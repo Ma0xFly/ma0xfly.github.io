@@ -1,0 +1,149 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>经典重入漏洞 | Notebook Dispatch</title><meta name="description" content="# 经典重入漏洞 (Classic Reentrancy) > **标签:** #漏洞类型/重入 | #协议类型/DeFi/智能合约底层逻辑 | #严重程度/High ## 📌 1. TL;DR (一句话快速回顾) * **本质成因**：在修改关键状态（如扣减余额）**之前**"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.XLusA-kG.css"></head> <body class> <!-- 首页导航栏：右侧对齐链接和主题切换 --> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">Notebook Dispatch</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☼</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <p class="eyebrow">2026/4/14</p> <h1>经典重入漏洞</h1> <p class="lead"># 经典重入漏洞 (Classic Reentrancy) &gt; **标签:** #漏洞类型/重入 | #协议类型/DeFi/智能合约底层逻辑 | #严重程度/High ## 📌 1. TL;DR (一句话快速回顾) * **本质成因**：在修改关键状态（如扣减余额）**之前**</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> </header> <div class="article-content"><h1>经典重入漏洞 (Classic Reentrancy)</h1>
+<blockquote>
+<p><strong>标签:</strong> #漏洞类型/重入 | #协议类型/DeFi/智能合约底层逻辑 | #严重程度/High</p>
+</blockquote>
+<h2>📌 1. TL;DR (一句话快速回顾)</h2>
+<ul>
+<li><strong>本质成因</strong>：在修改关键状态（如扣减余额）<strong>之前</strong>，就将控制流或以太坊原生转账交由外部地址处理，导致防御机制形同虚设。</li>
+<li><strong>攻击路径</strong>：攻击者在合约打款触发的 <code>fallback/receive</code> 回调中，趁着余额还没被清零，反手再次调用该提款函数，通过嵌套循环把池子掏空。</li>
+</ul>
+<hr>
+<h2>🔍 2. 漏洞底层原理 (Root Cause)</h2>
+<h3>正常业务逻辑</h3>
+<ul>
+<li>用户调用提款功能（如 <code>withdraw()</code>），合约核对其内部账本，发送资金，然后将账本中的该用户余额减掉。</li>
+</ul>
+<h3>缺陷剖析</h3>
+<ul>
+<li><strong>致命代码/机制</strong>：开发者<strong>未能遵守 CEI 模式</strong>。在 &quot;Effects（修改状态）&quot; 发生前，就去执行了 &quot;Interactions（外部交互/转账）&quot;。</li>
+</ul>
+<h3>🛡️ 核心防御：CEI 模式详解</h3>
+<blockquote>
+<p><strong>CEI (Checks-Effects-Interactions)</strong> 是智能合约开发的“黄金法则”。它的本质是：<strong>在把控制权交给别人之前，先把自己家里的账结清。</strong></p>
+</blockquote>
+<ol>
+<li><strong>Checks (检查)</strong>：<ul>
+<li><strong>动作</strong>：验证所有的前置条件（如 <code>require</code> 余额足够、权限检查、输入验证）。</li>
+<li><strong>目的</strong>：确保这笔交易是有权的、合算的，不给非法请求开门。</li>
+</ul>
+</li>
+<li><strong>Effects (效果/状态更改)</strong>：<ul>
+<li><strong>动作</strong>：修改合约内部的状态变量（如 <code>balances[msg.sender] -= amount</code>、标记 <code>hasClaimed = true</code>）。</li>
+<li><strong>目的</strong>：<strong>提前记录下结果</strong>。即使后面的 Interactions 触发了重入，当攻击机再次回到 <code>Checks</code> 阶段时，由于状态已经更新（余额已扣除），攻击会被立即拦截。</li>
+</ul>
+</li>
+<li><strong>Interactions (交互)</strong>：<ul>
+<li><strong>动作</strong>：执行外部合约调用（如 <code>call</code>、<code>send</code>、调用其他合约的函数）。</li>
+<li><strong>目的</strong>：完成最终的资金转账或跨合约操作。这是风险最高的步骤，因为它会<strong>交出 CPU 的执行控制权</strong>。</li>
+</ul>
+</li>
+</ol>
+<h4>为什么顺序不能乱？</h4>
+<ul>
+<li><strong>错误顺序 (C-I-E)</strong>：就像在餐厅买单，服务生先把钱退给你，然后才去后台改账本。你拿到钱的那一秒就可以由于各种原因（比如瞬移）再次出现在前台领钱，因为账单结清状态还没更新。</li>
+<li><strong>正确顺序 (C-E-I)</strong>：先在账本上划掉这一笔，然后再把钱递给你。即使你拿到钱瞬间反悔重入，前台查账也会发现：“对不起，您刚才已经结清了，余额为 0”。</li>
+</ul>
+<hr>
+<hr>
+<h2>⚔️ 3. 攻击执行路径 (Exploit Steps)</h2>
+<blockquote>
+<p>这里是经典的“反复套娃”抽干池子：</p>
+</blockquote>
+<ol>
+<li><strong>[准备阶段]</strong>: 攻击者向漏洞合约存入一笔启动资金（例如 1 ETH），让合约记录下 <code>balances[attacker] = 1 ETH</code>。</li>
+<li><strong>[触发阶段]</strong>: 攻击者调用 <code>withdraw(1 ETH)</code>。漏洞合约在发送这 1 ETH 给攻击者时，不小心触发了攻击者合约的 <code>receive()</code> 函数。</li>
+<li><strong>[利用阶段]</strong>: 攻击者在自己的 <code>receive()</code> 函数里立刻写入：<code>if (address(victim).balance &gt;= 1 ETH) victim.withdraw(1 ETH);</code><ul>
+<li>合约一看账本：哦，<code>balances[attacker]</code> 还是 1 ETH（因为上一次提款后扣余额的代码还没走到），接着发第二笔钱！</li>
+<li>再次触发 <code>receive()</code>，如此反反复复循环往下掏。</li>
+</ul>
+</li>
+<li><strong>[获利退场]</strong>: 掏空漏洞合约内的所有 ETH 后，循环终止。攻击者带着卷走的脏款全身而退。</li>
+</ol>
+<hr>
+<h2>💻 4. 关键代码示例 (Snippets)</h2>
+<h3>漏洞代码 (Vulnerable Code)</h3>
+<pre><code class="language-solidity">// 最典型的反面教材！一定要肌肉记忆记住这种错误写法
+function withdraw(uint256 amount) public {
+    // 1. Checks: 检查余额
+    require(balances[msg.sender] &gt;= amount, &quot;Insufficient balance&quot;);
+
+    // 2. Interactions: 发送以太坊 (交出执行流！致命点！)
+    (bool success, ) = msg.sender.call{value: amount}(&quot;&quot;);
+    require(success, &quot;Transfer failed&quot;);
+
+    // 3. Effects: 更新状态 (此时外部由于没有更新状态，可以无限重入)
+    balances[msg.sender] -= amount;
+}
+</code></pre>
+<h3>攻击核心逻辑 (Attack Logic)</h3>
+<pre><code class="language-solidity">contract Attack {
+    Victim public victim;
+    
+    // 启动攻击！
+    function attack() external payable {
+        victim.deposit{value: 1 ether}();
+        victim.withdraw(1 ether); // 触发第一次提款
+    }
+
+    // 重复套娃薅羊毛
+    receive() external payable {
+        // 趁着此时 victim 还没执行 balances[msg.sender] -= amount
+        if (address(victim).balance &gt;= 1 ether) {
+            victim.withdraw(1 ether); 
+        }
+    }
+}
+</code></pre>
+<hr>
+<h2>🛡️ 5. 修复与防范方案 (Mitigations)</h2>
+<ul>
+<li><strong>协议自身的修复</strong>：<ul>
+<li><strong>必须严格遵循 CEI 模式 (Checks-Effects-Interactions)</strong>：一定是先查账，再把余额扣了，最后再对外发钱。（即使别人重入进来，因为余额已经是 0，就会被 Checks 拦在门外）。</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-solidity">// 正确写法
+require(balances[msg.sender] &gt;= amount); // Checks
+balances[msg.sender] -= amount;          // Effects (先扣钱！)
+(bool success, ) = msg.sender.call{value: amount}(&quot;&quot;); // Interactions (最后发钱)
+</code></pre>
+<ul>
+<li><strong>引入防重入锁 (ReentrancyGuard)</strong>：继承 OpenZeppelin 的 <code>ReentrancyGuard</code> 合约，对敏感函数加上 <code>nonReentrant</code> 修饰符。底层原理是设置一个进入标记。</li>
+</ul>
+<hr>
+<h2>📖 6. 真实案例与靶场 (References)</h2>
+<ul>
+<li><strong>经典黑客事件</strong>：<strong>The DAO 黑客事件 (2016)</strong>，这一事件直接导致以太坊硬分叉为 ETH 和 ETC。造成了数千万美元的损失，也是人类历史上最具影响力的智能合约安全事件。</li>
+<li><strong>靶场/练习</strong>：Damn Vulnerable DeFi - <code>[Truster]</code>, <code>[Side Entrance]</code>, Ethernaut - <code>[Re-entrance]</code>, <code>[Puzzle Wallet]</code>。</li>
+<li><strong>拓展阅读</strong>：重入攻击经过这么多年的发展，衍生出了<strong>跨函数重入</strong>（在一个函数套另一个函数）和<strong>跨合约只读重入</strong>（见另外一篇笔记）。核心思想都是“在状态未完全一致的真空期做小动作”。</li>
+</ul>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/开发框架/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">开发框架</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/漏洞笔记/拒绝服务攻击漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">拒绝服务攻击漏洞</h4> </a> </div> </nav> </article>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try { localStorage.setItem("theme", value); } catch {}
+          });
+        };
+        bindToggle();
+      })();
+    </script> </body> </html> 

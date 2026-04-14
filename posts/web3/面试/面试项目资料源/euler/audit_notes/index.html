@@ -1,0 +1,384 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>audit_notes | Notebook Dispatch</title><meta name="description" content="# Euler Finance 审计笔记 > 审计范围: `src/euler/` 的核心架构与模块，重点关注 `Storage.sol`、`BaseLogic.sol`、`modules/EToken.sol`、`modules/DToken.sol`、`modules/Liq"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.XLusA-kG.css"></head> <body class> <!-- 首页导航栏：右侧对齐链接和主题切换 --> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">Notebook Dispatch</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☼</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <p class="eyebrow">2026/4/14</p> <h1>audit_notes</h1> <p class="lead"># Euler Finance 审计笔记 &gt; 审计范围: `src/euler/` 的核心架构与模块，重点关注 `Storage.sol`、`BaseLogic.sol`、`modules/EToken.sol`、`modules/DToken.sol`、`modules/Liq</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> </header> <div class="article-content"><h1>Euler Finance 审计笔记</h1>
+<blockquote>
+<p>审计范围: <code>src/euler/</code> 的核心架构与模块，重点关注 <code>Storage.sol</code>、<code>BaseLogic.sol</code>、<code>modules/EToken.sol</code>、<code>modules/DToken.sol</code>、<code>modules/Liquidation.sol</code>、<code>modules/RiskManager.sol</code>
+Solidity 版本: <code>^0.8.0</code>（<code>vendor/</code> 下存在混合 pragma）</p>
+</blockquote>
+<h2>合约概览</h2>
+<p>这套代码是典型的“单存储 + 多模块逻辑”架构。真正持有状态的是 <a href="./Euler.sol"><code>Euler.sol</code></a> 和 <a href="./Storage.sol"><code>Storage.sol</code></a>，真正执行业务的是各个模块合约。</p>
+<p>我先从 <a href="./Euler.sol"><code>Euler.sol</code></a> 看入口，马上能确认这是一个强模块化系统：</p>
+<ul>
+<li><a href="./Euler.sol"><code>dispatch()</code></a> 会把来自受信任 proxy 的调用转成 <code>delegatecall</code>，把执行路由到对应模块。</li>
+<li>这意味着所有模块共享一套全局存储；任何一个模块只要少做一次安全检查，影响的就不是“这个函数自己”，而是整个协议账本。</li>
+<li>高危特征非常集中：<ul>
+<li><code>delegatecall</code> 路由</li>
+<li>借贷协议核心账本</li>
+<li><code>flashLoan</code></li>
+<li>清算折价机制</li>
+<li>自借 / 自抵押路径</li>
+</ul>
+</li>
+</ul>
+<h3>Slither 说明</h3>
+<ul>
+<li>这次我实际跑了 <code>slither . --exclude-dependencies</code>，已经能直接扫当前项目。</li>
+<li>这轮输出里有几类命中我会这样看：<ul>
+<li><strong><code>controlled-delegatecall</code> @ <code>Base.callInternalModule()</code></strong><ul>
+<li>我的判断：这是 Euler 模块化架构的设计特征，不是这次 exploit 的根因，但它提醒我“任一模块漏检都会放大成全协议风险”。</li>
+</ul>
+</li>
+<li><strong><code>reentrancy-balance</code> @ <code>DToken.flashLoan()</code></strong><ul>
+<li>我的判断：值得记一下，但更像“闪电贷回调前后余额检查”的通用风险提示，不是这次 DAI 攻击链主因。</li>
+</ul>
+</li>
+<li><strong><code>arbitrary-send-erc20</code> @ <code>BaseLogic.pullTokens()</code></strong><ul>
+<li>我的判断：这是通用 <code>transferFrom</code> 封装带来的高噪声命中，单看这个告警不足以说明真实漏洞。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>更关键的是：<strong>Slither 这次没有替我直接指出 <code>donateToReserves()</code> 的问题，真正把漏洞钉死的还是人工对同类函数的差异审计。</strong></li>
+</ul>
+<h2>资金在哪</h2>
+<p>钱和债都锚定在 <a href="./Storage.sol"><code>Storage.sol</code></a> 的 <code>AssetStorage</code> / <code>UserAsset</code> 上：</p>
+<p>Storage.sol 是 Euler 的“全局状态定义文件”。它不做业务逻辑，核心功能是定义整个协议要存哪些状态，以及这些状态的结构和映射关系确定各变量内存槽位置</p>
+<pre><code class="language-solidity">struct UserAsset {
+    uint112 balance;              // 用户持有的 eToken 内部记账余额，本质上代表这名用户在该资产池中的抵押份额
+    uint144 owed;                 // 用户在该资产池中的债务余额，对应 dToken / borrow 侧的欠款
+    uint interestAccumulator;     // 用户上次计息时记录的利息累计器，用来把历史 owed 换算成当前应还债务
+}
+
+struct AssetStorage {
+    uint96 reserveBalance;        // 协议储备金余额，手续费和 donateToReserves 一类的价值最终会沉到这里
+    uint112 totalBalances;        // 全池 eToken 总余额，也就是所有用户抵押份额之和
+    uint144 totalBorrows;         // 全池总债务
+    mapping(address =&gt; UserAsset) users; // 每个用户在这个资产池上的资产/债务账本
+}
+</code></pre>
+<p>我读到这里时，脑子里的第一反应是：</p>
+<p>“这协议真正的命门不是 token transfer，而是所有会改 <code>balance</code>、<code>owed</code>、<code>reserveBalance</code> 的函数。”</p>
+<p>所以我顺着账本保护链继续往下看：</p>
+<ol>
+<li><a href="./BaseLogic.sol"><code>BaseLogic.getAccountLiquidity()</code></a> 通过内部模块调用进入 <code>RiskManager.computeLiquidity()</code></li>
+<li><a href="./BaseLogic.sol"><code>BaseLogic.checkLiquidity()</code></a> 在状态变更后强制做健康度检查</li>
+<li><a href="./modules/RiskManager.sol"><code>RiskManager.requireLiquidity()</code></a> 最终执行两个硬约束：<ul>
+<li>不能违反 borrow isolation</li>
+<li><code>collateralValue &gt;= liabilityValue</code></li>
+</ul>
+</li>
+</ol>
+<p>这条保护链很清楚：</p>
+<p>“凡是会让用户更危险的状态变化，做完以后必须调 <code>checkLiquidity(account)</code>。”</p>
+<h3>补充：<code>underlying</code> 是什么</h3>
+<p>这里专门补一句，避免把变量语义看混：</p>
+<ul>
+<li><code>EToken</code> 里的 <code>underlying</code> 是<strong>底层 ERC20 的地址</strong>（比如 DAI 地址），不是金额变量。</li>
+<li>它来自 <code>CALLER()</code> 解包后的 <code>assetStorage.underlying</code>，而不是临时计算出来的数值。</li>
+</ul>
+<p>来源链我在代码里按顺序对上了：</p>
+<ol>
+<li><code>Markets.doActivateMarket()</code> 把底层币地址写进 <code>assetStorage.underlying</code></li>
+<li><code>Storage.AssetStorage</code> 用 <code>address underlying;</code> 持久化保存这个市场对应的底层币</li>
+<li><code>EToken.CALLER()</code> 通过 <code>eTokenLookup[proxyAddr]</code> 拿到该市场的 <code>assetStorage</code>，再读出 <code>underlying</code></li>
+</ol>
+<p>所以这一行：</p>
+<pre><code class="language-solidity">(address underlying, AssetStorage storage assetStorage, address proxyAddr, address msgSender) = CALLER();
+</code></pre>
+<p>本质是在说：“先确认当前调用对应哪个 eToken 市场，再拿这个市场底层币的地址。”</p>
+<p>这也解释了为什么一份 <code>EToken</code> 逻辑可以服务多资产市场：</p>
+<ul>
+<li>逻辑代码是共享的</li>
+<li>市场差异由 proxy + storage 映射出来的 <code>underlying</code> 决定</li>
+</ul>
+<p>另外容易混淆的点也顺便钉住：</p>
+<ul>
+<li><code>underlying</code>（变量）= 地址</li>
+<li><code>amount in underlying units</code>（注释语义）= 数量单位（后续会按 decimals 做缩放）</li>
+</ul>
+<p>我把 <a href="./BaseLogic.sol"><code>BaseLogic.checkLiquidity()</code></a> 这几行单独拆开看了一遍：</p>
+<pre><code class="language-solidity">function checkLiquidity(address account) internal {
+    uint8 status = accountLookup[account].deferLiquidityStatus;
+
+    if (status == DEFERLIQUIDITY__NONE) {
+        callInternalModule(MODULEID__RISK_MANAGER, abi.encodeWithSelector(IRiskManager.requireLiquidity.selector, account));
+    } else if (status == DEFERLIQUIDITY__CLEAN) {
+        accountLookup[account].deferLiquidityStatus = DEFERLIQUIDITY__DIRTY;
+    }
+}
+</code></pre>
+<p>这里的含义其实很直接：</p>
+<ul>
+<li>先读 <code>accountLookup[account].deferLiquidityStatus</code><ul>
+<li>也就是先看这个账户当前是不是处于“允许延迟流动性检查”的上下文里。</li>
+</ul>
+</li>
+<li>如果状态是 <code>DEFERLIQUIDITY__NONE</code><ul>
+<li>就说明现在没有任何豁免，必须立刻做健康度校验。</li>
+<li>于是它直接 <code>callInternalModule()</code> 调到 <code>RiskManager.requireLiquidity(account)</code>。</li>
+<li>真正的硬约束检查也就在那边执行：不能违反借贷隔离，且抵押价值必须覆盖债务价值。</li>
+</ul>
+</li>
+<li>如果状态是 <code>DEFERLIQUIDITY__CLEAN</code><ul>
+<li>说明当前正处在一个允许“先做一串状态变更，最后统一检查”的流程里。</li>
+<li>这时不会立刻校验，而是把状态标成 <code>DEFERLIQUIDITY__DIRTY</code>，意思是：“这个延迟检查上下文已经被改脏了，后面必须补做总检查。”</li>
+</ul>
+</li>
+</ul>
+<p>所以这段代码的安全意义是：</p>
+<ul>
+<li><code>checkLiquidity()</code> 不是装饰性函数，它就是账本修改后的统一闸门。</li>
+<li>正常路径下，它会立刻把账户送去 <code>RiskManager</code> 做硬校验。</li>
+<li>延迟检查路径下，它至少也会留下“这个账户已经被改动过，别忘了稍后结算”的标记。</li>
+</ul>
+<p>也正因为如此，<code>donateToReserves()</code> 漏掉这一步才会这么致命：</p>
+<ul>
+<li>它改了用户 <code>balance</code></li>
+<li>但既没有立即把账户送去 <code>requireLiquidity()</code></li>
+<li>也没有把账户标成需要延迟结算</li>
+</ul>
+<p>等于直接绕过了账本变更后的统一风控闸门。</p>
+<h2>逐函数分析</h2>
+<h3><code>EToken.deposit()</code></h3>
+<ul>
+<li>代码位置：<code>src/euler/modules/EToken.sol:139</code></li>
+<li>干了什么：<ul>
+<li>拉入 underlying</li>
+<li>换算成内部记账单位</li>
+<li>增加用户 <code>balance</code></li>
+</ul>
+</li>
+<li>我注意到：<ul>
+<li>这一路是“加抵押”，按理说风险较低</li>
+<li>但如果账户已经在这个市场有债务，会形成 self-collateralized loan，所以依然会在特定条件下补一发 <code>checkLiquidity(account)</code></li>
+</ul>
+</li>
+</ul>
+<h3><code>EToken.withdraw()</code></h3>
+<ul>
+<li>代码位置：<code>src/euler/modules/EToken.sol:193</code></li>
+<li>干了什么：<ul>
+<li>计算用户想提多少</li>
+<li>向外转 underlying</li>
+<li>减少用户 <code>balance</code></li>
+</ul>
+</li>
+<li>我注意到：<ul>
+<li>这就是一个标准的“减少抵押物”路径</li>
+<li>做完 <code>decreaseBalance()</code> 之后，立即调用 <code>checkLiquidity(account)</code>，非常符合预期</li>
+</ul>
+</li>
+</ul>
+<h3><code>EToken.mint()</code>自借杠杆函数。</h3>
+<ul>
+<li>代码位置：<code>src/euler/modules/EToken.sol:221</code></li>
+<li>干了什么：<ul>
+<li>先把输入金额从 external units 解码到内部精度：<code>decodeExternalAmount(...)</code></li>
+<li>再用 <code>underlyingAmountToBalanceRoundUp(...)</code> 换算出要铸造的 eToken 内部份额（这里是向上取整）</li>
+<li>接着又把 <code>amountInternal</code> 反算回 underlying 数量：<code>balanceToUnderlyingAmount(...)</code>，确保后续债务侧和资产侧对齐</li>
+<li>然后执行两步核心记账：</li>
+<li><code>increaseBalance(...)</code>：给用户加 <code>eToken</code> 余额（资产侧）</li>
+<li><code>increaseBorrow(...)</code>：给用户加 <code>dToken</code> 债务（负债侧）</li>
+<li>最后 <code>checkLiquidity(account)</code> 校验这次“自借杠杆”后账户仍健康</li>
+</ul>
+</li>
+<li>我注意到：<ul>
+<li>这个函数最危险的点在于：它不需要真实转入新的 underlying，就能同时把资产和负债放大</li>
+<li>对攻击者来说，这正好是“把头寸先膨胀到很大规模”的工具；头寸越大，后面 <code>donateToReserves()</code> 抹掉抵押后的坏账绝对值越大</li>
+<li>也正因为风险高，作者在流程末尾强制做了 <code>checkLiquidity(account)</code>；说明他们知道这步是高危动作</li>
+<li>从 exploit 视角看，<code>mint()</code> 本身不是漏洞点，但它是漏洞收益放大的前置放大器</li>
+</ul>
+</li>
+</ul>
+<h3><code>EToken.transferFrom()</code></h3>
+<ul>
+<li>代码位置：<code>src/euler/modules/EToken.sol:352</code></li>
+<li>干了什么：<ul>
+<li>把 eToken 从 <code>from</code> 挪到 <code>to</code></li>
+</ul>
+</li>
+<li>我注意到：<ul>
+<li>对 <code>from</code> 来说是减少抵押，对 <code>to</code> 来说可能形成自抵押债务</li>
+<li>所以这里对 <code>from</code> 和部分场景下的 <code>to</code> 都做了流动性检查</li>
+</ul>
+</li>
+</ul>
+<h3><code>EToken.donateToReserves()</code></h3>
+<ul>
+<li>代码位置：<code>src/euler/modules/EToken.sol:390</code></li>
+<li>干了什么：<ul>
+<li>从用户 <code>balance</code> 里扣除 eToken</li>
+<li>同时把同额 value 记入 <code>reserveBalance</code></li>
+</ul>
+</li>
+<li>这里要特别澄清一个很容易误解的点：<ul>
+<li>这不是“用户再额外转一笔新钱进协议”</li>
+<li>用户捐掉的是自己已经持有的 <code>eToken</code> 份额，也就是自己原本在池子里的抵押权益</li>
+<li>换句话说，<code>donateToReserves()</code> 本质上是一条“主动放弃自己抵押份额，把它改记到协议储备”的路径</li>
+</ul>
+</li>
+<li>我注意到：<ul>
+<li>这其实也是“减少用户抵押物”的路径</li>
+<li>从账本影响上看，它和 <code>withdraw()</code>、<code>transferFrom(from, ...)</code> 没有本质区别，甚至更危险，因为它不会把资产发回用户，而是直接沉到协议储备</li>
+<li><strong>但函数末尾完全没有 <code>checkLiquidity(account)</code></strong></li>
+</ul>
+</li>
+<li><strong>Slither 命中</strong>:<ul>
+<li>这次 Slither 没有直接把 <code>donateToReserves()</code> 标成核心漏洞</li>
+<li>真正高价值的发现仍然来自人工对 <code>withdraw()</code> / <code>mint()</code> / <code>burn()</code> / <code>transferFrom()</code> / <code>donateToReserves()</code> 的 post-state check 差异比对</li>
+</ul>
+</li>
+</ul>
+<h3><code>Liquidation.computeLiqOpp()</code> / <code>executeLiquidation()</code></h3>
+<p>compute Liquidation Opportunity，<strong>计算一笔清算机会的参数”</strong>，比如能还多少（repay）、能拿多少抵押物（yield）、健康度（healthScore）、折价（discount）等</p>
+<ul>
+<li>代码位置：<ul>
+<li><code>src/euler/modules/Liquidation.sol:55</code></li>
+<li><code>src/euler/modules/Liquidation.sol:224</code></li>
+</ul>
+</li>
+<li>干了什么：<ul>
+<li>先算健康度</li>
+<li>健康度 &lt; 1 时给清算折价</li>
+<li>再把违约人的债务转给清算人，并把抵押物折价划走</li>
+</ul>
+</li>
+<li>我注意到：<ul>
+<li><a href="./modules/Liquidation.sol"><code>80</code></a> 行开始，健康度低于 1 直接进入折价路径</li>
+<li><a href="./modules/Liquidation.sol"><code>91-102</code></a> 行会把折价和 conversion rate 算出来</li>
+<li><a href="./modules/Liquidation.sol"><code>242-246</code></a> 行把债务转给或铸给清算人，<a href="./modules/Liquidation.sol"><code>274</code></a> 行把 collateral 划给清算人</li>
+<li>也就是说，一旦有人能“合法地”把自己打成深度资不抵债，清算模块就会很诚实地帮他把坏账货币化</li>
+</ul>
+</li>
+</ul>
+<h2>🔍 发现的问题</h2>
+<h3>问题1: <code>donateToReserves()</code> 销毁抵押物后遗漏流动性检查</h3>
+<ul>
+<li><strong>严重程度</strong>: Critical</li>
+<li><strong>怎么发现的</strong>:<ul>
+<li>我不是先盯 exploit 交易，而是先盯“所有会让用户更危险的函数”。</li>
+<li>然后把几条同类路径摆在一起比：<ul>
+<li><code>withdraw()</code> 结尾有 <a href="./modules/EToken.sol"><code>checkLiquidity(account)</code></a></li>
+<li><code>mint()</code> 结尾有 <a href="./modules/EToken.sol"><code>checkLiquidity(account)</code></a></li>
+<li><code>burn()</code> 结尾有 <a href="./modules/EToken.sol"><code>checkLiquidity(account)</code></a></li>
+<li><code>transferFrom()</code> 对 <code>from</code> 也有 <a href="./modules/EToken.sol"><code>checkLiquidity(from)</code></a></li>
+</ul>
+</li>
+<li>结果扫到 <a href="./modules/EToken.sol"><code>donateToReserves()</code></a> 时，发现它同样减少 <code>balance</code>，却在结尾直接 <code>logAssetStatus(assetCache)</code> 返回。</li>
+<li>这时候我再回头看 <a href="./BaseLogic.sol"><code>BaseLogic.checkLiquidity()</code></a> 和 <a href="./modules/RiskManager.sol"><code>RiskManager.requireLiquidity()</code></a>，就能确认：协议原本的安全模型确实要求这种操作在 post-state 做健康度验证。</li>
+</ul>
+</li>
+<li><strong>问题本质</strong>:<ul>
+<li><code>donateToReserves()</code> 允许用户主动减少自己的抵押资产，却不验证这次减少之后账户是否还满足 <code>collateralValue &gt;= liabilityValue</code>。</li>
+<li>这里减少的不是“额外赠送的一笔外部资产”，而是用户已经持有的抵押份额本身。</li>
+<li>换句话说，攻击者可以<strong>保留债务、抹掉抵押、制造坏账</strong>。</li>
+</ul>
+</li>
+<li><strong>问题代码</strong>:<pre><code class="language-solidity">function donateToReserves(uint subAccountId, uint amount) external nonReentrant {
+    (address underlying, AssetStorage storage assetStorage, address proxyAddr, address msgSender) = CALLER();
+    address account = getSubAccount(msgSender, subAccountId);
+
+    updateAverageLiquidity(account);
+    emit RequestDonate(account, amount);
+
+    AssetCache memory assetCache = loadAssetCache(underlying, assetStorage);
+
+    uint origBalance = assetStorage.users[account].balance;
+    uint newBalance;
+
+    if (amount == type(uint).max) {
+        amount = origBalance;
+        newBalance = 0;
+    } else {
+        require(origBalance &gt;= amount, &quot;e/insufficient-balance&quot;);
+        unchecked { newBalance = origBalance - amount; }
+    }
+
+    assetStorage.users[account].balance = encodeAmount(newBalance);
+    assetStorage.reserveBalance = assetCache.reserveBalance = encodeSmallAmount(assetCache.reserveBalance + amount);
+
+    emit Withdraw(assetCache.underlying, account, amount);
+    emitViaProxy_Transfer(proxyAddr, account, address(0), amount);
+
+    logAssetStatus(assetCache);
+}
+</code></pre>
+</li>
+<li><strong>攻击叙事</strong>:<ul>
+<li>我是攻击者，我先找一个流动性很深的市场，比如 DAI。</li>
+<li>我用闪电贷拿到第一笔大资金。</li>
+<li>然后我调用 <code>mint()</code>，把自己的 <code>eDAI</code> 和 <code>dDAI</code> 一起放大，先把杠杆堆起来。</li>
+<li>这一步之后，我虽然债很大，但抵押也很大，所以 <code>checkLiquidity()</code> 还过得去。</li>
+<li>接着我调用 <code>donateToReserves()</code>，把一大块 <code>eDAI</code> 从自己账上抹掉，直接记入协议储备。</li>
+<li>因为这里没有 post-state 健康度检查，我的账户就能在链上成功变成“抵押远小于债务”的坏账账户。</li>
+<li>一旦进入这个状态，清算模块就会按设计给出高额折价。</li>
+<li>我再用第二个账号或第二个合约来清算自己，把系统给出的折价吃掉。</li>
+<li>最后还掉闪电贷，折价差额就是利润。</li>
+</ul>
+</li>
+<li><strong>代码位置</strong>:<ul>
+<li>漏洞函数：<code>src/euler/modules/EToken.sol:390</code></li>
+<li>漏掉的统一防线：<code>src/euler/BaseLogic.sol:585</code></li>
+<li>健康度硬约束：<code>src/euler/modules/RiskManager.sol:374</code></li>
+<li>利润兑现路径：<code>src/euler/modules/Liquidation.sol:80</code></li>
+</ul>
+</li>
+<li><strong>修复思路</strong>:<ul>
+<li>最直接的修法：在 <code>donateToReserves()</code> 完成账本更新后、返回前加入 <code>checkLiquidity(account)</code>。</li>
+<li>更稳一点的修法：把“任何减少 <code>balance</code> 或增加 <code>owed</code> 的路径都必须调用流动性检查”抽成显式开发规范，并补一组 invariant / regression test。</li>
+<li>审计侧我也会建议做一个“同类函数差异对比”测试：枚举所有会写 <code>users[account].balance</code> / <code>users[account].owed</code> 的函数，确保危险方向变更后都走到统一健康度校验。</li>
+</ul>
+</li>
+</ul>
+<h2>结论</h2>
+<p>这轮 scoped 审计里，最核心、最确定、也最贴合真实攻击路径的问题，仍然是：</p>
+<p><strong><code>donateToReserves()</code> 在减少用户抵押后没有做 post-state liquidity check。</strong></p>
+<p>我没有在这轮人工审计里再看到第二个同级别的关键漏洞；真正让这次事故爆炸的，不是复杂的价格操纵，而是一个非常朴素的“不一致性”：</p>
+<ul>
+<li>同类危险函数大多会调用 <code>checkLiquidity()</code></li>
+<li>唯独 <code>donateToReserves()</code> 没有</li>
+</ul>
+<p>这就是典型的“边缘功能绕开核心不变量”。</p>
+<h2>💡 收获与心得</h2>
+<ol>
+<li><p><strong>审计借贷协议时，先盯账本，不要先盯交易。</strong>
+真正关键的是谁在改 <code>balance</code>、谁在改 <code>owed</code>、谁在改 <code>reserveBalance</code>。</p>
+</li>
+<li><p><strong>同类函数 diff 是挖这种漏洞的高性价比方法。</strong>
+尤其是那种“大家最后都调一个 guard，只有一个函数没调”的情况，命中率很高。</p>
+</li>
+<li><p><strong>清算模块常常不是根因，但经常是利润放大器。</strong>
+这次真正的漏洞在 <code>EToken</code>，但真正把坏账变成利润的是 <code>Liquidation</code>。</p>
+</li>
+<li><p><strong>如果要长期用 Slither，源码树就别为了“好看”随便重排。</strong>
+目录直观性可以靠 README 和笔记补，工具链稳定性只能靠源码布局本身保证。</p>
+</li>
+</ol>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/面试/面试项目资料源/blocksec面经/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">blocksec面经</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/面试/面试项目资料源/euler/README/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">README</h4> </a> </div> </nav> </article>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try { localStorage.setItem("theme", value); } catch {}
+          });
+        };
+        bindToggle();
+      })();
+    </script> </body> </html> 

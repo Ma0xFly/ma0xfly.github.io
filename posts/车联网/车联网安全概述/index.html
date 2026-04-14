@@ -1,0 +1,200 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>车联网安全概述 | Notebook Dispatch</title><meta name="description" content="介绍车联网安全,它的一些基本的名词概念,还有它的一些漏洞点, # HU 中控屏/主机（Head Unit），是车辆中央控制系统的核心部件之一。HU通常位于汽车仪表板中央位置，是车辆信息娱乐系统的主要控制面板，用于控制车辆的音频、导航、电话、车况、气候控制等多个功能。 HU别名叫车"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.XLusA-kG.css"></head> <body class> <!-- 首页导航栏：右侧对齐链接和主题切换 --> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">Notebook Dispatch</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☼</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <p class="eyebrow">2026/4/14</p> <h1>车联网安全概述</h1> <p class="lead">介绍车联网安全,它的一些基本的名词概念,还有它的一些漏洞点, # HU 中控屏/主机（Head Unit），是车辆中央控制系统的核心部件之一。HU通常位于汽车仪表板中央位置，是车辆信息娱乐系统的主要控制面板，用于控制车辆的音频、导航、电话、车况、气候控制等多个功能。 HU别名叫车</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> </header> <div class="article-content"><p>介绍车联网安全,它的一些基本的名词概念,还有它的一些漏洞点,</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/a0c3d9eb43ef414f1f71097c1539926c_MD5.png" alt=""></p>
+<h1>HU</h1>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/e6b15c998a400ef9b3a5630ccdffa8e7_MD5.png" alt=""></p>
+<p>中控屏/主机（Head Unit），是车辆中央控制系统的核心部件之一。HU通常位于汽车仪表板中央位置，是车辆信息娱乐系统的主要控制面板，用于控制车辆的音频、导航、电话、车况、气候控制等多个功能。</p>
+<p>HU别名叫车机,主要功能呢就是娱乐,导航,然后在车机上面有一个模块叫做MCU模块,,它可以连入can总线,然后控制车的其他部分。比如说可以控制刹车空调,或者说车灯,前照灯,后照灯,或者说它的一些雾灯,包括天窗,仪表板,仪表板显示的一些数值,比如车速呀油耗,还有车辆警告等等一些功能,然后我们说要挖掘车子漏洞的话,多是从车机上进行 </p>
+<h1>TBOX</h1>
+<p>T-BOX（Telematics Box）是智能网联汽车的“通信中枢”，可以理解为车辆的“联网模组+远程控制网关”。它通过蜂窝网络（4G/5G）、GPS、蓝牙、CAN 总线等，把车端、云端、手机端连成一体。</p>
+<table>
+<thead>
+<tr>
+<th>关键词</th>
+<th>作用说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>联网</strong></td>
+<td>内置 SIM 卡，为整车提供 4G/5G 数据通道，车机、座舱 App 的在线功能都靠它中转。</td>
+</tr>
+<tr>
+<td><strong>远程控制</strong></td>
+<td>手机 App → 云服务器 → T-BOX → CAN 总线 → 车辆控制器，实现远程开空调、锁车门、开后备箱等。</td>
+</tr>
+<tr>
+<td><strong>状态监控</strong></td>
+<td>实时采集 SOC（电量）、油量、里程、胎压、门窗状态等，周期性上报云端，用户可随时查看。</td>
+</tr>
+<tr>
+<td><strong>远程诊断</strong></td>
+<td>读取故障码、清除故障灯；维修人员可远程查看车辆健康报告，降低进站率。</td>
+</tr>
+<tr>
+<td><strong>OTA 升级</strong></td>
+<td>通过蜂窝网络下载固件/软件包，对整车 ECU、车机系统进行“空中升级”，无需回店。</td>
+</tr>
+<tr>
+<td><strong>安全救援</strong></td>
+<td>eCall/B-Call：碰撞弹气囊或乘客主动按下 SOS 键时，T-BOX 自动拨打救援电话并上传 GPS 位置。</td>
+</tr>
+<tr>
+<td><strong>防盗追踪</strong></td>
+<td>车辆异常移动、非法入侵时，T-BOX 触发报警并持续回传位置，协助找回被盗车辆。</td>
+</tr>
+<tr>
+<td><strong>V2X 接口</strong></td>
+<td>未来扩展支持 V2V、V2I 通信，为车路协同、自动驾驶提供数据通道。</td>
+</tr>
+</tbody></table>
+<p>起到一个定位的功能，把车的GPS的信息,可传给云端,再通过手机的app,定位到这个车达到一个锁车的功能,也就是说远远程控车,主要就是通过T盒和云端进行一个实现</p>
+<h1>域控制器</h1>
+<p>域控制器（Domain Controller）就是“把原来几十个分散 ECU 的算力、IO、软件集中到几块高性能电脑板上，再用统一网络把全车串起来”的硬件节点。<br>它既是“中央大脑的各个分脑”，也是传统 ECU 的“上位替代”。</p>
+<ol>
+<li>为什么需要“域”<br>• 10 年前：加一个功能就加一个 ECU → 线束 3–5 km，重量 40 kg，成本、复杂度爆炸。<br>• 新能源＋智能化把用电设备再翻几倍，<strong>分布式架构已“不堪重负”</strong>。<br>→ 工程师把全车功能按“域”打包，用 3-5 个高性能域控替代 60-100 个 ECU，线束砍半、软件可 OTA。</li>
+<li>主流四个域</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>域名称</th>
+<th>覆盖功能</th>
+<th>典型算力平台</th>
+<th>车上位置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>动力域（VDC/PCM）</strong></td>
+<td>电池、电机、充电、热管理</td>
+<td>200-400 DMIPS MCU + 少量 A核</td>
+<td>前舱</td>
+</tr>
+<tr>
+<td><strong>底盘域（CDC）</strong></td>
+<td>转向、制动、空气悬架、ESP</td>
+<td>同上或高阶 MCU</td>
+<td>前舱或中央通道</td>
+</tr>
+<tr>
+<td><strong>车身域（BDC）</strong></td>
+<td>灯、门、窗、空调、座椅、网关</td>
+<td>4-8 核 A55/A53</td>
+<td>副仪表板下方</td>
+</tr>
+<tr>
+<td><strong>智驾域（ADC）</strong></td>
+<td>摄像头、雷达、高精地图、NOA</td>
+<td>100-500 TOPS SoC（Orin、EyeQ6H）</td>
+<td>后备箱或前风挡下</td>
+</tr>
+</tbody></table>
+<ol start="3">
+<li>消费者能感知到的 5 个好处<br>① <strong>车机不卡顿</strong>（座舱域算力从 20 kDMIPS 提到 200 kDMIPS，8155 芯片）。<br>② <strong>NOA 功能年年升级</strong>（智驾域 30 TOPS → 254 TOPS，软件 OTA 解锁新场景）。<br>③ <strong>线束减重 10–20 kg</strong> → 续航+操控双提升。<br>④ <strong>整车布线更简洁，装配工时降 30%，成本降 15–20%</strong>。<br>⑤ <strong>跨域融合</strong>：开门自动降窗、座椅迎宾、氛围灯联动，过去需要 3 个 ECU 协同，现在车身域一个 SoC 全搞定。</li>
+</ol>
+<h1>漏洞</h1>
+<h2>usb</h2>
+<p>较老的车才有，特斯拉它就是没有USB的只有一个显示屏。</p>
+<p>老的车通过USB来做什么呢,</p>
+<p>比如一些汽车的网站上,比如说大众网,有给车刷固件的操作。有可能你把车给搞坏了,就需要通过这个USB刷系统,</p>
+<p>比较常见的一个漏洞,就是因为它可以保证我们刷系统,所以它的一个校验可能会出现问题,</p>
+<h2>TSP</h2>
+<p>TSP留给这些外面的一个API的接口,需要进行一个测试,就是因为,我们要测试一下,这些APIS是不是存在漏洞,如果没有的话,那就是车的一个SN码,包括一些那个通过爆爆破可以释放,是不是可以得到一些别的车的位置,或者说一些信息泄露之类</p>
+<h1>安卓</h1>
+<p>IVI它里面会有很多移动端的app,会有加个反调试这类的工作。</p>
+<p>安卓的漏洞挖掘,就因为车机上全都是一些安卓app</p>
+<h1>wifi&amp;蓝牙</h1>
+<h1>合规检测</h1>
+<h2>合规检测的定义</h2>
+<p><strong>车联网安全合规检测</strong>是指依据国家和行业相关的<strong>网络安全法律法规与技术标准</strong>，对车联网系统中的<strong>硬件设备、通信协议、软件平台、数据传输链路等</strong>进行系统化的<strong>安全性测试与合规性评估</strong>，以识别潜在的安全漏洞与合规缺陷，确保系统整体符合网络安全要求。</p>
+<p>检测对象包括<strong>车载终端、移动终端、车联网服务平台及其通信系统</strong>。检测过程中，通常通过<strong>系统架构分解、业务流程分析、安全与合规性分析、威胁建模与渗透测试验证</strong>等手段，结合合规评估与实际攻防测试，帮助企业既满足政策法规要求，又提升车联网系统的整体<strong>安全防御能力</strong>。</p>
+<hr>
+<h2>检测对象与内容</h2>
+<h3>主要检测对象</h3>
+<ol>
+<li><strong>车载终端设备</strong><ul>
+<li>包括 T-Box、OBU（车载单元）、IVI（信息娱乐系统）等。</li>
+<li>检测其硬件、操作系统（如 Linux、QNX、Android Automotive）及应用软件的安全与合规性。</li>
+</ul>
+</li>
+<li><strong>车联网通信链路</strong><ul>
+<li>涉及 V2V、V2I、V2N、V2P 等通信模式。</li>
+<li>使用的协议包括 DSRC、C-V2X、5G、Wi-Fi、Bluetooth 等。</li>
+</ul>
+</li>
+<li><strong>车联网服务平台</strong><ul>
+<li>包括 TSP 平台、远程运维平台、OTA 升级平台、后台管理系统等。</li>
+<li>检测平台的数据处理、接口安全、访问控制等内容。</li>
+</ul>
+</li>
+<li><strong>移动终端</strong><ul>
+<li>针对 iOS 和 Android 系统进行静态与动态分析，检测其应用程序的隐私合规性和安全性。</li>
+</ul>
+</li>
+<li><strong>数据处理与存储系统</strong><ul>
+<li>包括隐私信息（如人脸、位置、座舱数据）在采集、存储、传输过程中的加密、防泄漏和匿名化处理。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3>核心检测内容</h3>
+<ol>
+<li><strong>合规性检测</strong><ul>
+<li>判断是否符合《网络安全法》《数据安全法》《个人信息保护法》等法律法规。</li>
+<li>是否符合《车联网网络安全标准体系建设指南》《车联网网络安全白皮书》等行业规范。</li>
+</ul>
+</li>
+<li><strong>通信安全检测</strong><ul>
+<li>检测通信协议的一致性与互操作性。</li>
+<li>检查加密传输的有效性，防范中间人攻击、假冒攻击、数据泄露、重放攻击、身份伪造等漏洞。</li>
+</ul>
+</li>
+<li><strong>身份认证与访问控制</strong><ul>
+<li>验证系统是否存在未授权访问、越权访问等问题。</li>
+<li>检测是否实现有效的终端与平台之间的双向认证机制。</li>
+</ul>
+</li>
+<li><strong>漏洞扫描与渗透测试</strong><ul>
+<li>对固件、软件系统、协议栈等进行静态和动态分析。</li>
+<li>检查是否存在缓冲区溢出、后门、弱口令、节点捕获攻击、内部人员攻击等安全隐患。</li>
+</ul>
+</li>
+<li><strong>数据安全与隐私保护</strong><ul>
+<li>检查个人敏感数据是否经过加密存储与传输。</li>
+<li>检测数据收集是否遵循“最小化原则”，如默认不采集、显著告知用户等。</li>
+</ul>
+</li>
+<li><strong>OTA 升级安全</strong><ul>
+<li>检查 OTA 升级包是否经过签名验证、防止伪造。</li>
+<li>检查升级过程是否存在数据篡改或注入风险。</li>
+</ul>
+</li>
+</ol>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/车联网/车机渗透思路/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">车机渗透思路</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/计算机基础/计算机网络/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">计算机网络</h4> </a> </div> </nav> </article>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try { localStorage.setItem("theme", value); } catch {}
+          });
+        };
+        bindToggle();
+      })();
+    </script> </body> </html> 

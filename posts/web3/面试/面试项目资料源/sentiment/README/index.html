@@ -1,0 +1,248 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>README | Notebook Dispatch</title><meta name="description" content="# Sentiment 基于 Balancer 只读重入攻击复现 ## 事故概览 - 协议：Sentiment - 链上攻击时间：`2023-04-04 17:50:29 UTC` - 攻击区块：Arbitrum `77026913` - 推荐 fork 区块：`77026912"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.XLusA-kG.css"></head> <body class> <!-- 首页导航栏：右侧对齐链接和主题切换 --> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">Notebook Dispatch</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☼</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <p class="eyebrow">2026/4/14</p> <h1>README</h1> <p class="lead"># Sentiment 基于 Balancer 只读重入攻击复现 ## 事故概览 - 协议：Sentiment - 链上攻击时间：`2023-04-04 17:50:29 UTC` - 攻击区块：Arbitrum `77026913` - 推荐 fork 区块：`77026912</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> </header> <div class="article-content"><h1>Sentiment 基于 Balancer 只读重入攻击复现</h1>
+<h2>事故概览</h2>
+<ul>
+<li>协议：Sentiment</li>
+<li>链上攻击时间：<code>2023-04-04 17:50:29 UTC</code></li>
+<li>攻击区块：Arbitrum <code>77026913</code></li>
+<li>推荐 fork 区块：<code>77026912</code></li>
+<li>日期说明：不少公开文章按本地时区写成 <code>2023-04-05</code>，本仓库统一以链上 UTC 时间为准</li>
+<li>核心问题：Sentiment 在 <code>borrow()</code> 中先放款、后做健康度检查；而其 Balancer LP 预言机在 <code>Vault.exitPool()</code> 的只读重入窗口里读取到了尚未更新的池子余额</li>
+<li>公开损失规模：约 <code>~1M USD</code></li>
+<li>攻击交易：<code>0xa9ff2b587e2741575daf893864710a5cbb44bb64ccdc487a100fa20741e0f74d</code></li>
+</ul>
+<h2>范围说明</h2>
+<p>这个仓库当前是“复现脚手架”，不是已经补完的最终 PoC。</p>
+<p>已完成部分：</p>
+<ul>
+<li>事故上下文、时间线与地址簿已经固化</li>
+<li><code>src/sentiment/</code> 下已经整理出一套可编译的 Sentiment 源码树</li>
+<li><code>test/</code> 下已经拆出最小接口、地址常量和 PoC 骨架</li>
+<li>关键文档已切到中文</li>
+</ul>
+<p>仍需你本地补充的环境项：</p>
+<ul>
+<li>一条可用的 Arbitrum archive RPC，建议直接使用 Tenderly Virtual TestNet，并从区块 <code>77026912</code> fork</li>
+<li>对 <code>0x62c5...6403</code> 在攻击区块对应实现地址的最终确认</li>
+</ul>
+<h2>快速开始</h2>
+<ol>
+<li>在 Tenderly 创建新的 Arbitrum One Virtual TestNet，并从区块 <code>77026912</code> fork。</li>
+<li>复制 <code>.env.example</code> 为 <code>.env</code>，填入 RPC 和 API Key。</li>
+<li>编译项目：</li>
+</ol>
+<pre><code class="language-bash">cd /home/myx/漏洞复现/sentiment-poc
+forge build
+</code></pre>
+<ol start="4">
+<li>运行当前脚手架测试：</li>
+</ol>
+<pre><code class="language-bash">source .env
+forge test --match-test testExploit -vvv --rpc-url $TENDERLY_RPC_URL --fork-block-number 77026912
+</code></pre>
+<h2>攻击路径摘要</h2>
+<ol>
+<li>攻击者先从 Aave V3 闪电贷 WBTC、WETH、USDC。</li>
+<li>通过 <code>AccountManager</code> 打开 Sentiment 账户并注入初始抵押品。</li>
+<li>与目标 Balancer weighted pool 交互，建立会被 Sentiment LP 预言机引用的 BPT 头寸。</li>
+<li>退出 Balancer 池子时，WETH 转账触发攻击合约 <code>fallback()</code>，而此时 Balancer 还没完成余额更新。</li>
+<li>攻击者在这个重入窗口里继续向 Sentiment 借款，<code>WeightedBalancerLPOracle.getPrice()</code> 读取到被高估的 BPT 价格。</li>
+<li>借出的资产再经过 Aave / Curve 等路径中转，归还闪电贷后留下利润。</li>
+</ol>
+<h2>时间线</h2>
+<ul>
+<li><code>2023-04-04 17:50:29 UTC</code>：攻击交易 <code>0xa9ff2b587e2741575daf893864710a5cbb44bb64ccdc487a100fa20741e0f74d</code> 被打进 Arbitrum 区块 <code>77026913</code></li>
+<li><code>fork 基线</code>：建议使用区块 <code>77026912</code></li>
+<li><code>2026-04-01</code>：当前仓库完成源码树、地址簿和测试骨架初始化</li>
+</ul>
+<h2>地址簿</h2>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>地址</th>
+<th>类型</th>
+<th>区块/上下文</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>攻击者 EOA</td>
+<td><code>0xdd0cDb4c3b887bc533957BC32463977E432e49C3</code></td>
+<td>EOA</td>
+<td>攻击交易发送方</td>
+<td>Arbiscan + 公开 PoC</td>
+</tr>
+<tr>
+<td>攻击合约</td>
+<td><code>0x9f626F5941FAfe0A5b839907d77fbBD5d0deA9D0</code></td>
+<td>合约</td>
+<td>攻击交易接收方</td>
+<td>Arbiscan + 公开 PoC</td>
+</tr>
+<tr>
+<td>Sentiment AccountManager</td>
+<td><code>0x62c5AA8277E49B3EAd43dC67453ec91DC6826403</code></td>
+<td>协议核心合约</td>
+<td>攻击入口</td>
+<td>官方复盘 + 公开 PoC</td>
+</tr>
+<tr>
+<td>当前实现地址线索</td>
+<td><code>0xb08501A3020Ae096c2Edd6495d0957b615D8C093</code></td>
+<td>类实现地址</td>
+<td>2026-04-01 用 <code>cast implementation</code> 解析</td>
+<td>本地链上查询</td>
+</tr>
+<tr>
+<td>Weighted BPT Oracle</td>
+<td><code>0x16F3ae9C1727ee38c98417cA08BA785BB7641b5B</code></td>
+<td>预言机</td>
+<td>重入窗口内读取旧余额</td>
+<td>公开 PoC + 已验证源码</td>
+</tr>
+<tr>
+<td>目标 Balancer BPT</td>
+<td><code>0x64541216bAFFFEec8ea535BB71Fbc927831d0595</code></td>
+<td>weighted pool token</td>
+<td>33/33/33 WBTC/WETH/USDC 池</td>
+<td>公开 PoC</td>
+</tr>
+<tr>
+<td>Balancer Vault</td>
+<td><code>0xBA12222222228d8Ba445958a75a0704d566BF2C8</code></td>
+<td>外部协议</td>
+<td><code>joinPool/exitPool</code> 重入面</td>
+<td>Balancer</td>
+</tr>
+<tr>
+<td>Aave V3 Pool</td>
+<td><code>0x794a61358D6845594F94dc1DB02A252b5b4814aD</code></td>
+<td>外部协议</td>
+<td>闪电贷来源</td>
+<td>公开 PoC</td>
+</tr>
+<tr>
+<td>FRAXBP Pool</td>
+<td><code>0xC9B8a3FDECB9D5b218d02555a8Baf332E5B740d5</code></td>
+<td>外部协议</td>
+<td>FRAX 兑换腿</td>
+<td>公开 PoC</td>
+</tr>
+<tr>
+<td>WBTC</td>
+<td><code>0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f</code></td>
+<td>代币</td>
+<td>闪电贷与建仓路径</td>
+<td>Arbitrum</td>
+</tr>
+<tr>
+<td>WETH</td>
+<td><code>0x82aF49447D8a07e3bd95BD0d56f35241523fBab1</code></td>
+<td>代币</td>
+<td>抵押物与 <code>fallback</code> 触发路径</td>
+<td>Arbitrum</td>
+</tr>
+<tr>
+<td>USDC</td>
+<td><code>0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8</code></td>
+<td>代币</td>
+<td>闪电贷与借款路径</td>
+<td>Arbitrum</td>
+</tr>
+<tr>
+<td>USDT</td>
+<td><code>0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9</code></td>
+<td>代币</td>
+<td>借款路径</td>
+<td>Arbitrum</td>
+</tr>
+<tr>
+<td>FRAX</td>
+<td><code>0x17FC002b466eEc40DaE837Fc4bE5c67993ddBd6F</code></td>
+<td>代币</td>
+<td>借款路径</td>
+<td>Arbitrum</td>
+</tr>
+</tbody></table>
+<h2>源码阅读指南</h2>
+<h3>先看哪些文件</h3>
+<ol>
+<li><code>src/sentiment/modules/WeightedBalancerLPOracle/src/balancer/WeightedBalancerLPOracle.sol</code></li>
+<li><code>src/sentiment/modules/AccountManager/src/core/AccountManager.sol</code></li>
+<li><code>src/sentiment/modules/AccountManager/src/interface/core/IRiskEngine.sol</code></li>
+<li><code>test/helpers/SentimentAddresses.sol</code></li>
+<li><code>test/interfaces/SentimentInterfaces.sol</code></li>
+<li><code>test/poc.t.sol</code></li>
+</ol>
+<h3>为什么先看</h3>
+<ul>
+<li><code>WeightedBalancerLPOracle.getPrice()</code> 是本次事故最关键的旧状态读取点。它在 Balancer <code>exitPool()</code> 尚未完成余额结算时，通过 <code>vault.getPoolTokens(...)</code> 读到过期余额。</li>
+<li><code>AccountManager.borrow()</code> 是 Sentiment 一侧把旧价格转成真实资金流出的边界。它会先出借，再检查 <code>riskEngine.isAccountHealthy(account)</code>。</li>
+<li><code>IRiskEngine</code> 能帮助继续定位健康度检查如何依赖预言机价格。</li>
+<li><code>test/</code> 侧文件把真实地址、最小接口和攻击骨架集中到一处，调试时不需要在源码树和测试树之间来回跳转。</li>
+</ul>
+<h3>漏洞相关入口</h3>
+<ul>
+<li><code>WeightedBalancerLPOracle.getPrice(address token)</code></li>
+<li><code>AccountManager.borrow(address account, address token, uint256 amt)</code></li>
+<li><code>AccountManager.exec(address account, address target, uint256 amt, bytes data)</code></li>
+<li><code>AccountManager.deposit(address account, address token, uint256 amt)</code></li>
+</ul>
+<h3>测试侧分工</h3>
+<ul>
+<li><code>test/helpers/SentimentAddresses.sol</code>：保存 fork 区块、攻击地址和协议地址簿</li>
+<li><code>test/interfaces/SentimentInterfaces.sol</code>：只保留 PoC 需要调用的最小接口</li>
+<li><code>test/poc.t.sol</code>：保存 fork 初始化、攻击阶段划分和 <code>fallback()</code> 骨架</li>
+</ul>
+<h3>源码树说明</h3>
+<ul>
+<li><code>src/sentiment/modules/AccountManager/</code> 来自 <code>0xb085...C093</code> 对应的已验证源码</li>
+<li><code>src/sentiment/modules/WeightedBalancerLPOracle/</code> 来自 <code>0x16F3...1b5B</code> 对应的已验证源码</li>
+<li>为了让 Foundry 能直接编译，只在根 <code>foundry.toml</code> 里补了 remapping，没有再在 <code>src/</code> 下额外放 README</li>
+</ul>
+<h2>推荐阅读顺序</h2>
+<ol>
+<li>当前根 README</li>
+<li><code>src/sentiment/modules/WeightedBalancerLPOracle/src/balancer/WeightedBalancerLPOracle.sol</code></li>
+<li><code>src/sentiment/modules/AccountManager/src/core/AccountManager.sol</code></li>
+<li><code>test/helpers/SentimentAddresses.sol</code></li>
+<li><code>test/interfaces/SentimentInterfaces.sol</code></li>
+<li><code>test/poc.t.sol</code></li>
+</ol>
+<h2>参考资料</h2>
+<ul>
+<li>Sentiment 官方复盘：<a href="https://hackmd.io/@sentimentxyz/SJCySo1z2">https://hackmd.io/@sentimentxyz/SJCySo1z2</a></li>
+<li>Balancer 关于扩散影响面的论坛说明：<a href="https://forum.balancer.fi/t/reentrancy-vulnerability-scope-expanded/4345">https://forum.balancer.fi/t/reentrancy-vulnerability-scope-expanded/4345</a></li>
+<li>攻击交易：<a href="https://arbiscan.io/tx/0xa9ff2b587e2741575daf893864710a5cbb44bb64ccdc487a100fa20741e0f74d">https://arbiscan.io/tx/0xa9ff2b587e2741575daf893864710a5cbb44bb64ccdc487a100fa20741e0f74d</a></li>
+<li>公开 Foundry PoC，仅用于地址和调用面的交叉核对：<a href="https://github.com/KISSInori/DeFiAttack_Foundry/tree/main/src/2023-04-05-Sentiment">https://github.com/KISSInori/DeFiAttack_Foundry/tree/main/src/2023-04-05-Sentiment</a></li>
+</ul>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/面试/面试项目资料源/sentiment/audit_notes/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">audit_notes</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/面试/ai模拟面试/1/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">1</h4> </a> </div> </nav> </article>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try { localStorage.setItem("theme", value); } catch {}
+          });
+        };
+        bindToggle();
+      })();
+    </script> </body> </html> 

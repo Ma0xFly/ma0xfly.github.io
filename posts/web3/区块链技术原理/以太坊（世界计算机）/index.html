@@ -1,0 +1,434 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>以太坊（世界计算机） | Notebook Dispatch</title><meta name="description" content="以太坊被称为 “世界计算机”，核心是它突破了比特币仅能处理简单价值转移的局限，靠去中心化架构、图灵完备的智能合约等技术，构建了一个全球可访问、能承载复杂计算与多样化应用的分布式计算平台。下面以计算机五层结构拆解分析 “图灵完备（Turing Complete）”这个概念源自“计算"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.XLusA-kG.css"></head> <body class> <!-- 首页导航栏：右侧对齐链接和主题切换 --> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">Notebook Dispatch</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☼</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <p class="eyebrow">2026/4/14</p> <h1>以太坊（世界计算机）</h1> <p class="lead">以太坊被称为 “世界计算机”，核心是它突破了比特币仅能处理简单价值转移的局限，靠去中心化架构、图灵完备的智能合约等技术，构建了一个全球可访问、能承载复杂计算与多样化应用的分布式计算平台。下面以计算机五层结构拆解分析 “图灵完备（Turing Complete）”这个概念源自“计算</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> </header> <div class="article-content"><p>以太坊被称为 “世界计算机”，核心是它突破了比特币仅能处理简单价值转移的局限，靠去中心化架构、图灵完备的智能合约等技术，构建了一个全球可访问、能承载复杂计算与多样化应用的分布式计算平台。下面以计算机五层结构拆解分析</p>
+<p>“图灵完备（Turing Complete）”这个概念源自“计算机科学之父”艾伦·图灵。简单来说，如果一个系统（比如虚拟机或编程语言）能够模拟任何图灵机、计算任何可解的算法，它就是图灵完备的</p>
+<h1>五层结构概述</h1>
+<h3>硬件层</h3>
+<p>核心作用：为整个以太坊网络提供物理硬件支持，是 “世界计算机” 的 “硬件主机”<br>组成部分：全球范围内参与以太坊网络的节点设备，包括个人电脑、服务器、专业矿机（合并后以验证节点设备为主）等
+关键特点：去中心化分布，无单一控制中心，节点越多，网络安全性、稳定性越强，确保 “世界计算机” 持续运行不宕机</p>
+<h3>内核层（操作系统层确定全局状态）</h3>
+<p>核心作用： 在这些不可信硬件上，实现“一个统一的状态机 + 资源调度”<br>核心功能：pos权益证明机制，gas机制</p>
+<ol>
+<li>把所有节点连成一个 P2P 网络（网络子系统）</li>
+<li>在节点之间达成“<strong>谁的区块算数</strong>”的共识（共识子系统）</li>
+<li>控制“<strong>谁先来打包交易谁来验证交易、每个区块能装多少东西</strong>”（调度/调度器）</li>
+<li>控制“<strong>每个操作要花多少资源 / 钱</strong>”（资源管理：Gas &amp; Fee Market）</li>
+<li>把“执行层（EVM）”的状态转移结果纳入全局（状态机转移接口）</li>
+</ol>
+<h4>pos权益证明机制</h4>
+<p>当前共识机制：权益证明（PoS），取代原有的工作量证明（PoW）<br>原理：节点通过质押一定数量的 ETH 成为验证者，按规则打包交易、生成区块，合规则验证者获得奖励，违规者将被惩罚（扣除质押的 ETH）<br>优势：降低能源消耗，提升网络效率，同时通过 “质押成本” 保障节点诚实性</p>
+<h4>gas</h4>
+<ol>
+<li><strong>资源计量与成本化</strong><br>所有 EVM 操作（opcode）都有固定 gas 消耗，gas 用于精确计量“计算量 + 存储 + 带宽”。<br>通过让执行成本显式化，确保链上资源稀缺可定价。</li>
+<li><strong>防止 DoS 与无限计算</strong><br>交易必须预付 gas，执行过程中 gas 用尽会被中止。<br>这使得任何无限循环、恶意大计算、垃圾交易都无法无成本消耗网络资源。</li>
+<li><strong>交易排序与拥堵调节（Fee Market）</strong><br>Gas price/priority fee 作为经济信号，在拥堵情况下让用户竞争区块空间。<br>节点根据费用从高到低选择交易，实现市场化调度。</li>
+</ol>
+<p>总结：<br><strong>Gas = 区块链的资源管理系统，负责计量成本、防 DoS、调节交易优先级，是以太坊作为“世界计算机”能稳定运行的关键内核机制。</strong></p>
+<h3>处理层（以太坊虚拟机EVM，全球同步的软件CPU）</h3>
+<p> EVM 是以太坊上的 <strong>虚拟 CPU + 沙箱执行环境</strong>，专门用来运行智能合约。它执行 bytecode，确保所有节点执行结果一致（确定性）。  </p>
+<h4>EVM 的执行模型（Execution Model）</h4>
+<p>EVM 执行一笔交易主要包含以下步骤：</p>
+<ol>
+<li><p>加载交易
+交易包含 to、value、data，用作智能合约调用的入口。</p>
+</li>
+<li><p>初始化执行上下文
+包含：</p>
+</li>
+</ol>
+<ul>
+<li>程序计数器 PC</li>
+<li>栈（stack）</li>
+<li>内存（memory）</li>
+<li>存储（storage）</li>
+<li>gas（燃料配额）</li>
+</ul>
+<ol start="2">
+<li><p>逐条执行 opcode
+EVM 执行汇编级操作，包括算术、控制流、调用、存储、日志等。</p>
+</li>
+<li><p>gas 用尽则 revert
+执行中 gas 不够，会回滚所有状态修改，但已消耗的 gas 不退还。</p>
+</li>
+</ol>
+<hr>
+<h4>EVM 的内存结构（Stack/Memory/Storage）</h4>
+<p>栈（Stack）</p>
+<ul>
+<li>LIFO 栈</li>
+<li>最大深度 1024</li>
+<li>所有 opcode 参数都来自栈顶</li>
+</ul>
+<p>内存（Memory）</p>
+<ul>
+<li>执行期间的临时数据区</li>
+<li>线性扩展，执行结束即清空</li>
+</ul>
+<p>存储（Storage）</p>
+<ul>
+<li>合约的持久化状态</li>
+<li>写入非常贵（类似写磁盘）</li>
+</ul>
+<h4>合约间调用（CALL / DELEGATECALL）</h4>
+<p>CALL</p>
+<ul>
+<li>新建一个独立的执行上下文</li>
+<li>自己用自己的 storage</li>
+<li>能转 ETH</li>
+</ul>
+<p>DELEGATECALL</p>
+<ul>
+<li>使用 <strong>被调用合约的代码</strong></li>
+<li>使用 <strong>调用者的 storage（非常危险）</strong></li>
+<li>是代理合约与许多漏洞的源头</li>
+</ul>
+<p>（类比：把别人的函数在你的进程里执行，并用你的全局变量）</p>
+<hr>
+<h4>Solidity → EVM 的编译流程</h4>
+<ol>
+<li>Solidity 源码</li>
+<li>编译为 Yul（中间 IR）</li>
+<li>编译为 EVM bytecode</li>
+<li>部署到链上</li>
+<li>由 EVM 逐条执行指令</li>
+</ol>
+<p>（类比：C → LLVM IR → 汇编 → 机器码 → CPU）</p>
+<hr>
+<h4>EVM 的局限性</h4>
+<ul>
+<li>是纯栈机（无寄存器）</li>
+<li>无浮点数</li>
+<li>内存只增大不缩小</li>
+<li>CALL 返回值要手动检查</li>
+<li>DELEGATECALL 容易被利用</li>
+<li>无线程和并发</li>
+</ul>
+<h3>扩展层（Layer2）</h3>
+<p><strong>为什么需要 Layer2</strong></p>
+<ol>
+<li><strong>以太坊 L1 吞吐量极低（~15 TPS）</strong><br>所有节点必须重复执行所有交易，无法提升执行能力。</li>
+<li><strong>Gas 昂贵、链易拥堵</strong><br>大量应用（DeFi、NFT、游戏）无法在 L1 承担高成本。</li>
+</ol>
+<p>Layer2 是构建在以太坊 L1 之上的<strong>扩展执行环境</strong>，目标是：</p>
+<ol>
+<li><strong>提高吞吐量（TPS）</strong></li>
+<li><strong>降低交易成本（Gas）</strong></li>
+<li><strong>保持以太坊主链安全性（最终性与数据可用性）</strong></li>
+</ol>
+<p>核心思想：</p>
+<pre><code class="language-plain">执行在 Layer2，安全在 Layer1。
+</code></pre>
+<p>Layer 2 Rollup 的核心思路是“链下执行，链上结算”。它将成千上万笔交易转移到以太坊主网（Layer 1）之外的专属网络中进行处理，然后将这些交易打包（汇总）成一个数据摘要或证明，最后作为一笔单笔交易发布回以太坊主网上。</p>
+<p>通过这种方式，极其消耗资源的计算都被移到了链下，大大突破了主网的吞吐量瓶颈。这不仅让交易速度飙升，而且因为成千上万笔交易平摊了主网上那一笔的 Gas 费，让用户的手续费变得极其便宜。同时，它依然依靠以太坊主网来保障最终的安全性。</p>
+<h4>两大主流路线</h4>
+<h5>Optimistic Rollup（以“欺诈证明”生效）</h5>
+<p>**代表：**Optimism、Arbitrum</p>
+<p><strong>执行流程：</strong></p>
+<ol>
+<li>L2 执行所有交易（EVM 等价）</li>
+<li>将交易数据或状态根批量上报至 L1</li>
+<li>假设（optimistic）结果是正确的</li>
+<li>有“挑战窗口”（如 7 天）</li>
+<li>若有人质疑 → 执行 fraud proof，即验证器在 L1 上重放某段执行来检查是否造假</li>
+</ol>
+<p><strong>特点：</strong></p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>特性</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>安全性</td>
+<td>基于争议解决机制 + 挑战者经济激励</td>
+</tr>
+<tr>
+<td>延迟</td>
+<td>有挑战窗口（通常几天）</td>
+</tr>
+<tr>
+<td>兼容性</td>
+<td>原生 EVM（Arbitrum Stylus 扩展 WebAssembly）</td>
+</tr>
+<tr>
+<td>成本</td>
+<td>较低</td>
+</tr>
+</tbody></table>
+<h5>3.2 ZK Rollup（以“有效性证明”生效）</h5>
+<p>**代表：**zkSync、StarkNet、Scroll、Polygon zkEVM</p>
+<p><strong>核心思路：L1 只需要一次“Verify(proof)”即可确认状态合法。</strong></p>
+<ul>
+<li>L2 执行交易</li>
+<li>构造零知识证明（ZKP）</li>
+<li>L1 仅需验证证明（快速、成本低）而无需重放执行</li>
+</ul>
+<p><strong>特点：</strong></p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>特性</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>安全性</td>
+<td>密码学强保证，无需挑战窗口</td>
+</tr>
+<tr>
+<td>延迟</td>
+<td>无需等待，可快速 finality</td>
+</tr>
+<tr>
+<td>计算成本</td>
+<td>生成证明耗时高（链下重计算）</td>
+</tr>
+<tr>
+<td>兼容性</td>
+<td>zkEVM 系列努力做到与 EVM 字节码等价</td>
+</tr>
+</tbody></table>
+<p><strong>ZK 的显著优势：</strong></p>
+<ul>
+<li>抗攻击性强：结果“数学上正确”，攻击者无法注入错误状态</li>
+<li>低延迟转账和提现</li>
+</ul>
+<h3>应用层</h3>
+<p>核心作用：基于以太坊底层技术开发的各类实际应用，是 “世界计算机” 的 “软件应用程序”，直接面向用户提供服务<br>常见应用类型：<br>去中心化金融（DeFi）：如借贷平台（Aave）、去中心化交易所（Uniswap）<br>非同质化代币（NFT）：如数字艺术品交易（OpenSea）、NFT 游戏<br>去中心化应用（DApp）：如社交应用、供应链溯源应用等<br>核心特点：依托底层四层结构的安全性与去中心化特性，无需依赖中心化机构即可运行，用户对自身数据与资产拥有更高控制权</p>
+<h3>以太坊状态</h3>
+<p>在顶层，我们有以太坊全局状态 (Ethereum World State)。全局状态是自以太坊地址（160 位数值 ，20字节）到账户的映射。
+在底层，每个以太坊地址代表一个账户，包含以下内容</p>
+<p>以太币余额 (Ether Balance)：以该账户拥有的 Wei 数量存储。 
+Nonce：如果是外部账户（EOA），代表从该账户成功发送的交易数量；如果是合约账户，则代表由其创建的合约数量。 
+账户存储 (Account Storage)：仅供智能合约使用的永久数据存储库。 账户程序代码 (Program Code)：同样仅存在于智能合约账户中。</p>
+<p>当一个区块被处理时，区块内的交易会一笔接一笔地被以太坊虚拟机（EVM）执行：</p>
+<ol>
+<li>每执行一笔交易，EVM 都会先在一个“沙盒”环境中进行计算。</li>
+<li>只要这笔交易成功执行（未报错且未耗尽 Gas），它产生的修改就会立即更新到全局状态中。</li>
+<li>紧接着的下一笔交易，就会基于刚刚被上一笔交易修改过的最新全局状态继续执行。</li>
+</ol>
+<p>正因为全局状态是逐笔实时更新的，交易在区块中的<strong>排列先后顺序</strong>变得极其重要</p>
+<h3>全局状态</h3>
+<p>你可以把“全局状态（World State）”想象成一张覆盖全球的、实时更新的<strong>巨大 Excel 表格</strong>。</p>
+<p>在这个表格里：</p>
+<ul>
+<li><strong>每一行</strong>对应一个以太坊地址（比如你的钱包地址，或者某个智能合约的地址）。</li>
+<li><strong>每一列</strong>记录了这个地址<strong>此时此刻</strong>的最新情况，主要包括四个核心信息：<ol>
+<li><strong>余额</strong>：这个账户现在有多少以太币。</li>
+<li><strong>交易次数（Nonce）</strong>：这个账户成功发送过多少次交易。</li>
+<li><strong>程序代码</strong>：如果它是一个智能合约账户，编译后的字节码就存在这里。</li>
+<li><strong>存储（Storage）</strong>：供智能合约使用的专属数据仓库（比如记录每个人拥有多少具体的代币）。</li>
+</ol>
+</li>
+</ul>
+<p>简单来说，区块记录的是历史“动作”（比如：A 给 B 转了 5 个以太币），而全局状态记录的是当前的“结果”（比如：A 的余额更新为 0，B 的余额更新为 5）。</p>
+<p>你可以这样理解：<strong>节点</strong>是载体，它利用<strong>区块链</strong>里的历史交易数据，计算并维护着全网一致的<strong>全局状态</strong>。</p>
+<h1>DApp</h1>
+<h3>1. 核心定义：什么是 dApp？</h3>
+<blockquote>
+<p><strong>dApp = 链上智能合约（后端） + 链下用户界面（前端）</strong></p>
+</blockquote>
+<p>它不像传统 App 那样把后端代码跑在阿里云或 AWS 的中心化服务器上，而是把核心逻辑（资金处理、业务规则）部署在<strong>以太坊区块链</strong>上。</p>
+<p>• dApp 的后端代码 （智能合约）运行在以太坊主网或其 Rollup （二层网 络）之上的 EVM 中，由全网节点共同执行和记录；
+• dApp 的前端可以用任意 Web / App 技术编写，既可以放在传统服务器 上，也可以托管在 IPFS、Arweave 等去中心化存储上。</p>
+<h3>2. 架构对比：Web2 vs Web3</h3>
+<ul>
+<li><p><strong>传统 App (Web2)</strong>：</p>
+<ul>
+<li><p><strong>后端</strong>：中心化服务器（可随时关机、随时由管理员修改数据）。</p>
+</li>
+<li><p><strong>信任模型</strong>：信任“公司”不作恶。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>dApp (Web3)</strong>：</p>
+<ul>
+<li><p><strong>后端</strong>：智能合约（运行在去中心化的 EVM 节点网络中）。</p>
+</li>
+<li><p><strong>数据</strong>：存储在公开透明的区块链上。</p>
+</li>
+<li><p><strong>信任模型</strong>：信任“代码”和“共识规则”（Code is Law）。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3>3. dApp 的关键特性（双刃剑）</h3>
+<ul>
+<li><p><strong>零停机时间 (Zero Downtime)</strong>：没有“总机房”，只要以太坊网络还在，后端就永远在线。</p>
+</li>
+<li><p><strong>抗审查 (Censorship Resistance)</strong>：没有单一机构能按下“删除键”或阻止特定用户交互。</p>
+</li>
+<li><p><strong>代码不可篡改 (Immutability)</strong>：这是最大的特性，也是最大的挑战。合约一旦部署，逻辑通常就无法直接修改（除非预留了代理升级模式）。</p>
+</li>
+</ul>
+<h1>Chainlink 预言机</h1>
+<p><strong>Chainlink 是一个去中心化预言机网络（Decentralized Oracle Network, DON）</strong>，其主要作用是：</p>
+<blockquote>
+<p><strong>为区块链上的智能合约提供真实世界的数据。</strong></p>
+</blockquote>
+<p>区块链本身无法主动访问外部世界（互联网、API、价格数据、天气等），所以预言机负责“喂数据”。</p>
+<hr>
+<h3>🧃 为什么需要预言机？</h3>
+<p>区块链的特点是<strong>确定性和封闭性</strong>，这意味着：</p>
+<ul>
+<li>智能合约 <strong>不能主动访问 HTTP API</strong></li>
+<li>智能合约 <strong>不能直接获取价格信息</strong></li>
+<li>智能合约 <strong>不能获取现实世界的事件（如比分、天气、随机数）</strong></li>
+</ul>
+<p>然而，大多数 DeFi 或关联现实的应用都需要外部信息，比如：</p>
+<table>
+<thead>
+<tr>
+<th>应用</th>
+<th>需要的数据</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DeFi（借贷、交易所）</td>
+<td>ETH/USD, BTC/ETH 等实时价格</td>
+</tr>
+<tr>
+<td>NFTs</td>
+<td>随机数（公平抽奖、盲盒）</td>
+</tr>
+<tr>
+<td>保险合约</td>
+<td>天气、温度、灾害数据</td>
+</tr>
+<tr>
+<td>游戏</td>
+<td>公平随机数、链下状态信息</td>
+</tr>
+</tbody></table>
+<p><strong>Chainlink 就是解决连接链上与现实世界的桥梁。</strong></p>
+<hr>
+<h3>Chainlink 的核心组成</h3>
+<h4>1. Oracle 节点（Chainlink Nodes）</h4>
+<p>由独立运营者运行，用来：</p>
+<ul>
+<li>拉取外部 API 数据</li>
+<li>签名并上传到链上</li>
+<li>确保数据透明、可信任</li>
+</ul>
+<p>这些节点是去中心化的，不由单一机构控制。</p>
+<h4>2. 数据聚合（Data Aggregation）</h4>
+<p>Chainlink 会从 <strong>多个数据源</strong>、<strong>多个节点</strong> 采集数据，然后进行：</p>
+<ul>
+<li>去异常值</li>
+<li>加权平均</li>
+<li>可信度校验</li>
+</ul>
+<p>最终得到一个可信的数据喂给智能合约。</p>
+<p>例如 ETH/USD 价格：</p>
+<pre><code class="language-plain">Node 1 → 2987.12
+Node 2 → 2987.15
+Node 3 → 2986.99
+...
+Chainlink Aggregator → 2987.10
+</code></pre>
+<p>这比单一 API 更安全可靠。</p>
+<hr>
+<h4>3. Chainlink Price Feeds（价格喂价）</h4>
+<p><strong>最常用的模块</strong>，直接在 DeFi 中使用。</p>
+<p>例：获取 ETH/USD 价格：</p>
+<pre><code class="language-solidity">AggregatorV3Interface priceFeed;
+
+function getLatestPrice() public view returns (int) {
+    (,int price,,,) = priceFeed.latestRoundData();
+    return price;
+}
+</code></pre>
+<p>Chainlink 价格喂价已经被应用于：</p>
+<ul>
+<li>Aave</li>
+<li>Compound</li>
+<li>Synthetix</li>
+<li>dYdX</li>
+<li>Uniswap</li>
+<li>...等上百个 DeFi 协议</li>
+</ul>
+<hr>
+<h4>4. <strong>VRF（Verifiable Random Function）可验证随机数</strong></h4>
+<p>提供<strong>安全、不可操控、可验证的随机数</strong>。</p>
+<p>用途：</p>
+<ul>
+<li>游戏抽奖</li>
+<li>NFT 盲盒</li>
+<li>随机掉落</li>
+<li>公平彩票</li>
+</ul>
+<p>智能合约示例：</p>
+<pre><code class="language-solidity">requestRandomWords();
+</code></pre>
+<hr>
+<h4>5. Automation（原 Keepers）自动化执行</h4>
+<p>让智能合约能：</p>
+<ul>
+<li>定时任务</li>
+<li>条件触发</li>
+<li>自动执行逻辑</li>
+</ul>
+<p>例如：每 24 小时自动执行一次操作。</p>
+<hr>
+<h4>6. Cross-Chain（CCIP）跨链通信</h4>
+<p>Chainlink 可作为可信的跨链通信系统，让资产与消息跨多链运行。</p>
+<h3>⛓ Chainlink 预言机如何工作（简单流程）</h3>
+<p>以获取 ETH/USD 价格为例：</p>
+<ol>
+<li>智能合约请求价格数据</li>
+<li>Chainlink 去中心化节点从多个 API 收集数据</li>
+<li>Chainlink 聚合器合并这些数据</li>
+<li>聚合结果写入链上</li>
+<li>用户合约通过接口读取该数据</li>
+</ol>
+<p>整个过程去中心化、可验证、安全。</p>
+<hr>
+<h3>📦 一个简单示例：从 Chainlink 读取 ETH/USD 价格</h3>
+<pre><code class="language-solidity">pragma solidity ^0.8.7;
+
+import &quot;@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol&quot;;
+
+contract ETHPrice {
+    AggregatorV3Interface internal priceFeed;
+
+    constructor() {
+        priceFeed = AggregatorV3Interface(
+            0x... // 具体链上的 ETH/USD 预言机地址
+        );
+    }
+
+    function getPrice() public view returns (int) {
+        (,int price,,,) = priceFeed.latestRoundData();
+        return price; // 单位：8 位小数
+    }
+}
+</code></pre>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/区块链技术原理/钱包/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">钱包</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/区块链技术原理/web3常见术语/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">web3常见术语</h4> </a> </div> </nav> </article>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try { localStorage.setItem("theme", value); } catch {}
+          });
+        };
+        bindToggle();
+      })();
+    </script> </body> </html> 

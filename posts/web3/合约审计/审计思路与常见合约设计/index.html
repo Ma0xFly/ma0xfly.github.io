@@ -1,0 +1,431 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>审计思路与常见合约设计 | Notebook Dispatch</title><meta name="description" content="# 审计思路 这是每一位 Web3 安全工程师新手的必经之路。面对几百行代码感到不知所措是非常正常的。 别担心，专业的审计并不是从第一行读到最后一行。我们有一套**标准化的审计“战术流程”**。 --- ### 第一步：鸟瞰全貌 **目的**：搞清楚“这合约是干嘛的”、“它使用了"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.XLusA-kG.css"></head> <body class> <!-- 首页导航栏：右侧对齐链接和主题切换 --> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">Notebook Dispatch</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☼</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <p class="eyebrow">2026/4/14</p> <h1>审计思路与常见合约设计</h1> <p class="lead"># 审计思路 这是每一位 Web3 安全工程师新手的必经之路。面对几百行代码感到不知所措是非常正常的。 别担心，专业的审计并不是从第一行读到最后一行。我们有一套**标准化的审计“战术流程”**。 --- ### 第一步：鸟瞰全貌 **目的**：搞清楚“这合约是干嘛的”、“它使用了</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> </header> <div class="article-content"><h1>审计思路</h1>
+<p>这是每一位 Web3 安全工程师新手的必经之路。面对几百行代码感到不知所措是非常正常的。</p>
+<p>别担心，专业的审计并不是从第一行读到最后一行。我们有一套<strong>标准化的审计“战术流程”</strong>。</p>
+<hr>
+<h3>第一步：鸟瞰全貌</h3>
+<p><strong>目的</strong>：搞清楚“这合约是干嘛的”、“它使用了什么工具”。</p>
+<ul>
+<li><p><strong>看名字</strong>：通常暗示了业务逻辑（如 <code>Pool</code>, <code>Vault</code>, <code>Lender</code>）。</p>
+</li>
+<li><p><strong>看继承 (Inheritance)</strong>：</p>
+<ul>
+<li><p><code>is Ownable</code> $\rightarrow$ 有权限控制。</p>
+</li>
+<li><p><code>is ERC20</code> $\rightarrow$ 它是一个代币。</p>
+</li>
+<li><p><code>is Multicall</code> $\rightarrow$ <strong>警觉！</strong> 支持批量调用（组合拳入口）。</p>
+</li>
+<li><p><code>is ReentrancyGuard</code> $\rightarrow$ 开发者考虑了防重入（但也可能用错）。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>看引入 (Imports)</strong>：使用了 OpenZeppelin 还是 Solmate？（Solmate 通常更激进，少检查）。</p>
+</li>
+</ul>
+<h3>第二步：资金锚定</h3>
+<p><strong>目的</strong>：找到“金库”在哪里。合约最危险的地方就是存钱的地方。</p>
+<ul>
+<li><p><strong>找状态变量</strong>：</p>
+<ul>
+<li><p><code>mapping(address =&gt; uint256) balances</code>：内部记账。</p>
+</li>
+<li><p><code>IERC20 public token</code>：它操作的是哪种资产？</p>
+</li>
+</ul>
+</li>
+<li><p><strong>找常量/不可变量</strong>：</p>
+<ul>
+<li><p>是否有硬编码的费率？（如 <code>FIXED_FEE = 1 ether</code>）。</p>
+</li>
+<li><p>是否有硬编码的地址？</p>
+</li>
+<li><p>是否有特殊的时间锁？</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3>第三步：核心逻辑精读</h3>
+<p><strong>目的</strong>：逐行翻译最复杂的那个函数（通常是 <code>flashLoan</code>, <code>swap</code>, <code>deposit</code>）。</p>
+<ul>
+<li><p><strong>扮演攻击者 (Attacker Mindset)</strong>：在读每一行时，自问自答：</p>
+<ul>
+<li><p><strong>Q1: 谁能调？</strong> (<code>external</code>/<code>public</code> 且无 <code>onlyOwner</code>？那我能调)。</p>
+</li>
+<li><p><strong>Q2: 参数受控吗？</strong> (<code>target</code>, <code>data</code>, <code>amount</code> 是我填的吗？)。</p>
+</li>
+<li><p><strong>Q3: 谁付钱？</strong> (是用 <code>msg.sender</code> 的钱，还是 <code>address(this)</code> 的钱，还是 <code>target</code> 的钱？)。</p>
+</li>
+<li><p><strong>Q4: 外部调用在哪？</strong> (见第四步)。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3>第四步：威胁建模</h3>
+<p><strong>目的</strong>：扫描高危操作和组合漏洞。</p>
+<ul>
+<li><p>外部调用 ：</p>
+<ul>
+<li><p>搜索关键字：<code>call</code>, <code>delegatecall</code>, <code>staticcall</code>, <code>transfer</code>, <code>transferFrom</code>。</p>
+</li>
+<li><p><strong>黄金法则</strong>：这是控制权移交的地方。如果目标地址 (<code>target</code>) 和数据 (<code>data</code>) 由用户控制，这里就是 <strong>任意外部调用漏洞 (Arbitrary External Call)</strong>。</p>
+</li>
+</ul>
+</li>
+<li><p>鉴权缺失 ：</p>
+<ul>
+<li><p>检查 <code>msg.sender</code> 是否与受影响的账户一致。</p>
+</li>
+<li><p>是否存在 <code>tx.origin</code> 这种错误的鉴权。</p>
+</li>
+</ul>
+</li>
+<li><p>上下文混淆 ：</p>
+<ul>
+<li>如果涉及 <code>delegatecall</code> 或 <code>Multicall</code>，检查 <code>msg.sender</code> 是否被保留或混淆（如第二关）。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3>总结：新手审计的“四板斧”</h3>
+<p>下次看到大段代码，按这个顺序切入：</p>
+<ol>
+<li><p><strong>看门面 (Interface)</strong>：看继承了什么，引入了什么库。（确定是 DeFi、NFT 还是 DAO？）</p>
+</li>
+<li><p><strong>找常量 (Constants)</strong>：找有没有离谱的费率、时间锁、或者硬编码地址。（比如这里的 <code>1 ETH</code> 费率）。</p>
+</li>
+<li><p><strong>盯着外部调用 (External Calls)</strong>：搜索 <code>call</code>, <code>delegatecall</code>, <code>transfer</code>, <code>onFlashLoan</code> 等关键字。</p>
+<ul>
+<li><em>这是控制权移交的地方，也是最容易出事的地方。</em></li>
+</ul>
+</li>
+<li><p><strong>身份分离检查 (Auth Check)</strong>：</p>
+<ul>
+<li><p>调用者 (<code>msg.sender</code>) 和 受影响者 (<code>account</code> / <code>receiver</code>) 是同一个人吗？</p>
+</li>
+<li><p>如果不是，<code>msg.sender</code> 有权利动 <code>receiver</code> 的钱吗？</p>
+</li>
+</ul>
+</li>
+</ol>
+<p><strong>现在，你再回头看那段代码，是不是感觉清晰多了？</strong> 不要在意 <code>_deposit</code> 那种辅助函数，盯着 <code>flashLoan</code> 这种核心业务逻辑猛攻。</p>
+<hr>
+<h1>智能合约安全审计 SOP (v1.0)</h1>
+<p>基于你提供的 <strong>“合约分析四步法”</strong>，我已将其标准化为一份 <strong>Web3 安全审计 SOP (Standard Operating Procedure)</strong>。</p>
+<p>这份文档将你的个人经验（鸟瞰、资金、逻辑、威胁）转化为可执行、可复查的工程标准，适用于审计报告生成或漏洞挖掘实战。</p>
+<p><strong>目标 (Objective):</strong> 系统化拆解智能合约逻辑，确保从宏观架构到微观代码行的全覆盖，最小化安全死角。</p>
+<p><strong>适用范围 (Scope):</strong> Solidity 智能合约（DeFi, NFT, DAO 等）。</p>
+<p><strong>工具链 (Tools):</strong> Foundry (Forge), VS Code (Solidity Metrics), Slither.</p>
+<hr>
+<h3>第一阶段：全貌扫描 (Bird&#39;s Eye View)</h3>
+<p><strong>核心目标：</strong> 确定“这是什么”，识别系统边界与静态风险。</p>
+<p><strong>1.1 协议指纹识别 (Protocol Fingerprinting)</strong></p>
+<ul>
+<li><p><strong>动作：</strong> 检查 <code>interface</code> 和继承树（Inheritance Tree）。</p>
+</li>
+<li><p><strong>检查项：</strong></p>
+<ul>
+<li><p>是否继承了标准库（OpenZeppelin, Solmate）？版本是否兼容？</p>
+</li>
+<li><p><strong>分类判定：</strong></p>
+<ul>
+<li><p>DeFi (AMMs, Lending, Staking) -&gt; 重点关注数学精度与流动性。</p>
+</li>
+<li><p>NFT (ERC721/1155) -&gt; 重点关注 Mint 逻辑与元数据权限。</p>
+</li>
+<li><p>DAO (Governor) -&gt; 重点关注投票权重与提案执行阈值。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>1.2 静态配置审查 (Constants &amp; Config Scan)</strong></p>
+<ul>
+<li><p><strong>动作：</strong> 全局搜索 <code>constant</code>, <code>immutable</code> 关键字及硬编码数值。</p>
+</li>
+<li><p><strong>风险检查点：</strong></p>
+<ul>
+<li><p><strong>费率 (Fees)：</strong> 是否存在超过 10% 的异常费率？费率分母（Basis Points）是否正确？</p>
+</li>
+<li><p><strong>时间锁 (Timelock)：</strong> 关键操作是否有冷却期（Cooldown）？</p>
+</li>
+<li><p><strong>特权地址：</strong> 是否存在硬编码的 EOA 地址（Admin/Owner）？</p>
+</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><strong>SOP 输出物：</strong> 系统架构图，包含合约继承关系及外部依赖库列表。</p>
+</blockquote>
+<hr>
+<h3>第二阶段：资金锚定 (Funds Anchoring)</h3>
+<p><strong>核心目标：</strong> 追踪“钱去哪了”，锁定控制权移交点（The Sink）。</p>
+<p><strong>2.1 外部调用审计 (External Calls Analysis)</strong></p>
+<ul>
+<li><p><strong>动作：</strong> 正则搜索高危关键字：<code>call</code>, <code>delegatecall</code>, <code>transfer</code>, <code>transferFrom</code>, <code>safeTransfer</code>, <code>onFlashLoan</code>。</p>
+</li>
+<li><p><strong>关键检查：</strong></p>
+<ul>
+<li><p><strong>控制权移交：</strong> 所有的 <code>external call</code> 前后是否遵循“检查-生效-交互”（CEI）模式？</p>
+</li>
+<li><p><strong>重入风险：</strong> 调用外部合约后，是否更新了状态变量？是否加了 <code>nonReentrant</code> 修饰符？</p>
+</li>
+<li><p><strong>返回值检查：</strong> 低级调用 <code>call</code> 的布尔返回值是否被处理？</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>2.2 资金流向图谱 (Asset Flow Mapping)</strong></p>
+<ul>
+<li><p><strong>动作：</strong> 绘制资金流入（Deposit）与流出（Withdraw）路径。</p>
+</li>
+<li><p><strong>关键检查：</strong></p>
+<ul>
+<li><p>谁能触发转账？</p>
+</li>
+<li><p>合约内资金是否可能被“意外”锁死（没有 withdraw 函数）？</p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3>第三阶段：核心逻辑精读 (Core Logic Deep Dive)</h3>
+<p><strong>核心目标：</strong> 理解“怎么运行”，验证状态机转换的正确性。</p>
+<p><em>(注：此阶段连接资金流与威胁模型)</em></p>
+<p><strong>3.1 状态变化审计 (State Transition Check)</strong></p>
+<ul>
+<li><p><strong>动作：</strong> 逐行分析修改 <code>storage</code> 变量的函数。</p>
+</li>
+<li><p><strong>检查项：</strong></p>
+<ul>
+<li><p><strong>记账逻辑：</strong> <code>balances[user]</code> 的增减是否原子化？是否存在“凭空增发”或“双重扣除”？</p>
+</li>
+<li><p><strong>数学运算：</strong> 是否使用 <code>unchecked</code>？是否存在溢出/下溢风险（尤其是 Solidity &lt; 0.8.0 或涉及位运算时）？</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>3.2 业务逻辑一致性 (Business Logic Consistency)</strong></p>
+<ul>
+<li><p><strong>动作：</strong> 对照白皮书或注释，验证代码意图。</p>
+</li>
+<li><p><strong>反直觉检查：</strong></p>
+<ul>
+<li><p>代码逻辑是否与函数名（如 <code>emergencyWithdraw</code>）描述一致？</p>
+</li>
+<li><p>极端情况（如 TotalSupply = 0 或 极大值）下逻辑是否崩坏？</p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3>第四阶段：威胁建模 (Threat Modeling)</h3>
+<p><strong>核心目标：</strong> 尝试“坏人视角”，通过身份伪造与权限绕过进行攻击模拟。</p>
+<p><strong>4.1 身份分离检查 (Auth &amp; Spoofing Check)</strong></p>
+<ul>
+<li><p><strong>核心原则：</strong> 永远不要信任 <code>msg.sender</code>。</p>
+</li>
+<li><p><strong>检查清单：</strong></p>
+<ul>
+<li><p><strong>调用者 vs 受益人：</strong></p>
+<ul>
+<li><p>代码中 <code>msg.sender</code>（操作者）和 <code>receiver</code>（接收资金者）是同一个参数吗？</p>
+</li>
+<li><p>如果是分离的（如 <code>transferFrom(from, to, amount)</code>），检查 <code>msg.sender</code> 是否有权操作 <code>from</code> 的资金（即 <code>allowance</code> 检查）。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>Tx.origin 陷阱：</strong> 确保未混淆 <code>msg.sender</code> 与 <code>tx.origin</code>（防止钓鱼攻击）。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>4.2 权限越权测试 (Privilege Escalation)</strong></p>
+<ul>
+<li><p><strong>动作：</strong> 梳理所有 <code>onlyOwner</code> 或 <code>onlyRole</code> 修饰的函数。</p>
+</li>
+<li><p><strong>攻击面：</strong></p>
+<ul>
+<li><p>初始设置函数（<code>initialize</code>）是否被保护？能否被 Front-run 抢跑？</p>
+</li>
+<li><p>权限转移逻辑是否可能导致权限丢失（如转给零地址）？</p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3>总结：SOP 执行速查表 (Checklist)</h3>
+<table>
+<thead>
+<tr>
+<th><strong>阶段</strong></th>
+<th><strong>核心动作</strong></th>
+<th><strong>关键指令/搜索词</strong></th>
+<th><strong>必须确认 (Definition of Done)</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>1. 鸟瞰</strong></td>
+<td>继承与常量检查</td>
+<td><code>interface</code>, <code>constant</code>, <code>immutable</code></td>
+<td>确认是不是标准 Fork 项目？</td>
+</tr>
+<tr>
+<td><strong>2. 资金</strong></td>
+<td>外部调用追踪</td>
+<td><code>call</code>, <code>delegatecall</code>, <code>transfer</code></td>
+<td>所有的“出钱”出口都已标记？</td>
+</tr>
+<tr>
+<td><strong>3. 逻辑</strong></td>
+<td>状态与数学</td>
+<td><code>unchecked</code>, <code>storage</code> 变更</td>
+<td>记账逻辑是否闭环？</td>
+</tr>
+<tr>
+<td><strong>4. 威胁</strong></td>
+<td>身份与权限</td>
+<td><code>msg.sender</code> vs <code>account</code></td>
+<td>确认我不能动别人的钱？</td>
+</tr>
+</tbody></table>
+<h1>常见合约设计</h1>
+<h2>Multicall</h2>
+<p><strong>Multicall (多重调用)</strong> 是 Web3 开发和审计中非常核心的一个设计模式。</p>
+<p>简单来说，它的作用是：<strong>把多个独立的函数调用，打包进唯一的一笔交易 (Transaction) 中执行。</strong></p>
+<p>作为安全工程师，你需要从 <strong>“业务价值”</strong> 和 <strong>“底层原理”</strong> 两个维度来理解它，因为这通常是产生高阶漏洞（如Context Confusion）的根源。</p>
+<hr>
+<h3>1. 为什么我们需要 Multicall？(业务价值)</h3>
+<p>如果没有 Multicall，你要执行 10 次操作（比如给 10 个人发工资，或者像第DVD第二关那样借 10 次钱），你需要：</p>
+<ol>
+<li><p>发起 10 笔交易。</p>
+</li>
+<li><p>用户点 10 次钱包确认。</p>
+</li>
+<li><p>支付 10 次基础 Gas 费（每笔交易自带 21,000 gas base fee）。</p>
+</li>
+<li><p><strong>原子性缺失</strong>：可能第 3 笔成功了，第 4 笔失败了，导致状态不一致。</p>
+</li>
+</ol>
+<p><strong>有了 Multicall：</strong></p>
+<ol>
+<li><p><strong>省钱 (Gas Efficiency)</strong>：只付一次 21,000 的基础费用。</p>
+</li>
+<li><p><strong>原子性 (Atomicity)</strong>：所有操作要么全部成功，要么（通常）全部失败回滚。这在 DeFi 组合操作中至关重要（例如：Swap -&gt; Add Liquidity -&gt; Stake，中间任何一步断了都不行）。</p>
+</li>
+<li><p><strong>用户体验 (UX)</strong>：用户只需签一次名。</p>
+</li>
+</ol>
+<hr>
+<h3>2. 底层原理 (代码审计视角)</h3>
+<p>在 Solidity 中，<code>Multicall</code> 通常是一个抽象合约（Abstract Contract），你的 DVD<code>NaiveReceiverPool</code> 继承了它。</p>
+<p>核心代码逻辑通常长这样（OpenZeppelin 实现版）：</p>
+<pre><code class="language-solidity">abstract contract Multicall {
+    function multicall(bytes[] calldata data) external virtual returns (bytes[] memory results) {
+        results = new bytes[](data.length);
+        
+        for (uint256 i = 0; i &lt; data.length; i++) {
+            // ⚠️ 关键点：delegatecall
+            (bool success, bytes memory ret) = address(this).delegatecall(data[i]);
+            require(success, &quot;Multicall: internal error&quot;);
+            results[i] = ret;
+        }
+        return results;
+    }
+}
+</code></pre>
+<h4>审计重点：<code>delegatecall</code> 与上下文 (Context)</h4>
+<p>这是你刚刚通关第二关的核心知识点。</p>
+<ol>
+<li><p>自调用 (Self-Interaction)：
+ 当通过 pool.multicall(...) 调用时，合约是在自己调用自己。</p>
+</li>
+<li><p>delegatecall 的特性：
+ 它会保留原始的 msg.sender 和 msg.value。</p>
+<ul>
+<li><p><strong>正常情况</strong>：</p>
+<ul>
+<li><p>你 (Player) -&gt; 调用 -&gt; <code>Pool.multicall</code></p>
+</li>
+<li><p><code>Multicall</code> 内部 -&gt; <code>delegatecall</code> -&gt; <code>Pool.flashLoan</code></p>
+</li>
+<li><p>在 <code>flashLoan</code> 里，<code>msg.sender</code> 依然是 <strong>Player</strong>。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>受信任转发器 (Trusted Forwarder) 情况 (本关漏洞)</strong>：</p>
+<ul>
+<li><p>Forwarder -&gt; 调用 -&gt; <code>Pool.multicall</code></p>
+</li>
+<li><p>此时 <code>msg.sender</code> 是 <strong>Forwarder</strong>。</p>
+</li>
+<li><p><code>Multicall</code> 内部 -&gt; <code>delegatecall</code> -&gt; <code>Pool.withdraw</code></p>
+</li>
+<li><p>在 <code>withdraw</code> 里，<code>msg.sender</code> <strong>依然是 Forwarder</strong>！</p>
+</li>
+<li><p>这就是为什么 <code>_msgSender()</code> 检查通过了，因为它看到了 Forwarder，并进而去解析 calldata 末尾的“伪造地址”。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3>3. 常见的 Multicall 类型</h3>
+<ol>
+<li><p><strong>Read-Only Multicall (链下查询用)</strong>：</p>
+<ul>
+<li><p>例如 <code>MakerDAO Multicall</code> 合约。</p>
+</li>
+<li><p>用于前端一次性查询 100 个代币的余额。</p>
+</li>
+<li><p>通常使用 <code>staticcall</code>。</p>
+</li>
+<li><p><strong>风险低</strong>。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>State-Changing Multicall (交易执行用)</strong>：</p>
+<ul>
+<li><p>例如 <code>Uniswap V3 Router</code>, <code>NaiveReceiverPool</code>。</p>
+</li>
+<li><p>用于打包复杂的交易逻辑。</p>
+</li>
+<li><p>使用 <code>delegatecall</code>。</p>
+</li>
+<li><p><strong>风险高</strong>：必须检查 <code>payable</code> 问题（是否多次计算了同一个 msg.value？）和 上下文混淆问题（Context Confusion）。</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>总结：
+Multicall 就是一个“批处理循环”。在审计时，只要看到 Multicall，立刻警觉：“如果我在这个批处理中混合了不同权限的函数，或者通过代理合约调用它，会不会导致权限校验被绕过？”</p>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/工具/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">工具</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/合约审计/以太航员挑战/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">以太航员挑战</h4> </a> </div> </nav> </article>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try { localStorage.setItem("theme", value); } catch {}
+          });
+        };
+        bindToggle();
+      })();
+    </script> </body> </html> 

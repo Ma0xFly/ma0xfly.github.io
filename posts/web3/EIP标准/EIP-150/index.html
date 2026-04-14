@@ -1,0 +1,187 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>EIP-150 | Notebook Dispatch</title><meta name="description" content="# EIP-150: IO 密集型操作的 Gas 成本调整 (Gas cost changes for IO-heavy operations) > **一句话总结**：EIP-150 大幅提高了 `EXTCODESIZE`、`EXTCODECOPY`、`BALANCE`、`SL"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.XLusA-kG.css"></head> <body class> <!-- 首页导航栏：右侧对齐链接和主题切换 --> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">Notebook Dispatch</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☼</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <p class="eyebrow">2026/4/14</p> <h1>EIP-150</h1> <p class="lead"># EIP-150: IO 密集型操作的 Gas 成本调整 (Gas cost changes for IO-heavy operations) &gt; **一句话总结**：EIP-150 大幅提高了 `EXTCODESIZE`、`EXTCODECOPY`、`BALANCE`、`SL</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> </header> <div class="article-content"><h1>EIP-150: IO 密集型操作的 Gas 成本调整 (Gas cost changes for IO-heavy operations)</h1>
+<blockquote>
+<p><strong>一句话总结</strong>：EIP-150 大幅提高了 <code>EXTCODESIZE</code>、<code>EXTCODECOPY</code>、<code>BALANCE</code>、<code>SLOAD</code>、<code>CALL</code> 系列等涉及跨账户访问（I/O 密集型）操作码的 Gas 价格，并引入了 <strong>&quot;63/64 规则&quot;</strong> 限制子调用可用 Gas，从根源上扼杀了 2016 年上海 DevCon 2 期间令以太坊网络近乎瘫痪的 DoS 攻击向量。</p>
+</blockquote>
+<h2>📜 核心元数据 (Metadata)</h2>
+<blockquote>
+<p><strong>信息源原则</strong>：底层网络协议必须以 <strong>Ethereum EIP 官方文档 (eips.ethereum.org)</strong> 和以太坊黄皮书 (Yellow Paper) 为准。</p>
+</blockquote>
+<ul>
+<li><strong>官方 EIP 提案编号与链接</strong>：<a href="https://eips.ethereum.org/EIPS/eip-150">EIP-150: Gas cost changes for IO-heavy operations</a></li>
+<li><strong>协议类型 (Type)</strong>：Core</li>
+<li><strong>所属分叉/升级名称 (Hard Fork)</strong>：<strong>Tangerine Whistle</strong>（橘子口哨，2016年10月18日，区块高度 2,463,000）</li>
+<li><strong>当前标准状态</strong>：Final</li>
+<li><strong>前置依赖 EIP</strong>：无。但本 EIP 导致了 EIP-2929/2930 (Berlin 硬分叉) 进一步细化冷热访问模型。</li>
+</ul>
+<hr>
+<h2>1. 核心理念与全网级痛点 (Core Concept &amp; Motivation)</h2>
+<ul>
+<li><p><strong>传统状态机痛点</strong>：在 EIP-150 之前，许多涉及<strong>读取其他账户状态</strong>的操作码（如 <code>EXTCODESIZE</code>, <code>BALANCE</code>, <code>SLOAD</code>, <code>CALL</code>）的 Gas 定价<strong>极度低廉</strong>（有些低至 20 Gas）。然而这些操作在底层需要节点去磁盘或状态树（Merkle Patricia Trie）中做 I/O 查询，实际计算资源消耗远大于定价。
+攻击者利用这一定价失衡，构造了大量嵌套调用垃圾交易（仅花极少 Gas 却迫使节点进行海量磁盘读取），导致 2016 年 9-10 月以太坊主网出块时间从 ~15 秒飙升到 30 秒以上，节点频繁宕机，网络近乎瘫痪。这就是臭名昭著的 <strong>上海 DoS 攻击 (Shanghai Attacks)</strong>。</p>
+</li>
+<li><p><strong>破局思路</strong>：<strong>大幅涨价</strong>——把那些被低估的 I/O 操作码的 Gas 成本提高 4~25 倍，使得同样的攻击成本直线飙升到经济上不可行。同时引入子调用的 Gas 上限规则（63/64 规则），防止无限深度的嵌套调用耗尽资源。</p>
+</li>
+<li><p><strong>专属核心概念</strong>：</p>
+<ul>
+<li><strong>I/O 密集型操作</strong>：指那些需要访问以太坊节点磁盘上的状态数据库（StateDB）的操作码，代价远高于纯内存/栈运算。</li>
+<li><strong>63/64 规则</strong>：子调用（<code>CALL</code>, <code>DELEGATECALL</code> 等）最多只能获得当前剩余 Gas 的 63/64，始终为父调用保留 1/64 的 Gas 用于善后。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2>2. 核心架构与底层修改细节 (Core Specification)</h2>
+<h3>A. 全局参数 / 常量变动 (Parameters)</h3>
+<p><strong>核心 Gas 计价变更表（变化前后对比）</strong>：</p>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>操作码</strong></th>
+<th align="center"><strong>旧 Gas 成本</strong></th>
+<th align="center"><strong>新 Gas 成本</strong></th>
+<th align="center"><strong>涨幅</strong></th>
+<th align="left"><strong>操作本质</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>EXTCODESIZE</code></td>
+<td align="center">20</td>
+<td align="center"><strong>700</strong></td>
+<td align="center"><strong>35x</strong></td>
+<td align="left">查询另一个账户的代码大小（需访问外部账户状态）</td>
+</tr>
+<tr>
+<td align="left"><code>EXTCODECOPY</code></td>
+<td align="center">20</td>
+<td align="center"><strong>700</strong></td>
+<td align="center"><strong>35x</strong></td>
+<td align="left">复制另一个账户的代码到内存</td>
+</tr>
+<tr>
+<td align="left"><code>BALANCE</code></td>
+<td align="center">20</td>
+<td align="center"><strong>400</strong></td>
+<td align="center"><strong>20x</strong></td>
+<td align="left">查询另一个账户的 ETH 余额</td>
+</tr>
+<tr>
+<td align="left"><code>SLOAD</code></td>
+<td align="center">50</td>
+<td align="center"><strong>200</strong></td>
+<td align="center"><strong>4x</strong></td>
+<td align="left">从合约自身的永久存储中读取一个 Word</td>
+</tr>
+<tr>
+<td align="left"><code>CALL</code></td>
+<td align="center">40</td>
+<td align="center"><strong>700</strong></td>
+<td align="center"><strong>17.5x</strong></td>
+<td align="left">调用另一个账户/合约的代码</td>
+</tr>
+<tr>
+<td align="left"><code>DELEGATECALL</code></td>
+<td align="center">40</td>
+<td align="center"><strong>700</strong></td>
+<td align="center"><strong>17.5x</strong></td>
+<td align="left">在当前上下文中执行另一个合约的代码</td>
+</tr>
+<tr>
+<td align="left"><code>SELFDESTRUCT</code></td>
+<td align="center">0</td>
+<td align="center"><strong>5000</strong></td>
+<td align="center"><strong>∞</strong></td>
+<td align="left">自毁当前合约（涉及状态删除和 ETH 转移）</td>
+</tr>
+</tbody></table>
+<h3>B. EVM 指令集与 Gas 计价改动 (Opcodes &amp; Gas Changes)</h3>
+<p><strong>63/64 规则 (Gas Stipend Rule)</strong>：</p>
+<p>在 EIP-150 之前，<code>CALL</code> 系列操作码可以把当前<strong>全部剩余 Gas</strong> 转交给子调用。这意味着攻击者可以构造成千上万层的嵌套调用，每一层都把所有 Gas 传下去，直到达到调用栈深度限制（1024），制造&quot;调用栈深度攻击 (Call Depth Attack)&quot;。</p>
+<p>EIP-150 引入了一条简洁而致命的规则：
+$$\text{子调用可用 Gas} = \text{剩余 Gas} - \lfloor \frac{\text{剩余 Gas}}{64} \rfloor = \text{剩余 Gas} \times \frac{63}{64}$$</p>
+<p><strong>这意味着</strong>：</p>
+<ul>
+<li>每次 <code>CALL</code> 都会为父调用保留至少 1/64 的 Gas 用于后续善后（如检查返回值、继续执行后续代码）。</li>
+<li>经过 $n$ 层嵌套后，可用 Gas 衰减为 $\text{初始 Gas} \times (63/64)^n$。当 $n \approx 480$ 时，可用 Gas 衰减至接近 0，攻击者<strong>在物理上不可能</strong>再用尽全部 Gas 进行深度嵌套攻击。</li>
+</ul>
+<pre><code class="language-python"># 63/64 规则衰减演示
+initial_gas = 10_000_000  # 假设初始 10M Gas
+gas = initial_gas
+for depth in range(1, 1025):
+    gas = gas - gas // 64  # 每层保留 1/64
+    if gas &lt; 2300:  # 低于最低 stipend
+        print(f&quot;在第 {depth} 层, Gas 耗尽: {gas}&quot;)
+        break
+# 输出: 约在第 480 层左右就无 Gas 可用了
+</code></pre>
+<h3>C. 交易类型与区块结构 (Transaction &amp; Block Header Changes)</h3>
+<p>无。EIP-150 仅修改 EVM 执行引擎的 Gas 计价表，不改变交易格式或区块头结构。</p>
+<hr>
+<h2>3. 从宏观到微观的生命周期 (Lifecycle Workflow)</h2>
+<p><strong>一笔普通的跨合约调用在 EIP-150 后的 Gas 消耗变化：</strong></p>
+<ol>
+<li><strong>用户发起交易</strong>：调用合约 A 的 <code>foo()</code> 函数，附带 100,000 Gas。</li>
+<li><strong>A 内部调用 B</strong>：<code>B.bar{gas: ...}()</code>。EIP-150 之前可以传递全部剩余 Gas；<strong>之后最多只能传递剩余的 63/64</strong>。</li>
+<li><strong>B 内部读取另一个合约 C 的代码大小</strong>：<code>EXTCODESIZE(C)</code>。EIP-150 之前仅耗 20 Gas；<strong>之后耗 700 Gas</strong>。</li>
+<li><strong>B 内部读取自身 Storage</strong>：<code>SLOAD(key)</code>。EIP-150 之前仅耗 50 Gas；<strong>之后耗 200 Gas</strong>。</li>
+<li><strong>总效果</strong>：同样的调用链路，Gas 消耗从之前的微不足道，变为显著的成本开支，攻击者再也无法用低廉的 Gas 制造海量 I/O 负载。</li>
+</ol>
+<hr>
+<h2>4. 关键机制深度解析 (Deep Dive)</h2>
+<h3>A. 核心难点：为什么这些操作码之前那么便宜？</h3>
+<p>以太坊黄皮书最初的 Gas 定价基于一个简化模型：<strong>所有操作的计算成本大致相等</strong>。但现实中，<code>ADD</code>（纯栈运算，纳秒级）和 <code>SLOAD</code>（需要查磁盘上的 MPT 状态树，毫秒级）的实际硬件成本相差<strong>数个数量级</strong>。最初的定价者严重低估了 I/O 操作的真实系统负载。</p>
+<h3>B. 核心难点：63/64 规则为什么能防止调用栈深度攻击？</h3>
+<p>在 EIP-150 之前，攻击者可以利用<strong>恰好消耗完 Gas 使得子调用失败但父调用继续</strong>的技巧来操纵执行流程。在 63/64 规则下：</p>
+<ul>
+<li>父调用<strong>始终保留</strong> 1/64 的 Gas → 无论子调用是否失败，父调用都有足够的 Gas 检测失败并正确 revert。</li>
+<li>嵌套深度被 Gas 指数衰减<strong>自然淘汰</strong> → 不需要额外的&quot;最大调用深度&quot;硬编码限制。</li>
+</ul>
+<hr>
+<h2>5. 对生态与智能合约的系统级冲击 (Impact Analysis)</h2>
+<ul>
+<li><p><strong>对 DApp 开发者的影响</strong>：</p>
+<ul>
+<li>大量依赖 <code>address.send()</code> 和 <code>address.transfer()</code> 的旧合约（这两者固定 2300 Gas Stipend），在 EIP-150 后可能出现接收方合约因 Gas 不足而接收失败的问题。这也是为什么后来行业推荐使用 <code>address.call{value: x}(&quot;&quot;)</code> 的原因之一。</li>
+<li>代码中硬编码 Gas 量（如 <code>call.gas(40000)</code>）的做法变得极其危险，因为操作码涨价后原来够用的 Gas 可能不够了。</li>
+</ul>
+</li>
+<li><p><strong>对基础设施体系的影响</strong>：</p>
+<ul>
+<li>节点运营者的 I/O 压力大幅下降，出块时间从 30+ 秒恢复到正常的 ~15 秒。</li>
+<li>以太坊网络在 DoS 攻击后首次证明了自己能通过紧急硬分叉进行自我修复。</li>
+</ul>
+</li>
+<li><p><strong>长远倒逼演进</strong>：</p>
+<ul>
+<li>EIP-150 的简单&quot;一刀切涨价&quot;虽然有效，但过于粗暴——把所有 <code>SLOAD</code> 都定为 200 Gas，无论你是第一次读还是第十次读同一个 Slot。这为后续的 <strong>EIP-2929 (Berlin 硬分叉)</strong> 引入更精细的**&quot;冷/热访问&quot; (Cold/Warm Access)** 模型奠定了基础：首次访问某 Slot 需要 2100 Gas（冷读），后续访问同一 Slot 仅需 100 Gas（热读）。</li>
+</ul>
+</li>
+</ul>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/DeFi协议/uniswap_v4/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">uniswap_v4</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/EIP标准/EIP-1559/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-1559</h4> </a> </div> </nav> </article>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try { localStorage.setItem("theme", value); } catch {}
+          });
+        };
+        bindToggle();
+      })();
+    </script> </body> </html> 
