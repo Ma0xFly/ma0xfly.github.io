@@ -1,0 +1,78 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Curve | Notebook Dispatch</title><meta name="description" content="# Curve Finance: 稳定兑换做市商协议 > **一句话总结**：Curve 是一个极大程度优化了同质化商品（如各种稳定币之间，或不同版本衍生资产之间）兑换深度的顶尖外汇钱庄。通过融合乘法和加法的“稳定交换曲线”，它成功将锚定资产之间的滑点降到了零的极限。 --- #"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.D0JR-qFn.css"></head> <body class> <!-- 首页导航栏：右侧对齐链接和主题切换 --> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">Notebook Dispatch</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☼</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <p class="eyebrow">2026/4/14</p> <h1>Curve</h1> <p class="lead"># Curve Finance: 稳定兑换做市商协议 &gt; **一句话总结**：Curve 是一个极大程度优化了同质化商品（如各种稳定币之间，或不同版本衍生资产之间）兑换深度的顶尖外汇钱庄。通过融合乘法和加法的“稳定交换曲线”，它成功将锚定资产之间的滑点降到了零的极限。 --- #</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> </header> <div class="article-content"><h1>Curve Finance: 稳定兑换做市商协议</h1>
+<blockquote>
+<p><strong>一句话总结</strong>：Curve 是一个极大程度优化了同质化商品（如各种稳定币之间，或不同版本衍生资产之间）兑换深度的顶尖外汇钱庄。通过融合乘法和加法的“稳定交换曲线”，它成功将锚定资产之间的滑点降到了零的极限。</p>
+</blockquote>
+<hr>
+<h2>1. 核心痛点与破局思路 (Problem &amp; Solution)</h2>
+<p><strong>痛点：用 Uniswap 换美金，为什么会亏？</strong>
+假设你有 1000 万 USDT 巨款想换成 USDC（两者理论上都等价 1 美元）：
+在 Uniswap V2 时代，它只认 $x \cdot y = k$ 恒定乘积公式。当你大额买入 USDC 时，沿着向内弯曲的玻璃滑梯，USDC 库存急剧减少，金库会极其不合常理地强行拉高 USDC 价格。你最终可能只能换回 950 万的 USDC。剩下的几十万凭空被“滑点（价格冲击）”吞噬了。
+但如果粗暴地改成 $x + y = k$（恒定总和 1:1 兑换），一旦 USDT 稍微跌到 $0.99，套利者立刻会用废纸把池子里的 USDC 全部抽干。</p>
+<p><strong>破局思路</strong>：DeFi 需要一个能保持 1:1 极低滑点，但又绝不会被黑客彻底抽干储备的奇迹引擎。</p>
+<hr>
+<h2>2. 核心数学模型与底层逻辑 (Core Math)</h2>
+<h3>缝合怪“稳定滑梯” ($Stableswap\ Invariant$)</h3>
+<p>一位搞俄罗斯微积分竞赛的物理学家想出了天才级方案：把 $x+y=k$ 和 $x \cdot y=k$ 缝合在一起！</p>
+<ul>
+<li><strong>池子平衡时（中间段）</strong>：曲线极其平坦，无限接近加法公式 $x+y=k$。在这个宽广的平原区域，无论巨鲸怎么大额交易，1 USDT 几乎永远等于 1 USDC。<strong>滑点近乎 0！</strong></li>
+<li><strong>池子极端失衡时（两端段）</strong>：当某种币快被买光时，曲线会像悬崖一样陡峭，无缝切换成乘法公式 $x \cdot y=k$。价格指数级飙升劝退买家，<strong>永远保护金库不被彻底抽干</strong>。</li>
+</ul>
+<h3>地下钱庄的护城河比喻 (Analogy)</h3>
+<p>聪明的倒爷：只要他手里的欧元和美元数量相仿，你拿几百万来，他都按死规定 1:1 换（低滑点体验极佳）。但如果他发现金库的欧元底裤快被掏空了，他立刻变回那个暴利的 Uniswap 商人：“客官，欧元成绝版了，你想换？得加倍给钱！”</p>
+<hr>
+<h2>3. 核心架构与资金流转 (Architecture)</h2>
+<p>相比 Uniswap 简单的配对，Curve 的架构设计是一个精密耦合的跨国钱庄网络。</p>
+<h3>3.1 混合金库 (The Pools)</h3>
+<p>在一个金库同时装两个以上的币。例如最著名的 <strong>3Pool</strong>，一个保险箱里同时装着 USDT、USDC 和 DAI。你丢进去任何一种，都能以极低的滑点换出另外两种。资金在此高维互换，极大分摊了某个单币脱锚的风险。</p>
+<h3>3.2 流动性套娃 (Base &amp; Metapools)</h3>
+<ul>
+<li><strong>母池 (Base Pool)</strong>：底盘极其厚实的 3Pool（装着数亿美金）。</li>
+<li><strong>子池 (Metapool)</strong>：假设要为新稳定币 FRAX 创建流动性，不需要再找一堆 USDC 去配对。只需将 FRAX 加上 <strong>3Pool 的股权凭证（3CRV LP Token）</strong> 放进新金库。母金库犹如蓄水大坝，通过层层子池将流动性灌溉到整个生态，瞬间接通几亿美金大动脉。</li>
+</ul>
+<hr>
+<h2>4. 特色机制：永远稳步向上的 Virtual Price (Simulation)</h2>
+<p>当你在 3Pool 里存钱做市时，钱庄会打给你提款收据——<strong>Curve LP Token（如 3CRV）</strong>。在稳定币中几无无常损失的情况下，做市赚的钱怎么体现？</p>
+<ul>
+<li><strong>虚拟价格计算公式</strong>：
+$$Virtual\ Price = \frac{\text{金库内部所有资产根据算法折算后的总净值 (分子)}}{\text{已发行出去的 LP Token 总额度 (分母)}}$$</li>
+<li><strong>为什么它通常只涨不跌？</strong> 刚建池子时 $Virtual\ Price = 1$。随着每天千万次的交易，系统扣除的极少手续费并不直接发给个人，而是<strong>全部硬生生地沉淀在水池里</strong>。这导致金库总算盘净值（分子）由于吃手续费而一天天变大；分母不动。</li>
+<li><strong>结论</strong>：分子变大，分母不变，Virtual Price 永远单边稳步向上倾斜。你什么都不干捏着 3CRV，它能换出来的“美金总量”也会持续增加。这就成了 DeFi 乐高王国中除了 ETH 之外最硬通、最安全的抵押品积木。</li>
+</ul>
+<hr>
+<h2>5. 当前软肋与暗黑权力的游戏：Curve War (Limitations &amp; Evolution)</h2>
+<p>仅仅靠极低的滑点，不足以让 Curve 统治江湖。让所有人为之疯狂且暴露出它深不可测“权力勾结”风险的，是它的 <strong>VeToken 经济学</strong>。</p>
+<ul>
+<li><strong>CRV 与 veCRV</strong>：普通的 CRV 只是能卖钱的股票。你必须把它<strong>关进监狱死死锁住</strong>（最长锁 4 年），才能换取到拥有分红和投票权的 <strong>veCRV</strong>。</li>
+<li><strong>爆发 Curve War（曲线战争）</strong>：Curve 每天大量印发 CRV 奖励给流动性提供者，但哪一个池子能分到最多的奖金呢？全由 veCRV 选票决定！各大机构（如稳定币项目方）为了护盘不让自己的币崩盘，必须疯狂在黑市买 CRV 锁仓拿选票，好把当天的政府巨额补助（CRV释放）引流到自己的池子里来高息吸引做市商。</li>
+<li><strong>代理人出现 (Convex)</strong>：因为锁四年太痛苦，诞生了专门代散户锁仓夺权的寡头代理团 <strong>Convex</strong>。它成功垄断了全网过半的选票，成为了架空 Curve 钱庄的真正摄政王。这展现了 DeFi 机制演化到极致后，技术护城河最终是如何向政治和权力博弈转移的。</li>
+</ul>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/DeFi协议/Aave/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">Aave</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/DeFi协议/uniswap_v2/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">uniswap_v2</h4> </a> </div> </nav> </article>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try { localStorage.setItem("theme", value); } catch {}
+          });
+        };
+        bindToggle();
+      })();
+    </script> </body> </html> 
