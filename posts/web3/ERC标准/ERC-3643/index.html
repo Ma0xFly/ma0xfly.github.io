@@ -1,0 +1,128 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ERC-3643 | Notebook Dispatch</title><meta name="description" content="# ERC-3643: 合规型资产证券化代币 (T-REX / RWA Token) > **一句话总结**：ERC-3643 是一套极其严格的“链上白名单门禁系统”。它专为映射现实世界受监管资产（RWA，如股权、债券、房地产）而生，确保在公有链上的代币转账符合每一个现实主权国家"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.Coc4ZbWY.css"></head> <body class> <!-- 首页导航栏：悬浮透明，叠在 Hero 上方 --> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">Notebook Dispatch</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☼</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回主页花园</a> <header class="article-header"> <p class="eyebrow">2026/4/14</p> <h1>ERC-3643</h1> <p class="lead"># ERC-3643: 合规型资产证券化代币 (T-REX / RWA Token) &gt; **一句话总结**：ERC-3643 是一套极其严格的“链上白名单门禁系统”。它专为映射现实世界受监管资产（RWA，如股权、债券、房地产）而生，确保在公有链上的代币转账符合每一个现实主权国家</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> </header> <div class="article-content"> <h1 id="erc-3643-合规型资产证券化代币-t-rex--rwa-token">ERC-3643: 合规型资产证券化代币 (T-REX / RWA Token)</h1>
+<blockquote>
+<p><strong>一句话总结</strong>：ERC-3643 是一套极其严格的“链上白名单门禁系统”。它专为映射现实世界受监管资产（RWA，如股权、债券、房地产）而生，确保在公有链上的代币转账符合每一个现实主权国家的反洗钱（AML）和 KYC 特许规范。</p>
+</blockquote>
+<h2 id="-核心元数据与参阅资料-metadata--references">📜 核心元数据与参阅资料 (Metadata &#x26; References)</h2>
+<blockquote>
+<p><strong>信息源原则</strong>：底层的通信/代币标准必须以 <strong>Ethereum EIP 官方文档 (ethereum.org/EIPS)</strong> 和最主流的防呆实现库（如 <strong>OpenZeppelin</strong> 或 <strong>Solmate</strong>）的源码作为<strong>唯一第一手真理源</strong>。切忌大量摘抄二手的科普文章。</p>
+</blockquote>
+<ul>
+<li><strong>官方 EIP 提案编号与链接</strong>：<a href="https://eips.ethereum.org/EIPS/eip-3643">EIP-3643: T-REX - Token for Regulated EXchanges</a></li>
+<li><strong>当前标准状态</strong>：Final</li>
+<li><strong>权威参考实现 (Reference Implementation)</strong>：T-REX Protocol (由 Tokeny Solutions 主导开发)</li>
+<li><strong>依赖基座标准</strong>：完全兼容 ERC-20。且深度绑定 ERC-734（密钥管理）和 ERC-735（声明验证）。</li>
+</ul>
+<hr>
+<h2 id="1-核心理念与痛点解决-core-concept">1. 核心理念与痛点解决 (Core Concept)</h2>
+<ul>
+<li><strong>传统痛点/背景</strong>：以太坊的本质是“抗审查、无需许可”，这就是为什么普通人可以随意将 ERC-20 代币转给暗网或遭受制裁的黑客地址。但这对于试图在以太坊上发行正规纳斯达克股票、美国国债的金融机构来说是最大的噩梦——合规资产绝对不能落入未经实名的账户手中。</li>
+<li><strong>破局思路</strong>：ERC-3643 在代币的每一个基础转移通道（<code>transfer</code>）前，死死堵上了一道名为 <strong>Identity Registry（身份注册表/链上白名单）</strong> 的铁闸门。发送者和接收者必须在链下通过了真实世界的 KYC，由机构在链上给他们的钱包地址颁发许可证书，才能完成划款。</li>
+</ul>
+<hr>
+<h2 id="2-核心接口与数据结构-core-interfaces">2. 核心接口与数据结构 (Core Interfaces)</h2>
+<blockquote>
+<p>它包含一套庞大的模块化合约体系，核心是通过一个独立的强制注册中心与合规预言机来死死卡住所有的 ERC-20 资产流转路线。</p>
+</blockquote>
+<h3 id="a-核心状态结构-state-variables">A. 核心状态结构 (State Variables)</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="solidity"><code><span class="line"><span style="color:#6A737D">// 除了继承原有的 _balances 账本，RWA 代币最核心的是必须为自己挂载两个不可篡改的外置监控摄像头：</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 1. 唯一引用的身份注册局（绿名单/黑名单大本营数据库）</span></span>
+<span class="line"><span style="color:#E1E4E8">IIdentityRegistry </span><span style="color:#F97583">private</span><span style="color:#E1E4E8"> _identityRegistry;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 2. 发行方的合规审计法官（比如设定诸如“单人持仓上限”或“禁止俄罗斯国籍地址买卖”）</span></span>
+<span class="line"><span style="color:#E1E4E8">ICompliance </span><span style="color:#F97583">private</span><span style="color:#E1E4E8"> _compliance;</span></span></code></pre>
+<h3 id="b-关键机制与底层逻辑-core-functions">B. 关键机制与底层逻辑 (Core Functions)</h3>
+<h4 id="1-transferto-amount-合规转移与强制安检校验">1. <code>transfer(to, amount)</code> (合规转移与强制安检校验)</h4>
+<p>代币转移大门前的最终 X 光安检机。</p>
+<ul>
+<li><strong>白话逻辑解析</strong>：表面上叫法跟原版 ERC-20 无异。但在内部账本加减的引擎前被强行插入了两重死刑校验：先问 <code>Identity</code> 组件，买家和卖家的以太坊地址对应的现实护照是不是都在白名单里；再去问 <code>Compliance</code> 组件，这一单到底有没有触发美国证券法的锁仓交易红线。只有两方同时绝对绿灯放行，底层的金库才准许进行加减法。</li>
+<li><strong>核心源码骨架</strong>：
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="solidity"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> transfer</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">address</span><span style="color:#FFAB70"> to</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">uint256</span><span style="color:#FFAB70"> amount</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">public</span><span style="color:#F97583"> virtual</span><span style="color:#F97583"> returns</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">bool</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    require</span><span style="color:#E1E4E8">(to </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> address</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">), </span><span style="color:#9ECBFF">"ERC20: transfer to the zero address"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 1. 最核心的实名制门禁：审查出单人与接单人在现实世界中是否有合规身份资质</span></span>
+<span class="line"><span style="color:#F97583">    require</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">        _identityRegistry.</span><span style="color:#B392F0">isVerified</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">msg.sender</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> _identityRegistry.</span><span style="color:#B392F0">isVerified</span><span style="color:#E1E4E8">(to), </span></span>
+<span class="line"><span style="color:#9ECBFF">        "Identity is not verified"</span><span style="color:#6A737D"> // 任何人一旦没过 KYC 或者私钥丢失被挂黑名单，直接掐断交易</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"><span style="color:#E1E4E8">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 2. 极其繁杂的特种法规审查：如冻结期、合格投资者校验、制裁名录等</span></span>
+<span class="line"><span style="color:#F97583">    require</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#E1E4E8">        _compliance.</span><span style="color:#B392F0">canTransfer</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">msg.sender</span><span style="color:#E1E4E8">, to, amount), </span></span>
+<span class="line"><span style="color:#9ECBFF">        "Compliance rules not met"</span></span>
+<span class="line"><span style="color:#E1E4E8">    );</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 上述两把法律的大锁全都应声解锁通过后，才允许触碰底层的加密数字账本</span></span>
+<span class="line"><span style="color:#B392F0">    _transfer</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">msg.sender</span><span style="color:#E1E4E8">, to, amount);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> true</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+</li>
+</ul>
+<h3 id="c-关键事件-events">C. 关键事件 (Events)</h3>
+<p>底层的记账发生变更后依旧抛出经典 <code>Transfer</code>。特殊的大规模国家级查封、解冻、资产找回操作则由关联的子安全组件另行抛出行政日志。</p>
+<hr>
+<h2 id="3-标准业务工作流-standard-workflow">3. 标准业务工作流 (Standard Workflow)</h2>
+<p><strong>华尔街机构发行链上美债给投资者的合规链路：</strong></p>
+<ol>
+<li><strong>链下打卡 (KYC Onboarding)</strong>：机构在现实中对用户 B 查验了护照和财富证明。</li>
+<li><strong>链上发证 (Identity Claim)</strong>：受信任的机构控制官利用机构私钥，向身份注册表合约发送指令，把用户 B 的 <code>0x...</code> 地址拉入系统的认证绿名单。</li>
+<li><strong>资金交割 (Execution Check)</strong>：大户 A 想要把 100 股链上美债卖给刚刚通过验证的用户 B，调用了美债代币的 <code>transfer(B, 100)</code>。</li>
+<li><strong>守卫放行 (Accounting)</strong>：底层代币的拦截系统向外部的合规总机验证，得到 <code>[A:合法, B:已入库]</code> 的回复。转账完成。如果此时 A 转给一个不在库里的野地址 C，交易将直接冰冷 Revert。</li>
+</ol>
+<hr>
+<h2 id="4-关键机制与难点解析-key-mechanics">4. 关键机制与难点解析 (Key Mechanics)</h2>
+<blockquote>
+<p>对于协议中那些绕人的数学计算、状态机流转或者是舍入取整规则，<strong>必须配以核心公式推导或精简版代码辅助理解</strong>。</p>
+</blockquote>
+<h3 id="a-核心难点一强制力剥夺-冻结与强制找回">A. 核心难点一：强制力剥夺 (冻结与强制找回)</h3>
+<ul>
+<li><strong>原理讲解</strong>：既然是中心化合规的资产证券化，那就不可避免地面临一个现实：如果用户的私钥弄丢了，或者收到了法院没收令咋办？ERC-20 是“你的钥匙你的钱（Not your keys, not your coins）”，而在 ERC-3643 中，由于遵循极度强势的现实法律监管，系统赋予了管理员不可抗拒的冻结权和单边复苏权。</li>
+<li><strong>核心逻辑代码 (Solidity)</strong>：
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="solidity"><code><span class="line"><span style="color:#6A737D">// 在 3643 标准下，存在极权管理员特供的超级函数</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> recoveryAddress</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#79B8FF">    address</span><span style="color:#FFAB70"> walletToRecover</span><span style="color:#E1E4E8">, </span></span>
+<span class="line"><span style="color:#79B8FF">    address</span><span style="color:#FFAB70"> newWallet</span><span style="color:#E1E4E8">, </span></span>
+<span class="line"><span style="color:#79B8FF">    address</span><span style="color:#FFAB70"> investorOnchainID</span></span>
+<span class="line"><span style="color:#E1E4E8">) </span><span style="color:#F97583">external</span><span style="color:#B392F0"> onlyAgent</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D">    // 一旦法院判决或者用户挂失</span></span>
+<span class="line"><span style="color:#6A737D">    // 官方管理员可以直接将旧地址(walletToRecover)上的资产余额，</span></span>
+<span class="line"><span style="color:#6A737D">    // 原封不动地直接全部搬运到查验过实体身份的新地址(newWallet)上。</span></span>
+<span class="line"><span style="color:#6A737D">    // 这是对 Web3 去中心化核心思想的一种为了合规而做出的彻底让步。</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<em>代码拆解</em>：注意后面的 <code>onlyAgent</code>。意味着这些强制接管函数只能由现实中的发证机构（如持牌券商或托管银行）在链上的代理人触发。</li>
+</ul>
+<hr>
+<h2 id="5-周边生态与后续演进-ecosystem">5. 周边生态与后续演进 (Ecosystem)</h2>
+<ul>
+<li><strong>主流采用方</strong>：Polygon 和以太坊上真正合规的 RWA 平台（如代币化房地产、碳信用证券、国债收益凭证等）。</li>
+<li><strong>标准的局限性</strong>：因为它强行将去中心化世界加上了层层过滤网，这意味着普通去中心化交易所（如 Uniswap 完全不受许可的流动池）根本无法承接并且兼容这类代币。这些代币只能在极其封闭的受规管市场网络中流动。</li>
+</ul> </div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/ERC标准/ERC-3156/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-3156</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/ERC标准/ERC-4626/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-4626</h4> </a> </div> </nav> </article> <div id="reading-progress" style="position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 9999; transition: width 0.1s ease-out; pointer-events: none;"></div> <script type="module">document.addEventListener("astro:page-load",()=>{const e=document.getElementById("reading-progress");if(!e)return;const t=()=>{const n=document.documentElement.scrollHeight-window.innerHeight;if(n>0){const o=window.scrollY/n*100;e.style.width=`${o}%`}};window.addEventListener("scroll",t),document.addEventListener("astro:before-swap",()=>{window.removeEventListener("scroll",t)},{once:!0})});</script>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try { localStorage.setItem("theme", value); } catch {}
+          });
+        };
+        bindToggle();
+      })();
+    </script> </body> </html> 

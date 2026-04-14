@@ -1,0 +1,662 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>面试计划 | Notebook Dispatch</title><meta name="description" content="# 10 天 Web3 安全面试冲刺计划 v2 这份 10 天冲刺计划继续沿用“攻防代偿”和“底层降维”的主线，但目标从“学很多”调整为“能稳定打面试”。核心不是覆盖更多知识点，而是把知识转化成 3 类可展示成果： 1. 能口头讲清楚的底层机制 2. 能跑通并解释的漏洞 PoC "><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.Coc4ZbWY.css"></head> <body class> <!-- 首页导航栏：悬浮透明，叠在 Hero 上方 --> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">Notebook Dispatch</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☼</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回主页花园</a> <header class="article-header"> <p class="eyebrow">2026/4/14</p> <h1>面试计划</h1> <p class="lead"># 10 天 Web3 安全面试冲刺计划 v2 这份 10 天冲刺计划继续沿用“攻防代偿”和“底层降维”的主线，但目标从“学很多”调整为“能稳定打面试”。核心不是覆盖更多知识点，而是把知识转化成 3 类可展示成果： 1. 能口头讲清楚的底层机制 2. 能跑通并解释的漏洞 PoC </p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> </header> <div class="article-content"> <h1 id="10-天-web3-安全面试冲刺计划-v2">10 天 Web3 安全面试冲刺计划 v2</h1>
+<p>这份 10 天冲刺计划继续沿用“攻防代偿”和“底层降维”的主线，但目标从“学很多”调整为“能稳定打面试”。核心不是覆盖更多知识点，而是把知识转化成 3 类可展示成果：</p>
+<ol>
+<li>能口头讲清楚的底层机制</li>
+<li>能跑通并解释的漏洞 PoC</li>
+<li>能写进简历和项目介绍的高质量产出</li>
+</ol>
+<h2 id="执行原则">执行原则</h2>
+<ul>
+<li>每天都必须同时有 <code>输入</code>、<code>输出</code>、<code>口述</code>、<code>复盘</code> 四个动作，不能只看不讲、只学不写。</li>
+<li>每天结束前必须留下可见产出：笔记、题卡、测试、PoC、总结、简历改写之一。</li>
+<li>以“能否在 5 分钟内讲明白”为验收标准，而不是“今天看了多少资料”。</li>
+<li>从 Day 6 开始滚动投递，不等 Day 10 才投。</li>
+<li>Day 5 和 Day 9 各安排一次 Mock Interview，专门训练追问承压。</li>
+</ul>
+<h2 id="本轮模拟面试补强">本轮模拟面试补强</h2>
+<p>这轮模拟暴露出的短板不是“不会漏洞”，而是“在主网对抗环境、协议底层接口精度、以及更强断言设计上不够硬”。接下来优先级按下面 4 项补：</p>
+<h3 id="优先级-1mev--mempool--searcher">优先级 1：MEV / Mempool / Searcher</h3>
+<ul>
+<li>必须纠正一个危险误区：Searcher 发现机会不依赖 Event 广播，而是依赖 mempool 中待打包交易的状态模拟。</li>
+<li>目标不是只会背 <code>front-running / sandwich</code> 定义，而是能讲清：
+<ul>
+<li>Searcher 如何看 pending tx</li>
+<li>如何 simulate 交易后的状态变化</li>
+<li>为什么可清算仓位、套利空间、预言机窗口可以在事件发出前就被发现</li>
+<li>Flashbots / Private RPC 解决的是什么，解决不了什么</li>
+<li>如果不依赖私有 RPC，代码设计层面还能怎么减少 front-running 风险</li>
+</ul>
+</li>
+</ul>
+<h3 id="优先级-2uniswap-v2--v3-架构精度">优先级 2：Uniswap V2 / V3 架构精度</h3>
+<ul>
+<li>不能再把 <code>Pair</code> 和 <code>Factory</code> 的职责讲混。</li>
+<li>必须做到：
+<ul>
+<li>准确说出谁创建池子、谁抛 <code>PairCreated</code></li>
+<li>说清 <code>Factory / Router / Pair(Pool)</code> 各自职责</li>
+<li>说清 <code>mint / burn / swap</code> 底层由谁改储备量</li>
+<li>说清 <code>Router</code> 为什么更像无状态编排层，而 <code>Pair / Pool</code> 才是真正持有 AMM 关键状态的地方</li>
+</ul>
+</li>
+</ul>
+<h3 id="优先级-3proxy--storage--collision">优先级 3：Proxy / Storage / Collision</h3>
+<ul>
+<li>这块虽然这次没被打穿，但已经被明确点名为后续高压追问方向。</li>
+<li>必须做到：
+<ul>
+<li>不看资料讲清 <code>delegatecall</code> 的 storage 语义</li>
+<li>讲清 slot 冲突不是抽象名词，而是具体的 <code>implementation / admin</code> 槽位覆盖风险</li>
+<li>能用“不使用 EIP-1967 时黑客如何通过 storage collision 接管 proxy”讲出真实攻击面</li>
+</ul>
+</li>
+</ul>
+<h3 id="优先级-4memescan-更强断言">优先级 4：MemeScan 更强断言</h3>
+<ul>
+<li>现有“买卖前后余额对比 + <code>onlyOwner</code> 检查”太理想化，不足以应对恶意对抗。</li>
+<li>必须补上：
+<ul>
+<li>按调用者地址变化的差异税率 / 黑名单逻辑</li>
+<li>按区块高度、时间或交易顺序触发的动态开关</li>
+<li>owner 之外的隐藏特权角色、代理升级、后门 setter</li>
+<li>更贴近攻击者视角的多身份、多时刻、多路径断言</li>
+</ul>
+</li>
+</ul>
+<h3 id="本轮补强的最低交付线">本轮补强的最低交付线</h3>
+<ul>
+<li>1 份 <code>MEV / Mempool / Searcher</code> 机制图</li>
+<li>1 份 <code>Uniswap V2/V3 架构与关键接口</code> 对照笔记</li>
+<li>1 份 <code>Proxy / Storage Collision</code> 追问卡</li>
+<li>1 份 <code>MemeScan 强断言清单</code></li>
+<li>至少补 10 张新题卡，并做 1 次只追问这些薄弱点的 mock</li>
+</ul>
+<h2 id="每日固定模板">每日固定模板</h2>
+<p>每一天都按下面这套节奏执行：</p>
+<ul>
+<li><code>今日必做</code>：当天最关键的 1-3 件事，必须完成</li>
+<li><code>今日产出</code>：当天必须留下的文件、代码或笔记</li>
+<li><code>验收标准</code>：用来判断是否真的学会</li>
+<li><code>今日口述</code>：至少录音 1 次，按面试场景练表达</li>
+<li><code>卡壳降级方案</code>：如果当天推进不动，优先保住什么</li>
+</ul>
+<p>建议时间分配：</p>
+<ul>
+<li>2 小时：看源码 / 文档 / 复盘文章</li>
+<li>3 小时：手写笔记 / 推公式 / 写测试 / 写 PoC</li>
+<li>1 小时：口述训练 / 录音 / 纠错</li>
+<li>30 分钟：整理错题和第二天待补点</li>
+</ul>
+<h2 id="贯穿式任务">贯穿式任务</h2>
+<h3 id="任务-a项目话术包">任务 A：项目话术包</h3>
+<p>不要把项目介绍混在某一天的学习任务里，而是把它当成贯穿 10 天的固定产出。不是只准备 <code>MemeScan</code>，而是同步准备 4 组“可上场项目包”：</p>
+<ul>
+<li><code>MemeScan</code>
+<ul>
+<li><code>60 秒版</code>：做了什么、解决什么问题、亮点是什么</li>
+<li><code>3 分钟版</code>：Agent / Service 分层、真实链路、你负责的核心模块</li>
+<li><code>追问版</code>：为什么要用 Anvil 分叉、<code>impersonate</code> 底层在做什么、如何避免误报/漏报</li>
+<li><code>不要说错版</code>：Coordinator 不是最终决策者、当前不是完全自治 Agent、数据库还没完整承接主链路</li>
+</ul>
+</li>
+<li><code>Euler</code>
+<ul>
+<li><code>一句话版</code>：为什么 <code>donateToReserves</code> 漏掉流动性检查会导致坏账仓位被主动制造出来</li>
+<li><code>3 分钟版</code>：背景、根因、攻击链、证据、修复</li>
+<li><code>追问版</code>：为什么不是权限漏洞 / 普通重入、<code>checkLiquidity()</code> / <code>deferLiquidityStatus</code> 为什么是关键闸门、为什么要拆 <code>violator</code> / <code>liquidator</code></li>
+</ul>
+</li>
+<li><code>Sentiment</code>
+<ul>
+<li><code>一句话版</code>：为什么这是“上游脏读 + 下游真钱放款”的组合攻击</li>
+<li><code>3 分钟版</code>：<code>getPrice()</code>、<code>borrow()</code>、ETH callback 窗口、错误估值如何转成真实损失</li>
+<li><code>追问版</code>：为什么 <code>nonReentrant</code> 没挡住、为什么要走 ETH 退出路径、<code>priceBefore / priceDuring / priceAfter</code> 证明了什么、<code>manageUserBalance([])</code> 这类修复思路是什么意思</li>
+</ul>
+</li>
+<li><code>Uniswap V2 DEX</code>
+<ul>
+<li><code>一句话版</code>：你不是只看过 V2 原理，而是亲手实现过恒定乘积做市、流动性池和 LP 份额铸造/销毁</li>
+<li><code>3 分钟版</code>：项目背景、<code>Factory / Router / Pair</code> 职责、<code>mint / burn / swap</code>、储备量更新与 LP 份额逻辑</li>
+<li><code>追问版</code>：<code>x * y = k</code> 在实现里如何落地、为什么 <code>PairCreated</code> 是 <code>Factory</code> 发的、为什么 <code>Router</code> 更像编排层、价格冲击和手续费进入模型的方式是什么</li>
+</ul>
+</li>
+</ul>
+<p>推荐统一用下面这个结构回答：</p>
+<ol>
+<li>协议或业务前提是什么</li>
+<li>真正的根因在哪里</li>
+<li>攻击 / 系统链路怎么串起来</li>
+<li>你拿什么证据证明自己真的做过</li>
+<li>修复和工程教训是什么</li>
+</ol>
+<h3 id="任务-b错题本与题卡">任务 B：错题本与题卡</h3>
+<p>每天新增 10-15 张题卡，内容只记录两类：</p>
+<ul>
+<li>今天被追问时容易卡住的点</li>
+<li>今天新学到但还讲不顺的点</li>
+</ul>
+<p>题卡格式建议固定：</p>
+<ul>
+<li>问题</li>
+<li>30 秒回答</li>
+<li>3 分钟展开</li>
+<li>相关代码 / 公式 / 例子</li>
+</ul>
+<p>对项目题和漏洞复现题，再额外补 3 类信息：</p>
+<ul>
+<li><code>关键函数 / 边界</code>：真正决定结论的入口在哪</li>
+<li><code>证据锚点</code>：关键断言、关键数字、关键交易 / 区块</li>
+<li><code>不要说错 / 可以承认的局限</code>：哪些地方不能吹，哪些边界适合主动讲清</li>
+</ul>
+<h3 id="任务-c滚动投递">任务 C：滚动投递</h3>
+<p>从 Day 6 开始，每天至少做 1 件和投递有关的动作：</p>
+<ul>
+<li>改 1 条简历 bullet</li>
+<li>针对 1 个 JD 补 1 个知识点</li>
+<li>投递 1-2 个岗位</li>
+<li>复盘 1 次真实面试问题</li>
+<li>把当天遇到的真实问法补成 1-3 张题卡，而不是只记“今天学了什么”</li>
+</ul>
+<hr>
+<h2 id="阶段一evm-底层与机制防拷打day-1---day-3">阶段一：EVM 底层与机制防拷打（Day 1 - Day 3）</h2>
+<p>目标：解决面试官对调用机制、存储布局、Gas 模型、升级模式的源码级追问。</p>
+<h3 id="day-1storage-布局与代理模式">Day 1：Storage 布局与代理模式</h3>
+<h4 id="今日必做">今日必做</h4>
+<ul>
+<li>推演 value type、struct、mapping、dynamic array 的 storage layout，搞清楚紧凑打包与 slot 对齐。</li>
+<li>把公式记成可面试表达的版本：
+<ul>
+<li><code>mapping[key]</code> 的槽位是 <code>keccak256(abi.encode(key, p))</code></li>
+<li>dynamic array 数据起点是 <code>keccak256(p)</code>，第 <code>i</code> 个元素通常位于 <code>keccak256(p) + i</code></li>
+</ul>
+</li>
+<li>理解 storage collision 的本质：<code>delegatecall</code> 下逻辑合约代码写的是代理合约的存储。</li>
+<li>对比 Transparent Proxy、UUPS、Diamond 的差异，重点记：
+<ul>
+<li>升级逻辑在哪里</li>
+<li>风险边界在哪里</li>
+<li>为什么 EIP-1967 能降低碰撞风险</li>
+</ul>
+</li>
+</ul>
+<h4 id="今日产出">今日产出</h4>
+<ul>
+<li>1 份 <code>Storage 与 Proxy</code> 笔记</li>
+<li>10 张题卡</li>
+</ul>
+<h4 id="验收标准">验收标准</h4>
+<ul>
+<li>能不看资料说清楚为什么 <code>delegatecall</code> 会导致存储碰撞。</li>
+<li>能口头解释 Transparent Proxy 与 UUPS 的主要区别，不只停留在“哪个更省 gas”。</li>
+<li>能说出 EIP-1967 的核心思想，最好能进一步说到 <code>bytes32(uint256(keccak256(...)) - 1)</code> 这类 slot 推导方式。</li>
+</ul>
+<h4 id="今日口述">今日口述</h4>
+<ul>
+<li>“为什么代理合约最危险的问题不是升级，而是存储布局？”</li>
+<li>“UUPS 为什么会有升级能力丢失风险？”</li>
+<li>“如果面试官让我解释钻石代理，我会怎么在 90 秒内讲完？”</li>
+</ul>
+<h4 id="卡壳降级方案">卡壳降级方案</h4>
+<ul>
+<li>如果来不及研究 Diamond，先保住 Transparent Proxy、UUPS、EIP-1967。</li>
+<li>如果推公式吃力，至少保证能画图解释 slot 是怎么被覆盖的。</li>
+</ul>
+<h3 id="day-2调用上下文gas-与签名授权">Day 2：调用上下文、Gas 与签名授权</h3>
+<h4 id="今日必做-1">今日必做</h4>
+<ul>
+<li>横向比较 <code>call</code>、<code>delegatecall</code>、<code>staticcall</code> 对以下 4 个维度的影响：
+<ul>
+<li>storage 上下文</li>
+<li><code>msg.sender</code></li>
+<li><code>msg.value</code></li>
+<li>是否允许状态修改</li>
+</ul>
+</li>
+<li>攻克 EIP-150，理解为什么 <code>call</code> 默认拿不到所有 gas，以及 63/64 规则在深层调用中的意义。</li>
+<li>掌握 <code>permit</code> 的面试表达链路：
+<ul>
+<li>EIP-712 域分隔</li>
+<li>nonce</li>
+<li>签名恢复</li>
+<li>截止时间</li>
+<li>风险点：钓鱼、签名重放、前置执行</li>
+</ul>
+</li>
+<li><code>EIP-1559</code> 作为选做：能讲清 base fee、priority fee 即可，不追求极深。</li>
+</ul>
+<h4 id="今日产出-1">今日产出</h4>
+<ul>
+<li>1 张调用上下文对照表</li>
+<li>1 份 <code>Permit 风险清单</code></li>
+<li>1 个小测试：分别验证 <code>call</code> / <code>delegatecall</code> / <code>staticcall</code> 的行为差异</li>
+</ul>
+<h4 id="验收标准-1">验收标准</h4>
+<ul>
+<li>能脱稿解释为什么 <code>delegatecall</code> 会保留外部调用者的 <code>msg.sender</code>。</li>
+<li>能解释 63/64 规则不是“背结论”，而是为了保证调用栈上层还能保留 gas 处理异常。</li>
+<li>能把 <code>permit</code> 从“省一次 approve”讲到“签名授权带来的新攻击面”。</li>
+</ul>
+<h4 id="今日口述-1">今日口述</h4>
+<ul>
+<li>“如果你来设计一个安全的 permit 流程，你最怕哪三类风险？”</li>
+<li>“为什么 staticcall 写状态会 revert？”</li>
+<li>“EIP-150 对攻击和防御分别意味着什么？”</li>
+</ul>
+<h4 id="卡壳降级方案-1">卡壳降级方案</h4>
+<ul>
+<li>如果 Day 2 压力太大，优先顺序是：调用上下文 > EIP-150 > EIP-2612 > EIP-1559。</li>
+</ul>
+<h3 id="day-3漏洞抽象重入本质与静态分析">Day 3：漏洞抽象、重入本质与静态分析</h3>
+<h4 id="今日必做-2">今日必做</h4>
+<ul>
+<li>不带 DeFi 术语地重新定义重入：它本质是时序失控和临界资源竞争。</li>
+<li>把重入细分为：
+<ul>
+<li>单函数重入</li>
+<li>跨函数重入</li>
+<li>跨合约重入</li>
+<li>只读重入</li>
+</ul>
+</li>
+<li>对比 UTXO 与 Account 模型在并发、竞争、重放防御上的差异，形成自己的“底层降维”话术。</li>
+<li>跑一遍 Slither，理解它不是“神奇扫漏洞”，而是基于 IR、CFG、规则匹配、污点分析做静态近似判断。</li>
+<li>找 2-3 个误报或边界案例，练习“为什么工具报了但不一定真 exploitable”。</li>
+</ul>
+<h4 id="今日产出-2">今日产出</h4>
+<ul>
+<li>1 份 <code>重入漏洞抽象笔记</code></li>
+<li>1 份 <code>Slither 结果解读</code> 文档</li>
+<li>10 张题卡</li>
+</ul>
+<h4 id="验收标准-2">验收标准</h4>
+<ul>
+<li>能把重入问题从“先转账后改余额”提升到“状态原子性被破坏”这一层。</li>
+<li>能解释为什么静态分析工具常常需要人工复核。</li>
+<li>能把 UTXO vs Account 的比较讲到 MEV 与全局状态竞争。</li>
+</ul>
+<h4 id="今日口述-2">今日口述</h4>
+<ul>
+<li>“重入为什么不是 Solidity 特有问题，而是状态机设计问题？”</li>
+<li>“静态分析工具扫出来的问题，哪些最容易误报？”</li>
+<li>“为什么 EVM 的全局状态模型天然更容易产生 MEV？”</li>
+</ul>
+<h4 id="卡壳降级方案-2">卡壳降级方案</h4>
+<ul>
+<li>如果静态分析原理吃不透，至少要会用 Slither 并能解释 2 个 detector 的原理和局限。</li>
+</ul>
+<hr>
+<h2 id="阶段二defi-机制突击day-4---day-5">阶段二：DeFi 机制突击（Day 4 - Day 5）</h2>
+<p>目标：应对 DeFi 协议、聚合器、借贷系统相关的机制题和追问题。</p>
+<h3 id="day-4amm预言机与闪电贷">Day 4：AMM、预言机与闪电贷</h3>
+<h4 id="今日必做-3">今日必做</h4>
+<ul>
+<li>复习 Uniswap V2 的恒定乘积做市逻辑，至少能讲清：
+<ul>
+<li>swap 前后储备变化</li>
+<li>手续费如何进入模型</li>
+<li>为什么不是简单的 <code>x * y = k</code> 不变</li>
+</ul>
+</li>
+<li>结合你自己的 <code>Uniswap V2 DEX</code> 项目，明确回答：
+<ul>
+<li>你实现了哪些核心模块</li>
+<li><code>Liquidity Pool</code> 如何支持双边存入/提取</li>
+<li>LP 份额的铸造/销毁逻辑是怎么设计的</li>
+<li>你项目里的 <code>Factory / Router / Pair</code> 是否分层，如果没有，如何解释这个取舍</li>
+</ul>
+</li>
+<li>梳理 Uniswap V3 的 Tick、流动性区间、集中流动性以及 TWAP 的基本原理。</li>
+<li>系统总结闪电贷攻击链条：
+<ul>
+<li>借大额资金</li>
+<li>制造短时状态偏移</li>
+<li>利用依赖方的错误假设</li>
+<li>在同一事务内还款并获利</li>
+</ul>
+</li>
+<li>至少整理 2 个价格操纵或预言机误用案例。</li>
+</ul>
+<h4 id="今日产出-3">今日产出</h4>
+<ul>
+<li>1 份 <code>AMM 与预言机机制图</code></li>
+<li>1 份 <code>Uniswap V2 DEX 项目话术稿</code></li>
+<li>1 份 <code>闪电贷攻击模板</code></li>
+<li>1 次 5 分钟录音</li>
+</ul>
+<h4 id="验收标准-3">验收标准</h4>
+<ul>
+<li>能讲清 TWAP 为什么比 spot price 更难操纵，但不是不能操纵。</li>
+<li>能解释闪电贷只是资金放大器，不是漏洞本身。</li>
+<li>能把“回调”从语法点讲到攻击链条中的位置。</li>
+<li>能把你自己的 <code>Uniswap V2 DEX</code> 讲成“做过 AMM 实现”的项目，而不是只会背协议原理。</li>
+</ul>
+<h4 id="今日口述-3">今日口述</h4>
+<ul>
+<li>“闪电贷在攻击里扮演的到底是什么角色？”</li>
+<li>“TWAP 为什么能缓解操纵，但为什么还需要结合流动性和窗口长度看风险？”</li>
+<li>“如果面试官让我用 3 分钟讲清自己做过的 Uniswap V2 DEX，我会怎么讲？”</li>
+</ul>
+<h4 id="卡壳降级方案-3">卡壳降级方案</h4>
+<ul>
+<li>如果 V3 太难，先保住 V2、TWAP 概念、闪电贷攻击模板。</li>
+</ul>
+<h3 id="day-5lending清算与第一次-mock-interview">Day 5：Lending、清算与第一次 Mock Interview</h3>
+<h4 id="今日必做-4">今日必做</h4>
+<ul>
+<li>理解 Compound / Aave 的基础借贷结构：
+<ul>
+<li>存款凭证如何计息</li>
+<li>借款如何累计利息</li>
+<li>抵押率 / 清算阈值 / 清算奖励之间是什么关系</li>
+</ul>
+</li>
+<li>健康因子不要只背简化公式，要能讲清不同协议对 <code>LTV</code>、<code>liquidation threshold</code>、<code>close factor</code> 的处理差异。</li>
+<li>梳理“什么时候一个账户看起来安全，但在某个状态变动后突然可清算”。</li>
+<li>做第一次 Mock Interview，重点问：
+<ul>
+<li>Proxy</li>
+<li><code>delegatecall</code></li>
+<li>Reentrancy</li>
+<li>AMM</li>
+<li>Lending liquidation</li>
+</ul>
+</li>
+</ul>
+<h4 id="今日产出-4">今日产出</h4>
+<ul>
+<li>1 份 <code>Lending 核心机制</code> 笔记</li>
+<li>1 次 45-60 分钟 Mock Interview 录音</li>
+<li>1 份 <code>第一次 Mock 错题清单</code></li>
+</ul>
+<h4 id="验收标准-4">验收标准</h4>
+<ul>
+<li>能从协议机制角度解释清算为什么不是“惩罚”，而是维持系统偿付能力。</li>
+<li>能解释 cToken / aToken 的价值增长逻辑。</li>
+<li>能指出自己在 Mock 中最容易被追穿的 3 个点。</li>
+</ul>
+<h4 id="今日口述-4">今日口述</h4>
+<ul>
+<li>“为什么借贷协议必须依赖预言机，而预言机又会反过来成为最大风险点之一？”</li>
+<li>“清算阈值和 LTV 有什么区别？”</li>
+</ul>
+<h4 id="卡壳降级方案-4">卡壳降级方案</h4>
+<ul>
+<li>如果 Aave 和 Compound 同时看不过来，先选 1 个作为主讲协议，另 1 个只保留差异点。</li>
+</ul>
+<hr>
+<h2 id="阶段三高危漏洞复现与可展示作品day-6---day-9">阶段三：高危漏洞复现与可展示作品（Day 6 - Day 9）</h2>
+<p>目标：把“我理解漏洞”升级成“我能自己复现、解释、写断言、总结教训”。</p>
+<h3 id="day-6euler-finance-复现准备">Day 6：Euler Finance 复现准备</h3>
+<h4 id="今日必做-5">今日必做</h4>
+<ul>
+<li>搭好 Foundry 主网分叉环境。</li>
+<li>阅读 Euler 事件复盘，明确攻击路径中的每一步状态变化。</li>
+<li>对照 <code>deposit()</code>、<code>withdraw()</code>、<code>mint()</code>、<code>transferFrom()</code> 和 <code>donateToReserves()</code>，确认谁会走 <code>checkLiquidity()</code>，谁漏掉了这道闸门。</li>
+<li>搞清 <code>deferLiquidityStatus</code> / <code>DEFERLIQUIDITY__DIRTY</code> 的语义，理解为什么这不是“补充检查”，而是统一风控入口。</li>
+<li>不急着写完整 PoC，先把以下问题答清楚：
+<ul>
+<li>攻击者利用了哪类机制缺陷</li>
+<li>为什么 <code>donateToReserves</code> 会成为关键点</li>
+<li>问题是“权限”漏洞还是“会计”漏洞</li>
+</ul>
+</li>
+<li>确认为什么 PoC 里必须拆 <code>violator</code> / <code>liquidator</code> 两个角色，而不能 self-liquidation。</li>
+<li>把 PoC 拆成 3 段：资金准备、状态畸变、清算获利。</li>
+<li>区分 <code>Foundry fork test</code> 和 <code>Tenderly 广播调试</code> 的用途，不把“本地可跑”和“链上可追踪”混成一件事。</li>
+</ul>
+<h4 id="今日产出-5">今日产出</h4>
+<ul>
+<li>1 份 Euler 攻击路径图</li>
+<li>1 份 <code>checkLiquidity 与 donateToReserves</code> 对照笔记</li>
+<li>1 个 Foundry fork 测试骨架</li>
+<li>1 份“漏洞本质”总结</li>
+</ul>
+<h4 id="验收标准-5">验收标准</h4>
+<ul>
+<li>能不看文章复述 Euler 攻击主线。</li>
+<li>能说出这不是普通重入，而是会计与状态约束设计失效。</li>
+<li>能讲清 <code>checkLiquidity()</code> / <code>deferLiquidityStatus</code> 为什么是这次事故真正失守的边界。</li>
+</ul>
+<h4 id="今日口述-5">今日口述</h4>
+<ul>
+<li>“Euler 这类漏洞为什么比单点函数 bug 更可怕？”</li>
+</ul>
+<h4 id="卡壳降级方案-5">卡壳降级方案</h4>
+<ul>
+<li>如果主网分叉环境调不顺，先把攻击流程图和关键状态变化写清楚，再补 PoC。</li>
+</ul>
+<h3 id="day-7euler-finance-poc-与滚动投递开始">Day 7：Euler Finance PoC 与滚动投递开始</h3>
+<h4 id="今日必做-6">今日必做</h4>
+<ul>
+<li>补完核心攻击步骤，完成 PoC 主流程。</li>
+<li>为关键状态添加断言，不要只跑通结果，要证明状态为什么变化。</li>
+<li>在 PoC 和总结里明确写出 <code>violator</code> / <code>liquidator</code> 的职责分工，以及为什么协议不允许 self-liquidation。</li>
+<li>如果要走 Tenderly 广播调试，记录为什么脚本里需要 <code>--slow</code>，避免把“部署成功”和“调用成功”当成同一层问题。</li>
+<li>输出一页总结：
+<ul>
+<li>漏洞前提</li>
+<li>攻击步骤</li>
+<li>根因</li>
+<li>修复思路</li>
+<li>如果我是审计员，早期该如何发现</li>
+</ul>
+</li>
+<li>今天开始第一次滚动投递，至少投递 1-2 个岗位。</li>
+</ul>
+<h4 id="今日产出-6">今日产出</h4>
+<ul>
+<li>1 个可跑的 Euler PoC</li>
+<li>1 份 <code>Euler 漏洞复现总结</code></li>
+<li>1 份 <code>Euler 一句话介绍 + 3 分钟版 + 高频追问版</code></li>
+<li>1 次实际投递记录</li>
+</ul>
+<h4 id="验收标准-6">验收标准</h4>
+<ul>
+<li>能把攻击流程讲成一个连续故事，而不是碎片化步骤。</li>
+<li>能解释为什么断言比“脚本跑通了”更能体现工程能力。</li>
+<li>简历里能新增 1 条关于 Euler 复现的 bullet。</li>
+<li>被追问“你怎么证明不是抄 PoC”时，能拿 <code>checkLiquidity</code>、双角色、断言设计、调试路径来回答。</li>
+</ul>
+<h4 id="今日口述-6">今日口述</h4>
+<ul>
+<li>“如果面试官让我现场讲 Euler，你会怎么在 3 分钟内讲清攻击链？”</li>
+<li>“为什么 <code>donateToReserves</code> 漏掉的不是一个普通 if，而是整套风险约束的统一入口？”</li>
+</ul>
+<h4 id="卡壳降级方案-6">卡壳降级方案</h4>
+<ul>
+<li>如果完整 PoC 赶不出来，至少保住测试骨架、关键一步复现、状态断言、总结文档。</li>
+</ul>
+<h3 id="day-8只读重入原理拆解">Day 8：只读重入原理拆解</h3>
+<h4 id="今日必做-7">今日必做</h4>
+<ul>
+<li>锁定 <code>Sentiment 2023-04-04</code> 这个案例，不再泛泛看“只读重入”。</li>
+<li>重点不是背 case，而是理解：
+<ul>
+<li>为什么它叫“只读”重入</li>
+<li>为什么“只读”也可能导致错误价格或错误状态被其他协议消费</li>
+<li>状态去同步是怎么出现的</li>
+</ul>
+</li>
+<li>明确这条链上的两个边界函数：<code>WeightedBalancerLPOracle.getPrice()</code> 和 <code>AccountManager.borrow()</code>。</li>
+<li>搞清为什么要走 ETH 退出路径，以及为什么 Sentiment 自己的 <code>nonReentrant</code> 没有挡住这次攻击。</li>
+<li>画出 DEX、预言机依赖方、攻击合约之间的调用链。</li>
+<li>记下最关键的证据锚点：<code>priceBefore</code>、<code>priceDuring</code>、<code>priceAfter</code> 的关系，不把“价格变了”讲成空话。</li>
+<li>归纳“哪些协议设计特别怕只读重入”。</li>
+</ul>
+<h4 id="今日产出-7">今日产出</h4>
+<ul>
+<li>1 张调用链与状态流转图</li>
+<li>1 份 <code>Read-Only Reentrancy</code> 原理笔记</li>
+<li>1 份 <code>Sentiment 关键函数与证据表</code></li>
+<li>10 张题卡</li>
+</ul>
+<h4 id="验收标准-7">验收标准</h4>
+<ul>
+<li>能解释“没有直接写坏状态”为什么仍然能造成经济损失。</li>
+<li>能把只读重入与普通重入、预言机操纵联系起来讲。</li>
+<li>能讲清 <code>borrow()</code> 的“先放款、后检查”为什么会把脏价格直接兑现成真钱风险。</li>
+</ul>
+<h4 id="今日口述-7">今日口述</h4>
+<ul>
+<li>“只读重入为什么会打破很多人对 <code>view</code> / <code>read-only</code> 的安全直觉？”</li>
+<li>“为什么 <code>nonReentrant</code> 没挡住这次 Sentiment 攻击？”</li>
+</ul>
+<h4 id="卡壳降级方案-7">卡壳降级方案</h4>
+<ul>
+<li>如果某个案例源码太重，先保住抽象层：调用时序、状态快照失真、依赖方误用。</li>
+</ul>
+<h3 id="day-9只读重入-poc-与第二次-mock-interview">Day 9：只读重入 PoC 与第二次 Mock Interview</h3>
+<h4 id="今日必做-8">今日必做</h4>
+<ul>
+<li>编写恶意回调合约，尽量把最小攻击链跑通。</li>
+<li>为关键时刻打印或断言：
+<ul>
+<li>池子状态</li>
+<li>价格读数</li>
+<li>借贷协议读到的值</li>
+<li>攻击前后收益变化</li>
+</ul>
+</li>
+<li>单独对比 <code>priceBefore / priceDuring / priceAfter</code>，明确“真正证明漏洞成立的是 during，不是 after”。</li>
+<li>在总结里分别写上游修复和下游修复：例如 Balancer 侧的 reentrancy check / <code>manageUserBalance([])</code> 思路，以及 Sentiment 借款路径的前置额度检查。</li>
+<li>输出和 Euler 一样结构化的总结。</li>
+<li>做第二次 Mock Interview，这次重点练：
+<ul>
+<li>漏洞复现讲解</li>
+<li>项目介绍</li>
+<li>为什么你适合 Web3 安全岗</li>
+</ul>
+</li>
+</ul>
+<h4 id="今日产出-8">今日产出</h4>
+<ul>
+<li>1 个只读重入最小 PoC</li>
+<li>1 份 <code>Read-Only Reentrancy 复现总结</code></li>
+<li>1 份 <code>Sentiment 一句话介绍 + 3 分钟版 + 高频追问版</code></li>
+<li>1 份 <code>第二次 Mock 错题清单</code></li>
+</ul>
+<h4 id="验收标准-8">验收标准</h4>
+<ul>
+<li>能用“状态去同步 + 依赖方误读”来解释攻击本质。</li>
+<li>能明显感受到第二次 Mock 比第一次更稳、更结构化。</li>
+<li>被追问“你凭什么说这里读到了脏价格”时，能直接拿出关键函数和关键数值回答。</li>
+</ul>
+<h4 id="今日口述-8">今日口述</h4>
+<ul>
+<li>“如果让我比较 Euler 和只读重入，我会怎么体现自己的抽象能力，而不是只会讲 case？”</li>
+</ul>
+<h4 id="卡壳降级方案-8">卡壳降级方案</h4>
+<ul>
+<li>如果完整 PoC 太难，至少完成最小重入回调 + 错误读值演示 + 总结文档。</li>
+</ul>
+<hr>
+<h2 id="阶段四收网简历与实弹投递day-10">阶段四：收网、简历与实弹投递（Day 10）</h2>
+<p>目标：把前 9 天的成果压缩成面试可见价值。</p>
+<h3 id="day-10简历定稿项目话术收口集中投递">Day 10：简历定稿、项目话术收口、集中投递</h3>
+<h4 id="今日必做-9">今日必做</h4>
+<ul>
+<li>修改简历中的“项目经历”或“自我驱动”板块，重点新增：
+<ul>
+<li>Euler 漏洞复现</li>
+<li>只读重入复现</li>
+<li>MemeScan 的攻防推演能力</li>
+<li>Uniswap V2 DEX 的 AMM / LP 实现能力</li>
+</ul>
+</li>
+<li>把 4 个项目包都整理成最终版：
+<ul>
+<li><code>MemeScan</code>：60 秒版 / 3 分钟版 / 高频追问版 / 不要说错版</li>
+<li><code>Euler</code>：一句话版 / 3 分钟版 / 高频追问版</li>
+<li><code>Sentiment</code>：一句话版 / 3 分钟版 / 高频追问版</li>
+<li><code>Uniswap V2 DEX</code>：一句话版 / 3 分钟版 / 高频追问版</li>
+</ul>
+</li>
+<li>集中投递一批岗位，优先投和你当前准备内容贴近的团队：
+<ul>
+<li>审计</li>
+<li>协议安全</li>
+<li>Web3 后端安全研发</li>
+</ul>
+</li>
+<li>梳理一份“最终高频问题清单”，至少覆盖：
+<ul>
+<li>Proxy / delegatecall / storage collision</li>
+<li>reentrancy / read-only reentrancy</li>
+<li>AMM / TWAP / flash loan</li>
+<li>lending / liquidation</li>
+<li>你的项目与 PoC（MemeScan / Euler / Sentiment / Uniswap V2 DEX）</li>
+</ul>
+</li>
+</ul>
+<h4 id="今日产出-9">今日产出</h4>
+<ul>
+<li>1 版最终简历</li>
+<li>1 份项目话术稿</li>
+<li>1 份按主题整理的高频问题清单</li>
+<li>3-5 个岗位投递记录</li>
+</ul>
+<h4 id="验收标准-9">验收标准</h4>
+<ul>
+<li>简历上的每一条技术描述都能被你展开讲 3 分钟。</li>
+<li>被问“你最近最有代表性的安全研究是什么”时，可以稳定回答 Euler 或只读重入。</li>
+<li>被问 <code>MemeScan</code> 时，不会把当前实现边界说错。</li>
+<li>你已经不再是“准备好了再投”，而是边投边迭代。</li>
+</ul>
+<h4 id="今日口述-9">今日口述</h4>
+<ul>
+<li>“请你做一个 3 分钟自我介绍，重点说最能代表你技术判断力的项目或研究。”</li>
+</ul>
+<h4 id="卡壳降级方案-9">卡壳降级方案</h4>
+<ul>
+<li>如果 Day 10 很赶，优先顺序是：简历 > 项目话术 > 投递 > 题库整理。</li>
+</ul>
+<hr>
+<h2 id="每日收尾检查">每日收尾检查</h2>
+<p>每天睡前只检查这 5 件事：</p>
+<ol>
+<li>今天有没有留下可见产出</li>
+<li>今天有没有录过至少 1 次口述</li>
+<li>今天新增了哪些错题和题卡</li>
+<li>今天最容易被追穿的点是什么</li>
+<li>明天第一件要补的事是什么</li>
+</ol>
+<h2 id="10-天后的达标线">10 天后的达标线</h2>
+<p>如果这 10 天执行得比较完整，最终应该至少达到下面这个水平：</p>
+<ul>
+<li>能比较稳定地回答 EVM 底层、代理模式、调用上下文、Gas、Permit 等基础追问</li>
+<li>能清楚解释 AMM、预言机、借贷、清算这些 DeFi 面试高频机制</li>
+<li>能拿出 2 个自己复现过的高质量漏洞案例，而不是只会复述文章</li>
+<li>能把 <code>MemeScan</code> 讲成一个有问题意识、有架构判断、有验证闭环的项目</li>
+<li>能在投递后根据真实面试问题继续迭代，而不是停留在“学习完成”的错觉里</li>
+</ul>
+<h2 id="最后提醒">最后提醒</h2>
+<p>这份计划最容易失败的地方不是“难”，而是“每天输入很多，但输出不够”。如果只能保一件事，就保 <code>口述 + 产出</code>。因为面试不是比谁知道得多，而是比谁能在高压下讲清楚、举出证据、形成闭环。</p> </div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/面试/面试高频清单/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">面试高频清单</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/面试/面试题卡/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">面试题卡</h4> </a> </div> </nav> </article> <div id="reading-progress" style="position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 9999; transition: width 0.1s ease-out; pointer-events: none;"></div> <script type="module">document.addEventListener("astro:page-load",()=>{const e=document.getElementById("reading-progress");if(!e)return;const t=()=>{const n=document.documentElement.scrollHeight-window.innerHeight;if(n>0){const o=window.scrollY/n*100;e.style.width=`${o}%`}};window.addEventListener("scroll",t),document.addEventListener("astro:before-swap",()=>{window.removeEventListener("scroll",t)},{once:!0})});</script>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try { localStorage.setItem("theme", value); } catch {}
+          });
+        };
+        bindToggle();
+      })();
+    </script> </body> </html> 

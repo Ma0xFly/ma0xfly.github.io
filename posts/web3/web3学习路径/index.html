@@ -1,0 +1,407 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>web3学习路径 | Notebook Dispatch</title><meta name="description" content="# 阶段 0：Web3 入门基础（1–2 周） ## ▸ 必学内容 ### ● 创建钱包 &#38; Web3 基础 + MetaMask 入门 - [https://support.metamask.io/zh-cn/start/getting-started-with-metamas"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.Coc4ZbWY.css"></head> <body class> <!-- 首页导航栏：悬浮透明，叠在 Hero 上方 --> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">Notebook Dispatch</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☼</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回主页花园</a> <header class="article-header"> <p class="eyebrow">2026/4/14</p> <h1>web3学习路径</h1> <p class="lead"># 阶段 0：Web3 入门基础（1–2 周） ## ▸ 必学内容 ### ● 创建钱包 &amp; Web3 基础 + MetaMask 入门 - [https://support.metamask.io/zh-cn/start/getting-started-with-metamas</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> </header> <div class="article-content"> <h1 id="阶段-0web3-入门基础12-周">阶段 0：Web3 入门基础（1–2 周）</h1>
+<h2 id="-必学内容">▸ 必学内容</h2>
+<h3 id="-创建钱包--web3-基础">● 创建钱包 &#x26; Web3 基础</h3>
+<ul>
+<li>MetaMask 入门
+<ul>
+<li><a href="https://support.metamask.io/zh-cn/start/getting-started-with-metamask/">https://support.metamask.io/zh-cn/start/getting-started-with-metamask/</a></li>
+<li><a href="https://learn.metamask.io/zh-CN/lessons/what-is-web3">https://learn.metamask.io/zh-CN/lessons/what-is-web3</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="-智能合约基础概念">● 智能合约基础概念</h3>
+<ul>
+<li>Solidity 官方入门
+<ul>
+<li><a href="https://docs.soliditylang.org/zh-cn/latest/introduction-to-smart-contracts.html">https://docs.soliditylang.org/zh-cn/latest/introduction-to-smart-contracts.html</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="-工具环境">● 工具环境</h3>
+<ul>
+<li>Remix 在线 IDE
+<ul>
+<li><a href="https://remix.ethereum.org/">https://remix.ethereum.org</a></li>
+</ul>
+</li>
+<li>以太坊区块浏览器 Etherscan
+<ul>
+<li><a href="https://etherscan.io/">https://etherscan.io</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="-推荐课程">● 推荐课程</h3>
+<ul>
+<li>北大区块链课程
+<ul>
+<li><a href="https://www.bilibili.com/video/BV1Vt411X7JF">https://www.bilibili.com/video/BV1Vt411X7JF</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="-checkpoints">▸ Checkpoints</h2>
+<ul>
+<li>创建钱包</li>
+<li>交易一次（swap）</li>
+<li>在 Etherscan 分析一笔交易</li>
+<li>用 Remix 部署 HelloWorld</li>
+</ul>
+<hr>
+<h1 id="阶段-1solidity--foundry-核心基础36-周">阶段 1：Solidity + Foundry 核心基础（3–6 周）</h1>
+<h2 id="-solidity-核心语法">▸ Solidity 核心语法</h2>
+<ul>
+<li>官方文档
+<ul>
+<li><a href="https://docs.soliditylang.org/">https://docs.soliditylang.org</a></li>
+</ul>
+</li>
+<li>ABI 编码
+<ul>
+<li><a href="https://docs.soliditylang.org/en/latest/abi-spec.html">https://docs.soliditylang.org/en/latest/abi-spec.html</a></li>
+</ul>
+</li>
+<li>storage / memory / calldata</li>
+<li>tx.origin / msg.sender</li>
+<li>event / mapping / struct</li>
+<li>fallback / receive</li>
+</ul>
+<h2 id="-evm-基础slot--sload--sstore--abi">▸ EVM 基础（slot / SLOAD / SSTORE / ABI）</h2>
+<ul>
+<li>参考
+<ul>
+<li><a href="https://docs.soliditylang.org/en/latest/internals/layout_in_storage.html">https://docs.soliditylang.org/en/latest/internals/layout_in_storage.html</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="-开发工具链主力">▸ 开发工具链（主力）</h2>
+<h3 id="-foundry">● Foundry</h3>
+<ul>
+<li>文档
+<ul>
+<li><a href="https://book.getfoundry.sh/">https://book.getfoundry.sh</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="-代理模式">● 代理模式</h3>
+<ul>
+<li>Transparent Proxy
+<ul>
+<li><a href="https://docs.openzeppelin.com/contracts/4.x/api/proxy#TransparentUpgradeableProxy">https://docs.openzeppelin.com/contracts/4.x/api/proxy#TransparentUpgradeableProxy</a></li>
+</ul>
+</li>
+<li>UUPS Proxy
+<ul>
+<li><a href="https://docs.openzeppelin.com/contracts/4.x/api/proxy#UUPSUpgradeable">https://docs.openzeppelin.com/contracts/4.x/api/proxy#UUPSUpgradeable</a></li>
+</ul>
+</li>
+<li>Diamond Proxy (ERC2535)
+<ul>
+<li><a href="https://eips.ethereum.org/EIPS/eip-2535">https://eips.ethereum.org/EIPS/eip-2535</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="-checkpoints-1">▸ Checkpoints</h2>
+<ul>
+<li>手写 ERC20</li>
+<li>手写 Bank（存款/取款）</li>
+<li>Foundry 单测 ≥10</li>
+<li>Foundry fuzz 测试</li>
+<li>手写 3 类 Proxy</li>
+<li>部署到 testnet（Forge script）</li>
+</ul>
+<hr>
+<h1 id="阶段-2defi-协议原理24-周">阶段 2:DeFi 协议原理（2–4 周）</h1>
+<h2 id="-必学协议">▸ 必学协议</h2>
+<h3 id="-amm--uniswap">● AMM / Uniswap</h3>
+<ul>
+<li>V2 Whitepaper
+<ul>
+<li><a href="https://uniswap.org/whitepaper">https://uniswap.org/whitepaper</a></li>
+</ul>
+</li>
+<li>V3 Whitepaper
+<ul>
+<li><a href="https://uniswap.org/whitepaper-v3">https://uniswap.org/whitepaper-v3</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="-curve">● Curve</h3>
+<ul>
+<li>Docs
+<ul>
+<li><a href="https://curve.readthedocs.io/">https://curve.readthedocs.io</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="-gmx">● GMX</h3>
+<ul>
+<li>Docs
+<ul>
+<li><a href="https://gmxio.gitbook.io/">https://gmxio.gitbook.io</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="-推荐课程-1">● 推荐课程</h3>
+<ul>
+<li>梁培利 DeFi 课程</li>
+</ul>
+<h2 id="-checkpoints-2">▸ Checkpoints</h2>
+<ul>
+<li>理解 x*y=k</li>
+<li>用 Solidity 写一个最简 AMM</li>
+<li>理解 LP、滑点、套利</li>
+<li>用 Foundry 模拟一次套利</li>
+</ul>
+<hr>
+<h1 id="阶段-3solidity-漏洞体系23-周">阶段 3：Solidity 漏洞体系（2–3 周）</h1>
+<h2 id="-必学漏洞类型">▸ 必学漏洞类型</h2>
+<ul>
+<li>重入攻击（Reentrancy）
+<ul>
+<li><a href="https://blog.openzeppelin.com/reentrancy-after-istanbul">https://blog.openzeppelin.com/reentrancy-after-istanbul</a></li>
+</ul>
+</li>
+<li>授权错误（AccessControl）
+<ul>
+<li><a href="https://docs.openzeppelin.com/contracts/4.x/access-control">https://docs.openzeppelin.com/contracts/4.x/access-control</a></li>
+</ul>
+</li>
+<li>调用陷阱（delegatecall）
+<ul>
+<li><a href="https://docs.soliditylang.org/en/latest/introduction-to-smart-contracts.html#delegatecall">https://docs.soliditylang.org/en/latest/introduction-to-smart-contracts.html#delegatecall</a></li>
+</ul>
+</li>
+<li>预言机操控
+<ul>
+<li><a href="https://chain.link/education">https://chain.link/education</a></li>
+</ul>
+</li>
+<li>TWAP 操控
+<ul>
+<li><a href="https://samczsun.com/twap-oracle-attacks">https://samczsun.com/twap-oracle-attacks</a></li>
+</ul>
+</li>
+<li>闪电贷攻击（Flashloan）
+<ul>
+<li>Aave Docs: <a href="https://docs.aave.com/faq/flash-loans">https://docs.aave.com/faq/flash-loans</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="-checkpoints-3">▸ Checkpoints</h2>
+<ul>
+<li>每种漏洞写出简版复现</li>
+<li>用 Foundry 写 PoC</li>
+</ul>
+<hr>
+<h1 id="阶段-4靶场训练48-周">阶段 4：靶场训练（4–8 周）</h1>
+<h2 id="-你必须刷完的-3-套靶场">▸ 你必须刷完的 3 套靶场</h2>
+<h3 id="-ethernaut">● Ethernaut</h3>
+<ul>
+<li><a href="https://ethernaut.openzeppelin.com/">https://ethernaut.openzeppelin.com</a></li>
+</ul>
+<h3 id="-damn-vulnerable-defi">● Damn Vulnerable DeFi</h3>
+<ul>
+<li><a href="https://www.damnvulnerabledefi.xyz/">https://www.damnvulnerabledefi.xyz/</a></li>
+</ul>
+<h3 id="-paradigm-ctf选做">● Paradigm CTF（选做）</h3>
+<ul>
+<li><a href="https://github.com/paradigmxyz/paradigm-ctf-2021">https://github.com/paradigmxyz/paradigm-ctf-2021</a></li>
+</ul>
+<h2 id="-checkpoints-4">▸ Checkpoints</h2>
+<ul>
+<li>Ethernaut ≥ 20 关</li>
+<li>DVDeFi 全部完成</li>
+<li>Paradigm 完成几题</li>
+<li>写 3 个漏洞 PoC</li>
+</ul>
+<hr>
+<h1 id="阶段-5真实攻击事件复现46-周">阶段 5：真实攻击事件复现（4–6 周）</h1>
+<h2 id="-工具必须掌握">▸ 工具（必须掌握）</h2>
+<ul>
+<li>区块链浏览器（Etherscan）
+<ul>
+<li><a href="https://etherscan.io/">https://etherscan.io</a></li>
+</ul>
+</li>
+<li>Phalcon Explorer（调用栈、资金流）
+<ul>
+<li><a href="https://explorer.phalcon.xyz/">https://explorer.phalcon.xyz</a></li>
+</ul>
+</li>
+<li>Foundry mainnet fork
+<ul>
+<li><a href="https://book.getfoundry.sh/forge/forking">https://book.getfoundry.sh/forge/forking</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="-推荐复现仓库">▸ 推荐复现仓库</h2>
+<ul>
+<li>DeFiHackLabs
+<ul>
+<li><a href="https://github.com/SunWeb3Sec/DeFiHackLabs">https://github.com/SunWeb3Sec/DeFiHackLabs</a></li>
+</ul>
+</li>
+<li>learn-evm-hacks
+<ul>
+<li><a href="https://github.com/1nchboy/learn-evm-hacks">https://github.com/1nchboy/learn-evm-hacks</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="-checkpoints-5">▸ Checkpoints</h2>
+<ul>
+<li>复现 ≥ 3 个真实攻击事件</li>
+<li>写 ≥ 3 个攻击 PoC</li>
+<li>在 Phalcon 分析 ≥5 笔攻击</li>
+</ul>
+<hr>
+<h1 id="阶段-6审计报告学习23-周">阶段 6：审计报告学习（2–3 周）</h1>
+<h2 id="-报告来源按优先级">▸ 报告来源（按优先级）</h2>
+<ul>
+<li>Solodit（合集）
+<ul>
+<li><a href="https://solodit.xyz/">https://solodit.xyz</a></li>
+</ul>
+</li>
+<li>Code4rena
+<ul>
+<li><a href="https://code4rena.com/">https://code4rena.com</a></li>
+</ul>
+</li>
+<li>Sherlock
+<ul>
+<li><a href="https://audits.sherlock.xyz/">https://audits.sherlock.xyz</a></li>
+</ul>
+</li>
+<li>Cantina
+<ul>
+<li><a href="https://cantina.xyz/">https://cantina.xyz</a></li>
+</ul>
+</li>
+<li>Trail of Bits 博客
+<ul>
+<li><a href="https://blog.trailofbits.com/">https://blog.trailofbits.com</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="-checkpoints-6">▸ Checkpoints</h2>
+<ul>
+<li>阅读 ≥15 份报告</li>
+<li>对 ≥5 个漏洞写复盘</li>
+<li>仿写 2 份完整审计报告</li>
+</ul>
+<hr>
+<h1 id="阶段-7move--sui--aptos48-周">阶段 7：Move / Sui / Aptos（4–8 周）</h1>
+<h2 id="-学习资源">▸ 学习资源</h2>
+<ul>
+<li>Move Book
+<ul>
+<li><a href="https://move-book.com/">https://move-book.com</a></li>
+</ul>
+</li>
+<li>Move Audit Resources
+<ul>
+<li><a href="https://github.com/0xriazaka/Move-Audit-Resources">https://github.com/0xriazaka/Move-Audit-Resources</a></li>
+</ul>
+</li>
+<li>Aptos 官方教程
+<ul>
+<li><a href="https://learn.aptoslabs.com/en">https://learn.aptoslabs.com/en</a></li>
+</ul>
+</li>
+<li>Sui / Move 安全（Spearbit）
+<ul>
+<li><a href="https://x.com/spearbit/status/1900610959812776221">https://x.com/spearbit/status/1900610959812776221</a></li>
+</ul>
+</li>
+<li>Move Prover
+<ul>
+<li><a href="https://medium.com/@monethic/getting-started-with-move-prover-for-aptos-01923d5a1d0f">https://medium.com/@monethic/getting-started-with-move-prover-for-aptos-01923d5a1d0f</a></li>
+</ul>
+</li>
+<li>OtterSec Move 审计报告
+<ul>
+<li><a href="https://ottersec.notion.site/Sampled-Public-Audit-Reports-a296e98838aa4fdb8f3b192663400772">https://ottersec.notion.site/Sampled-Public-Audit-Reports-a296e98838aa4fdb8f3b192663400772</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="-checkpoints-7">▸ Checkpoints</h2>
+<ul>
+<li>写一个 Move coin</li>
+<li>写一个 Move AMM</li>
+<li>阅读 ≥3 个 Move 审计报告</li>
+<li>Move Prover 验证 invariant</li>
+</ul>
+<hr>
+<h1 id="阶段-8bounty--审计比赛持续">阶段 8：Bounty / 审计比赛（持续）</h1>
+<h2 id="-赏金平台">▸ 赏金平台</h2>
+<ul>
+<li>Immunefi
+<ul>
+<li><a href="https://immunefi.com/">https://immunefi.com</a></li>
+</ul>
+</li>
+<li>HackenProof
+<ul>
+<li><a href="https://hackenproof.com/">https://hackenproof.com</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="-审计比赛">▸ 审计比赛</h2>
+<ul>
+<li>Code4rena
+<ul>
+<li><a href="https://code4rena.com/">https://code4rena.com</a></li>
+</ul>
+</li>
+<li>Sherlock
+<ul>
+<li><a href="https://audits.sherlock.xyz/">https://audits.sherlock.xyz</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="-checkpoints-8">▸ Checkpoints</h2>
+<ul>
+<li>提交 ≥1 个有效漏洞</li>
+<li>参加 ≥1 次审计比赛</li>
+<li>写 ≥1 份正式审计报告</li>
+</ul>
+<hr>
+<h1 id="最终你将具备的能力">最终你将具备的能力</h1>
+<ul>
+<li>Solidity + Foundry + 代理模式</li>
+<li>DeFi 深入理解</li>
+<li>漏洞体系知识</li>
+<li>靶场攻克能力</li>
+<li>主网攻击复现能力</li>
+<li>能读写审计报告</li>
+<li>Move / Aptos / Sui 审计基础</li>
+<li>能参与 Code4rena / Sherlock / Immunefi 挖洞</li>
+</ul> </div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/SpeedrunEthereum/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">SpeedrunEthereum</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;">  </div> </nav> </article> <div id="reading-progress" style="position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 9999; transition: width 0.1s ease-out; pointer-events: none;"></div> <script type="module">document.addEventListener("astro:page-load",()=>{const e=document.getElementById("reading-progress");if(!e)return;const t=()=>{const n=document.documentElement.scrollHeight-window.innerHeight;if(n>0){const o=window.scrollY/n*100;e.style.width=`${o}%`}};window.addEventListener("scroll",t),document.addEventListener("astro:before-swap",()=>{window.removeEventListener("scroll",t)},{once:!0})});</script>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try { localStorage.setItem("theme", value); } catch {}
+          });
+        };
+        bindToggle();
+      })();
+    </script> </body> </html> 

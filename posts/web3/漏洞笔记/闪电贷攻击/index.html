@@ -1,0 +1,118 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>闪电贷攻击 | Notebook Dispatch</title><meta name="description" content="# 闪电贷攻击 (Flash Loan Attack) > **标签:** #漏洞类型/资本操纵 | #协议类型/DeFi/借贷/DEX | #严重程度/High ## 📌 1. TL;DR (一句话快速回顾) * **本质成因**：DeFi 协议在设计时假设了市场流动性分布和"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.Coc4ZbWY.css"></head> <body class> <!-- 首页导航栏：悬浮透明，叠在 Hero 上方 --> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">Notebook Dispatch</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☼</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回主页花园</a> <header class="article-header"> <p class="eyebrow">2026/4/14</p> <h1>闪电贷攻击</h1> <p class="lead"># 闪电贷攻击 (Flash Loan Attack) &gt; **标签:** #漏洞类型/资本操纵 | #协议类型/DeFi/借贷/DEX | #严重程度/High ## 📌 1. TL;DR (一句话快速回顾) * **本质成因**：DeFi 协议在设计时假设了市场流动性分布和</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> </header> <div class="article-content"> <h1 id="闪电贷攻击-flash-loan-attack">闪电贷攻击 (Flash Loan Attack)</h1>
+<blockquote>
+<p><strong>标签:</strong> #漏洞类型/资本操纵 | #协议类型/DeFi/借贷/DEX | #严重程度/High</p>
+</blockquote>
+<h2 id="-1-tldr-一句话快速回顾">📌 1. TL;DR (一句话快速回顾)</h2>
+<ul>
+<li><strong>本质成因</strong>：DeFi 协议在设计时假设了市场流动性分布和资金规模的“常态”，未考虑到攻击者能在单笔交易内无抵押借入天量资金（极大改变了局部资本状态）。</li>
+<li><strong>攻击路径</strong>：通过闪电贷借入巨资 -> 利用天量资金在各协议间搬砖、操纵预言机价格或触发系统极端状态 -> 获利并在此笔交易结束前归还本金+手续费。</li>
+</ul>
+<hr>
+<h2 id="-2-漏洞底层原理-root-cause">🔍 2. 漏洞底层原理 (Root Cause)</h2>
+<h3 id="正常业务逻辑">正常业务逻辑</h3>
+<ul>
+<li><strong>闪电贷机制</strong>：允许用户在无需抵押物的情况下借入任意数量的资产，前提是必须在**同一笔区块链交易（同一个区块内）**结束前连本带息归还。如果无法归还，整笔交易回滚（revert），仿佛借钱从未发生过。</li>
+<li><strong>协议期望</strong>：闪电贷原本是为开发者套利、清算、债务置换等提供无摩擦流动性的金融工具。</li>
+</ul>
+<h3 id="缺陷剖析">缺陷剖析</h3>
+<ul>
+<li><strong>致命代码/机制</strong>：闪电贷本身<strong>不是漏洞</strong>，它只是一种“资本杠杆放大器”。真正的漏洞往往潜伏在被攻击协议自身的业务逻辑中。</li>
+<li><strong>为何产生冲突</strong>：
+<ul>
+<li><em>预期状态：协议按照“普通用户资金量”设计的滑点、价格预言机采集或借贷清算水位是健康的。</em></li>
+<li><em>实际状态：攻击者携巨量资金（如几千万美金）在单笔交易内疯狂砸盘/拉盘，导致去中心化交易所（DEX）极其倾斜，依附于此 DEX 读取价格的借贷协议瞬间被“欺骗”算出极值。普通机制在天量资金冲击下失效。</em></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="️-3-攻击执行路径-exploit-steps">⚔️ 3. 攻击执行路径 (Exploit Steps)</h2>
+<blockquote>
+<p>以“闪电贷辅助的价格操纵攻击”为例：</p>
+</blockquote>
+<ol>
+<li><strong>[准备阶段]</strong>: 调用 Aave 或 dYdX 等提供闪电贷的平台，借入海量 Token A。</li>
+<li><strong>[触发阶段]</strong>: 在 DEX（如 Uniswap）抛售海量 Token A 兑换为 Token B。这会导致该池子里 Token A 价格暴跌，Token B 价格暴涨。</li>
+<li><strong>[利用阶段]</strong>: 带着暴涨后的 Token B，去某个把该 Uniswap 池子直接当做价格预言机的借贷协议。由于此时借贷协议看到的 Token B 价格极高，攻击者用很少的 Token B 抵押，就能借空该协议里的其他有价值资产（如 ETH）。</li>
+<li><strong>[获利退场]</strong>: 此时在 DEX 中反向操作（可做可不做，看成本），攻击者结清闪电贷本息归还给 Aave。剩下的从借贷协议“骗”出的巨额资产即为净利润。留下一地鸡毛的借贷协议面临巨额坏账。</li>
+</ol>
+<hr>
+<h2 id="-4-关键代码示例-snippets">💻 4. 关键代码示例 (Snippets)</h2>
+<h3 id="漏洞代码-vulnerable-code">漏洞代码 (Vulnerable Code)</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="solidity"><code><span class="line"><span style="color:#6A737D">// 一个严重依赖单一 AMM 即时余额作为现价预言机的脆弱协议</span></span>
+<span class="line"><span style="color:#F97583">contract</span><span style="color:#B392F0"> VulnerableLending</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    function</span><span style="color:#B392F0"> getPriceOfToken</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">address</span><span style="color:#FFAB70"> token</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">public</span><span style="color:#F97583"> view</span><span style="color:#F97583"> returns</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">uint256</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">        // 致命点：直接取当前区块某一个池子的瞬时比例作为价格！这极容易被闪电贷一波流冲垮。</span></span>
+<span class="line"><span style="color:#79B8FF">        uint256</span><span style="color:#E1E4E8"> reserveA </span><span style="color:#F97583">=</span><span style="color:#B392F0"> IERC20</span><span style="color:#E1E4E8">(token).</span><span style="color:#B392F0">balanceOf</span><span style="color:#E1E4E8">(uniswapPool);</span></span>
+<span class="line"><span style="color:#79B8FF">        uint256</span><span style="color:#E1E4E8"> reserveETH </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> address</span><span style="color:#E1E4E8">(uniswapPool).balance;</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> reserveETH </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> reserveA; </span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="攻击核心逻辑-attack-logic">攻击核心逻辑 (Attack Logic)</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="solidity"><code><span class="line"><span style="color:#6A737D">// 你的攻击合约实现闪电贷回调接口</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> executeOperation</span><span style="color:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#79B8FF">    address</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">calldata</span><span style="color:#FFAB70"> assets</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    uint256</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">calldata</span><span style="color:#FFAB70"> amounts</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    uint256</span><span style="color:#E1E4E8">[] </span><span style="color:#F97583">calldata</span><span style="color:#FFAB70"> premiums</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    address</span><span style="color:#FFAB70"> initiator</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">    bytes</span><span style="color:#F97583"> calldata</span><span style="color:#FFAB70"> params</span></span>
+<span class="line"><span style="color:#E1E4E8">) </span><span style="color:#F97583">external</span><span style="color:#F97583"> returns</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">bool</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#6A737D">    // 1. 此时你已经拥有了天量资金 assets[0]</span></span>
+<span class="line"><span style="color:#E1E4E8">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 2. 拿去砸盘，人为制造巨大的价格滑点</span></span>
+<span class="line"><span style="color:#E1E4E8">    dex.</span><span style="color:#B392F0">swapExactTokensForTokens</span><span style="color:#E1E4E8">(amounts[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">], ...);</span></span>
+<span class="line"><span style="color:#E1E4E8">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 3. 趁着价格扭曲，去借贷协议薅羊毛</span></span>
+<span class="line"><span style="color:#E1E4E8">    vulnerableLending.</span><span style="color:#B392F0">borrow</span><span style="color:#E1E4E8">(targetAmount);</span></span>
+<span class="line"><span style="color:#E1E4E8">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 4. 批准闪电贷平台扣除本金+手续费 (如果钱不够，交易直接 revert，你不会有任何损失)</span></span>
+<span class="line"><span style="color:#B392F0">    IERC20</span><span style="color:#E1E4E8">(assets[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]).</span><span style="color:#B392F0">approve</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">msg.sender</span><span style="color:#E1E4E8">, amounts[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> premiums[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">]);</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#79B8FF"> true</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="️-5-修复与防范方案-mitigations">🛡️ 5. 修复与防范方案 (Mitigations)</h2>
+<ul>
+<li><strong>协议自身的修复</strong>：
+<ul>
+<li><strong>切断瞬时预言机依赖</strong>：坚决不要使用基于现货的瞬时价格（Spot Price）。</li>
+<li><strong>采用 TWAP</strong>：对于基于 AMM 的价格，应当使用时间加权平均价格（TWAP, Time-Weighted Average Price），这使得黑客必须要在一个漫长的时间周期内持续花真金白银压制价格，闪电贷就失效了。</li>
+<li><strong>引入去中心化多节点预言机</strong>：如 Chainlink 等通过多个链下节点共识报价过滤掉单笔交易极端波动的预言机服务。</li>
+</ul>
+</li>
+<li><strong>业务逻辑上的防范</strong>：可以设置每个区块单地址/全局可借金额上限、引入跨区块延迟（存入和借出/清算不能在同一个区块完成，这就彻底封死了闪电贷只存在一笔交易内的特性）。</li>
+</ul>
+<hr>
+<h2 id="-6-真实案例与靶场-references">📖 6. 真实案例与靶场 (References)</h2>
+<ul>
+<li><strong>经典黑客事件</strong>：<strong>bZx 黑客攻击事件</strong>（早期连环闪电贷操纵价格鼻祖），<strong>PancakeBunny 事件</strong>。此类事件频发，占 DeFi 损失金额的半壁江山。</li>
+<li><strong>靶场/练习</strong>：Damn Vulnerable DeFi - <code>[Unstoppable]</code>, <code>[Truster]</code>, <code>[Puppet]</code>, <code>[Free Rider]</code> 等多关卡均深度结合该工具/逻辑。</li>
+<li><strong>拓展阅读</strong>：学习各类 DeFi 协议关于 TWAP 和 Chainlink 的接入标准，研究攻击者如何在不同协议之间进行资产折算路由（Path Routing）。</li>
+</ul> </div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/漏洞笔记/拒绝服务攻击漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">拒绝服务攻击漏洞</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/漏洞笔记/授权漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">授权漏洞</h4> </a> </div> </nav> </article> <div id="reading-progress" style="position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 9999; transition: width 0.1s ease-out; pointer-events: none;"></div> <script type="module">document.addEventListener("astro:page-load",()=>{const e=document.getElementById("reading-progress");if(!e)return;const t=()=>{const n=document.documentElement.scrollHeight-window.innerHeight;if(n>0){const o=window.scrollY/n*100;e.style.width=`${o}%`}};window.addEventListener("scroll",t),document.addEventListener("astro:before-swap",()=>{window.removeEventListener("scroll",t)},{once:!0})});</script>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try { localStorage.setItem("theme", value); } catch {}
+          });
+        };
+        bindToggle();
+      })();
+    </script> </body> </html> 

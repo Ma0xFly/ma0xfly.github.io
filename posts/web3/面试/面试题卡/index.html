@@ -1,0 +1,2264 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>面试题卡 | Notebook Dispatch</title><meta name="description" content="这份文档用于集中存放 Web3 安全面试题卡。格式尽量固定，方便后续持续追加： - `问题`：面试官可能的问法 - `短答`：30 秒版本 - `展开`：2-3 分钟版本 - `关键词 / 公式 / 例子`：方便你快速复盘 --- ## Day 1：Storage 布局与代理模式"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.Coc4ZbWY.css"></head> <body class> <!-- 首页导航栏：悬浮透明，叠在 Hero 上方 --> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">Notebook Dispatch</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☼</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回主页花园</a> <header class="article-header"> <p class="eyebrow">2026/4/14</p> <h1>面试题卡</h1> <p class="lead">这份文档用于集中存放 Web3 安全面试题卡。格式尽量固定，方便后续持续追加： - `问题`：面试官可能的问法 - `短答`：30 秒版本 - `展开`：2-3 分钟版本 - `关键词 / 公式 / 例子`：方便你快速复盘 --- ## Day 1：Storage 布局与代理模式</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> </header> <div class="article-content"> <p>这份文档用于集中存放 Web3 安全面试题卡。格式尽量固定，方便后续持续追加：</p>
+<ul>
+<li><code>问题</code>：面试官可能的问法</li>
+<li><code>短答</code>：30 秒版本</li>
+<li><code>展开</code>：2-3 分钟版本</li>
+<li><code>关键词 / 公式 / 例子</code>：方便你快速复盘</li>
+</ul>
+<hr>
+<h2 id="day-1storage-布局与代理模式">Day 1：Storage 布局与代理模式</h2>
+<h3 id="题卡-1solidity-的-storage-layout-是怎么分配的">题卡 1：Solidity 的 storage layout 是怎么分配的？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>Solidity 状态变量在 storage 里是怎么排布的？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>Solidity 的状态变量默认按声明顺序分配 storage slot，每个 slot 是 32 字节。</li>
+<li>多个小于 32 字节的值类型会尽量紧凑打包到同一个 slot。</li>
+<li>struct 和 array 通常从新 slot 开始，mapping 自己占一个逻辑 slot，但真正的数据存到哈希派生位置。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>EVM 的 storage 可以理解为一个 <code>slot => 32 bytes</code> 的大字典。</li>
+<li>Solidity 编译器会按变量声明顺序给状态变量分配 slot。</li>
+<li>对于 <code>uint128</code>、<code>bool</code>、<code>address</code> 这类小于 32 字节的值类型，编译器会尝试把它们塞进同一个 slot，这就是紧凑打包。</li>
+<li>如果当前 slot 剩余空间不够，就会开下一个 slot。</li>
+<li><code>struct</code> 和 <code>array</code> 一般会从新的 slot 开始，避免布局歧义。</li>
+<li><code>mapping</code> 比较特殊，它声明位置的 slot 更像一个“种子槽位”，真正的 value 不直接放在这个 slot，而是通过 <code>keccak256</code> 计算出实际存储位置。</li>
+</ul>
+<hr>
+<h3 id="题卡-2什么是紧凑打包为什么它重要">题卡 2：什么是紧凑打包，为什么它重要？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>Solidity 的紧凑打包是什么？为什么面试里经常问？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>紧凑打包就是把多个较小的状态变量放进同一个 32 字节 slot 里，减少 storage 占用。</li>
+<li>它重要是因为会影响 gas、slot 编号和升级合约时的存储兼容性。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>storage 写入是昂贵操作，所以多个小变量如果能共用一个 slot，通常更省空间。</li>
+<li>例如两个 <code>uint128</code> 可以共用一个 slot，一个 <code>address</code> 加一个 <code>bool</code> 在某些顺序下也可能打包。</li>
+<li>但打包不是“越多越好”，因为变量顺序会直接影响布局。</li>
+<li>在代理升级场景里，旧版本和新版本如果布局不兼容，就可能出现 slot 错位，最终覆盖关键数据。</li>
+</ul>
+<hr>
+<h3 id="题卡-3mapping-的-storage-slot-怎么算">题卡 3：mapping 的 storage slot 怎么算？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li><code>mapping(key => value)</code> 的值到底存在什么位置？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>假设 mapping 变量本身的 slot 是 <code>p</code>，某个 <code>key</code> 对应 value 的存储位置通常是 <code>keccak256(abi.encode(key, p))</code>。</li>
+<li>也就是说 mapping 的数据不是顺序排的，而是通过 key 和槽位一起哈希出来的。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li><code>mapping</code> 不能像数组一样顺序存储，因为 key 的类型和分布都不固定。</li>
+<li>所以 Solidity 不会把所有值线性铺开，而是把 mapping 声明所在的 slot 作为基准点。</li>
+<li>当你访问 <code>m[key]</code> 时，编译器会把 <code>key</code> 和 <code>p</code> 一起编码，再做一次 <code>keccak256</code>，得到最终 storage slot。</li>
+<li>如果 value 本身还是复杂类型，比如 struct，那这个哈希出来的位置通常是 struct 起始位置，后续字段再按偏移继续排。</li>
+<li>面试里最好强调一点：<code>mapping</code> 的声明 slot 本身通常不直接存 value，而是参与地址推导。</li>
+</ul>
+<hr>
+<h3 id="题卡-4dynamic-array-的-storage-slot-怎么算">题卡 4：dynamic array 的 storage slot 怎么算？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>动态数组在 storage 中怎么存？长度和元素位置分别在哪？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>动态数组变量本身所在的 slot <code>p</code> 一般存数组长度。</li>
+<li>数组元素的起始位置通常是 <code>keccak256(p)</code>，第 <code>i</code> 个元素位于 <code>keccak256(p) + i</code>。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>和普通值类型不同，动态数组长度不固定，所以 Solidity 需要把“长度”和“数据区”分开。</li>
+<li>数组变量自己的 slot 主要用于记录数组长度。</li>
+<li>真正的数据不会紧挨着长度继续放，而是从 <code>keccak256(p)</code> 开始放置。</li>
+<li>这样设计的好处是能避免和其他变量的 slot 冲突，并且支持不定长扩展。</li>
+</ul>
+<hr>
+<h3 id="题卡-5什么是-storage-collision">题卡 5：什么是 storage collision？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>代理模式里为什么会发生 storage collision？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>因为代理模式下常用 <code>delegatecall</code> 执行逻辑合约代码，但写入的是代理合约自己的 storage。</li>
+<li>如果逻辑合约和代理合约对 slot 的理解不一致，就会把不该写的数据写到关键 slot 上，造成存储碰撞。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li><code>delegatecall</code> 的核心特征是“用别人的代码，操作自己的状态”。</li>
+<li>所以当 proxy 通过 <code>delegatecall</code> 调用 implementation 时，implementation 里的状态变量并不会写到 implementation 自己的 storage，而是写到 proxy 的 storage。</li>
+<li>如果 proxy 把某个 slot 留给 <code>admin</code>、<code>implementation</code>、<code>beacon</code>，而 implementation 恰好也把这个 slot 当成普通业务变量，就会发生覆盖。</li>
+<li>这就是 storage collision，本质不是“两个合约变量重名”，而是“同一个 slot 被两套布局解释成了不同含义”。</li>
+<li>这类问题在升级合约里尤其危险，因为它可能直接导致管理员地址被改掉、升级入口失控或资产状态被破坏。</li>
+</ul>
+<hr>
+<h3 id="题卡-6为什么-delegatecall-会导致代理合约写自己的-storage">题卡 6：为什么 <code>delegatecall</code> 会导致代理合约写自己的 storage？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li><code>delegatecall</code> 到底和普通 <code>call</code> 差在哪？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li><code>call</code> 是去对方上下文执行，对方用自己的 storage。</li>
+<li><code>delegatecall</code> 是借对方代码执行，但保留当前合约上下文，所以 storage、<code>msg.sender</code>、<code>msg.value</code> 都沿用调用者一侧的环境。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>代理模式之所以可升级，本质上就是把“代码”和“状态”拆开。</li>
+<li>proxy 保存状态，implementation 保存逻辑。</li>
+<li>如果使用普通 <code>call</code>，那 implementation 会在自己的上下文里执行，根本碰不到 proxy 的状态，这样代理模式就没法工作。</li>
+<li>所以要用 <code>delegatecall</code>，让 implementation 代码在 proxy 的 storage 上运行。</li>
+</ul>
+<hr>
+<h3 id="题卡-7transparent-proxy-和-uups-的核心区别是什么">题卡 7：Transparent Proxy 和 UUPS 的核心区别是什么？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>Transparent Proxy 和 UUPS 分别是什么？差异在哪？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>Transparent Proxy 把升级逻辑放在 proxy 里，proxy 更重，但升级控制更集中。</li>
+<li>UUPS 把升级逻辑放在 implementation 里，proxy 更轻、更省 gas，但如果实现写坏了，可能失去升级能力。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>Transparent Proxy 的思路是：proxy 不只是转发，还自己持有升级入口和管理员判断逻辑。</li>
+<li>它的好处是升级逻辑始终留在 proxy 端，不容易因为 implementation 出错而彻底失去升级入口。</li>
+<li>代价是 proxy 更重，且每次调用通常需要经过额外判断身份耗费gas。</li>
+<li>UUPS 则更轻，proxy 主要负责 <code>delegatecall</code> 转发，升级逻辑由 implementation 提供。</li>
+<li>好处是结构更简洁、部署和运行更省一些。</li>
+<li>风险是如果新的 implementation 没有正确保留升级接口或校验逻辑，proxy 可能还能转发，但系统已经无法继续升级，甚至直接变砖。</li>
+</ul>
+<hr>
+<h3 id="题卡-8eip-1967-为什么能降低-storage-collision-风险">题卡 8：EIP-1967 为什么能降低 storage collision 风险？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>EIP-1967 解决了什么问题？为什么它常和代理模式一起被问？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>EIP-1967 规定了 implementation、admin 等关键地址要放到标准化的特殊 slot 里，而不是随便放在普通业务 slot。</li>
+<li>这样可以显著降低和业务变量发生碰撞的风险，也方便工具统一识别代理合约。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>早期代理模式很容易因为 slot 选得随意而和业务变量冲突。</li>
+<li>EIP-1967 的思路是把关键元数据放到经过约定的特殊 slot 中，例如通过 <code>bytes32(uint256(keccak256("eip1967.proxy.implementation")) - 1)</code> 这种方式生成。</li>
+<li>这样做有两个好处：</li>
+<li>第一，这些 slot 很难和普通编译器按顺序生成的业务 slot 重合。</li>
+<li>第二，区块浏览器、审计工具和升级框架都能更容易识别代理结构。</li>
+<li>所以它不是“从根本上消灭所有碰撞”，而是通过标准化把高风险冲突面大幅缩小。</li>
+</ul>
+<hr>
+<h3 id="题卡-9为什么高-tvl-协议的-proxy-admin-不应该是-eoa">题卡 9：为什么高 TVL 协议的 Proxy Admin 不应该是 EOA？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>一个 DeFi 协议为什么不能让单个 EOA 直接掌控升级权限？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>因为代理升级权本质上接近系统最高权限，单个 EOA 风险太集中。</li>
+<li>私钥泄露、单人作恶或被胁迫都可能导致协议被恶意升级，所以更合理的是多签、治理和时间锁组合。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>对高 TVL 协议来说，升级权并不是普通运维权限，而是接近“根权限”。</li>
+<li>如果这个权限由单个 EOA 掌控，那么攻击面非常直接：盗私钥、社工、木马、内部作恶都可能导致全协议被接管。</li>
+<li>更稳妥的做法至少是多签，把单点失败变成多点共谋。</li>
+<li>再往上是 DAO 治理，把升级决策交给治理流程。</li>
+<li>但即使是多签或 DAO，也仍然需要时间锁，因为治理本身也可能被操纵。</li>
+<li>所以成熟做法通常是 <code>Proxy Admin + Multisig/DAO + Timelock</code> 组合，而不是把希望押在一个人身上。</li>
+</ul>
+<hr>
+<h3 id="题卡-10如果面试官让我-90-秒解释钻石代理我该怎么答">题卡 10：如果面试官让我 90 秒解释钻石代理，我该怎么答？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>什么是 Diamond Proxy？什么时候会考虑它？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>Diamond Proxy 可以把系统功能拆成多个 facet，由同一个代理统一转发。</li>
+<li>它适合功能很多、需要模块化扩展的大型系统，但复杂度和治理成本都比普通代理更高。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>普通代理通常是一个 proxy 对应一个 implementation，升级时整体替换。</li>
+<li>Diamond 的思路是把不同函数选择器映射到不同 facet 合约，相当于一个代理挂载多个功能模块。</li>
+<li>这样做的好处是模块拆分更细，升级粒度更灵活，不需要每次替换整个实现。</li>
+<li>但代价也很明显：路由更复杂，审计面更大，storage 管理更容易出错。</li>
+<li>所以 Diamond 不是“更高级的默认选择”，而是适合超大合约系统的工程化方案。</li>
+<li>面试里如果被追问，你可以补一句：它本质上是在代理模式上继续做函数级路由和模块化拆分。</li>
+</ul>
+<hr>
+<h2 id="day-2调用上下文gas-与签名授权">Day 2：调用上下文、Gas 与签名授权</h2>
+<h3 id="题卡-1calldelegatecallstaticcall-的核心区别是什么">题卡 1：<code>call</code>、<code>delegatecall</code>、<code>staticcall</code> 的核心区别是什么？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>面试里如果让我快速区分 <code>call</code>、<code>delegatecall</code>、<code>staticcall</code>，我该怎么答？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li><code>call</code> 是在被调合约上下文执行，使用被调方的 storage。</li>
+<li><code>delegatecall</code> 是借用被调合约代码，但保留调用方上下文，所以 storage、<code>msg.sender</code>、<code>msg.value</code> 都沿用调用方一侧语义。</li>
+<li><code>staticcall</code> 和 <code>call</code> 类似，但强制只读，不能发生状态修改。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li><code>call</code> 最像普通外部调用，代码、storage 和执行环境都切到被调方。</li>
+<li><code>delegatecall</code> 最特殊，它只借代码，不切上下文，所以经常被用来做代理升级、library 风格复用。</li>
+<li><code>staticcall</code> 则是在调用层面加了“只读约束”，即便底层代码里试图写状态，也会 revert。</li>
+<li>面试里最好不要只背“谁更常用”，而是从 4 个维度讲：</li>
+</ul>
+<hr>
+<h3 id="题卡-2call-会怎么影响-storagemsgsender-和-msgvalue">题卡 2：<code>call</code> 会怎么影响 storage、<code>msg.sender</code> 和 <code>msg.value</code>？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>普通 <code>call</code> 执行时，上下文到底怎么变？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li><code>call</code> 会切到合约 B 的 storage 上下文。</li>
+<li>对 B 来说，<code>msg.sender</code> 变成调用它的合约 A。</li>
+<li><code>msg.value</code> 则是 A 显式传给 B 的值，没有传就是 0。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>假设外部用户先调用合约 A，A 再用 <code>call</code> 调 B。</li>
+<li>这时 B 看到的 <code>msg.sender</code> 不是最初那个用户，而是 A。</li>
+<li>B 使用的是自己的 storage，所以 B 对状态的写入不会直接改 A 的状态。</li>
+<li><code>msg.value</code> 也不是自动沿用上层值，必须由 A 在 <code>call{value: ...}</code> 时显式指定。</li>
+</ul>
+<hr>
+<h3 id="题卡-3为什么-delegatecall-会保留原始-msgsender">题卡 3：为什么 <code>delegatecall</code> 会保留原始 <code>msg.sender</code>？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>为什么 <code>delegatecall</code> 下 <code>msg.sender</code> 不会变成被调合约地址？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>因为 <code>delegatecall</code> 的设计目标就是“在当前上下文里执行别人的代码”。</li>
+<li>它不会创建新的完整执行上下文，而是保留调用方的 storage 和消息语义，所以 <code>msg.sender</code>、<code>msg.value</code> 都继续沿用上层调用链中的值。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>还是假设用户调 A，A 再 <code>delegatecall</code> 到 B。</li>
+<li>B 中执行的代码其实像是“贴到 A 里运行”，因此读写的都是 A 的 storage。</li>
+<li>同理，B 看到的 <code>msg.sender</code> 仍然是最外层调用 A 的那个用户，而不是 A 自己。</li>
+<li>这也是代理模式能成立的原因，因为逻辑合约必须像自己就是 proxy 一样操作状态和权限。</li>
+<li>但风险也很大，因为一旦逻辑合约里有危险代码，它操作的是 proxy 的状态，不是自己的一块隔离区。</li>
+</ul>
+<hr>
+<h3 id="题卡-4为什么-staticcall-写状态会-revert">题卡 4：为什么 <code>staticcall</code> 写状态会 revert？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li><code>staticcall</code> 为什么能保证只读？如果里面调用写状态函数会怎样？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>因为 <code>staticcall</code> 在 EVM 层面携带了静态上下文约束。</li>
+<li>在这个上下文里，一旦发生状态修改类操作，就会触发异常并 revert。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li><code>staticcall</code> 不是“开发者约定俗成的只读”，而是 EVM 执行语义上的硬约束。</li>
+<li>只要当前执行路径处在 static context 中，像 <code>SSTORE</code>、创建合约、销毁合约等会引起状态变化的操作都不被允许。</li>
+<li>所以即便目标函数没有标 <code>view</code>，只要你用 <code>staticcall</code> 去调，它也不能真正写入状态。</li>
+<li>这类设计的意义在于：上层调用者可以强制要求“我这次外部读取必须是只读的”，降低意外交互风险。</li>
+</ul>
+<hr>
+<h3 id="题卡-5callvalue--的潜在风险与防御是什么">题卡 5：<code>call{value: ...}</code> 的潜在风险与防御是什么？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果面试官追问“<code>call</code> 携带 <code>msg.value</code> 转账时，除了重入还有什么风险”，我该怎么答？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>风险不只是常规重入，还包括触发目标合约 <code>fallback()</code> / <code>receive()</code> 中的危险逻辑、低级调用静默失败，以及 gas 转发行为带来的边界问题。</li>
+<li>防御上不能只背 CEI，还要补一句：低级 <code>call</code> 必须检查返回值，必要时主动 <code>revert</code>，不能让“账本已改、转账没成”这种状态静默发生。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li><code>call{value: ...}</code> 的危险点主要有三层：</li>
+<li>第一层，<strong>控制权交出去</strong>。</li>
+<li>只要你把 ETH 通过低级 <code>call</code> 发给目标地址，对方就可能在 <code>receive()</code> 或 <code>fallback()</code> 里立即执行逻辑。</li>
+<li>这会带来：</li>
+<li>常规重入</li>
+<li>跨函数重入</li>
+<li>在某些依赖外部读值的场景里，还可能把中间态暴露给别的路径消费</li>
+<li>第二层，<strong>低级调用不会自动替你处理失败</strong>。</li>
+<li><code>call</code> 返回的是 <code>(bool success, bytes memory data)</code>。</li>
+<li>如果你不检查 <code>success</code>，就可能出现：</li>
+<li>你的账本已经减了余额，但 ETH 实际没有成功转出去</li>
+<li>或者目标逻辑失败了，你这边还当成成功继续往后跑</li>
+<li>这类问题比单纯的 revert 更危险，因为它会制造“静默失败”。</li>
+<li>面试里可以直接给一句标准写法：</li>
+<li><code>(bool success, ) = target.call{value: amount}(data);</code></li>
+<li><code>require(success, "call failed");</code></li>
+<li>第三层，<strong>gas 转发不是无限自由的</strong>。</li>
+<li><code>call</code> 默认的 gas 转发行为会受 EIP-150 的 63/64 规则影响。</li>
+<li>这意味着你不能简单假设：</li>
+<li>对方一定有足够 gas 把复杂逻辑跑完</li>
+<li>失败一定会被优雅处理</li>
+<li>回调里的行为一定和你想象得一样</li>
+<li>所以安全分析时，要把“目标 fallback 可能干什么”和“它到底有多少 gas 能干这些事”一起看。</li>
+<li>综合起来，最稳的防御回答应该是：</li>
+<li>先做检查</li>
+<li>先改自己账本</li>
+<li>最后再做外部转账（CEI）</li>
+<li>低级 <code>call</code> 必须检查返回值</li>
+</ul>
+<hr>
+<h3 id="题卡-6eip-150-的-6364-规则是什么">题卡 6：EIP-150 的 63/64 规则是什么？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>什么是 63/64 规则？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>EIP-150 规定外部调用时，实际可转发给子调用的 gas 不能简单把当前 gas 全部送出去，而是通常最多只能转发大约 <code>gasleft() * 63 / 64</code>。</li>
+<li>它的目的之一是保证上层调用者在子调用结束后还留有 gas 处理返回值、错误和后续逻辑，而不是被下游调用把 gas 完全吃光。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>这里最容易混淆的是两件事：第一，整笔交易给链上的 gas limit 够不够；第二，当前调用帧把多少 gas 转发给下一层。</li>
+<li>EIP-150 解决的主要不是“用户整笔交易 gas 不够”这个问题，而是“调用者不能把自己这一层的 gas 毫无保留地全送给子调用”。</li>
+<li>假设合约 A 在执行过程中还剩 <code>64000</code> gas，如果没有这条规则，A 理论上可以把几乎所有 gas 都转给 B。</li>
+<li>如果 B 把这些 gas 全部消耗掉并 OOG(Out Of Gas)，B 这一层当然会失败，但问题是 A 返回之后可能已经几乎没有 gas 了。</li>
+<li>这时 A 连最基本的收尾动作都做不了，比如检查 <code>success</code>、走备用分支、记录失败、主动 <code>revert</code>，甚至连后续几条指令都可能跑不完。</li>
+<li>结果就会从“子调用失败，但调用者还有机会决定怎么处理”变成“下游失败顺便把上游也拖死”，这就是为什么要强制给上层留一点 gas。</li>
+<li>EIP-150 引入 63/64 规则后，A 最多只能把大约 <code>64000 * 63 / 64 = 63000</code> gas 送给 B，自己至少还能保留大约 <code>1000</code> gas。</li>
+<li>这部分 gas 不一定很多，也不保证足够做复杂逻辑，但至少让 A 不会因为一次外部调用就被完全抽干，仍有机会处理返回结果。</li>
+<li>如果不做这种保留，典型后果有三个：</li>
+<li>第一，A 会失去处理失败的能力，连 <code>if (!success)</code> 这种最基本的收尾代码都可能跑不完。</li>
+<li>第二，本来只是 B 这层调用失败，最后却会升级成 A 也 OOG，严重时整笔交易一起回滚。</li>
+<li>第三，会放大 DoS 或 gas griefing 风险，让下游合约有机会通过“吃光 gas”干扰上游的控制流。</li>
+<li>所以这个规则不是单纯的费用优化，也不是“失败了反正就 revert”的简单逻辑，而是在调用语义上保护调用者的控制权。</li>
+<li>另一个副作用是，深层嵌套调用时 gas 会层层衰减，这让调用深度天然受到软约束，也让 gas griefing 和复杂回调链分析变得更现实。</li>
+</ul>
+<hr>
+<h3 id="题卡-7eip-150-对攻击和防御分别意味着什么">题卡 7：EIP-150 对攻击和防御分别意味着什么？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>63/64 规则除了是机制题，对安全分析有什么意义？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>对攻击者来说，它限制了“把所有 gas 压给下游”的某些操作预期。</li>
+<li>对防御者来说，它提醒你不能假设外部调用一定拥有足够 gas，也不能把 gas 行为想得过于理想化；更重要的是，要区分“子调用失败”和“调用者还有没有 gas 处理失败”。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>在复杂调用链里，下游合约实际拿到的 gas 往往比调用者直觉里更少。</li>
+<li>这会影响回调函数能做多少事、fallback 是否跑得完、某些分支会不会因 gas 不足失败。</li>
+<li>安全上常见的误区有两个：</li>
+<li>第一，以为“我传了很多 gas，所以外部逻辑一定能完整执行”。</li>
+<li>第二，以为“对方一定还能执行某段逻辑”，但实际在深层调用下可能已经没那么多 gas。</li>
+<li>还有第三个常见误区：觉得“如果下游 OOG，那不就是直接 revert 吗”。其实低级 <code>call</code> 下更准确的语义是：子调用失败，返回 <code>success = false</code>，然后由调用者决定接下来怎么办。</li>
+<li>如果调用者自己也没 gas 了，它就失去了这个决定权。于是本来应该是“可控失败”的地方，可能变成上游一起 OOG，或者根本没法走备用逻辑。</li>
+<li>所以分析攻击链时，除了状态和权限，也要考虑 gas 是否支持这条链真实跑通。</li>
+<li>它不是万能防线，但会改变很多边界条件。</li>
+</ul>
+<hr>
+<h3 id="题卡-8permit-的完整链路该怎么讲">题卡 8：<code>permit</code> 的完整链路该怎么讲？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>EIP-2612 <code>permit</code> 到底在做什么？如果面试官让我从头讲一遍，我该怎么答？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li><code>permit</code> 允许用户先离线签名，再由链上交易提交授权，从而不需要用户自己先发一笔 <code>approve</code>。</li>
+<li>它的核心链路是：构造 EIP-712 消息、签名、链上验证签名、检查 nonce 和 deadline，然后更新 allowance。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>传统 <code>approve</code> 需要用户自己发链上交易，体验差，而且需要先有 gas。</li>
+<li><code>permit</code> 的思路是把“授权意愿”先写进结构化消息里，由用户离线签名。</li>
+<li>提交者可以是用户自己，也可以是第三方 relayer。</li>
+<li>合约收到请求后，一般会验证以下几件事：</li>
+<li>签名是否对应 owner</li>
+<li>域分隔是否正确，避免跨合约或跨链混用</li>
+<li>nonce 是否匹配，避免重放</li>
+<li>deadline 是否过期</li>
+<li>全部通过后，再更新 allowance</li>
+<li>所以 <code>permit</code> 的本质不是“省一次 approve”这么简单，而是把授权从普通交易改成了“签名 + 提交”的双阶段模型。</li>
+</ul>
+<hr>
+<h3 id="题卡-9为什么-permit-必须有-nonce-和-deadline">题卡 9：为什么 <code>permit</code> 必须有 <code>nonce</code> 和 <code>deadline</code>？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li><code>permit</code> 里为什么几乎总会有 <code>nonce</code> 和 <code>deadline</code>？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li><code>nonce</code> 主要用来防重放，确保同一份签名不能被无限次复用。</li>
+<li><code>deadline</code> 主要用来限制签名有效期，降低用户长期暴露在钓鱼或延迟执行风险中的概率。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>如果没有 <code>nonce</code>，攻击者拿到一份合法签名后，就可能反复提交同样的授权请求。</li>
+<li><code>nonce</code> 的作用就是把“这次签名”绑定到一个唯一序号，用过一次就失效。</li>
+<li>如果没有 <code>deadline</code>，签名理论上可以长期有效，这会带来很大的尾部风险。</li>
+<li>比如用户今天签了一份消息，几个月后市场环境变了、资产变多了，这份旧签名却仍可能被人拿出来执行。</li>
+<li>所以 <code>permit</code> 安全里，<code>nonce</code> 解决的是“能不能重复用”，<code>deadline</code> 解决的是“能用到什么时候”。</li>
+<li>面试里再补一句更完整：它们都不能防止用户主动签给钓鱼消息，但能收缩被利用的窗口和方式。</li>
+</ul>
+<hr>
+<h3 id="题卡-10permit-和-eip-1559-分别最容易被追问什么">题卡 10：<code>permit</code> 和 EIP-1559 分别最容易被追问什么？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果 Day 2 最后被追问到 <code>permit</code> 风险或 EIP-1559 基础，我该怎么稳住？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li><code>permit</code> 最容易被追问的是：签名验证链路、nonce/deadline 作用、钓鱼和重放风险。</li>
+<li>EIP-1559 最容易被追问的是：<code>base fee</code> 会被销毁，<code>priority fee</code> 是给打包者的激励，两者共同决定交易费用结构。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>对 <code>permit</code> 来说，面试官常常不是要你背标准原文，而是看你是否真的理解“签名授权会引入哪些新攻击面”。</li>
+<li>你要能讲：</li>
+<li>域分隔为什么重要</li>
+<li>为什么 relayer 模式会带来提交时序问题</li>
+<li>为什么用户可能被诱导签下危险消息</li>
+<li>对 EIP-1559 来说，一般不需要讲到特别深的实现细节，但至少要能区分：</li>
+<li><code>base fee</code> 是协议根据区块拥堵动态调整的基础费，并被销毁</li>
+<li><code>priority fee</code> 是用户给打包者的小费</li>
+<li><code>max fee</code> 则是用户愿意支付的上限</li>
+<li>如果时间紧，Day 2 优先保住调用语义、EIP-150 和 <code>permit</code>，EIP-1559 作为保底基础题即可。</li>
+</ul>
+<hr>
+<h2 id="day-3重入utxo-vs-accountslither">Day 3：重入、UTXO vs Account、Slither</h2>
+<h3 id="题卡-1如果不用-defi-术语怎么重新定义重入">题卡 1：如果不用 DeFi 术语，怎么重新定义重入？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>不提 AMM、借贷、提款，单从程序与状态机角度看，重入到底是什么？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>重入本质上不是“某个函数被再次调用”这么简单，而是系统在一次状态更新尚未完成时，被外部控制流重新插入执行。</li>
+<li>更抽象地说，它是时序失控和临界资源竞争，最终破坏了状态更新的原子性。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>很多人第一次学重入，会把它记成“先转账后改余额”，但这只是常见表象，不是本质。</li>
+<li>更本质的描述是：合约在处理某个关键状态变化时，把执行权暂时交给了外部，而外部又在中间重新进入了本系统。</li>
+<li>于是系统内部原本假设的“这一步做完再做下一步”被打断了。</li>
+<li>一旦关键状态还没更新完，或者某个资源还没被正式扣减，新的调用就可能读到旧状态、重复消费同一资源，或者触发不该通过的校验。</li>
+</ul>
+<hr>
+<h3 id="题卡-4什么是跨函数重入">题卡 4：什么是跨函数重入？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果不是重进同一个函数，也算重入吗？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>算。跨函数重入是指攻击者在一个函数执行过程中，通过回调进入同一合约的另一个函数，而那个函数依赖的状态同样还没更新完成。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>很多人以为只要给某个危险函数加锁就够了，但真实系统里，多个函数可能共享同一批核心状态。</li>
+<li>例如函数 A 正在处理中间态，外部调用发生后，攻击者不一定非要再打 A，也可以打函数 B。</li>
+<li>如果 B 同样读取那批尚未最终落盘的状态，或者能操作同一份资源，就可能绕开“只防同函数”的防护。</li>
+<li>所以跨函数重入比单函数重入更能体现你是否真的理解“问题在状态共享，而不在函数名字相同”。</li>
+<li>面试里最好强调：只要多个入口共享同一临界状态，就要按“一个状态机”来防，而不是按“一个函数一个函数”来防。</li>
+</ul>
+<hr>
+<h3 id="题卡-6什么是只读重入为什么只读也危险">题卡 6：什么是只读重入，为什么“只读”也危险？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>没有直接写坏状态，为什么只读重入仍然能造成经济损失？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>因为“只读”不代表“无影响”。如果某个协议在错误时机读取了一个暂时失真的状态或价格，再用它做定价、清算或借贷判断，就可能造成真实损失。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>只读重入最容易迷惑人的地方在于：被重入的那一侧可能没有直接执行状态写入。</li>
+<li>但问题在于，另一个协议把它当成预言机、报价源或健康度输入时，读到的可能是一个尚未完全同步的中间状态。</li>
+<li>也就是说，危险不一定来自“把状态写坏”，而可能来自“把错误快照当成真实世界”。</li>
+<li>例如池子在执行流动性移除过程中，某些内部变量已经变化，某些还没变化；这时外部协议来读取价格，就可能得到一个短暂偏离真实值的结果。</li>
+<li>如果这个读值被拿去做借贷、清算或兑换判断，后果就会落到真钱上。</li>
+<li>所以只读重入的本质是：状态快照失真被外部系统消费，而不是传统意义上的重复扣款。</li>
+</ul>
+<hr>
+<h3 id="题卡-7utxo-和-account-模型的核心差异是什么">题卡 7：UTXO 和 Account 模型的核心差异是什么？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果面试官让我从底层模型上比较 UTXO 和 Account，我该怎么答？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>UTXO 更像一组彼此独立、一次性消耗的离散输入，天然更局部、更易并行。</li>
+<li>Account 模型则是所有交易共享一个全局状态机，表达力更强，但更容易出现竞争、排序依赖和全局状态冲突。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>UTXO 全称是 <code>Unspent Transaction Output</code>，可以理解成“未花费的输出票据”。</li>
+<li>在 UTXO 模型里，系统不直接维护“某个账户现在余额是多少”这类中心视角，而是记录：你手里现在有哪些还没花掉的输出。</li>
+<li>当你发起一笔交易时，本质不是“把账户余额减掉一点”，而是“消耗若干旧输出，再生成若干新输出”。</li>
+<li>例如你有一个 <code>10 BTC</code> 的 UTXO，要转给别人 <code>3 BTC</code>，常见做法不是把余额从 10 改成 7，而是：</li>
+<li>消耗那个 <code>10 BTC</code> 的旧 UTXO</li>
+<li>生成一个 <code>3 BTC</code> 给对方的新 UTXO</li>
+<li>再生成一个 <code>7 BTC</code> 的找零 UTXO 给自己</li>
+<li>这意味着 UTXO 更像局部、离散、一次性的资源消费模型。</li>
+<li>只要两笔交易不花同一个 UTXO，它们天然彼此隔离，因此验证与并发处理都更自然。</li>
+<li>Account 模型则完全不同。它直接维护账户余额、nonce、合约 storage、池子储备、借贷头寸等全局状态。</li>
+<li>交易执行时，本质是在修改这棵共享的全局状态树。</li>
+<li>例如以太坊转账时，系统会直接改发送者余额、接收者余额和发送者 nonce；如果是合约调用，还会继续修改 mapping、数组、储备量、债务等状态。</li>
+<li>所以 Account 模型可以概括成“全局共享状态机”，表达力更强，也更适合复杂智能合约。</li>
+<li>这里说“表达力更强”，具体体现在几个层面：</li>
+<li>第一，它更容易表达<strong>持久化的共享可变状态</strong>。例如一个 AMM 池子的储备量、一个借贷协议的总债务、一个治理系统的投票状态，都可以长期挂在链上并被多个用户持续读写。</li>
+<li>第二，它更容易表达<strong>复杂状态机</strong>。例如订单从 <code>Created -> Filled -> Cancelled</code>，提案从 <code>Pending -> Active -> Succeeded -> Executed</code>，这些都可以直接用合约状态变量维护。</li>
+<li>第三，它更容易表达<strong>跨用户、跨事务累积的逻辑关系</strong>。例如 allowance、抵押率、清算阈值、累计利息、LP 份额，这些都依赖历史状态不断滚动更新。</li>
+<li>第四，它更容易表达<strong>合约之间的同步组合</strong>。一个合约可以直接调用另一个合约，立即读取它的状态、拿返回值继续计算，再决定下一步怎么做，这对 DeFi 组合性特别关键。</li>
+<li>也正因为如此，Proxy、Vault、AMM、Lending、DAO 这类复杂系统在 Account 模型下实现会更自然。</li>
+<li>反过来看，传统 UTXO 更擅长表达“消费哪些输入、产生哪些输出”，但对这种持续演化的共享状态、复杂权限关系和多合约同步交互表达起来会更别扭。</li>
+<li>但代价就是状态耦合更强。大家不再是只消费各自独立的票据，而是在争夺“谁先改全局状态、改哪一部分状态”。</li>
+<li>这也是为什么 EVM 世界里更容易出现排序依赖、共享状态竞争、清算争夺和 MEV。</li>
+<li>从防重放角度看，两者也不一样：</li>
+<li>UTXO 更依赖“输入只能被花一次”，也就是同一个 UTXO 一旦消费掉，再拿同一笔交易重放通常会因为输入已失效而失败。</li>
+<li>Account 更依赖 <code>nonce</code>，即同一个账户的交易按序执行，同一个 nonce 只能成功一次。</li>
+<li>所以如果面试官让你抽象总结，最值得说的一句就是：</li>
+<li>UTXO 是局部资源消费模型，Account 是全局共享状态模型。</li>
+<li>这句总结后面可以自然连到并发能力、重放防御、MEV 和状态竞争。</li>
+</ul>
+<p><strong>面试加强版</strong></p>
+<ul>
+<li>如果只说“比特币用 UTXO，以太坊用账户模型”，这只是记名词，不够深入。</li>
+<li>更强的答法是把后果一起讲出来：</li>
+<li>UTXO 因为状态边界清晰，所以更容易并行验证，双花问题也更容易形式化判断。</li>
+<li>Account 因为所有人共享同一个全局状态，所以交易顺序本身会改变结果，排序权也就变成了有经济价值的资源。</li>
+<li>这就是为什么 Account 模型更容易产生 MEV、夹子攻击、清算竞争和预言机依赖问题。</li>
+<li>如果面试官追问“那表达力更强具体强在哪”，就落到四个词：</li>
+<li>共享状态</li>
+<li>复杂状态机</li>
+<li>跨事务累计逻辑</li>
+<li>合约同步组合</li>
+<li>也可以再补一句 tradeoff：</li>
+<li>UTXO 更清晰、更局部、更适合并发</li>
+<li>Account 更灵活、更强表达、更适合智能合约</li>
+<li>代价则是全局状态竞争和时序敏感性更强</li>
+</ul>
+<hr>
+<h3 id="题卡-8为什么-account-模型更容易产生-mev-和临界资源竞争">题卡 8：为什么 Account 模型更容易产生 MEV 和临界资源竞争？</h3>
+<p>MEV 现在通常指 Maximal Extractable Value，最大可提取价值。</p>
+<p>简单说，就是：区块生产者或能影响交易排序的人，通过控制一笔交易：</p>
+<ul>
+<li>先后顺序</li>
+<li>插队</li>
+<li>打包与否</li>
+</ul>
+<p>从中额外榨取出来的利润。</p>
+<p><strong>问题</strong></p>
+<ul>
+<li>为什么 EVM 的全局状态模型天然更容易产生 MEV？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>因为交易不是在彼此独立的局部状态上运行，而是在共享的全局状态上串行执行。</li>
+<li>当多个用户都想抢同一个价格、清算机会或池子状态时，执行顺序本身就变成了可套利资源。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>在 EVM 里，一笔交易的结果往往依赖它前面那笔交易刚刚把状态改成了什么。</li>
+<li>对 DeFi 来说，这种依赖尤其强，因为价格、储备量、健康因子、套利空间都和前一笔交易的结果紧密相关。</li>
+<li>所以内存池里的竞争，不只是“谁先上链”，而是“谁先改全局状态”。</li>
+<li>这就让排序权本身具有经济价值，MEV 由此出现。</li>
+<li>从更抽象的角度讲，热门合约其实就是高价值的临界资源。</li>
+<li>谁先访问、谁插队、谁夹在中间，都会改变最终收益分配。</li>
+</ul>
+<hr>
+<h3 id="题卡-9slither-到底在做什么为什么它不是神奇扫漏洞">题卡 9：Slither 到底在做什么？为什么它不是“神奇扫漏洞”？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>Slither 这种静态分析工具，底层到底在干嘛？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>Slither 本质上是在源码和字节码语义之间构建中间表示，再结合控制流、数据流和规则匹配做静态近似分析。</li>
+<li>它很强，但不是“扫一下就知道一定有漏洞”的神谕。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>静态分析工具不会像真实链上执行那样把每条路径都跑一遍。</li>
+<li>它更像是在“代码还没运行前”，先建立程序结构图，然后检查某些危险模式是否存在。</li>
+<li>常见步骤包括：</li>
+<li>把 Solidity 代码转成更适合分析的中间表示</li>
+<li>建立控制流图 CFG，看函数和基本块怎么流转</li>
+<li>建立数据流 / 污点传播关系，看危险输入会不会流到危险操作</li>
+<li>用 detector 规则去匹配潜在问题，比如重入、未检查返回值、权限缺失等</li>
+<li>所以 Slither 提供的是高价值线索，不是终局判决。</li>
+<li>它特别适合做“第一轮筛查”和“代码味道定位”，但最后仍需要人结合业务语义判断是否真能被利用。</li>
+</ul>
+<hr>
+<h3 id="题卡-10为什么静态分析常常会误报面试里该怎么答">题卡 10：为什么静态分析常常会误报，面试里该怎么答？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>工具都报出来了，为什么还说不一定真 exploitable？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>因为静态分析看到的是“代码形状”，不一定完整理解真实执行约束、权限条件、上下文前提和协议业务语义。</li>
+<li>所以它擅长发现可疑路径，但不保证这些路径在现实中真的能走通。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>误报的来源很多。</li>
+<li>有些路径在语法上存在，但现实中被权限控制、初始化顺序、调用前置条件或外层框架约束住了。</li>
+<li>有些 detector 看到“外部调用 + 状态更新”就会提示重入风险，但实际代码可能有锁、快照或不变量保护。</li>
+<li>还有些问题在单合约维度看像漏洞，但放进完整协议流程里并不能形成可利用攻击链。</li>
+<li>所以一个成熟的安全工程师不会把工具输出当结论，而会继续追问：</li>
+<li>调用路径真实可达吗</li>
+<li>攻击者权限足够吗</li>
+<li>是否存在经济收益</li>
+<li>成本是否合理</li>
+<li>是否会被其他机制拦住</li>
+<li>面试里如果你能把“工具发现”与“人工验证”区分开，通常会显得比只会跑命令更专业。</li>
+</ul>
+<hr>
+<h2 id="day-4ammtwapflash-loan">Day 4：AMM、TWAP、Flash Loan</h2>
+<h3 id="题卡-1uniswap-v2-的核心做市逻辑是什么">题卡 1：Uniswap V2 的核心做市逻辑是什么？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果面试官让我用一句话讲 Uniswap V2，我该怎么答？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>Uniswap V2 是恒定乘积做市商，核心约束是池子中两种资产的储备乘积尽量满足 <code>x * y = k</code>。</li>
+<li>用户买入一种资产时，必须卖出另一种资产，池子通过储备变化自动给出价格。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>Uniswap V2 不是传统订单簿，而是把两种资产放进同一个池子里。</li>
+<li>池子维护两份核心状态：<code>reserve0</code> 和 <code>reserve1</code>。</li>
+<li>交易者往池子里放入一种资产，就能取走另一种资产。</li>
+<li>但池子不会随便给价格，而是通过储备关系约束输出数量。</li>
+<li>最经典的抽象是 <code>x * y = k</code>，其中 <code>x</code> 和 <code>y</code> 是两边储备，<code>k</code> 是某种意义上的不变量。</li>
+<li>当一种资产被买走，它的储备减少；另一边储备增加，于是边际价格立刻发生变化。</li>
+<li>所以 V2 的本质是：价格不是预先喂给池子的，而是由储备比例和交易本身共同决定。</li>
+</ul>
+<hr>
+<h3 id="题卡-4uniswap-v3-的-tick-和区间流动性是什么">题卡 4：Uniswap V3 的 Tick 和区间流动性是什么？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>V3 比 V2 高级在哪？Tick 和区间流动性要怎么讲？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>V2 的流动性默认铺满整个价格区间，V3 则允许 LP 只在自己选定的价格区间提供流动性。</li>
+<li>Tick 可以理解为离散化的价格刻度，流动性在不同 Tick 区间之间切换。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>V2 的流动性是“全范围”的，不管价格跑到哪里，理论上你的资金都在场。</li>
+<li>这听起来简单，但资本利用率不高，因为很多资金其实长期躺在根本用不到的价格区间里。</li>
+<li>V3 的改进是让 LP 自己指定一个价格范围，只在这个范围内提供流动性。</li>
+<li>为了让这个机制可执行，协议把连续价格离散成很多 Tick。</li>
+<li>你可以把 Tick 理解成“价格刻度”，流动性会在 Tick 区间之间分布和切换。</li>
+<li>当价格落在你的区间内，你的资金参与做市、赚手续费。</li>
+<li>当价格跑出你的区间，你的流动性会变成单边资产，暂时不再提供有效双边做市。</li>
+<li>所以 V3 的本质是：牺牲简单性，换取更高资本效率和更精细的流动性管理。</li>
+</ul>
+<hr>
+<h3 id="题卡-5为什么说-v3-的资本效率更高但风险也更复杂">题卡 5：为什么说 V3 的资本效率更高，但风险也更复杂？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>V3 为什么被说成“更高效但更难管”？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>因为 LP 不再把资金平均铺在整个价格轴上，而是集中部署在更可能发生交易的区间里，所以单位资金能产生更高做市深度。</li>
+<li>但代价是头寸管理、再平衡、无常损失和跑出区间后的风险都更复杂。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>在 V2 里，资金铺得很散，优点是简单，缺点是很多资本闲置。</li>
+<li>V3 允许你把资金压缩到更窄区间，所以同样 100 万美元流动性，在活跃价格附近能提供比 V2 更深的可交易深度。</li>
+<li>这就是资本效率更高的来源。</li>
+<li>但风险并没有消失，而是从“简单平均暴露”变成了“带主动管理要求的精细暴露”。</li>
+<li>价格一旦跑出你的区间，你就不再像预期那样赚手续费，头寸还可能变成单边资产。</li>
+<li>这要求 LP 更关注再平衡、市场波动和策略管理。</li>
+<li>所以面试里可以说：V3 让 LP 更像策略交易员，而不只是被动存钱的人。</li>
+</ul>
+<hr>
+<h3 id="题卡-6twap-是什么为什么比-spot-price-更难操纵">题卡 6：TWAP 是什么，为什么比 Spot Price 更难操纵？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>什么是 TWAP？为什么大家常说它比现价更安全？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>TWAP 是时间加权平均价格，它不是看某一个瞬时价格点，而是看一段时间内的平均价格。</li>
+<li>因此攻击者如果想操纵 TWAP，就需要在更长时间窗口内持续维持异常价格，成本通常比操纵单点现价更高。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>Spot Price 是你现在这一刻读到的价格，非常敏感，也很容易被单笔大额交易短暂拉歪。</li>
+<li>TWAP 的思路是：不要只信这一瞬间，而是把一段时间里的价格轨迹综合起来。</li>
+<li>这样一来，攻击者不能只在一个区块里做个短暂拉盘就立刻骗过依赖方。</li>
+<li>如果协议读的是过去几分钟或更长时间窗口的均价，攻击者就要把异常价格维持得更久，或者在多个区块反复投入资金。</li>
+<li>这会显著提高操纵成本。</li>
+<li>所以 TWAP 不是“绝对安全”，而是“让攻击从短时低成本变成更长时、更昂贵”。</li>
+<li>这正是它的工程价值所在。</li>
+</ul>
+<hr>
+<h3 id="题卡-7为什么-twap-不是万能的评估它还要看什么">题卡 7：为什么 TWAP 不是万能的？评估它还要看什么？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>面试里如果被追问“TWAP 也会被操纵吗”，我该怎么答？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>会。TWAP 只是提高操纵成本，不是消灭操纵可能。</li>
+<li>判断它是否安全，还要结合流动性深度、窗口长度、更新频率和攻击者资本规模一起看。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>如果池子本身很浅，哪怕做 TWAP，攻击者维持异常价格的成本也可能没有高到不可承受。</li>
+<li>如果时间窗口太短，比如只看最近几个区块，那它和现价相比并没有本质安全跃迁。</li>
+<li>对预言机安全来说，关键不只是“有没有用 TWAP”，而是：</li>
+<li>窗口够不够长</li>
+<li>池子够不够深</li>
+<li>交易成本够不够高</li>
+<li>被操纵后能造成的收益够不够大</li>
+<li>所以面试里你可以一句话总结：</li>
+<li>TWAP 解决的是“瞬时价格可被低成本拉歪”的问题，但面对低流动性池或高收益攻击目标时，仍然可能失守。</li>
+</ul>
+<hr>
+<h3 id="题卡-8flash-loan-到底是什么为什么它不是漏洞本身">题卡 8：Flash Loan 到底是什么，为什么它不是漏洞本身？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>闪电贷到底是什么？为什么很多人说“闪电贷不是漏洞，只是放大器”？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>Flash Loan 是一种要求“同一笔交易内借出并归还”的无抵押借贷机制。</li>
+<li>它本身不是漏洞，真正的漏洞是协议对价格、状态或权限做了错误假设，闪电贷只是把攻击者的瞬时资金能力放大了。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>正常借贷需要抵押，因为出借方担心你不还。</li>
+<li>闪电贷之所以能无抵押，是因为它要求在同一事务里完成借款、使用、还款。</li>
+<li>如果事务结束时钱没还上，整笔交易回滚，就像借款从未发生过。</li>
+<li>这意味着攻击者可以在一个区块内瞬间获得巨额资金，而不用长期持有这些资本。</li>
+<li>但这不等于“闪电贷让本来安全的协议凭空失守”。</li>
+<li>更准确地说，闪电贷会把原本存在但要求巨额本金才能利用的问题，变成人人可利用的现实攻击面。</li>
+<li>所以它是资金放大器、攻击加速器，不是根因。</li>
+</ul>
+<hr>
+<h3 id="题卡-9callback-在闪电贷攻击链里扮演什么角色">题卡 9：Callback 在闪电贷攻击链里扮演什么角色？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>为什么面试里老要问 callback？它和攻击到底是什么关系？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>Callback 是闪电贷协议把控制权交还给借款人的那一步。</li>
+<li>攻击者正是利用这段“已拿到钱、尚未归还”的窗口，去操纵价格、清算头寸或触发其他协议的错误逻辑。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>闪电贷不是把钱打给你就结束了，它通常会在放款后立即调用你指定的回调函数。</li>
+<li>这一点非常关键，因为从那一刻开始，到你归还贷款之前，你拥有了一笔巨大但短暂的可用资本。</li>
+<li>攻击链往往就写在这个 callback 里：</li>
+<li>先借钱</li>
+<li>再拿大钱去推价格、搬池子、打清算、做跨协议套利</li>
+<li>最后在函数末尾还钱</li>
+<li>所以 callback 不是一个“语法细节”，而是闪电贷机制里最关键的攻击执行窗口。</li>
+<li>面试里如果你能把 callback 说成“资金真正进入攻击链的起点”，会比只说“回调函数很重要”更到位。</li>
+</ul>
+<hr>
+<h3 id="题卡-10一个典型的价格操纵--闪电贷攻击链该怎么讲">题卡 10：一个典型的价格操纵 / 闪电贷攻击链该怎么讲？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果让我系统讲一遍价格操纵类攻击链，我该怎么有条理地回答？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>典型链路是：借大额资金，短时扭曲某个关键状态或价格，让依赖方基于错误输入执行有利于攻击者的逻辑，最后获利并还款。</li>
+<li>关键不是“借到钱”，而是“依赖方错误地信了那个短时状态”。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>一个经典模板通常分四步：</li>
+<li>第一步，借到大额资金，通常通过 flash loan 放大火力。</li>
+<li>第二步，利用这笔资金短时间改变目标池子的储备、价格或某个关键状态。</li>
+<li>第三步，让另一个依赖这个状态的协议做出错误决策，例如按虚高价格放贷、按错误估值接受抵押，或在错误价格下完成兑换。</li>
+<li>第四步，攻击者拿走收益，归还 flash loan，本次事务结束。</li>
+<li>这个模板之所以危险，是因为很多协议会错误地把“链上某一瞬间能读到的值”当成“稳健可信的真实价格”。</li>
+<li>所以你在面试里最好把问题说成“依赖方对数据来源的信任模型出了问题”，而不是只说“闪电贷很危险”。</li>
+<li>你还可以补一句常见防御：</li>
+<li>不直接信单点 spot price</li>
+<li>使用更稳健的 TWAP 或外部预言机</li>
+<li>提高操纵成本</li>
+<li>限制单区块内敏感操作</li>
+</ul>
+<hr>
+<h2 id="day-5lendingliquidationmock-interview">Day 5：Lending、Liquidation、Mock Interview</h2>
+<h3 id="题卡-1借贷协议的基本结构是什么">题卡 1：借贷协议的基本结构是什么？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果让我抽象地讲 DeFi 借贷协议，它的核心结构是什么？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>借贷协议的核心就是：存款人把资产存进池子提供流动性，借款人抵押资产后从池子里借出资产，协议再依赖预言机和风险参数持续评估谁安全、谁该被清算。</li>
+<li>它本质上是一个“资金池 + 会计系统 + 风险控制系统”的组合。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>DeFi 借贷协议里最基础的参与方有两类：</li>
+<li>一类是存款人，他们把资产放进协议，提供可借流动性，并期待赚取利息。</li>
+<li>一类是借款人，他们需要先提供抵押品，再借出另一种资产。</li>
+<li>但这还不够，协议还必须维护一套持续运行的会计系统：</li>
+<li>记录每个人存了多少</li>
+<li>借了多少</li>
+<li>利息累计到哪里了</li>
+<li>抵押品当前值多少钱</li>
+<li>另外还必须有一套风险控制系统：</li>
+<li>预言机负责提供价格</li>
+<li>参数系统负责定义 LTV、清算阈值、close factor、清算奖励等规则</li>
+<li>清算人负责在风险失控时把坏账及时处理掉</li>
+<li>所以你可以把借贷协议看成“链上的自动抵押借贷银行”，但这个银行没有人工风控，全靠代码、参数和外部价格源维持偿付能力。</li>
+</ul>
+<hr>
+<h3 id="题卡-2为什么借贷协议需要-ctoken--atoken-这类存款凭证">题卡 2：为什么借贷协议需要 <code>cToken</code> / <code>aToken</code> 这类存款凭证？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>存款凭证到底是干什么的？为什么不能只记一个余额？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>因为协议需要一种可组合、可计息、可转移的方式来表示“你在池子里的份额”。</li>
+<li><code>cToken</code> / <code>aToken</code> 本质上都是存款头寸的链上凭证，只是记账方式不同。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>如果协议只是内部记一个“你存了 100 USDC”，虽然也能运作，但表达力和组合性会很差。</li>
+<li>借贷协议更常见的做法是给存款人铸造一个代表其头寸的代币。</li>
+<li>这个代币有几个重要价值：</li>
+<li>它能证明你在池子里的权益</li>
+<li>它能承载利息增长逻辑</li>
+<li>它可以被钱包、前端、其他协议直接识别和组合</li>
+<li>它让“存款头寸”从抽象数据库记录变成了链上的一等公民</li>
+<li><code>aToken</code> 和 <code>cToken</code> 都属于这类设计，只是增值方式不同。</li>
+<li>所以不要把它们理解成“奖励积分”，更准确地说，它们是“生息头寸凭证”。</li>
+</ul>
+<hr>
+<h3 id="题卡-3atoken-和-ctoken-的高层差异是什么">题卡 3：<code>aToken</code> 和 <code>cToken</code> 的高层差异是什么？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>Aave 的 <code>aToken</code> 和 Compound 的 <code>cToken</code> 都是存款凭证，但差别在哪？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li><code>aToken</code> 更像“余额直接增长”的模式，你看到的代币数量会随着利息累积而增长。</li>
+<li><code>cToken</code> 更像“数量相对稳定、兑换率上涨”的模式，真正变的是 <code>exchangeRate</code>。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>对 Aave 来说，用户存款后拿到 <code>aToken</code>，它更直观地表现为“你钱包里这类资产余额在增长”。</li>
+<li>对 Compound 来说，用户拿到 <code>cToken</code>，它代表的是一种可兑换头寸，你最终能换回多少底层资产，取决于 <code>cToken -> underlying</code> 的兑换率。</li>
+<li>所以两者都能表达“存款会生息”，但用户感知层面不同：</li>
+<li><code>aToken</code> 更像余额动态增长</li>
+<li><code>cToken</code> 更像凭证数量相对固定、价值通过汇率增长</li>
+<li>从工程上看，这是两种不同的会计表达方式，而不是“一个会生息、一个不会生息”。</li>
+<li>面试里如果你能说出“一个偏余额模型，一个偏兑换率模型”，通常就够稳了。</li>
+</ul>
+<hr>
+<h3 id="题卡-4借款利息为什么必须持续累计协议是怎么理解这件事的">题卡 4：借款利息为什么必须持续累计？协议是怎么理解这件事的？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>借贷协议里的利息不是每秒真实转账，那它到底怎么累计？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>借贷协议通常不会每秒给每个用户打款，而是通过索引、汇率或累积因子这类会计变量，把时间和利率折算进头寸价值。</li>
+<li>本质上是“会计更新”，而不是“实时逐笔转账”。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>如果一个协议真要每秒对所有账户逐个改余额，成本会极高，也几乎不可扩展。</li>
+<li>所以更现实的做法是：</li>
+<li>维护一套全局或局部的利息累计指标</li>
+<li>在用户交互、查询或清算时，再把这些指标结算到具体头寸上</li>
+<li>这样协议就能做到：</li>
+<li>存款会随着时间产生收益</li>
+<li>借款会随着时间增加债务</li>
+<li>但链上不需要持续遍历所有账户更新状态</li>
+<li>所以借贷协议的关键不只是“会不会收利息”，而是“会计系统能不能正确反映利息随时间的累积”。</li>
+<li>这也是为什么很多借贷协议的核心风险并不只是权限漏洞，而是利率、索引、汇率、精度和状态同步问题。</li>
+</ul>
+<hr>
+<h3 id="题卡-5ltvliquidation-thresholdclose-factorliquidation-bonus-分别是什么">题卡 5：<code>LTV</code>、<code>liquidation threshold</code>、<code>close factor</code>、<code>liquidation bonus</code> 分别是什么？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>这些清算参数老是混在一起，它们到底各管什么？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li><code>LTV</code> 管的是“最多能借多少”。</li>
+<li><code>liquidation threshold</code> 管的是“什么时候开始危险到可清算”。</li>
+<li><code>close factor</code> 管的是“一次最多能被清多少债务”。</li>
+<li><code>liquidation bonus</code> 管的是“清算人为什么愿意来执行清算”。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li><code>LTV</code> 可以理解成放贷上线，它回答的是：用户拿这份抵押品，最多能借到什么程度。</li>
+<li><code>liquidation threshold</code> 更偏风控线，它通常高于或区别于 LTV，回答的是：什么情况下账户会跌入可清算区间。</li>
+<li><code>close factor</code> 是清算节奏控制器，它防止一次清算把整个头寸瞬间全部扫空，通常限制单次最多可偿还多少比例的债务。</li>
+<li><code>liquidation bonus</code> 则是给清算人的经济激励，因为如果没有奖励，没人愿意出 gas 和资金来帮协议处理坏账风险。</li>
+<li>所以这几个参数不是一回事：</li>
+<li>一个决定借款上限</li>
+<li>一个决定危险阈值</li>
+<li>一个决定每次清多少</li>
+<li>一个决定清算人为什么来</li>
+<li>面试里如果把这几个概念混了，通常会被继续追问。</li>
+</ul>
+<hr>
+<h3 id="题卡-6健康因子--可清算条件应该怎么理解">题卡 6：健康因子 / 可清算条件应该怎么理解？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>健康因子到底是什么？为什么不能只背一个公式？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>健康因子本质上是在衡量“按协议当前风险参数和价格计算后，你的抵押是否还足以覆盖债务”。</li>
+<li>它不是一个脱离协议语义的纯数学数值，不同协议对参数和记账方式的定义会不同。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>很多资料会给出类似：</li>
+<li><code>Health Factor = (Collateral × 某种风险折扣) / Debt</code></li>
+<li>这个方向没问题，但面试里不能只背一个简化版，因为协议之间的定义并不完全一样。</li>
+<li>真正重要的是理解它在表达什么：</li>
+<li>抵押品值多少钱</li>
+<li>协议愿意按多保守的折扣承认这份价值</li>
+<li>当前债务值多少钱</li>
+<li>两者相比，安全垫还剩多少</li>
+<li>一旦这个安全垫低于某个阈值，协议就认为你的账户已经不再足够安全，可以被清算。</li>
+<li>所以健康因子不是“一个神秘分数”，而是风险参数、价格、债务和会计状态共同作用下的结果。</li>
+</ul>
+<hr>
+<h3 id="题卡-7为什么清算不是惩罚用户而是协议自救机制">题卡 7：为什么清算不是“惩罚用户”，而是协议自救机制？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>为什么借贷协议必须有清算？它的本质作用是什么？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>清算的本质不是惩罚某个用户操作失误，而是在抵押不足时尽快回收风险敞口，防止协议整体出现坏账。</li>
+<li>它服务的是系统偿付能力，而不是情绪上的惩罚逻辑。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>借贷协议的根本目标之一，是保证存款人的钱随时尽可能可兑付。</li>
+<li>如果借款人的抵押品价值跌得太多，但债务没同步下降，协议就面临坏账风险。</li>
+<li>这时如果不允许清算，损失最终会传导给整个资金池。</li>
+<li>所以清算机制的作用是：</li>
+<li>在账户还没彻底资不抵债前</li>
+<li>尽快让外部清算人介入</li>
+<li>还掉部分债务</li>
+<li>拿走对应抵押品和奖励</li>
+<li>这样协议可以缩小风险敞口，维持整体偿付能力。</li>
+<li>所以更准确的说法是：清算是系统级风险处置机制，而不是“惩罚不小心的用户”。</li>
+</ul>
+<hr>
+<h3 id="题卡-8为什么借贷协议高度依赖预言机而预言机又会成为核心风险">题卡 8：为什么借贷协议高度依赖预言机，而预言机又会成为核心风险？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>借贷协议为什么离不开预言机？它又为什么这么危险？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>因为借贷协议必须知道抵押品和债务当前值多少钱，否则无法判断用户还能借多少、是否该被清算。</li>
+<li>但一旦价格源被操纵或失真，整个风控逻辑就会跟着一起失真，所以预言机会从基础设施变成主要攻击面。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>借贷协议不是只看“你有多少枚币”，而是要看“这些币现在值多少钱”。</li>
+<li>如果没有价格，协议就无法计算：</li>
+<li>你的抵押价值</li>
+<li>你的借款上限</li>
+<li>你的健康程度</li>
+<li>你是否已跌入清算区间</li>
+<li>所以预言机是借贷协议的眼睛。</li>
+<li>但问题也正出在这里：如果眼睛被欺骗，整个风控系统看到的世界就是错的。</li>
+<li>典型风险包括：</li>
+<li>直接读取易被操纵的 spot price</li>
+<li>低流动性池子价格被闪电贷扭曲</li>
+<li>预言机更新滞后</li>
+<li>多源聚合设计不当</li>
+<li>所以对借贷协议来说，预言机既是基础设施，也是最危险的单点之一。</li>
+</ul>
+<hr>
+<h3 id="题卡-9为什么一个账户看起来安全却可能突然变得可清算">题卡 9：为什么一个账户看起来安全，却可能突然变得可清算？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>用户前一秒还没事，为什么下一秒就被清算了？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>因为安全与否不是静态属性，而是由价格、利息、参数和市场状态共同决定的动态结果。</li>
+<li>只要其中某个关键变量快速变化，账户就可能从“看起来安全”瞬间跨进清算区间。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>借贷账户是否安全，本质上是一个实时计算结果。</li>
+<li>所以它随时会被这些因素改变：</li>
+<li>抵押品价格下跌</li>
+<li>借入资产价格上涨</li>
+<li>借款利息持续累积</li>
+<li>预言机更新价格</li>
+<li>协议参数变化</li>
+<li>甚至其他关联市场的流动性变化</li>
+<li>这意味着“现在健康”不等于“下一个区块还健康”。</li>
+<li>很多清算并不是用户做错了某个新操作，而是市场状态变化后，原来的安全垫被迅速吃掉了。</li>
+<li>所以面试里可以把这类问题概括为：借贷安全性是动态状态，不是一次性判断。</li>
+</ul>
+<hr>
+<h3 id="题卡-10aave-和-compound-的面试级差异该怎么讲以及如何串成一轮追问">题卡 10：Aave 和 Compound 的面试级差异该怎么讲？以及如何串成一轮追问？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果面试官追问 Aave 和 Compound 的差异，或者把 Lending 和前几天题目串起来，我该怎么稳住？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>高层上，两者都是超额抵押借贷协议，但 Aave 更常用 <code>aToken</code> 的余额增长式体验，Compound 更典型的是 <code>cToken</code> + 汇率增长式记账。</li>
+<li>如果被串题追问，可以把 Proxy、重入、AMM、预言机、清算全部落到“共享状态 + 风控输入 + 可组合性风险”这条主线上。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>Aave 和 Compound 的共性先讲清：</li>
+<li>都依赖超额抵押</li>
+<li>都依赖预言机</li>
+<li>都有存款凭证</li>
+<li>都通过参数系统和清算机制维持偿付能力</li>
+<li>再讲高层差异：</li>
+<li>Aave 常见记忆点是 <code>aToken</code>、更直观的余额增长感知、参数体系和产品形态较丰富</li>
+<li>Compound 常见记忆点是 <code>cToken</code>、兑换率增长模型、整体框架相对更“凭证化”</li>
+<li>不需要在题卡里展开成源码对比，只要讲到“记账方式和用户感知不同”就够了</li>
+<li>如果进入 mock 式追问，可以这样串：</li>
+<li>Proxy / <code>delegatecall</code>：说明升级系统的权限和状态安全问题</li>
+<li>Reentrancy：说明状态更新原子性</li>
+<li>AMM / 预言机：说明价格从哪里来、为什么会失真</li>
+<li>Lending liquidation：说明错误价格或状态如何最终落到清算和偿付风险上</li>
+<li>这样整轮回答会显得不是四个孤立知识点，而是一套能串起来的安全理解框架。</li>
+</ul>
+<hr>
+<h2 id="day-6-7euler-finance-漏洞复现与-poc">Day 6-7：Euler Finance 漏洞复现与 PoC</h2>
+<h3 id="题卡-1euler-finance-攻击全貌3-分钟怎么讲清">题卡 1：Euler Finance 攻击全貌——3 分钟怎么讲清？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>面试官让你用 3 分钟讲清 Euler Finance 攻击链，你怎么组织？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>Euler 攻击不是权限泄露或经典重入，而是攻击者利用 <code>donateToReserves</code> 这条缺失健康检查的业务路径，主动让自己变成可清算状态，再通过清算奖励反向获利。</li>
+<li>本质是会计系统与风险约束失效叠加的逻辑漏洞。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>讲述框架建议按时间线：<strong>背景 → 根因 → 攻击链 → 根本教训</strong>。</li>
+<li><strong>背景</strong>：Euler 是借贷协议，核心安全前提是”账户在任何关键操作后都必须仍满足风险约束”。</li>
+<li><strong>根因</strong>：<code>donateToReserves</code> 会改变抵押/债务/储备的会计关系，但缺了操作后的健康检查——主路径有检查，这条偏路径没有。这不是代码漏写，而是风险模型没有在所有状态变更路径上保持一致。</li>
+<li><strong>攻击链</strong>：
+<ul>
+<li>资金准备：flash loan 获取大额资金，做大借贷头寸</li>
+<li>状态畸变：调用 <code>donateToReserves</code> 把自己推入不健康区间</li>
+<li>清算获利：利用清算奖励机制从系统提取净利润</li>
+</ul>
+</li>
+<li><strong>教训</strong>：协议不是在单个权限点上失守，而是在系统性风险边界上失守。安全规则必须被所有入口统一执行。</li>
+</ul>
+<hr>
+<h3 id="题卡-3为什么攻击者主动把自己推到可清算状态">题卡 3：为什么攻击者主动把自己推到可清算状态？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>正常用户都想远离清算，攻击者为什么反其道而行？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>因为清算伴随着清算奖励。杠杆放大头寸 + 故意制造可清算状态 → 清算奖励 > 自身损失 → 净利润。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>清算机制给清算人 bonus 以激励坏账处理，这在正常场景下合理。</li>
+<li>但如果协议允许攻击者自己送自己进危险区，再从清算环节吃到奖励，那清算奖励就从”防御机制”变成”套利入口”。</li>
+<li>Euler 攻击的反直觉核心：攻击者不是在躲清算，而是在<strong>设计一场对自己有利的清算</strong>。
+<ul>
+<li>先把头寸做大</li>
+<li>用 <code>donateToReserves</code> 改变安全状态</li>
+<li>让自己变成可清算</li>
+<li>利用清算奖励机制吃出净收益</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="题卡-5poc-怎么拆怎么验证怎么写断言">题卡 5：PoC 怎么拆、怎么验证、怎么写断言？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果要写一个高质量的 Euler PoC，应该怎么组织，关键断言有哪些？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>按三段拆：<strong>资金准备 → 状态畸变 → 清算获利</strong>。每段各自验证一个关键问题。</li>
+<li>断言不只是”盈利多少”，要证明<strong>协议不变量被打穿的过程</strong>。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li><strong>资金准备</strong>：主网分叉 + flash loan，复现攻击者如何做大初始头寸。重点：资产、借贷关系和初始状态搭建正确。</li>
+<li><strong>状态畸变</strong>：触发 <code>donateToReserves</code>，观察抵押 / 债务 / 健康状态变化。重点：证明协议允许了不该出现的状态。</li>
+<li><strong>清算获利</strong>：复现清算动作、奖励结算和资产提取。重点：异常状态能转化成净利润。</li>
+<li><strong>关键断言</strong>（把攻击脚本升级为漏洞解释器）：
+<ul>
+<li>操作前后用户的抵押 / 债务 / eToken 余额变化</li>
+<li><code>donateToReserves</code> 前后健康状态变化</li>
+<li>原本不可清算的账户何时变成可清算</li>
+<li>清算后奖励与损失的净差额</li>
+</ul>
+</li>
+<li><strong>Foundry 环境要求</strong>：fork 到正确区块高度、合约接口可访问、关键调用链走通。先保证”能跑、能观测、能断言”。</li>
+<li>断言的面试价值：说明你不是抄 PoC，而是理解状态机如何失守。</li>
+</ul>
+<hr>
+<h3 id="题卡-7如果我是审计员如何早期发现这类漏洞">题卡 7：如果我是审计员，如何早期发现这类漏洞？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>面试官追问”你会怎么在审计中发现类似问题”，怎么回答？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>核心方法：枚举所有能改变头寸健康度的路径，逐一检查是否都有统一的健康状态校验。</li>
+<li>不要只盯主路径，要像攻击者一样问”哪些偏门操作也会动到风险相关的状态变量”。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li><strong>审计清单思路</strong>：
+<ul>
+<li>列出所有涉及抵押 / 债务 / 储备变化的函数（不只是 borrow/repay/withdraw）</li>
+<li>检查每条路径末尾是否都有健康检查</li>
+<li>特别关注”看似无害”的辅助函数（donate、transfer、migrate）</li>
+<li>验证风险模型在所有入口上是否一致执行</li>
+</ul>
+</li>
+<li><strong>不变量驱动审计</strong>：先定义协议的核心不变量（如”任何操作后账户必须健康或被阻止”），再反向验证每条路径是否维护了这些不变量。</li>
+<li><strong>修复思路</strong>：在所有改变头寸风险的路径末尾统一加入健康检查，或提取成 modifier/internal function 确保不遗漏。</li>
+</ul>
+<hr>
+<h3 id="题卡-8checkliquidity--deferliquiditystatus-为什么是这次事故真正的风控闸门">题卡 8：<code>checkLiquidity()</code> / <code>deferLiquidityStatus</code> 为什么是这次事故真正的风控闸门？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果面试官继续往源码层追，<code>checkLiquidity()</code> 到底为什么这么关键？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>因为它不是装饰性函数，而是 Euler 在账本变化后统一触发风险检查或挂脏标记的闸门。</li>
+<li><code>donateToReserves()</code> 致命就致命在：它改了用户风险相关状态，却既没立即检查，也没把账户标成稍后必须结算。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>Euler 不只是“有一个 RiskManager”，而是通过 <code>checkLiquidity()</code> 把很多状态变更路径统一收口到风控边界。</li>
+<li>它会先看 <code>deferLiquidityStatus</code>。</li>
+<li>如果当前没有延迟检查上下文，就直接把账户送去 <code>requireLiquidity(account)</code> 做硬校验。</li>
+<li>如果当前处在允许延迟结算的上下文里，它至少也会把状态从 <code>CLEAN</code> 标成 <code>DIRTY</code>，意思是“这个账户已经被改动过，稍后必须补总检查”。</li>
+<li>也就是说，这里保护的不是某个局部函数，而是“所有会影响头寸健康度的路径，最后都要经过统一闸门”。</li>
+<li><code>donateToReserves()</code> 的问题就在于它改了 <code>balance</code> 这类风险相关状态，却绕开了这个闸门：</li>
+<li>没有立即 <code>requireLiquidity()</code></li>
+<li>没有留下延迟检查的脏标记</li>
+<li>等于让协议接受了一个本不该暂时存在的危险状态组合。</li>
+</ul>
+<hr>
+<h3 id="题卡-9为什么-poc-里必须拆成-violator-和-liquidator-两个角色">题卡 9：为什么 PoC 里必须拆成 <code>violator</code> 和 <code>liquidator</code> 两个角色？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>为什么不能让攻击者自己清算自己？PoC 里拆双角色只是写法习惯吗？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>不是写法习惯，而是协议约束决定的。</li>
+<li>Euler 的清算逻辑禁止 self-liquidation，所以 PoC 必须把“持有坏账仓位的人”和“执行清算的人”拆开。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>很多初看 Euler 的人会把攻击理解成“攻击者自己把自己清算掉赚奖励”，但链上实现不是这么跑的。</li>
+<li>协议会把不健康仓位的账户视为 <code>violator</code>。</li>
+<li>真正发起清算、拿到折价收益的人是另一个角色 <code>liquidator</code>。</li>
+<li>这也是为什么高质量 PoC 不能只写“跑通攻击脚本”，而要把协议约束也忠实还原出来。</li>
+<li>如果你把这两个角色混成一个，面试官很容易追问你是不是只是看了攻击文章，没有真正对着合约约束做复现。</li>
+<li>所以这道题的加分点在于：你不仅知道攻击链，还知道协议本身不允许哪种偷懒实现。</li>
+</ul>
+<hr>
+<h3 id="题卡-10为什么既做-foundry-fork-test也做-tenderly-广播调试">题卡 10：为什么既做 Foundry fork test，也做 Tenderly 广播调试？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>既然本地 fork test 已经能跑通，为什么还要去 Tenderly 广播？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>因为两者验证的不是同一件事。</li>
+<li>Foundry fork test 更适合快速验证 PoC 成立，Tenderly 广播更适合把真实交易层次和状态变化逐层 debug 出来。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>Foundry fork test 的优势是快、可控、适合反复写断言。</li>
+<li>你可以在历史区块直接拉起状态，把攻击拆段验证，确认“这条逻辑链确实成立”。</li>
+<li>但它不天然等于“我已经从交易和部署语义上把真实 exploit 走了一遍”。</li>
+<li>Tenderly 广播的价值在于：</li>
+<li>真实部署 exploit 合约</li>
+<li>真实发送调用</li>
+<li>在 Debugger 里逐层看 trace、storage 和中间状态</li>
+<li>这特别适合回答“你怎么确认脚本不是在本地自欺欺人”这种追问。</li>
+<li>还有一个很容易被忽略的细节：脚本里如果先部署再调用，广播时常常需要 <code>--slow</code>。</li>
+<li>原因不是性能，而是为了避免第二笔调用在第一笔部署确认前发出，导致你打到一个当时还没代码的地址。</li>
+<li>这个细节很工程化，面试里说出来会明显提高可信度。</li>
+</ul>
+<hr>
+<h2 id="day-8-9sentiment-2023-04-04-基于-balancer-read-only-reentrancy-的攻击复现">Day 8-9：Sentiment 2023-04-04 基于 Balancer read-only reentrancy 的攻击复现</h2>
+<h3 id="题卡-1这个案例高层上到底发生了什么">题卡 1：这个案例高层上到底发生了什么？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果让我先用高层语言讲这个案例，我该怎么开口？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>这是一个“上游池子状态短暂失真，下游借贷协议把失真读值当真”的真实攻击案例。</li>
+<li>更具体地说，攻击者利用 Balancer 的 read-only reentrancy / state desynchronization，让 Sentiment 在错误时机读取了错误估值，最终完成高估值借贷并获利。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>这个案例不是单纯的闪电贷拉盘，也不是传统意义上“回调后把状态写坏”的重入。</li>
+<li>真正的关键是：上游系统在某个中间时刻，暴露出了一个看起来是 <code>view</code> 的、但实际已经不可信的状态快照。</li>
+<li>下游 Sentiment 把这个快照当成真实价格或真实估值输入，继续做风险判断和借贷决策。</li>
+<li>于是攻击链就形成了：</li>
+<li>上游状态失真</li>
+<li>下游信任错误数据</li>
+<li>攻击者利用错误估值借出真实资产</li>
+<li>所以这个案例最值得记住的不是某个函数名，而是“只读不等于安全，读错快照也能造成真钱损失”。</li>
+</ul>
+<hr>
+<h3 id="题卡-2为什么这是只读重入而不是普通重入">题卡 2：为什么这是“只读重入”，而不是普通重入？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>这个案例为什么会被归类成 read-only reentrancy？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>因为攻击核心不是反复进入去重复扣款或直接写坏同一状态，而是在重入窗口里读取到了一个中间态的错误数值。</li>
+<li>也就是说，真正被武器化的是“错误读取”，不是“重复写入”。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>传统重入更容易让人想到：</li>
+<li>先外部调用</li>
+<li>再回调进入</li>
+<li>然后重复提款或重复消费资源</li>
+<li>只读重入则更隐蔽。</li>
+<li>它可能没有直接把某个关键状态永久写坏，但它让外部系统在错误的时机读到了错误的状态。</li>
+<li>在 Balancer / Sentiment 这类案例里，危险不在“读函数会改状态”，而在“被读取的状态本身处于去同步中间态”。</li>
+<li>下游协议如果把这个读值当成可信输入，就会在自己的系统里做出真实、可结算的错误决策。</li>
+<li>所以 read-only reentrancy 的关键不是“只读函数有副作用”，而是“中间态被下游当成了稳定真相”。</li>
+</ul>
+<hr>
+<h3 id="题卡-3balancer-这边的根因是什么">题卡 3：Balancer 这边的根因是什么？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果把上游根因讲清楚，Balancer 这边到底出了什么问题？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>根因是 join/exit 过程中某些关键状态的更新不是一个外部完全不可见的原子快照。</li>
+<li>这导致在特定重入窗口里，外部读取能看到“部分状态已经变了、部分状态还没变”的去同步状态。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>在这类池子协议里，很多价格、份额和估值都依赖多个状态量共同成立。</li>
+<li>一旦这些状态量没有在外部完全不可见的前提下同步完成更新，就会出现中间态。</li>
+<li>比如可能出现：</li>
+<li><code>totalSupply</code> 已变化</li>
+<li>balances 还没同步</li>
+<li>或某些内部缓存值还停留在旧状态</li>
+<li>单看每个变量本身都“像是合法值”，但它们组合起来已经不再代表一个真实可结算的池子状态。</li>
+<li>这就是所谓 state desynchronization。</li>
+<li>攻击者并不一定要永久篡改这些值，只要能卡在这个窗口里，让下游读到它，就足够了。</li>
+</ul>
+<hr>
+<h3 id="题卡-4sentiment-为什么会中招">题卡 4：Sentiment 为什么会中招？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>上游池子出了问题，为什么最终亏钱的是 Sentiment？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>因为 Sentiment 把上游返回的估值当成了可信风险输入，用它决定账户价值、借贷额度或清算边界。</li>
+<li>一旦这个输入失真，Sentiment 的风控系统就会在自己这边“合法地”做出错误结算。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>借贷协议本质上是价格和风控驱动系统。</li>
+<li>它不只看“你有几个 token”，更看“这些 token 当前值多少钱”。</li>
+<li>所以只要 Sentiment 依赖的估值源被抬高，它看到的就是：</li>
+<li>你的抵押价值变高了</li>
+<li>你的安全边际变厚了</li>
+<li>你似乎还能借出更多资产</li>
+<li>如果这个估值其实只是上游中间态造成的幻觉，那 Sentiment 就是在错误前提下放出了真实资产。</li>
+<li>所以从系统角度讲：</li>
+<li>Balancer 暴露了错误快照</li>
+<li>Sentiment 错信了这个快照</li>
+<li>攻击者把“读值错误”兑现成了“真实借款利润”</li>
+<li>这也是为什么 DeFi 组合性风险这么高：一个协议的只读问题，可能变成另一个协议的真金白银损失。</li>
+</ul>
+<hr>
+<h3 id="题卡-5这条攻击链应该怎么拆">题卡 5：这条攻击链应该怎么拆？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果我要把这个真实攻击讲成一条清晰链路，应该怎么拆？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>最清晰的拆法是四步：</li>
+<li>制造上游中间态</li>
+<li>在中间态窗口读取错误估值</li>
+<li>用错误估值驱动下游借贷决策</li>
+<li>提取真实资产并完成获利</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>第一步，攻击者先构造能触发 Balancer 池子进入去同步中间态的动作。</li>
+<li>第二步，在这个窗口内，通过重入或相关调用路径让下游读取池子估值。</li>
+<li>第三步，Sentiment 把这个失真估值作为风险输入，错误地认为攻击者抵押品价值更高。</li>
+<li>第四步，攻击者基于这份虚高估值借出真实资产，随后完成整条攻击闭环。</li>
+<li>所以这条链里真正值得抓住的不是“某一个函数名”，而是数据流：</li>
+<li>上游错误状态</li>
+<li>错误读值</li>
+<li>下游错误信任</li>
+<li>真资产流出</li>
+<li>你只要把这个数据流讲顺，案例就不会碎。</li>
+</ul>
+<hr>
+<h3 id="题卡-6如果要做复现poc-应该拆成哪几段">题卡 6：如果要做复现，PoC 应该拆成哪几段？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>Day 8-9 合并成一个真实案例时，PoC 最稳的拆法是什么？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>最稳的拆法是三段：</li>
+<li>上游状态畸变复现</li>
+<li>下游错误估值复现</li>
+<li>借贷获利闭环复现</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>第一段是<strong>上游状态畸变</strong>：</li>
+<li>先在主网分叉里复现 Balancer 那个关键调用窗口</li>
+<li>证明池子在某个时刻确实暴露了去同步状态</li>
+<li>第二段是<strong>下游错误估值</strong>：</li>
+<li>让 Sentiment 在那个窗口内去读值</li>
+<li>证明它读到的是不该被当真使用的异常估值</li>
+<li>第三段是<strong>借贷获利闭环</strong>：</li>
+<li>证明攻击者可以基于这份高估值完成多借、提款或其他获利动作</li>
+<li>这样拆的好处是每段各自证明一件事：</li>
+<li>上游真的失真了</li>
+<li>下游真的信了</li>
+<li>信错以后真的亏钱了</li>
+</ul>
+<hr>
+<h3 id="题卡-7做这个-poc-最值得写哪些状态断言">题卡 7：做这个 PoC 最值得写哪些状态断言？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果我不想只写“脚本跑通”，那最该断言什么？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>最值得断言的是：</li>
+<li>上游关键状态在同一窗口内出现不一致</li>
+<li>下游读到的估值和正常状态下不同</li>
+<li>借贷额度或风险判断因此发生了可观察偏移</li>
+<li>最终资产流向出现真实获利</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>这类复现最怕只打印最终利润，却讲不清“为什么会有利润”。</li>
+<li>所以断言至少要覆盖三层：</li>
+<li><strong>状态层</strong>：上游池子哪些变量发生了去同步</li>
+<li><strong>读值层</strong>：Sentiment 在那个时刻读到的价格或估值是多少</li>
+<li><strong>结果层</strong>：这份错误估值如何改变了借贷额度、可清算性或提款能力</li>
+<li>如果还能补一条“正常路径下这个值应该是多少”，效果会更强。</li>
+<li>因为这样就不只是“异常发生了”，而是“异常偏离量能被量化出来”。</li>
+<li>这类断言会让你的 PoC 从“黑盒打通”升级成“白盒解释攻击机理”。</li>
+</ul>
+<hr>
+<h3 id="题卡-8这个案例最适合怎么做-3-分钟口述">题卡 8：这个案例最适合怎么做 3 分钟口述？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果面试让我 3 分钟讲完这个案例，最稳的结构是什么？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>最稳结构是：</li>
+<li>先讲一句根因</li>
+<li>再讲上游如何暴露错误快照</li>
+<li>再讲下游如何错信这份快照</li>
+<li>最后讲为什么这会变成真实资金损失</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>可以按这个顺序讲：</li>
+<li>这不是普通重入，而是 read-only reentrancy 导致的状态去同步案例</li>
+<li>Balancer 在某个 join/exit 相关窗口里会暴露中间态，导致外部读取看到错误估值</li>
+<li>Sentiment 把这个错误估值当成可信输入，用于借贷风险判断</li>
+<li>攻击者因此获得了被高估的抵押价值，借出了真实资产</li>
+<li>这个案例最重要的启发是：只读函数也可能在组合系统里变成高危入口，因为下游系统会拿返回值做真钱决策</li>
+<li>这样讲的好处是：</li>
+<li>有根因</li>
+<li>有数据流</li>
+<li>有受害机制</li>
+<li>有工程教训</li>
+</ul>
+<hr>
+<h3 id="题卡-9这个案例最适合提炼出什么工程教训">题卡 9：这个案例最适合提炼出什么工程教训？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果不只是讲攻击过程，这个案例最值得沉淀什么工程教训？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>最核心的教训是：不要把“能读到”误当成“值得信任”，尤其不能把复杂 AMM / LP 池在某个瞬时读到的值直接当作借贷风控输入。</li>
+<li>在组合协议里，快照一致性和信任边界本身就是安全设计的一部分。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>这个案例至少能沉淀出四条工程教训：</li>
+<li>第一，<code>view</code> / <code>read-only</code> 不等于安全输入</li>
+<li>第二，依赖外部池子估值时，必须考虑中间态和可操纵性</li>
+<li>第三，借贷协议不能把单点瞬时读值直接当成高价值风控输入</li>
+<li>第四，组合协议要显式定义“哪些外部状态值得信任、在什么条件下值得信任”</li>
+<li>所以这不是某个单体协议写错一行代码，而是组合系统里“信任边界定义得太乐观”。</li>
+<li>面试里如果能从这里提升到“安全设计不只是权限控制，也包括输入可信度建模”，通常会显得你抽象能力更强。</li>
+</ul>
+<hr>
+<h3 id="题卡-10如果只复现一个只读重入真实案例为什么选-sentiment">题卡 10：如果只复现一个只读重入真实案例，为什么选 Sentiment？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>面试官如果问“为什么选这个案例做复现”，怎么回答？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>因为它不是纯理论漏洞，而是完整打通了“上游 read-only reentrancy 根因 → 下游借贷误判 → 真实获利”的真实攻击链。</li>
+<li>这个案例能同时体现你对只读重入、预言机依赖和 DeFi 组合性风险的理解。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>如果只复现上游根因案例，容易停在“我知道 Balancer 有个只读重入窗口”。</li>
+<li>但 Sentiment 这类真实攻击更完整，因为它说明：</li>
+<li>上游状态异常如何被下游读取</li>
+<li>读取后如何改变借贷协议风控判断</li>
+<li>最终如何转化成真实资金损失</li>
+<li>所以它是一个更适合面试展示的案例。</li>
+<li>你不仅能讲漏洞本身，还能讲：</li>
+<li>组合性风险</li>
+<li>输入信任模型</li>
+<li>借贷协议为什么会被 oracle / read path 打穿</li>
+<li>这会比只讲一个孤立池子 bug 更有说服力。</li>
+</ul>
+<hr>
+<h3 id="题卡-11getprice-和-borrow-分别是这条链上的哪两个边界">题卡 11：<code>getPrice()</code> 和 <code>borrow()</code> 分别是这条链上的哪两个边界？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果我要把这个案例讲得更像源码审计，而不是复述文章，最该点哪两个函数？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>上游边界是 <code>WeightedBalancerLPOracle.getPrice()</code>，它把 Balancer 的瞬时读数转成估值。</li>
+<li>下游边界是 <code>AccountManager.borrow()</code>，它把这份估值直接兑换成真实放款。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>这条攻击链最容易讲散，解决办法就是抓住两个边界函数。</li>
+<li>第一是 <code>getPrice()</code>：</li>
+<li>它一边从 <code>Vault.getPoolTokens(...)</code> 读取底层余额</li>
+<li>一边从 BPT 合约读取 <code>totalSupply()</code></li>
+<li>一旦这两个值不来自同一个干净快照，估值就会飘。</li>
+<li>第二是 <code>borrow()</code>：</li>
+<li>它不是“先算额度再借”，而是先 <code>lendTo(account, amt)</code>，最后才 <code>isAccountHealthy(account)</code>。</li>
+<li>这意味着只要健康检查吃到了脏价格，虚高抵押价值就会立刻兑换成真资产。</li>
+<li>所以面试里最稳的说法是：</li>
+<li><code>getPrice()</code> 是脏数据进入系统的边界</li>
+<li><code>borrow()</code> 是脏数据兑现成真实资金流出的边界</li>
+</ul>
+<hr>
+<h3 id="题卡-12为什么-nonreentrant-没挡住这次攻击">题卡 12：为什么 <code>nonReentrant</code> 没挡住这次攻击？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>Sentiment 不是有 <code>nonReentrant</code> 吗，为什么还是被打穿了？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>因为这把锁保护的是 <code>AccountManager</code> 自己的执行栈，不保护外部依赖协议此刻是不是正处于脏状态。</li>
+<li>这次问题不是“我还没跑完你又进我”，而是“我去信了一个外部协议半路上的错快照”。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>很多人看到 <code>nonReentrant</code> 就会产生安全错觉，以为“那重入类问题应该都挡住了”。</li>
+<li>但这把锁只能防一种情况：</li>
+<li>Sentiment 自己某个受保护函数还没跑完</li>
+<li>攻击者又想回头进入 Sentiment 的另一个受保护函数</li>
+<li>这次真正制造中间态的关键动作发生在 Balancer 那边。</li>
+<li>也就是说，攻击窗口是在外部协议的 <code>exitPool()</code> 过程中出现的，而不是 Sentiment 自己的持锁执行栈里出现的。</li>
+<li>攻击者回到 Sentiment 调 <code>borrow()</code> 时，Sentiment 本地这把锁并不一定处于“施工中”状态。</li>
+<li>所以这次问题的本质不是“本地锁失效”，而是“本地锁根本不覆盖跨协议脏读”。</li>
+</ul>
+<hr>
+<h3 id="题卡-13为什么攻击者要走-eth-退出路径">题卡 13：为什么攻击者要走 ETH 退出路径？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>为什么案例里会特别强调 <code>exitPool()</code> 走 ETH 退出路径？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>因为如果退出拿到的是普通 ERC20，标准 <code>transfer</code> 不会把执行权交还给攻击者。</li>
+<li>走原生 ETH 路径时，Balancer 会做一次 value call，攻击者才能在 <code>receive()/fallback()</code> 里卡进中间态窗口。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>这类案例里真正值钱的不是“退池”这个动作本身，而是“退池过程里有没有一个可重入窗口”。</li>
+<li>如果只是普通 ERC20 转账，执行流通常不会自动回到攻击者自定义逻辑。</li>
+<li>但如果 Balancer 把资产以原生 ETH 形式退给攻击者合约，就会触发一次 value call。</li>
+<li>这时攻击者的 <code>receive()</code> 或 <code>fallback()</code> 就能在 <code>exitPool()</code> 还没完全收尾时执行。</li>
+<li>也正是在这个时间点：</li>
+<li>BPT <code>totalSupply()</code> 已经缩了</li>
+<li>Vault 里的 <code>balances</code> 还没同步扣完</li>
+<li>攻击者于是能趁这个窗口去让 Sentiment 读取价格。</li>
+<li>所以你可以把它讲成：ETH 退出路径不是“可有可无的实现细节”，而是把中间态窗口真正暴露给攻击者的执行机制。</li>
+</ul>
+<hr>
+<h3 id="题卡-14pricebefore--priceduring--priceafter-这组数字到底证明了什么">题卡 14：<code>priceBefore / priceDuring / priceAfter</code> 这组数字到底证明了什么？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果我要拿“证据”说服面试官，这三个价格该怎么解释？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>核心不是“after 比 before 高一点”，而是 <code>priceDuring > priceBefore</code>。</li>
+<li>真正证明脏读成立的是回调窗口里的异常高价，而不是最终状态更新后的价格变化。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>这组数据最适合拿来回答“你凭什么说这里读到了脏价格”：</li>
+<li><code>priceBefore = 220120691697985632</code></li>
+<li><code>priceDuring = 221005560649599490</code></li>
+<li><code>priceAfter = 220122172406069243</code></li>
+<li>面试里最容易说错的是把 <code>after</code> 也当成漏洞核心证据。</li>
+<li>更准确的讲法是：</li>
+<li><code>before -> during</code> 的明显抬升，说明回调窗口里读到的不是正常价格，而是中间态脏读</li>
+<li><code>after -> before</code> 的细小差别，不一定说明漏洞持续存在，更可能是退池后真实新平衡、池子组成变化和舍入误差</li>
+<li>所以这组数字的意义不是“价格一直异常”，而是“在某个短暂窗口里，价格被错误抬高过”</li>
+<li>这恰好对应只读重入的本质：窗口短，但足够致命。</li>
+</ul>
+<hr>
+<h3 id="题卡-15这类问题的修复思路应该怎么讲">题卡 15：这类问题的修复思路应该怎么讲？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果面试官继续追问“那怎么修”，这类案例应该怎么回答才不空？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>修复要分上游和下游两层。</li>
+<li>上游要避免把可重入窗口里的 spot 读数暴露成可信价格，下游要避免在价格可信性没确认前就把资产先放出去。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>上游 Balancer 侧的思路是：</li>
+<li>不把当前 <code>view</code> 读数直接当成天然安全</li>
+<li>在取价前做一次 no-op 的 reentrancy check，例如 <code>manageUserBalance([])</code> 这类等价检查</li>
+<li>或者干脆避免让借贷风控路径直接依赖这种可重入窗口里的 spot 价格</li>
+<li>下游 Sentiment 侧的思路是：</li>
+<li>借款前先做额度预演和价格安全校验</li>
+<li>不要把 <code>lendTo()</code> 放在健康检查之前</li>
+<li>对这类 LP 抵押增加 oracle freshness、borrow cooldown 或专门的 reentrancy / stale-price 防护</li>
+<li>面试里最好的总结是：</li>
+<li>上游修的是“别暴露脏快照”</li>
+<li>下游修的是“别在快照可信性未确认前先放真钱”</li>
+</ul>
+<hr>
+<h2 id="day-10简历定稿项目话术收口集中投递">Day 10：简历定稿、项目话术收口、集中投递</h2>
+<h3 id="题卡-1安全岗简历里的项目经历应该怎么写">题卡 1：安全岗简历里的项目经历应该怎么写？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>Web3 安全岗的简历项目经历，最核心要突出什么？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>核心不是“做过很多”，而是“做过有证据的技术工作”。</li>
+<li>最值得突出的是：你解决了什么问题、你具体做了什么、你怎么验证结果有效、最终产出了什么。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>安全岗简历最忌讳两种写法：</li>
+<li>只有空泛名词，比如“参与智能合约安全研究”</li>
+<li>只有技术名词堆砌，比如“使用 Foundry、Slither、Anvil、Etherscan API”</li>
+<li>更有效的写法要包含四层信息：</li>
+<li>问题：你研究或系统解决的是什么真实风险</li>
+<li>动作：你亲手做了哪些技术实现或复现</li>
+<li>证据：你如何证明结论成立，比如 fork PoC、状态断言、结构化报告</li>
+<li>结果：最终交付了什么，例如漏洞复现、自动化检测、审计报告、面试可讲述案例</li>
+<li>对安全岗来说，最有价值的不是“我学过”，而是“我能拿出被验证过的技术产出”。</li>
+</ul>
+<hr>
+<h3 id="题卡-2euler-漏洞复现写进简历bullet-应该怎么写">题卡 2：Euler 漏洞复现写进简历，bullet 应该怎么写？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果把 Euler 复现写成一条简历 bullet，应该怎么组织？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>要写成“漏洞类型 + 复现方式 + 关键验证手段 + 体现出的能力”。</li>
+<li>不要只写“复现了 Euler 漏洞”，那样信息密度太低。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>一个更好的结构可以是：</li>
+<li>复现对象：Euler Finance 2023 漏洞</li>
+<li>技术动作：基于 Foundry 主网分叉复现攻击链</li>
+<li>验证方式：通过状态断言验证 <code>donateToReserves</code> 导致的健康检查缺失与清算获利路径</li>
+<li>能力体现：说明你理解借贷协议会计系统、风险约束和清算机制</li>
+<li>这类 bullet 的重点不是“告诉别人你看过文章”，而是“告诉别人你能把文章里的漏洞落成可验证实验”。</li>
+<li>一句话模板可以记成：</li>
+<li><code>基于 Foundry 主网分叉复现 Euler Finance 漏洞，分段验证状态畸变与清算获利链路，并通过断言定位借贷协议风险约束在非主路径上的失效。</code></li>
+</ul>
+<hr>
+<h3 id="题卡-3只读重入--sentiment-案例写进简历bullet-应该怎么写">题卡 3：只读重入 / Sentiment 案例写进简历，bullet 应该怎么写？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果写 Sentiment 这类案例，怎么体现“组合性安全理解”？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>重点要写清“上游根因 + 下游利用 + 你怎么证明两者连接起来”。</li>
+<li>这比单纯写“研究了只读重入”更有说服力。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>这个案例的价值不只是 read-only reentrancy 这个名词，而是它把组合协议风险讲完整了：</li>
+<li>Balancer 暴露 state desynchronization</li>
+<li>Sentiment 错信读值</li>
+<li>借贷风控被打穿</li>
+<li>所以 bullet 里最值得出现的内容是：</li>
+<li>复现对象：Sentiment 2023 基于 Balancer 的真实攻击</li>
+<li>技术动作：拆解上游状态畸变、下游错误估值、获利闭环</li>
+<li>验证方式：对读值偏差和借贷额度偏移做断言</li>
+<li>能力体现：说明你理解只读重入、预言机依赖和 DeFi 组合性风险</li>
+<li>这会比只写“复现了只读重入”强很多，因为它体现的是系统级安全视角。</li>
+</ul>
+<hr>
+<h3 id="题卡-4memescan-这种项目60-秒版话术应该怎么讲">题卡 4：<code>MemeScan</code> 这种项目，60 秒版话术应该怎么讲？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果面试官让我快速介绍 <code>MemeScan</code>，最稳的 60 秒结构是什么？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>用四句讲清：</li>
+<li>它解决什么问题</li>
+<li>核心链路是什么</li>
+<li>技术亮点是什么</li>
+<li>你具体负责什么</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>最稳的 60 秒结构是：</li>
+<li>第一，业务问题：链上新发 Meme 币风险极高，普通用户很难及时识别蜜罐、后门和恶意税率逻辑</li>
+<li>第二，系统做法：监听新池子 / 新币事件，自动拉起沙盒分叉环境，模拟买卖并做代码审计</li>
+<li>第三，技术亮点：不仅做静态扫描，还能在分叉环境里 impersonate owner、重放恶意操作，判断是否存在后门</li>
+<li>第四，你的职责：强调你负责的核心模块，比如沙盒攻防推演、合约分析链路、报告输出等</li>
+<li>60 秒版本的关键不是讲全，而是让面试官立刻明白：这不是普通爬虫，而是一个“可验证的安全分析系统”。</li>
+</ul>
+<hr>
+<h3 id="题卡-5memescan-的-3-分钟版该怎么展开">题卡 5：<code>MemeScan</code> 的 3 分钟版该怎么展开？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果面试官追问项目细节，3 分钟版怎么讲最稳？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>最稳结构是：</li>
+<li>业务背景</li>
+<li>系统架构</li>
+<li>关键模块</li>
+<li>最难技术点</li>
+<li>结果验证</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>三分钟版本不能只是把 60 秒版拉长，而是要开始体现工程判断。</li>
+<li>一个比较稳的结构是：</li>
+<li>业务背景：为什么新币检测不能只看源码，必须结合链上行为</li>
+<li>系统架构：事件监听、沙盒仿真、代码审计、报告输出如何串起来</li>
+<li>关键模块：重点展开你负责的模块，例如 fork 环境模拟买卖、owner impersonation、税率计算、后门验证</li>
+<li>最难点：比如如何在本地重放链上真实条件，如何减少误报，如何设计状态断言</li>
+<li>结果验证：输出报告、问答接口、实验结果或发现能力</li>
+<li>这样讲出来，面试官听到的不是“我做了个工具”，而是“我对问题建模、验证路径和工程取舍有清楚理解”。</li>
+</ul>
+<hr>
+<h3 id="题卡-6memescan-面试时哪些点不要说错">题卡 6：<code>MemeScan</code> 面试时哪些点不要说错？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果面试官深挖实现细节，哪些地方最容易一吹就露馅？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>最容易说错的有三件事：</li>
+<li>不要说 <code>Coordinator</code> 决定是否做深度分析</li>
+<li>不要说数据库已经完整承接主链路</li>
+<li>不要把它说成完全自治的多智能体系统</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>这类项目最怕的不是“功能还没做满”，而是你自己都不知道当前边界在哪里。</li>
+<li>更准确的表述是：</li>
+<li><code>Coordinator</code> 主要负责编排流程，真正的“是否追加深度分析”决策当前写在 <code>AuditorAgent.decide()</code></li>
+<li>数据库基础设施已经有，但主业务链路现在仍主要把报告写到 <code>reports/</code>，不是 DB-first 架构</li>
+<li>整个系统更接近“带有限决策能力的多 Agent 编排”，而不是完全自治、自己相互规划和谈判的智能体系统</li>
+<li>面试里把这些边界说对，反而会显得你可信。</li>
+<li>因为这说明你不是在包装概念，而是真的理解当前代码长什么样。</li>
+</ul>
+<hr>
+<h3 id="题卡-7memescan-有哪些局限适合主动承认">题卡 7：<code>MemeScan</code> 有哪些局限适合主动承认？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果面试官问“你最想优化哪块”或“当前还有什么边界”，怎么回答更稳？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>最适合主动承认的局限有两类：</li>
+<li>规则引擎现在还偏 MVP</li>
+<li>数据库还没完整接入主链路</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>这类回答的关键不是自我否定，而是说明你知道系统的成熟度在哪。</li>
+<li>你可以这样讲：</li>
+<li>规则引擎目前主要覆盖蜜罐、税率、ownership、mint 和部分未知风险，还没有扩展成更系统的黑名单函数扫描、代理识别、权限图分析</li>
+<li>数据库模型和 Repository 已经在，但为了先跑通端到端体验，当前还是以 Markdown 报告落盘为主</li>
+<li>这两个局限都不是“方向错了”，而是你有意识地先保了端到端验证和用户价值</li>
+<li>面试里这种回答比“我们已经做得很完整了”更像真实工程师。</li>
+</ul>
+<hr>
+<h3 id="题卡-8uniswap-v2-dex-这个项目60-秒到-3-分钟该怎么讲">题卡 8：<code>Uniswap V2 DEX</code> 这个项目，60 秒到 3 分钟该怎么讲？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果面试官问我简历里的 <code>Uniswap V2 DEX</code>，我怎么讲才能让它看起来像“我真的做过 AMM”，而不是只背过原理？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>最稳的讲法是四段：</li>
+<li>做了什么</li>
+<li>核心机制是什么</li>
+<li>你实现了哪些关键模块</li>
+<li>你通过这个项目真正学到了什么</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>这个项目最怕讲成“我做了个 swap demo”，更好的讲法是：</li>
+<li>第一，项目定位：这是一个围绕 Uniswap V2 思路实现的简化 DEX / AMM 项目，目标是把恒定乘积做市、流动性池和 LP 份额机制真正落到代码里</li>
+<li>第二，核心机制：池子维护双边资产储备，交易遵循恒定乘积做市逻辑；用户可以通过双边存入/提取来铸造和销毁 LP 份额</li>
+<li>第三，关键实现：你重点实现了 <code>Liquidity Pool</code>、<code>mint / burn</code>、swap 相关逻辑，以及用户如何围绕双边资产与 LP 份额交互</li>
+<li>第四，能力体现：这个项目让你不只是“知道 Uniswap V2 是 <code>x * y = k</code>”，而是真的理解了 AMM 储备量、价格冲击、LP 份额、做市约束这些概念如何在合约状态机里落地</li>
+<li>如果面试官继续追问，你可以自然展开：</li>
+<li>你的项目是否拆了 <code>Factory / Router / Pair</code></li>
+<li>如果没有完整分层，你为什么这样简化</li>
+<li>你是如何处理流动性增加、减少和交易时状态更新的</li>
+<li>最后一句最好落在学习收获：</li>
+<li><strong>我不是只看过 V2 原理，而是亲手把 AMM 和 LP 机制从概念实现成了可运行的合约逻辑。</strong></li>
+</ul>
+<hr>
+<h3 id="题卡-9uniswap-v2-dex-写进简历bullet-应该怎么写">题卡 9：<code>Uniswap V2 DEX</code> 写进简历，bullet 应该怎么写？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果把 <code>Uniswap V2 DEX</code> 写成一条简历 bullet，怎么写信息密度更高？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>不要只写“实现了 Uniswap V2”，而要写成“机制类型 + 具体实现 + 关键能力”。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>更好的写法要包含三层：</li>
+<li><strong>实现对象</strong>：Uniswap V2 风格 DEX / AMM</li>
+<li><strong>技术动作</strong>：实现恒定乘积做市逻辑、流动性池、双边存取、LP 份额铸造/销毁</li>
+<li><strong>能力体现</strong>：说明你真正理解了 AMM 储备量管理、价格形成和状态更新</li>
+<li>一条更像样的 bullet 可以写成：</li>
+<li><code>基于 Solidity 实现 Uniswap V2 风格 DEX，完成恒定乘积做市逻辑、双边流动性池与 LP 份额铸造/销毁机制，深化对 AMM 储备更新、价格冲击与 DeFi 状态机设计的理解。</code></li>
+<li>如果你后续把架构也拆得更清楚，还可以补一句：</li>
+<li><code>并对 Factory / Router / Pair 的职责边界进行实现或对照分析。</code></li>
+<li>这类 bullet 的价值在于：它不是“看过协议源码”，而是“你用代码把机制做出来了”。</li>
+</ul>
+<hr>
+<h3 id="题卡-103-分钟自我介绍怎么组织最稳">题卡 10：3 分钟自我介绍怎么组织最稳？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果 Day 10 要准备 3 分钟自我介绍，最稳的框架是什么？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>最稳的是三段：</li>
+<li>背景与方向</li>
+<li>最能代表你的项目 / 漏洞研究</li>
+<li>你为什么适合这个岗位</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>很多自我介绍失败，不是因为内容少，而是因为没有主线。</li>
+<li>一个稳的 3 分钟结构通常是：</li>
+<li>第一段：你是谁，你当前聚焦的是 Web3 哪个方向，例如协议安全、智能合约审计、链上攻防</li>
+<li>第二段：拿一个最能代表你的项目或研究展开，例如 <code>MemeScan</code>、<code>Uniswap V2 DEX</code>、Euler 复现、Sentiment 复现</li>
+<li>第三段：把这些能力落回岗位需求，例如你能做漏洞分析、PoC 验证、组合性风险判断、审计辅助工具建设</li>
+<li>最关键的是：不要把介绍讲成学习流水账，而要讲成“我已经形成了一个明确的技术画像”。</li>
+</ul>
+<hr>
+<h3 id="题卡-11投递时应该优先投什么岗位">题卡 11：投递时应该优先投什么岗位？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>Day 10 开始集中投递时，优先级怎么排？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>优先投与你当前材料最匹配、最容易把已有案例讲透的岗位。</li>
+<li>对现在这套准备内容来说，优先级通常是：审计 / 协议安全 / Web3 后端安全研发。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>投递不是越广越好，而是要让已有材料和岗位需求尽量重合。</li>
+<li>你当前准备的内容明显偏强在：</li>
+<li>智能合约漏洞复现</li>
+<li>DeFi 机制理解</li>
+<li>fork PoC</li>
+<li>组合性风险分析</li>
+<li>所以更贴近的岗位通常是：</li>
+<li>智能合约审计</li>
+<li>协议安全研究</li>
+<li>Web3 后端安全 / 安全研发</li>
+<li>相比之下，如果去投一个更偏基础后端或纯链上业务开发岗位，你现在这套准备材料的优势就不一定能充分体现。</li>
+<li>所以 Day 10 的投递逻辑不是“什么都投”，而是“优先让你最强的证据先命中最匹配的岗位”。</li>
+</ul>
+<hr>
+<h3 id="题卡-12投递后应该记录什么才能形成正反馈">题卡 12：投递后应该记录什么，才能形成正反馈？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>每次投递或面试后，最该记什么？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>最该记录的是：</li>
+<li>岗位要求</li>
+<li>自己没答好的问题</li>
+<li>暴露出的知识短板</li>
+<li>下次要补的材料</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>如果投递和面试没有形成记录，经验就会丢掉。</li>
+<li>一个高价值的记录模板可以很简单：</li>
+<li>公司 / 岗位名称</li>
+<li>JD 里最看重什么</li>
+<li>自己在这次沟通里最强的证据是什么</li>
+<li>被追问最多的技术点是什么</li>
+<li>哪些地方答得不稳</li>
+<li>哪些内容该补进题卡、笔记或简历</li>
+<li>这样做的意义是，把“每次面试”都转化成“下一次面试的训练数据”。</li>
+<li>这会让 Day 10 之后不是准备结束，而是进入滚动迭代。</li>
+</ul>
+<hr>
+<h3 id="题卡-13最终高频问题清单应该怎么整理">题卡 13：最终高频问题清单应该怎么整理？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>Day 10 的“最终高频问题清单”，应该按什么结构整理？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>最好按主题整理，而不是按天整理。</li>
+<li>至少分成：EVM / Proxy、Reentrancy、AMM / Oracle、Lending / Liquidation、项目与 PoC 五组。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>如果还按 Day 1、Day 2 这样的学习顺序记，实战面试时会不方便快速检索。</li>
+<li>更适合最后收网的方式，是按面试提问主题整理：</li>
+<li>EVM / Proxy / <code>delegatecall</code> / storage collision</li>
+<li>Reentrancy / read-only reentrancy / 状态机抽象</li>
+<li>AMM / TWAP / flash loan / 预言机操纵</li>
+<li>Lending / health factor / liquidation / 风险参数</li>
+<li>项目与 PoC：MemeScan、Euler、Sentiment、Uniswap V2 DEX</li>
+<li>这样整理后，你在面试前就能按岗位快速复习最相关的一组，而不是整份文档线性重看。</li>
+</ul>
+<hr>
+<h3 id="题卡-14day-10-最低交付线是什么">题卡 14：Day 10 最低交付线是什么？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果 Day 10 时间不够，最低要保住哪些产出？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>最低要保住三件事：</li>
+<li>一版能讲得出去的简历</li>
+<li>一套能稳定输出的项目话术</li>
+<li>一轮真实投递与复盘记录</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>Day 10 最怕的是又去“补知识”，结果没有真正把前面内容转化成投递材料。</li>
+<li>所以如果时间不够，优先级应该很明确：</li>
+<li>第一，简历必须能打</li>
+<li>第二，项目话术必须能讲</li>
+<li>第三，必须开始真实投递并留下复盘</li>
+<li>题库整理和内容美化都可以往后放，但这三件事不能缺。</li>
+<li>因为从 Day 10 开始，重点已经不是“继续准备”，而是“让准备成果真正进入市场验证”。</li>
+</ul>
+<hr>
+<h2 id="真实面经补位">真实面经补位</h2>
+<h3 id="题卡-1面对大批量目标自动化漏扫方案应该怎么设计">题卡 1：面对大批量目标，自动化漏扫方案应该怎么设计？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果让我设计一套面向大批量目标的自动化漏扫方案，怎么答才不会停在“规则匹配”四个字？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>最稳的回答是分层讲：</li>
+<li>目标采集与归一化</li>
+<li>静态分析与组件识别</li>
+<li>风险排序与 PoC 验证</li>
+<li>人工复核与结果闭环</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>这类题的关键不是背一个工具名，而是说明你理解“工业化漏扫”是流水线，不是单点脚本。</li>
+<li>一个比较完整的方案可以这样拆：</li>
+<li><strong>目标采集</strong>：先拿到合约地址、源码、编译器信息、依赖库和部署链信息，做统一归档</li>
+<li><strong>静态分析层</strong>：把源码或反编译结果转成 IR / CFG / 数据流，跑 detector 规则去抓危险模式</li>
+<li><strong>组件识别层</strong>：识别常见库、代理模式、组件版本，结合已知 CVE / 历史漏洞模式做指纹匹配</li>
+<li><strong>风险排序层</strong>：不是所有命中都一视同仁，要按权限前提、资金边界、可达性、经济可利用性排序</li>
+<li><strong>验证层</strong>：高优先级问题进入 PoC / fork test / 交易级验证，避免把误报直接送人</li>
+<li><strong>人工闭环</strong>：最后由审计人员把“工具发现”升级成“可解释结论”和修复建议</li>
+<li>面试里最好主动强调：Slither 这类工具擅长第一轮筛查，但真正值钱的是“筛查 -> 排序 -> 验证 -> 复核”的完整闭环。</li>
+</ul>
+<hr>
+<h3 id="题卡-2front-running-的原理是什么">题卡 2：Front-running 的原理是什么？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果面试官直接问 front-running 原理，我怎么答更像懂链上机制？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>Front-running 本质上是利用公开 mempool 和排序权，在目标交易前插入一笔会改变其结果的交易，从价格、成交路径或状态变化里获利。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>交易在正式上链前，通常会先进入公开或半公开的等待区。</li>
+<li>如果攻击者能看到用户准备买什么、卖什么、清算什么，就可以在它前面插入自己的交易。</li>
+<li>这样做的前提是：目标交易的结果会受前一笔交易影响。</li>
+<li>在 EVM 世界里这很常见，因为大家共享同一个全局状态。</li>
+<li>典型场景包括：</li>
+<li>抢先买入导致用户成交价变差</li>
+<li>抢先清算拿走本该属于别人的机会</li>
+<li>Sandwich：先把价格推歪，再让用户在坏价格成交，最后自己反向平仓</li>
+<li>所以 front-running 不是孤立现象，它本质上是“公开可观测交易意图 + 排序权可变现”。</li>
+</ul>
+<hr>
+<h3 id="题卡-3solidity-08-之后整数溢出还要怎么答">题卡 3：Solidity 0.8+ 之后，整数溢出还要怎么答？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>现在编译器都自带检查了，面试再问整型溢出，我该怎么回答才不显得过时？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>0.8+ 之后，默认算术溢出会触发 revert，所以“无意识溢出”风险明显下降。</li>
+<li>但这不等于可以不讲，因为 <code>unchecked</code>、类型缩窄、内联汇编和外部库边界里，溢出仍然可能变成真实问题。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>如果只回答“0.8 之后没事了”，通常会显得你停留在表面。</li>
+<li>更完整的答法是：</li>
+<li>默认情况下，<code>+ - *</code> 等算术操作会自动做溢出检查，异常会 revert</li>
+<li>但如果开发者为了省 gas 手动用了 <code>unchecked</code>，那又回到旧语义</li>
+<li>即使主逻辑不溢出，<code>uint256 -> uint128</code> 这类 downcast 也可能在类型转换时截断高位</li>
+<li>内联汇编、某些底层库或跨合约接口边界，也可能绕开你对“默认安全”的直觉</li>
+<li>所以现在面试里更好的表述是：整数溢出已经从“高频默认坑”变成“边界条件和优化路径上的坑”</li>
+<li>这会比单纯背 SafeMath 或背版本差异更到位。</li>
+</ul>
+<hr>
+<h2 id="本轮模拟面试补强专题">本轮模拟面试补强专题</h2>
+<h3 id="题卡-1为什么-searcher-不需要依赖-event也能发现可清算状态或套利空间">题卡 1：为什么 Searcher 不需要依赖 Event，也能发现可清算状态或套利空间？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果链上事件还没发出来，Searcher 为什么还是能提前发现机会？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>因为 Searcher 盯的是 mempool 里的待打包交易，不是链上已经确认的 Event。</li>
+<li>它会对 pending tx 做状态模拟，直接看“这笔交易如果打进去，储备量、价格、健康度、可清算性会怎么变”。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>这是黑暗森林里最关键的认知之一：机会的发现往往早于事件广播。</li>
+<li>Event 只有在交易真正上链执行后才会被写进日志。</li>
+<li>但 Searcher 的工作时点更早，它看到的是：</li>
+<li>用户刚发出的 pending tx</li>
+<li>这笔 tx 的 calldata、目标合约、参数</li>
+<li>基于当前链状态对这笔 tx 的模拟结果</li>
+<li>如果模拟后发现：</li>
+<li>某个账户会从健康变成可清算</li>
+<li>某个池子的价格会短时偏移</li>
+<li>某条路径会产生可套利价差</li>
+<li>它就能在事件还不存在时，先构造抢跑、夹子或回跑交易。</li>
+<li>所以安全工程师不能把“有没有 Event 广播”当成机会是否可见的分界线。</li>
+<li>真正的分界线是：这笔待打包交易是不是已经暴露在可观察 orderflow 里，以及别人能不能模拟出你的状态变化。</li>
+</ul>
+<hr>
+<h3 id="题卡-2mev-到底是什么">题卡 2：MEV 到底是什么？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果面试官先问一句“MEV 是什么”，我该怎么答得既不空泛又不跑偏？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>MEV 现在通常指 <code>Maximal Extractable Value</code>，可以理解为“谁能影响交易顺序，谁就能从中额外榨出收益”。</li>
+<li>它不是单一攻击，而是一大类利用排序权、打包权和状态先后关系获利的现象。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>早期很多人会说它是 <code>Miner Extractable Value</code>，因为矿工最直接控制交易打包顺序。</li>
+<li>现在更准确的说法是 <code>Maximal Extractable Value</code>，因为真正参与这条链路的不只是矿工，还有：</li>
+<li><code>searcher</code></li>
+<li><code>builder</code></li>
+<li><code>validator</code></li>
+<li>relay / orderflow 提供方</li>
+<li>它的本质不是“某个合约突然多了一个漏洞”，而是：</li>
+<li>交易都运行在同一份全局状态上</li>
+<li>谁先执行、谁后执行、谁被夹在中间，会直接改变收益分配</li>
+<li>于是排序权本身就变成了可以货币化的资源</li>
+<li>对安全分析来说，MEV 最重要的两个点是：</li>
+<li>第一，它不依赖链上 Event 发出来后才成立，很多机会在 pending tx 暴露时就已经能被模拟出来</li>
+<li>第二，它不只发生在 swap 上，也会发生在清算、套利、预言机窗口、NFT 铸造、桥接等所有强顺序敏感场景</li>
+<li>所以面试里一句更像样的话是：</li>
+<li><strong>MEV 本质上是排序权和状态先后关系的货币化。</strong></li>
+</ul>
+<hr>
+<h3 id="题卡-3front-runningback-runningsandwich-到底怎么区分">题卡 3：Front-running、Back-running、Sandwich 到底怎么区分？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果面试官不满足于“抢跑”两个字，我该怎么把三类典型 MEV 说清？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>Front-running 是在目标交易前插入会改变其结果的交易。</li>
+<li>Back-running 是在目标交易后立刻接一笔，吃它制造出的状态变化。</li>
+<li>Sandwich 是前后各打一笔，把用户夹在中间获利。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>三者的共同前提都是：交易顺序本身会改变收益。</li>
+<li>Front-running 最常见于：</li>
+<li>抢先买入</li>
+<li>抢先清算</li>
+<li>抢先执行某个会被状态变化影响的动作</li>
+<li>Back-running 更像“吃尾气”：</li>
+<li>别人的交易先把状态打歪</li>
+<li>你在后面立刻接上，把这个新状态的利润吃掉</li>
+<li>Sandwich 则是组合型打法：</li>
+<li>先在用户前面打第一笔，把价格推向对自己有利的方向</li>
+<li>用户在更差价格成交</li>
+<li>再在用户后面打第二笔，把头寸平掉并锁定利润</li>
+<li>所以面试里如果你只说“MEV 就是抢跑”，通常不够。</li>
+<li>更像专业回答的说法是：MEV 的核心是排序权可变现，而 front-run / back-run / sandwich 是排序权变现的三种常见形态。</li>
+</ul>
+<hr>
+<h3 id="题卡-4flashbots-和-private-rpc-到底解决了什么又解决不了什么">题卡 4：Flashbots 和 Private RPC 到底解决了什么？又解决不了什么？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>面试官如果追问“那用 Flashbots 或私有 RPC 不就行了”，我该怎么答？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>它们主要解决的是“公开 mempool 暴露交易意图”这个问题，减少被普通 Searcher 看到和抢跑的概率。</li>
+<li>但它们不是万能护城河，因为它们不改变合约本身的脆弱设计，也不保证所有 orderflow 都绝对私密。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>公开 mempool 的核心问题是：你的意图先暴露，别人就有时间模拟和构造反制交易。</li>
+<li>Flashbots / Private RPC 的思路是尽量把交易从公开广播改成私下投递给 builder / relay / validator。</li>
+<li>这样可以减少：</li>
+<li>普通抢跑</li>
+<li>public mempool 里的夹子攻击</li>
+<li>某些基于监听 pending tx 的机会捕获</li>
+<li>但它解决不了 3 件事：</li>
+<li>第一，合约设计本身如果可被 deterministic 地利用，私有投递只是降低被看到的概率，不是修复漏洞</li>
+<li>第二，不是所有路径都天然私密，系统边界和信任对象本身也要考虑</li>
+<li>第三，如果状态变化一旦上链后仍然会被后续交易利用，它也挡不住链上确认后的 back-run 或后续抢占</li>
+<li>所以它更像“orderflow 保护层”，不是“协议安全性证明”。</li>
+</ul>
+<hr>
+<hr>
+<h3 id="题卡-5uniswap-v2-里-factoryrouterpair-各自负责什么谁发-paircreated">题卡 5：Uniswap V2 里 Factory、Router、Pair 各自负责什么？谁发 <code>PairCreated</code>？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果面试官要我精确讲 Uniswap V2 架构，我该怎么答才不会把接口说混？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li><code>Factory</code> 负责创建交易对并维护 pair 映射，<code>PairCreated</code> 事件也是它发的。</li>
+<li><code>Router</code> 主要负责路径编排、加减流动性和 swap 的用户入口。</li>
+<li><code>Pair</code> 才是真正持有储备量、LP 份额和 swap 规则的状态合约。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>这类题最容易错在把“用户常调的入口”和“真正持状态的合约”混成一件事。</li>
+<li>更准确地讲：</li>
+<li><code>Factory</code></li>
+<li>创建 Pair</li>
+<li>记录 token 对应的 pair 地址</li>
+<li>发出 <code>PairCreated(token0, token1, pair, ...)</code></li>
+<li><code>Router</code></li>
+<li>帮用户做路径选择和多步调用编排</li>
+<li>处理加流动性、移除流动性、代币换币等入口</li>
+<li>自己通常不持有 AMM 核心状态，更像无状态协调层</li>
+<li><code>Pair</code></li>
+<li>持有 <code>reserve0</code>、<code>reserve1</code></li>
+<li>管 LP token</li>
+<li>执行 <code>mint</code>、<code>burn</code>、<code>swap</code></li>
+<li>更新储备并维持不变量</li>
+<li>所以如果面试官问“监听流动性池创建该监听谁”，准确答案是：监听 <code>Factory</code> 的 <code>PairCreated</code>，不是监听 <code>Pair</code> 自己。</li>
+</ul>
+<hr>
+<h3 id="题卡-6mintburnswap-底层到底是怎么改储备量的">题卡 6：<code>mint</code>、<code>burn</code>、<code>swap</code> 底层到底是怎么改储备量的？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果继续追问 Uniswap V2，<code>mint / burn / swap</code> 这几个动作底层是谁在改储备量？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>真正改 AMM 储备量的是 <code>Pair</code> 合约，不是 <code>Router</code>。</li>
+<li><code>Router</code> 负责把 token 转进正确地址并发起调用，<code>Pair</code> 再根据实际余额变化计算输入输出并调用 <code>_update()</code> 刷新 <code>reserve0 / reserve1</code>。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>这题的关键是把“资金转移”与“储备记账”区分开。</li>
+<li>在 V2 里，常见流程是：</li>
+<li>用户通过 <code>Router</code> 进入</li>
+<li><code>Router</code> 把 token 转到目标 <code>Pair</code></li>
+<li><code>Pair</code> 在 <code>mint / burn / swap</code> 内部根据当前余额与旧储备做计算</li>
+<li>最后通过 <code>_update(balance0, balance1, reserve0, reserve1)</code> 更新储备状态</li>
+<li>对应到三类动作：</li>
+<li><code>mint</code></li>
+<li>用户把两边资产打入 pair</li>
+<li>pair 计算应铸造多少 LP token</li>
+<li>更新 reserves</li>
+<li><code>burn</code></li>
+<li>销毁 LP token</li>
+<li>pair 把底层资产按份额退回</li>
+<li>更新 reserves</li>
+<li><code>swap</code></li>
+<li>用户先把输入 token 转入 pair</li>
+<li>pair 按不变量约束给出输出</li>
+<li>完成后更新 reserves</li>
+<li>所以更专业的表述是：Router 是入口和编排层，Pair 才是储备与定价状态的最终真相源。</li>
+</ul>
+<hr>
+<h3 id="题卡-8memescan-下一步应该补哪些更强的断言">题卡 8：<code>MemeScan</code> 下一步应该补哪些更强的断言？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果面试官追问“那你会怎么把 MemeScan 做得更像对抗工具”，我该怎么回答？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>方向不是再多加几个 if，而是把断言从“单身份、单时刻、单路径”升级成“多身份、多时刻、多权限路径”的对抗性验证。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>一个更强的断言体系至少要补 5 层：</li>
+<li><strong>多身份断言</strong></li>
+<li>不只用一个检测地址买卖</li>
+<li>要比较普通地址、owner、pair/router 相关地址、可疑特权地址的行为差异</li>
+<li><strong>多时刻断言</strong></li>
+<li>买完立刻卖</li>
+<li>推进若干区块后再卖</li>
+<li>模拟 owner 改参后再卖</li>
+<li>看税率、黑名单、暂停交易是否随时间或区块高度变化</li>
+<li><strong>多权限路径断言</strong></li>
+<li>不只读 <code>owner()</code></li>
+<li>还要找 operator、manager、proxy admin、role-based access 的 setter</li>
+<li><strong>多实现层断言</strong></li>
+<li>检查代理合约、实现合约、升级入口，而不是只扫当前表面代码</li>
+<li><strong>行为闭环断言</strong></li>
+<li>不只比较最终余额</li>
+<li>还要记录税率变化、transfer 行为、黑名单命中、approve / sell 路径是否被特定分支拦截</li>
+<li>面试金句：更强的沙盒不是“跑一遍买卖”，而是“故意换身份、换时刻、换权限路径去逼出隐藏条件分支”。</li>
+</ul>
+<hr>
+<h3 id="题卡-9如果不使用-eip-1967黑客会怎么利用-storage-collision-接管-proxy">题卡 9：如果不使用 EIP-1967，黑客会怎么利用 Storage Collision 接管 Proxy？</h3>
+<p><strong>问题</strong></p>
+<ul>
+<li>如果面试官继续高压追问，具体会怎么利用 storage collision 拿走代理合约控制权？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>如果 proxy 把 <code>implementation</code>、<code>admin</code> 等关键地址随便放在普通 slot，比如 <code>slot0 / slot1</code>，而 implementation 的业务变量也恰好写到这些槽位，攻击者就能通过合法业务调用把关键槽位覆盖掉。</li>
+<li>一旦 <code>implementation</code> 或 <code>admin</code> 被覆盖成攻击者控制的值，proxy 的升级权或执行逻辑就会被接管。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li><code>delegatecall</code> 的危险点在于：代码在 implementation，storage 在 proxy。</li>
+<li>这意味着 implementation 里的状态变量布局，本质上是在解释 proxy 的 storage。</li>
+<li>如果没有像 EIP-1967 那样把关键元数据放到特殊 slot，而是粗暴地放在常规业务槽位：</li>
+<li><code>slot0</code> 可能存 proxy admin</li>
+<li><code>slot1</code> 可能存 implementation 地址</li>
+<li>同时 implementation 第一、第二个状态变量也可能落在 <code>slot0 / slot1</code></li>
+<li>攻击路径就出现了：</li>
+<li>攻击者调用某个看似普通的业务函数</li>
+<li>该函数通过 <code>delegatecall</code> 在 proxy 上执行</li>
+<li>它把业务变量写进 <code>slot0 / slot1</code></li>
+<li>结果等于把 proxy 的 admin / implementation 覆盖了</li>
+<li>一旦 <code>implementation</code> 被改成攻击者合约，后续所有调用都能被导向恶意逻辑</li>
+<li>一旦 <code>admin</code> 被改成攻击者地址，升级控制权也等于被拿走</li>
+<li>所以 EIP-1967 的价值不是“神奇防御一切”，而是把这些关键槽位放到普通编译器几乎不会自然碰到的位置，极大降低业务变量误撞上去的概率。</li>
+</ul> </div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/面试/面试计划/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">面试计划</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/面试/面试项目资料源/blocksec面经/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">blocksec面经</h4> </a> </div> </nav> </article> <div id="reading-progress" style="position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 9999; transition: width 0.1s ease-out; pointer-events: none;"></div> <script type="module">document.addEventListener("astro:page-load",()=>{const e=document.getElementById("reading-progress");if(!e)return;const t=()=>{const n=document.documentElement.scrollHeight-window.innerHeight;if(n>0){const o=window.scrollY/n*100;e.style.width=`${o}%`}};window.addEventListener("scroll",t),document.addEventListener("astro:before-swap",()=>{window.removeEventListener("scroll",t)},{once:!0})});</script>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try { localStorage.setItem("theme", value); } catch {}
+          });
+        };
+        bindToggle();
+      })();
+    </script> </body> </html> 

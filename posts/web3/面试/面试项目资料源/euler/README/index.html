@@ -1,0 +1,222 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>README | Notebook Dispatch</title><meta name="description" content="# Euler Finance 漏洞复现工作区 这个仓库是面向审计与复现的 Euler Finance 漏洞脚手架，优先服务“先读后写”的分析流程。现在只维护一套源码树：协议源码全部放在 `src/euler/`，保持接近上游的可编译布局；审计直观性则通过根 README 和协议"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.Coc4ZbWY.css"></head> <body class> <!-- 首页导航栏：悬浮透明，叠在 Hero 上方 --> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">Notebook Dispatch</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☼</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回主页花园</a> <header class="article-header"> <p class="eyebrow">2026/4/14</p> <h1>README</h1> <p class="lead"># Euler Finance 漏洞复现工作区 这个仓库是面向审计与复现的 Euler Finance 漏洞脚手架，优先服务“先读后写”的分析流程。现在只维护一套源码树：协议源码全部放在 `src/euler/`，保持接近上游的可编译布局；审计直观性则通过根 README 和协议</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> </header> <div class="article-content"> <h1 id="euler-finance-漏洞复现工作区">Euler Finance 漏洞复现工作区</h1>
+<p>这个仓库是面向审计与复现的 Euler Finance 漏洞脚手架，优先服务“先读后写”的分析流程。现在只维护一套源码树：协议源码全部放在 <code>src/euler/</code>，保持接近上游的可编译布局；审计直观性则通过根 README 和协议 README 来补。</p>
+<p>根 README 现在兼任事故主页和地址簿，避免在分析初期来回跳转多个上下文文件。</p>
+<h2 id="事故概览">事故概览</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>字段</th><th>值</th></tr></thead><tbody><tr><td>攻击日期</td><td><code>2023-03-13</code></td></tr><tr><td>参考交易</td><td><a href="https://etherscan.io/tx/0xc310a0affe2169d1f6feec1c63dbc7f7c62a887fa48795d327d4d2da2d6b111d"><code>0xc310a0affe2169d1f6feec1c63dbc7f7c62a887fa48795d327d4d2da2d6b111d</code></a></td></tr><tr><td>Fork 区块</td><td><code>16817995</code></td></tr><tr><td>攻击者</td><td><a href="https://etherscan.io/address/0x5f259d0b76665c337c6104145894f4d1d2758b8c"><code>0x5F259D0b76665c337c6104145894F4D1D2758B8c</code></a> (<code>Euler Finance Exploiter 3</code>)</td></tr><tr><td>受害协议入口</td><td><a href="https://etherscan.io/address/0x27182842e098f60e3d576794a5bffb0777e025d3"><code>0x27182842E098f60e3D576794A5bFFb0777E025d3</code></a> (<code>Euler: Token</code>)</td></tr><tr><td>资产</td><td><a href="https://etherscan.io/token/0x6b175474e89094c44da98b954eedeac495271d0f"><code>DAI</code></a></td></tr><tr><td>外部依赖</td><td><a href="https://etherscan.io/address/0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9"><code>Aave V2 Lending Pool</code></a></td></tr></tbody></table>
+<h2 id="范围说明">范围说明</h2>
+<p>这个仓库当前只聚焦 Euler Finance 在以太坊主网上的 DAI 攻击链。
+2023 年 3 月 13 日当天存在多笔攻击交易；这里以 Euler Labs 复盘时间线中公开的第一笔攻击交易为锚点，并使用它前一个区块 <code>16817995</code> 作为推荐 fork 点。</p>
+<h2 id="快速开始">快速开始</h2>
+<ol>
+<li>参考 <code>.env.example</code> 填写 <code>.env</code>。</li>
+<li>执行 <code>forge build</code> 做一次仅编译的冒烟检查。</li>
+<li>执行 <code>forge test --match-test testExploit -vvv</code>，确认骨架在不 fork 的情况下也能通过。</li>
+<li>执行 <code>source .env &#x26;&#x26; forge test --match-test testExploit -vvv --rpc-url $TENDERLY_RPC_URL --fork-block-number 16817995</code>，运行带 fork 的 PoC 骨架。</li>
+<li>执行 <code>slither . --exclude-dependencies</code>，对当前唯一源码树做静态扫描。</li>
+</ol>
+<p>如果没有配置 <code>TENDERLY_RPC_URL</code>，测试会主动跳过依赖 fork 的步骤，只承担编译和结构校验的职责。</p>
+<h2 id="攻击路径摘要">攻击路径摘要</h2>
+<ol>
+<li>从 Aave V2 借出 <code>30,000,000 DAI</code> 闪电贷。</li>
+<li>存入 Euler，并通过自借把头寸杠杆拉高。</li>
+<li>调用 <code>donateToReserves()</code> 销毁抵押物，但不减少债务。</li>
+<li>主动把账户推入不健康状态。</li>
+<li>通过自清算吃到清算折价。</li>
+<li>归还闪电贷，保留价差利润。</li>
+</ol>
+<h2 id="时间线">时间线</h2>
+<ol>
+<li><code>2023-03-13 08:50:23 UTC</code>：<code>Euler Finance Exploiter 1</code> 部署 <code>Euler Exploit Contract 2</code>。</li>
+<li><code>2023-03-13 08:50:35 UTC</code>：<code>Euler Finance Exploiter 3</code> 部署 <code>Euler Exploit Contract 1</code>。</li>
+<li><code>2023-03-13 08:50:59 UTC</code>：第一笔参考攻击交易执行，从 Aave V2 借出 <code>30,000,000 DAI</code>，并从 Euler 的 DAI 市场抽走约 <code>$8.8M</code> 价值。</li>
+</ol>
+<h2 id="地址簿">地址簿</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>角色</th><th>地址</th><th>类型</th><th>区块 / 上下文</th><th>来源</th></tr></thead><tbody><tr><td>Euler 入口</td><td><code>0x27182842E098f60e3D576794A5bFFb0777E025d3</code></td><td>protocol entry</td><td>攻击期间主入口</td><td><a href="https://etherscan.io/address/0x27182842e098f60e3d576794a5bffb0777e025d3">Etherscan</a></td></tr><tr><td>Euler Markets 模块</td><td><code>0x3520d5a913427E6F0D6A83E07ccD4A4da316e4d3</code></td><td>module</td><td>在 fork 区块 <code>16817995</code> 解析 <code>eToken</code> / <code>dToken</code></td><td><a href="https://etherscan.io/address/0x3520d5a913427e6f0d6a83e07ccd4a4da316e4d3">Etherscan</a></td></tr><tr><td>Euler Liquidation 模块</td><td><code>0xf43ce1d09050BAfd6980dD43Cde2aB9F18C85b34</code></td><td>module</td><td>清算获利路径</td><td><a href="https://etherscan.io/address/0xf43ce1d09050bafd6980dd43cde2ab9f18c85b34">Etherscan</a></td></tr><tr><td>DAI</td><td><code>0x6B175474E89094C44Da98b954EedeAC495271d0F</code></td><td>asset</td><td>本仓库聚焦交易中的抵押与借贷资产</td><td><a href="https://etherscan.io/token/0x6b175474e89094c44da98b954eedeac495271d0f">Etherscan</a></td></tr><tr><td>Aave V2 Lending Pool</td><td><code>0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9</code></td><td>external dependency</td><td>DAI 攻击链里的闪电贷对手方</td><td><a href="https://etherscan.io/address/0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9">Etherscan</a></td></tr><tr><td>Euler Finance Exploiter 3</td><td><code>0x5F259D0b76665c337c6104145894F4D1D2758B8c</code></td><td>attacker EOA</td><td>参考交易 <code>0xc310...111d</code> 的发送者</td><td><a href="https://etherscan.io/address/0x5f259d0b76665c337c6104145894f4d1d2758b8c">Etherscan</a></td></tr><tr><td>Euler Exploit Contract 1</td><td><code>0xeBC29199C817Dc47BA12E3F86102564D640CBf99</code></td><td>exploit contract</td><td><code>Euler Finance Exploiter 3</code> 部署的 DAI 攻击合约</td><td><a href="https://etherscan.io/address/0xebc29199c817dc47ba12e3f86102564d640cbf99">Etherscan</a></td></tr><tr><td>Euler Finance Exploiter 1</td><td><code>0xB2698C2D99aD2c302a95A8DB26B08D17a77cedd4</code></td><td>attacker EOA</td><td>Euler Labs 时间线中的另一位主攻击者</td><td><a href="https://etherscan.io/address/0xb2698c2d99ad2c302a95a8db26b08d17a77cedd4">Etherscan</a></td></tr><tr><td>Euler Exploit Contract 2</td><td><code>0x036cec1a199234fC02f72d29e596a09440825f1C</code></td><td>exploit contract</td><td><code>Euler Finance Exploiter 1</code> 使用的第二个攻击合约</td><td><a href="https://etherscan.io/address/0x036cec1a199234fc02f72d29e596a09440825f1c">Etherscan</a></td></tr><tr><td><code>eDAI</code></td><td>runtime resolved</td><td>tokenized collateral</td><td>在攻击 fork 上通过 <code>Markets.underlyingToEToken(DAI)</code> 解析</td><td><code>test/helpers/EulerAddresses.sol</code> + <code>test/poc.t.sol</code></td></tr><tr><td><code>dDAI</code></td><td>runtime resolved</td><td>debt token</td><td>在攻击 fork 上通过 <code>Markets.underlyingToDToken(DAI)</code> 解析</td><td><code>test/helpers/EulerAddresses.sol</code> + <code>test/poc.t.sol</code></td></tr></tbody></table>
+<h2 id="推荐阅读顺序">推荐阅读顺序</h2>
+<ol>
+<li>根 README 当前页</li>
+<li><a href="src/euler/README.md"><code>src/euler/README.md</code></a></li>
+<li><a href="src/euler/Storage.sol"><code>src/euler/Storage.sol</code></a></li>
+<li><a href="src/euler/modules/EToken.sol"><code>src/euler/modules/EToken.sol</code></a></li>
+<li><a href="src/euler/modules/Liquidation.sol"><code>src/euler/modules/Liquidation.sol</code></a></li>
+<li><a href="src/euler/audit_notes.md"><code>src/euler/audit_notes.md</code></a></li>
+<li><a href="test/poc.t.sol"><code>test/poc.t.sol</code></a></li>
+</ol>
+<h2 id="仓库结构">仓库结构</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>.</span></span>
+<span class="line"><span>├── src/</span></span>
+<span class="line"><span>│   └── euler/</span></span>
+<span class="line"><span>├── test/</span></span>
+<span class="line"><span>│   ├── interfaces/</span></span>
+<span class="line"><span>│   ├── helpers/</span></span>
+<span class="line"><span>│   └── poc.t.sol</span></span>
+<span class="line"><span>├── .env.example</span></span>
+<span class="line"><span>├── foundry.toml</span></span>
+<span class="line"><span>└── README.md</span></span></code></pre>
+<h2 id="说明">说明</h2>
+<ul>
+<li>根 README 同时承担事故上下文、地址簿、启动入口三种职责。</li>
+<li><code>src/euler/</code> 是当前项目唯一维护的协议源码树，布局尽量贴近上游，方便 <code>forge build</code>、<code>slither</code>、diff 和全文搜索直接工作。</li>
+<li>协议级审计笔记和源码放在一起，位置是 <a href="src/euler/audit_notes.md"><code>src/euler/audit_notes.md</code></a>。</li>
+<li>外部协议默认不再单独维护整棵阅读树；当前只在根 README 和 <code>test/interfaces/</code> 里保留 Aave V2 所需的最小上下文。</li>
+</ul>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li>Euler Labs: <a href="https://medium.com/eulerfinance/war-peace-ab2670711175">War &#x26; Peace: Behind the Scenes of Euler’s $240M Exploit Recovery</a></li>
+<li>Etherscan: <a href="https://etherscan.io/tx/0xc310a0affe2169d1f6feec1c63dbc7f7c62a887fa48795d327d4d2da2d6b111d">参考攻击交易</a></li>
+</ul> </div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/面试/面试项目资料源/euler/audit_notes/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">audit_notes</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/面试/面试项目资料源/euler/REPRO_SUMMARY/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">REPRO_SUMMARY</h4> </a> </div> </nav> </article> <div id="reading-progress" style="position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 9999; transition: width 0.1s ease-out; pointer-events: none;"></div> <script type="module">document.addEventListener("astro:page-load",()=>{const e=document.getElementById("reading-progress");if(!e)return;const t=()=>{const n=document.documentElement.scrollHeight-window.innerHeight;if(n>0){const o=window.scrollY/n*100;e.style.width=`${o}%`}};window.addEventListener("scroll",t),document.addEventListener("astro:before-swap",()=>{window.removeEventListener("scroll",t)},{once:!0})});</script>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try { localStorage.setItem("theme", value); } catch {}
+          });
+        };
+        bindToggle();
+      })();
+    </script> </body> </html> 

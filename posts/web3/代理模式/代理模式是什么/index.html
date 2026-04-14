@@ -1,0 +1,224 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>代理模式是什么 | Notebook Dispatch</title><meta name="description" content="# 代理模式核心概念 > **一句话总结**：代理模式（Proxy Pattern）是以太坊智能合约&#34;可升级&#34;的底层基石，利用 `delegatecall` 操作码实现**代码与数据的物理分离**——用户永远与同一个地址（Proxy）交互，而 Proxy 背后指向的业务逻辑代码（"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.Coc4ZbWY.css"></head> <body class> <!-- 首页导航栏：悬浮透明，叠在 Hero 上方 --> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">Notebook Dispatch</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☼</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回主页花园</a> <header class="article-header"> <p class="eyebrow">2026/4/14</p> <h1>代理模式是什么</h1> <p class="lead"># 代理模式核心概念 &gt; **一句话总结**：代理模式（Proxy Pattern）是以太坊智能合约&quot;可升级&quot;的底层基石，利用 `delegatecall` 操作码实现**代码与数据的物理分离**——用户永远与同一个地址（Proxy）交互，而 Proxy 背后指向的业务逻辑代码（</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> </header> <div class="article-content"> <h1 id="代理模式核心概念">代理模式核心概念</h1>
+<blockquote>
+<p><strong>一句话总结</strong>：代理模式（Proxy Pattern）是以太坊智能合约”可升级”的底层基石，利用 <code>delegatecall</code> 操作码实现<strong>代码与数据的物理分离</strong>——用户永远与同一个地址（Proxy）交互，而 Proxy 背后指向的业务逻辑代码（Implementation）可以随时被替换。</p>
+</blockquote>
+<h2 id="-核心元数据与参阅资料-metadata--references">📜 核心元数据与参阅资料 (Metadata &#x26; References)</h2>
+<blockquote>
+<p><strong>信息源原则</strong>：代理模式笔记必须以 <strong>EIP 官方提案原文</strong> 和 <strong>OpenZeppelin / Solady</strong> 等权威参考实现源码为第一手真理源。</p>
+</blockquote>
+<ul>
+<li><strong>关联 EIP/ERC 编号</strong>：EIP-1967（标准存储槽）、ERC-1822（UUPS）、ERC-2535（Diamond）、ERC-1167（Minimal Proxy）</li>
+<li><strong>权威参考实现</strong>：<a href="https://github.com/OpenZeppelin/openzeppelin-contracts/tree/master/contracts/proxy">OpenZeppelin Proxy Contracts</a></li>
+</ul>
+<hr>
+<h2 id="1-delegatecall-的魔法">1. <code>delegatecall</code> 的魔法</h2>
+<p><code>delegatecall</code> 是以太坊中一种特殊的调用方式。它的核心规则是：</p>
+<blockquote>
+<p><strong>在调用方（Proxy）的存储空间和上下文中，执行被调用方（Implementation）的代码。</strong></p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th align="left">属性</th><th align="left">值归属</th></tr></thead><tbody><tr><td align="left"><strong>代码 (Code)</strong></td><td align="left">来自 Implementation</td></tr><tr><td align="left"><strong>存储 (Storage)</strong></td><td align="left"><strong>属于 Proxy</strong></td></tr><tr><td align="left"><strong><code>msg.sender</code></strong></td><td align="left">保留原始外部调用者（不变）</td></tr><tr><td align="left"><strong><code>msg.value</code></strong></td><td align="left">透传（不变）</td></tr></tbody></table>
+<p>这就是为什么<strong>数据一直在 Proxy 里，代码可以换</strong>。</p>
+<hr>
+<h2 id="2-升级到底在干什么">2. “升级”到底在干什么？</h2>
+<p>所谓的”升级合约”，<strong>不是</strong>修改已有的代码，而是：</p>
+<ol>
+<li>部署一个<strong>全新的</strong> Implementation 合约（包含新的业务逻辑/修复了 bug/增加了新功能）。</li>
+<li>告诉 Proxy：“从现在起，你不要再去找旧的 Implementation 了，改去找这个新的。”</li>
+<li>Proxy 内部把指向的地址从 <code>旧Implementation</code> 改成 <code>新Implementation</code>。</li>
+</ol>
+<h3 id="升级前后的变化">升级前后的变化</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>项目</th><th>升级前</th><th>升级后</th></tr></thead><tbody><tr><td>Proxy 地址</td><td><code>0xABC...</code></td><td><code>0xABC...</code>（<strong>不变！</strong>）</td></tr><tr><td>Implementation 地址</td><td><code>0x111...</code>（旧逻辑）</td><td><code>0x222...</code>（新逻辑）</td></tr><tr><td>存储数据（余额、状态等）</td><td>在 Proxy 里</td><td><strong>还在 Proxy 里，原封不动！</strong></td></tr><tr><td>代币余额</td><td><code>token.balanceOf(Proxy) = 1000万</code></td><td><strong>还是 1000万，没动！</strong></td></tr><tr><td>用户交互的地址</td><td><code>0xABC...</code></td><td><code>0xABC...</code>（用户无感）</td></tr></tbody></table>
+<h3 id="关于代币的疑问">关于代币的疑问</h3>
+<blockquote>
+<p>“换了地址，内部的 token 又怎么办？”</p>
+</blockquote>
+<p>答案是：<strong>Proxy 的地址不会换，所以 token 不受任何影响。</strong></p>
+<p>代币是存储在 ERC20 代币合约内部的 <code>balances</code> mapping 里的，key 就是持有者的地址。因为用户和外部合约看到的地址始终是 Proxy 的地址，Proxy 地址不变，所以代币余额、授权（allowance）、NFT 持有关系等都不会受到影响。</p>
+<hr>
+<h2 id="3-initializable--为什么不用-constructor">3. <code>Initializable</code> — 为什么不用 constructor？</h2>
+<p>在代理模式中，Implementation 合约的 <code>constructor</code> <strong>只会在部署 Implementation 合约本身时执行一次</strong>，不会在 Proxy 的上下文中执行。</p>
+<p>因此，代理模式的初始化<strong>不能用 constructor</strong>，而是改用一个带有 <code>initializer</code> 修饰符的普通函数（通常叫 <code>initialize</code>），并且确保它只能被调用一次：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="solidity"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> initialize</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">address</span><span style="color:#FFAB70"> admin</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">address</span><span style="color:#FFAB70"> proposer</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">address</span><span style="color:#FFAB70"> sweeper</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">external</span><span style="color:#B392F0"> initializer</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">    __Ownable_init</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">msg.sender</span><span style="color:#E1E4E8">);    </span><span style="color:#6A737D">// 初始化 Ownable</span></span>
+<span class="line"><span style="color:#B392F0">    __UUPSUpgradeable_init</span><span style="color:#E1E4E8">();      </span><span style="color:#6A737D">// 初始化 UUPS</span></span>
+<span class="line"><span style="color:#B392F0">    transferOwnership</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">address</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">new</span><span style="color:#B392F0"> ClimberTimelock</span><span style="color:#E1E4E8">(admin, proposer)));</span></span>
+<span class="line"><span style="color:#B392F0">    _setSweeper</span><span style="color:#E1E4E8">(sweeper);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>同时，Implementation 合约的 constructor 里通常会调用 <code>_disableInitializers()</code> 来确保没人能在 Implementation 合约本身上调用 <code>initialize</code>（只允许通过 Proxy 调用）：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="solidity"><code><span class="line"><span style="color:#F97583">constructor</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#B392F0">    _disableInitializers</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="4-eip-1967标准化存储槽">4. EIP-1967：标准化存储槽</h2>
+<p>所有主流代理模式都遵循 <a href="https://eips.ethereum.org/EIPS/eip-1967">EIP-1967</a> 存储槽标准，将 Proxy 的内部变量（如 Implementation 地址、Admin 地址）存放在<strong>伪随机的存储槽</strong>中：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="solidity"><code><span class="line"><span style="color:#6A737D">// Implementation 地址存储槽</span></span>
+<span class="line"><span style="color:#79B8FF">bytes32</span><span style="color:#F97583"> constant</span><span style="color:#E1E4E8"> IMPLEMENTATION_SLOT </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> bytes32</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">uint256</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">keccak256</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"eip1967.proxy.implementation"</span><span style="color:#E1E4E8">)) </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#6A737D">// = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Admin 地址存储槽</span></span>
+<span class="line"><span style="color:#79B8FF">bytes32</span><span style="color:#F97583"> constant</span><span style="color:#E1E4E8"> ADMIN_SLOT </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> bytes32</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">uint256</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">keccak256</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"eip1967.proxy.admin"</span><span style="color:#E1E4E8">)) </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#6A737D">// = 0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// Beacon 地址存储槽</span></span>
+<span class="line"><span style="color:#79B8FF">bytes32</span><span style="color:#F97583"> constant</span><span style="color:#E1E4E8"> BEACON_SLOT </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> bytes32</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">uint256</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">keccak256</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"eip1967.proxy.beacon"</span><span style="color:#E1E4E8">)) </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#6A737D">// = 0xa3f0ad74e5423aebfd80d3ef4346578335a9a72aeaee59ff6cb3582b35133d50</span></span></code></pre>
+<p>这样做是为了<strong>避免 Proxy 的内部变量与 Implementation 的状态变量发生存储碰撞</strong>。详见 <a href="../EIP%E6%A0%87%E5%87%86/EIP-1967.md">EIP-1967 专题笔记</a>。</p>
+<hr>
+<h2 id="5-代理模式全家族速查表">5. 代理模式全家族速查表</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th align="left">模式</th><th align="left">升级逻辑在哪</th><th align="left">Proxy 复杂度</th><th align="left">Gas 开销</th><th align="left">升级粒度</th><th align="left">升级丢失风险</th><th align="left">适用场景</th></tr></thead><tbody><tr><td align="left"><strong><a href="./Transparent_Proxy.md">Transparent</a></strong></td><td align="left">Proxy</td><td align="left">较重</td><td align="left">高（每次检查 caller）</td><td align="left">整体替换</td><td align="left">低</td><td align="left">安全要求极高的中型项目</td></tr><tr><td align="left"><strong><a href="./UUPS_Proxy.md">UUPS</a></strong></td><td align="left">Implementation</td><td align="left">极轻</td><td align="left">低</td><td align="left">整体替换</td><td align="left"><strong>较高</strong>（可能变砖）</td><td align="left">追求省 Gas 的主流项目</td></tr><tr><td align="left"><strong><a href="./Diamond_Proxy.md">Diamond</a></strong></td><td align="left">Diamond 主合约</td><td align="left">高</td><td align="left">中等</td><td align="left"><strong>函数级别</strong></td><td align="left">低</td><td align="left">突破 24KB 限制的巨型系统</td></tr><tr><td align="left"><strong>Beacon</strong></td><td align="left">Beacon 合约</td><td align="left">极轻</td><td align="left">低</td><td align="left">整体替换（批量同步）</td><td align="left">低</td><td align="left">工厂批量部署同构代理</td></tr><tr><td align="left"><strong>Minimal (ERC-1167)</strong></td><td align="left"><strong>不可升级</strong></td><td align="left">最轻</td><td align="left">最低</td><td align="left">—</td><td align="left">—</td><td align="left">一次性克隆合约</td></tr></tbody></table>
+<hr>
+<h2 id="6-通用安全红线">6. 通用安全红线</h2>
+<ol>
+<li><strong>存储布局一致性</strong>：升级时新的 Implementation 必须保持与旧版<strong>完全一致的存储变量布局</strong>（只能追加，不能修改或删除已有变量的顺序和类型）。</li>
+<li><strong><code>_disableInitializers()</code></strong>：Implementation 的 constructor 中必须调用此函数，防止裸合约被人恶意初始化。</li>
+<li><strong>多签/DAO 管理</strong>：掌控升级权限的 Admin/Owner 角色必须使用多签钱包或 DAO 治理，避免单点失败。</li>
+<li><strong>升级后测试</strong>：每次升级都应通过 <code>storageLayout</code> 工具（如 OpenZeppelin Upgrades Plugin）对比前后存储兼容性。</li>
+</ol> </div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/计算机基础/计算机组成/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">计算机组成</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/代理模式/Diamond_Proxy/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">Diamond_Proxy</h4> </a> </div> </nav> </article> <div id="reading-progress" style="position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 9999; transition: width 0.1s ease-out; pointer-events: none;"></div> <script type="module">document.addEventListener("astro:page-load",()=>{const e=document.getElementById("reading-progress");if(!e)return;const t=()=>{const n=document.documentElement.scrollHeight-window.innerHeight;if(n>0){const o=window.scrollY/n*100;e.style.width=`${o}%`}};window.addEventListener("scroll",t),document.addEventListener("astro:before-swap",()=>{window.removeEventListener("scroll",t)},{once:!0})});</script>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try { localStorage.setItem("theme", value); } catch {}
+          });
+        };
+        bindToggle();
+      })();
+    </script> </body> </html> 

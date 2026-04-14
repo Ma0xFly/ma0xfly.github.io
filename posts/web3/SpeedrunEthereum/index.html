@@ -1,0 +1,1610 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SpeedrunEthereum | Notebook Dispatch</title><meta name="description" content="# 通关ai使用指南 `SpeedrunEthereum`（基于 Scaffold-ETH 2）是练习“高分交互模式”的绝佳靶场。因为它不仅涉及 **Solidity 合约逻辑**（你的专业核心），还强制要求你理解 **前端交互（React/Wagmi）**——这往往是安全审计员"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.Coc4ZbWY.css"></head> <body class> <!-- 首页导航栏：悬浮透明，叠在 Hero 上方 --> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">Notebook Dispatch</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☼</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回主页花园</a> <header class="article-header"> <p class="eyebrow">2026/4/14</p> <h1>SpeedrunEthereum</h1> <p class="lead"># 通关ai使用指南 `SpeedrunEthereum`（基于 Scaffold-ETH 2）是练习“高分交互模式”的绝佳靶场。因为它不仅涉及 **Solidity 合约逻辑**（你的专业核心），还强制要求你理解 **前端交互（React/Wagmi）**——这往往是安全审计员</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> </header> <div class="article-content"> <h1 id="通关ai使用指南">通关ai使用指南</h1>
+<p><code>SpeedrunEthereum</code>（基于 Scaffold-ETH 2）是练习“高分交互模式”的绝佳靶场。因为它不仅涉及 <strong>Solidity 合约逻辑</strong>（你的专业核心），还强制要求你理解 <strong>前端交互（React/Wagmi）</strong>——这往往是安全审计员的盲区，却是理解“业务逻辑漏洞”的关键。</p>
+<p>结合你的 <strong>Web3 安全背景</strong> 和 <strong>Foundry 偏好</strong>，这里有一套专门针对 SpeedrunEthereum 的**“三层通关法”**，旨在把每个挑战吃透，而不是飘过。</p>
+<hr>
+<h3 id="第一层核心合约逻辑采用-mode-c---概念引导--自己手写">第一层：核心合约逻辑（采用 Mode C - 概念引导 + 自己手写）</h3>
+<p>你是安全方向的学生，<strong>绝对不要</strong>让 AI 直接写合约代码（特别是 <code>Staker.sol</code> 或 <code>Vendor.sol</code>）。这些逻辑是你未来的饭碗。</p>
+<p><strong>❌ 低分做法：</strong></p>
+<blockquote>
+<p>“请给我写一个去中心化众筹合约，要求有 deadline 和提款功能。”（复制粘贴 → 结束）</p>
+</blockquote>
+<p><strong>✅ 高分做法（Mode C）：</strong></p>
+<p>在写代码前，先用 AI <strong>“对齐伪代码”</strong>。</p>
+<ul>
+<li>
+<p><strong>场景：</strong> Challenge 1 (Decentralized Staking App)</p>
+</li>
+<li>
+<p><strong>Prompt 模板：</strong></p>
+<blockquote>
+<p>“我正在做 Staking Challenge。请不要给我代码。</p>
+<p>我想理清 <code>execute()</code> 函数的状态机逻辑：</p>
+<ol>
+<li>
+<p>如果我在 <code>deadline</code> 之前调用会发生什么？</p>
+</li>
+<li>
+<p>如果 <code>balance</code> 没达到 <code>threshold</code> 但时间到了，状态应该怎么变？</p>
+<p>请用文字描述这几种状态转换，并指出如果不加 <code>external</code> 修饰符可能带来的安全隐患。”</p>
+</li>
+</ol>
+</blockquote>
+</li>
+<li>
+<p><strong>你的行动：</strong> 根据 AI 的逻辑描述，自己在 Solidity 里逐行实现。</p>
+</li>
+</ul>
+<hr>
+<h3 id="第二层前端与交互钩子采用-mode-a---生成--强迫理解">第二层：前端与交互钩子（采用 Mode A - 生成 + 强迫理解）</h3>
+<p>Scaffold-ETH 2 封装了很多 React Hooks（如 <code>useScaffoldWriteContract</code>）。作为安全工程师，你不需要成为前端专家，但你必须<strong>看懂前端是如何构建交易参数的</strong>，因为很多攻击（如前端欺骗）发生在这里。</p>
+<p><strong>❌ 低分做法：</strong></p>
+<blockquote>
+<p>“前端报错了，帮我修好这个按钮。”</p>
+</blockquote>
+<p><strong>✅ 高分做法（Mode A）：</strong></p>
+<p>让 AI 生成前端组件，但必须逼问数据流向。</p>
+<ul>
+<li>
+<p><strong>场景：</strong> Challenge 2 (Token Vendor) - 前端购买 Token 逻辑</p>
+</li>
+<li>
+<p><strong>Prompt 模板：</strong></p>
+<blockquote>
+<p>“这段 React 代码调用了 <code>vendor.buyTokens()</code>。</p>
+<ol>
+<li>
+<p>请解释 <code>msg.value</code> 是如何在前端被封装进交易数据的？</p>
+</li>
+<li>
+<p><code>useScaffoldWatchContractEvent</code> 这个钩子是如何监听到链上事件并更新 UI 的？</p>
+</li>
+<li>
+<p>如果恶意用户直接绕过前端调用合约，这段前端逻辑里有哪些检查是链上合约必须重复做的？”</p>
+</li>
+</ol>
+</blockquote>
+</li>
+<li>
+<p><strong>你的行动：</strong> 能够指着前端代码说出：“这行代码对应着 EVM 里的 <code>calldata</code> 构建。”</p>
+</li>
+</ul>
+<hr>
+<h3 id="第三层红蓝对抗你的专属-bonus---mode-b--威胁建模">第三层：红蓝对抗（你的专属 Bonus - Mode B + 威胁建模）</h3>
+<p>这是最适合你“Web3 安全工程师”人设的环节。通关不是结束，<strong>Hacking 才是开始</strong>。由于 SpeedrunEthereum 自带测试通常是 JS/Hardhat 写的，你可以利用这一点进行 Foundry 迁移训练。</p>
+<p><strong>✅ 高分做法 1：Foundry 移植（深度内化）</strong></p>
+<blockquote>
+<p>“Challenge 的测试脚本是用 Hardhat/Chai 写的。请解释 <code>expect(await staker.timeLeft()).to.equal(0)</code> 背后的逻辑，并指导我如何用 <strong>Foundry (Forge Std)</strong> 重写这个测试用例？我想用 <code>vm.warp</code> 来模拟时间流逝。”</p>
+</blockquote>
+<p><strong>✅ 高分做法 2：自我攻击（威胁建模）</strong></p>
+<blockquote>
+<p>“我已经完成了 Challenge 3 (Dice Game)。现在你是黑客，请分析我的随机数生成逻辑（基于 <code>block.prevrandao</code> 或 <code>block.hash</code>）。请告诉我如何编写一个攻击合约来 100% 预测结果？不要只给理论，给我攻击合约的接口定义。”</p>
+</blockquote>
+<hr>
+<h1 id="challenge-1-crowdfunding">Challenge 1: Crowdfunding</h1>
+<h2 id="辅助提示词">辅助提示词</h2>
+<blockquote>
+<p>我正在做 SpeedrunEthereum 的 Challenge 1 ()。请不要直接给我代码。  我想先理清这个众筹合约的<strong>状态机逻辑</strong>。然后我对于开发很不熟悉，手把手教我每一步目标是什么，怎么去完成</p>
+</blockquote>
+<h2 id="收获知识">收获知识</h2>
+<h2 id="前端需要显示所有贡献者的列表2种方式">前端需要显示”所有贡献者的列表”，2种方式：</h2>
+<h3 id="方式-1使用事件--前端监听推荐">方式 1：使用事件 + 前端监听（推荐）⭐</h3>
+<p>你已经有了：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="solidity"><code><span class="line"><span style="color:#F97583">event</span><span style="color:#B392F0"> Contribution</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">address</span><span style="color:#F97583"> indexed</span><span style="color:#FFAB70"> contributor</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">uint256</span><span style="color:#FFAB70"> amount</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">emit</span><span style="color:#B392F0"> Contribution</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">msg.sender</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">msg</span><span style="color:#E1E4E8">.value);</span></span></code></pre>
+<p><strong>前端可以</strong>：</p>
+<ul>
+<li>监听所有Contribution事件</li>
+<li>从事件日志中提取所有贡献者信息</li>
+<li>在前端构建列表</li>
+</ul>
+<p><strong>优点</strong>：不增加合约复杂度和 gas 消耗 <strong>缺点</strong>：依赖前端处理</p>
+<h3 id="方式-2在合约中维护贡献者数组">方式 2：在合约中维护贡献者数组</h3>
+<p>添加一个数组来跟踪所有贡献者：</p>
+<p>solidity</p>
+<p>address[] public contributors;  // 存储所有贡献者地址</p>
+<p>然后在 contribute()中：</p>
+<p>solidity</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="solidity"><code><span class="line"><span style="color:#6A737D">// 如果是首次贡献，加入数组</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (contributions[</span><span style="color:#79B8FF">msg.sender</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    contributors.</span><span style="color:#B392F0">push</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">msg.sender</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">contributions[</span><span style="color:#79B8FF">msg.sender</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">+=</span><span style="color:#79B8FF"> msg</span><span style="color:#E1E4E8">.value;</span></span></code></pre>
+<p><strong>优点</strong>：合约端就能提供完整列表 <strong>缺点</strong>：消耗更多 gas</p>
+<h2 id="value-语法发送-eth-的方式"><code>{value: ...}</code> 语法：发送 ETH 的方式</h2>
+<h3 id="基本语法">基本语法</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="solidity"><code><span class="line"><span style="color:#E1E4E8">接收方.函数名{value</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> 金额, gas</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> gas限制}(函数参数)</span></span></code></pre>
+<h3 id="-实际例子">📝 实际例子</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="solidity"><code><span class="line"><span style="color:#E1E4E8">fundingRecipient.complete{value</span><span style="color:#F97583">:</span><span style="color:#79B8FF"> address</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">).balance}();</span></span></code></pre>
+<p><strong>解读</strong>：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>fundingRecipient- 接收方合约</span></span>
+<span class="line"><span>.complete- 要调用的函数</span></span>
+<span class="line"><span>{value: address(this).balance}  </span></span></code></pre>
+<ul>
+<li>() - 函数参数（这里是空的）</li>
+</ul>
+<h3 id="-为什么需要">🔍 为什么需要 </h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>{value: ...}</span></span></code></pre>
+<p>在 Solidity 中，如果你要调用另一个合约的payable函数</p>
+<h2 id="异常处理">异常处理</h2>
+<h3 id="为什么是require不是if-else">为什么是require不是if else</h3>
+<p>这是一个非常深刻的问题，触及了<strong>区块链与传统编程最大的逻辑区别</strong>。</p>
+<p>在传统编程（如 C++、Java、Python）中，<code>if-else</code> 是用来控制流程的。
+但在 Solidity 中，<code>require</code> 不仅仅是控制流程，它是一个**“带有时间倒流功能的断路器”**。</p>
+<p>主要有三个核心原因：<strong>状态回滚（Atomicity）</strong>、<strong>Gas 退款</strong>、<strong>代码防御性</strong>。</p>
+<hr>
+<h4 id="核心原因原子性与时间倒流-state-reversion">核心原因：原子性与“时间倒流” (State Reversion)</h4>
+<p>这是最关键的一点。区块链交易必须是<strong>原子的（Atomic）</strong>——要么全成功，要么全失败（什么都没发生）。</p>
+<ul>
+<li>
+<p><strong>使用 <code>if-else</code> (软失败)</strong>：
+如果你用 <code>if</code> 发现条件不对并 <code>return</code>，程序停止了，但<strong>之前已经发生的修改</strong>会被保留。</p>
+</li>
+<li>
+<p><em>危险场景</em>：你先扣了用户的钱，然后用 <code>if</code> 检查库存，发现没货了，于是 <code>return</code>。</p>
+</li>
+<li>
+<p><em>结果</em>：钱扣了，货没给，函数结束了。这是灾难。</p>
+</li>
+<li>
+<p><strong>使用 <code>require</code> (硬回滚)</strong>：
+一旦 <code>require</code> 失败，EVM 会触发 <code>REVERT</code> 操作码。</p>
+</li>
+<li>
+<p><em>结果</em>：它会像按下“Ctrl+Z”一样，<strong>撤销</strong>这笔交易中做过的所有状态修改（包括余额变动、变量赋值）。就像这笔交易从未发生过一样。</p>
+</li>
+</ul>
+<h3 id="erro-revert为什么比传统的-require-string-好">erro revert为什么比传统的 require String 好</h3>
+<h4 id="a-极致的-gas-节省最重要原因">A. 极致的 Gas 节省（最重要原因）</h4>
+<p>这是核心差异。</p>
+<ul>
+<li>
+<p><strong>传统的写法</strong>：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="solidity"><code><span class="line"><span style="color:#6A737D">// 这种写法很昂贵！</span></span>
+<span class="line"><span style="color:#F97583">require</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">block</span><span style="color:#E1E4E8">.timestamp </span><span style="color:#F97583">>=</span><span style="color:#E1E4E8"> deadline, </span><span style="color:#9ECBFF">"Wait until the deadline has passed"</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<ul>
+<li>
+<p><strong>原理</strong>：EVM 需要把 <code>"Wait until the deadline has passed"</code> 这串长字符串存储在字节码中，并且在报错时通过内存返回。</p>
+</li>
+<li>
+<p><strong>成本</strong>：字符串越长，Gas 越贵。哪怕是一个字母，都要占空间。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>你的写法（Custom Error）</strong>：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="solidity"><code><span class="line"><span style="color:#6A737D">// 定义错误（类似定义一个函数签名）</span></span>
+<span class="line"><span style="color:#F97583">error</span><span style="color:#B392F0"> TooEarly</span><span style="color:#E1E4E8">(); </span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">block</span><span style="color:#E1E4E8">.timestamp </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> deadline) {</span></span>
+<span class="line"><span style="color:#F97583">    revert</span><span style="color:#B392F0"> TooEarly</span><span style="color:#E1E4E8">(); </span><span style="color:#6A737D">// 这种写法非常便宜！</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<ul>
+<li>
+<p><strong>原理</strong>：EVM 不存字符串。它只存 <code>TooEarly()</code> 的哈希值前 4 个字节（Selector）。</p>
+</li>
+<li>
+<p><strong>成本</strong>：无论错误名字叫 <code>A()</code> 还是 <code>ThisIsAVeryLongErrorName()</code>，它在运行时只占 <strong>4 个字节</strong>。<strong>这是固定成本，极其便宜。</strong></p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="b-支持动态参数调试神器">B. 支持动态参数（调试神器）</h4>
+<p>如果你用字符串 <code>require</code>，想告诉用户“还要等多久”，你得疯狂拼接字符串（Solidity 拼接字符串非常痛苦且费 Gas）。</p>
+<p>但在 <code>revert</code> 中，你可以像传函数参数一样传值：</p>
+<p>Solidity</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// 定义带参数的错误</span></span>
+<span class="line"><span>error TooEarly(uint256 currentTime, uint256 deadline);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>if (block.timestamp &#x3C; deadline) {</span></span>
+<span class="line"><span>    // 直接把数据抛出去，前端能收到具体数值！</span></span>
+<span class="line"><span>    revert TooEarly(block.timestamp, deadline);</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>前端或者区块链浏览器会收到：<code>TooEarly(1700000000, 1800000000)</code>。用户瞬间明白：“哦，还要等一亿秒”。</p>
+<hr>
+<h3 id="2-进化史从-require-到-revert">2. 进化史：从 require 到 revert</h3>
+<p>为了让你更清楚 Web3 开发的演进，请看这个对比：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>阶段</strong></th><th><strong>写法</strong></th><th><strong>评价</strong></th><th><strong>典型场景</strong></th></tr></thead><tbody><tr><td><strong>石器时代</strong></td><td><code>require(cond, "Error String")</code></td><td><strong>耗气、笨重</strong></td><td>快速原型开发、老旧合约</td></tr><tr><td><strong>青铜时代</strong></td><td><code>revert("Error String")</code></td><td><strong>同上</strong></td><td>复杂的逻辑分支中手动触发</td></tr><tr><td>**黄金时代 **</td><td><code>if (!cond) revert CustomError()</code></td><td><strong>省气、专业</strong></td><td><strong>当前的行业标准</strong></td></tr><tr><td><strong>未来时代 (Solidity 0.8.26+)</strong></td><td><code>require(cond, CustomError())</code></td><td><strong>完美</strong></td><td>最新版编译器支持直接在 require 里用自定义错误</td></tr></tbody></table>
+<h1 id="challenge-2-自动贩卖机vendor">Challenge 2: 自动贩卖机（Vendor)</h1>
+<h2 id="辅助提示词-1">辅助提示词</h2>
+<p><strong>Role (角色):</strong> 你是一名 <strong>Web3 导师</strong>，擅长使用苏格拉底式教学法。你的目标是引导我完成 <strong>SpeedRunEthereum Challenge 2 (Token Vendor)</strong>，帮助我建立深层的理解，而不是直接给我答案。</p>
+<p><strong>Constraints (绝对约束 - 重要):</strong></p>
+<ul>
+<li>
+<p><strong>禁止直接给出完整的 Solidity 代码块。</strong></p>
+</li>
+<li>
+<p>请使用 <strong>伪代码 (Pseudo-code)</strong>、<strong>流程图描述</strong> 或 <strong>逻辑列表</strong> 来解释。</p>
+</li>
+<li>
+<p>如果我卡住了，请通过提问引导我思考，而不是直接把代码写出来。</p>
+</li>
+</ul>
+<p><strong>Context (背景):</strong> 我正在做 Challenge 2，目标是创建一个自动贩卖机（Vendor）：</p>
+<ol>
+<li>
+<p>用户可以用 ETH 买 Token。</p>
+</li>
+<li>
+<p>用户可以用 Token 换回 ETH（卖）。</p>
+</li>
+<li>
+<p>作为 Owner，我可以把赚到的 ETH 提走。</p>
+</li>
+</ol>
+<p><strong>Task (请按以下三个阶段指导我):</strong></p>
+<p><strong>Phase 1: 逻辑与机制 (The Mental Model)</strong></p>
+<ul>
+<li>
+<p>请帮我梳理这个系统的“资金流向图”。</p>
+</li>
+<li>
+<p><strong>重点解释：</strong> 在“买 Token”和“卖 Token”这两个操作中，资产（ETH 和 Token）分别是从谁流向谁？</p>
+</li>
+<li>
+<p><strong>核心难点：</strong> 请用通俗的比喻（例如：支票、银行柜台）解释为什么在“卖 Token”时，需要先进行 <code>Approve</code> (授权)，再调用 <code>transferFrom</code>？为什么不能直接 <code>transfer</code>？</p>
+</li>
+</ul>
+<p><strong>Phase 2: 后端任务拆解 (The Roadmap)</strong> 请将我的开发任务拆解为 4 个具体的**“微目标”**。对于每个目标，请告诉我：</p>
+<ol>
+<li>
+<p><strong>目标是什么？</strong> (例如：让 Vendor 合约拥有 Token)。</p>
+</li>
+<li>
+<p><strong>关键逻辑？</strong> (例如：在构造函数里做什么？)。</p>
+</li>
+<li>
+<p><strong>数学公式？</strong> (例如：如何根据 <code>tokensPerEth</code> 计算出用户该得多少 Token？)</p>
+</li>
+<li>
+<p>要求给出的目标要符合/packages/test/vendor中所有Checkpoint2</p>
+</li>
+</ol>
+<p><strong>Phase 3: 前端交互原理 (Frontend 101 for Non-Devs)</strong> 我不需要写前端代码，但我需要看懂 <code>Debug Contracts</code> 页面是怎么工作的。 请解释前端是如何构造交易参数的，特别是区分以下两种情况：</p>
+<ul>
+<li>
+<p><strong>Scenario A (买币):</strong> 当我点击“Buy”时，我的 ETH 是作为 <code>function arguments</code> 传进去的，还是作为 <code>msg.value</code> 传进去的？前端代码通常长什么样？</p>
+</li>
+<li>
+<p><strong>Scenario B (卖币):</strong> 当我点击“Sell”时，数量参数是怎么传的？为什么这个操作不需要发送 ETH？</p>
+</li>
+</ul>
+<h2 id="后端任务拆解-the-roadmap">后端任务拆解 (The Roadmap)</h2>
+<p>根据测试文件，我为你拆解为 4 个微目标：</p>
+<h3 id="-微目标-1-yourtoken-合约-checkpoint-1">✅ 微目标 1: YourToken 合约 (Checkpoint 1)</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>类别</strong></th><th><strong>详细要求</strong></th></tr></thead><tbody><tr><td><strong>目标</strong></td><td>创建一个 ERC20 Token，部署时铸造 1000 个给 deployer。</td></tr><tr><td><strong>关键逻辑</strong></td><td>在构造函数里调用铸币函数。</td></tr><tr><td><strong>数学公式</strong></td><td>$$初始供应量 = 1000 \times 10^{18}$$<br><br>(因为 ERC20 默认 18 位小数)。</td></tr><tr><td><strong>测试要求</strong></td><td><code>totalSupply() = 1000 ether</code>, <code>balanceOf(deployer) = 1000 ether</code>。</td></tr></tbody></table>
+<blockquote>
+<p>🤔 <strong>引导问题：</strong> ERC20 提供了哪个函数可以凭空创造 Token？提示：看看 OpenZeppelin 的 ERC20 合约有什么 <strong>internal</strong> 函数可用。</p>
+</blockquote>
+<hr>
+<h3 id="-微目标-2-buytokens-函数-checkpoint-2">✅ 微目标 2: buyTokens() 函数 (Checkpoint 2)</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>类别</strong></th><th><strong>详细要求</strong></th></tr></thead><tbody><tr><td><strong>目标</strong></td><td>用户发送 ETH，获得对应数量的 Token。</td></tr><tr><td><strong>核心逻辑</strong></td><td>1. 检查 ETH > 0；2. 计算 Token 数量；3. 检查 Vendor 余额；4. 转账 Token；5. 触发事件。</td></tr><tr><td><strong>数学公式</strong></td><td><code>tokenAmount = msg.value * tokensPerEth</code></td></tr><tr><td><strong>状态变量</strong></td><td><code>tokensPerEth = 100</code></td></tr><tr><td><strong>自定义 Error</strong></td><td><code>InvalidEthAmount()</code>, <code>InsufficientVendorTokenBalance()</code></td></tr><tr><td><strong>触发 Event</strong></td><td><code>BuyTokens(address buyer, uint256 ethAmount, uint256 tokenAmount)</code></td></tr></tbody></table>
+<blockquote>
+<p>🤔 <strong>引导问题：</strong></p>
+<ol>
+<li>
+<p>Vendor 合约如何知道自己还剩多少 Token 可以卖？（提示：它需要问 Token 合约）</p>
+</li>
+<li>
+<p>为什么函数需要标记为 <strong>payable</strong>？</p>
+</li>
+</ol>
+</blockquote>
+<hr>
+<h3 id="-微目标-3-withdraw-函数-checkpoint-3">✅ 微目标 3: withdraw() 函数 (Checkpoint 3)</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>类别</strong></th><th><strong>详细要求</strong></th></tr></thead><tbody><tr><td><strong>目标</strong></td><td>只有 Owner 可以提走 Vendor 里所有的 ETH。</td></tr><tr><td><strong>关键逻辑</strong></td><td>1. 验证 <strong>onlyOwner</strong>；2. 获取合约 ETH 余额；3. 发送给 Owner；4. 验证成功。</td></tr><tr><td><strong>自定义 Error</strong></td><td><code>EthTransferFailed(address recipient, uint256 amount)</code></td></tr></tbody></table>
+<blockquote>
+<p>🤔 <strong>引导问题：</strong></p>
+<ol>
+<li>
+<p>用什么方式发送 ETH 最安全？（提示：<strong>call</strong> vs <strong>transfer</strong> vs <strong>send</strong>）</p>
+</li>
+<li>
+<p>如何获取合约当前的 ETH 余额？</p>
+</li>
+</ol>
+</blockquote>
+<hr>
+<h3 id="-微目标-4-selltokens-函数-checkpoint-4">✅ 微目标 4: sellTokens() 函数 (Checkpoint 4)</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>类别</strong></th><th><strong>详细要求</strong></th></tr></thead><tbody><tr><td><strong>目标</strong></td><td>用户用 Token 换回 ETH。</td></tr><tr><td><strong>核心逻辑</strong></td><td>1. 检查 amount > 0；2. 计算 ETH；3. 检查 ETH 余额；4. 划转 Token；5. 发送 ETH。</td></tr><tr><td><strong>数学公式</strong></td><td><code>ethAmount = tokenAmount / tokensPerEth</code></td></tr><tr><td><strong>自定义 Error</strong></td><td><code>InvalidTokenAmount()</code>, <code>InsufficientVendorEthBalance()</code></td></tr><tr><td><strong>触发 Event</strong></td><td><code>SellTokens(address seller, uint256 tokenAmount, uint256 ethAmount)</code></td></tr></tbody></table>
+<blockquote>
+<p>🤔 <strong>引导问题（核心！）：</strong></p>
+<ol>
+<li>
+<p>用户调用 <code>sellTokens()</code> 之前，需要先调用哪个函数？在哪个合约上调用？</p>
+</li>
+<li>
+<p>在 <code>sellTokens()</code> 内部，你应该用 <strong>transfer</strong> 还是 <strong>transferFrom</strong> 来获取用户的 Token？为什么？</p>
+</li>
+</ol>
+</blockquote>
+<h2 id="学到的">学到的</h2>
+<h3 id="有ownable不需要自己声明owner">有Ownable不需要自己声明 owner</h3>
+<p><strong>Ownable</strong> 合约已经提供了 </p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>owner()</span></span></code></pre>
+<p> 函数！你不应该再声明一个 </p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>owner</span></span></code></pre>
+<p> 变量，这会造成冲突。
+(bool success, ) = payable(owner()).call{value: address(this).balance}("");
+↑        ↑                                         ↑
+|        |                                         |
+转为payable   调用函数                               空字符串参数</p>
+<h1 id="challenge-3-dice-game">Challenge 3 (Dice Game)</h1>
+<h2 id="提示词">提示词</h2>
+<p><strong>Role (角色):</strong> 你是一名 <strong>Web3 安全审计专家</strong> 和 <strong>白帽黑客导师</strong>。你的教学风格是苏格拉底式的——你不会直接把攻击代码甩给学生，而是通过解释底层原理，引导学生自己发现漏洞并写出利用脚本（Exploit）。</p>
+<p><strong>Context (背景):</strong> 我正在做 SpeedRunEthereum Challenge 3 (Dice Game)。 这个挑战要求我“攻破”一个使用 <code>block.hash</code> 或 <code>block.timestamp</code> 等变量生成随机数的骰子游戏，把合约里的钱全部赢走。 <strong>Constraint (绝对约束):</strong> <strong>不要直接给我 Solidity 代码。</strong> 请用伪代码、逻辑图或通俗比喻来解释。</p>
+<p><strong>Task (请按以下三个阶段指导我):</strong></p>
+<p><strong>Phase 1: 漏洞原理 (The Mental Model - Atomicity)</strong></p>
+<ul>
+<li>
+<p>请纠正我的思维模型：我不应该把这个看作一个“状态机”，而应该看作一次“原子交易”。</p>
+</li>
+<li>
+<p>请解释什么是**“伪随机数” (Pseudo-Randomness)**？为什么在区块链上用 <code>block.number</code> 或 <code>block.difficulty</code> 生成随机数是不安全的？</p>
+</li>
+<li>
+<p><strong>核心提示：</strong> 请解释如果我在<strong>同一个交易 (Transaction)</strong> 里既计算随机数又进行猜测，为什么我就能 100% 赢？（用“预知未来的水晶球”做比喻）。</p>
+</li>
+</ul>
+<p><strong>Phase 2: 攻击路径拆解 (The Hacker’s Roadmap)</strong> 请指导我完成攻击合约 (<code>RiggedRoll.sol</code>) 的开发逻辑，分步告诉我每一步的目标：</p>
+<ol>
+<li>
+<p><strong>Target Lock (锁定目标):</strong> 我的攻击合约需要知道骰子游戏合约的地址，我该怎么在代码里引用它？</p>
+</li>
+<li>
+<p><strong>Prediction (预测结果):</strong> 我需要在攻击合约里<strong>复制</strong>骰子游戏的随机数生成逻辑。请告诉我这一步的逻辑是什么？（提示：复制粘贴哪些代码？）。</p>
+</li>
+<li>
+<p><strong>Decision (决策执行):</strong> 算出结果后，我需要做一个 <code>if</code> 判断。如果算出来会输，我该怎么办？如果算出来会赢，我该怎么调用目标合约？</p>
+</li>
+<li>
+<p><strong>Fund Management (资金流转):</strong> 赢了钱之后，钱在谁的肚子里（我的钱包还是攻击合约）？我需要写一个 <code>withdraw</code> 函数吗？</p>
+</li>
+</ol>
+<p><strong>Phase 3: 前端与交易参数 (Frontend &#x26; Payload)</strong> 我不需要写前端，但我需要看懂 <code>DiceGame.jsx</code> 是怎么把钱发出去的。</p>
+<ul>
+<li>
+<p>当我点击“Roll the Dice”时，前端是如何构建交易的？</p>
+</li>
+<li>
+<p>请解释 <code>value: ethers.utils.parseEther("0.002")</code> 在交易中意味着什么？</p>
+</li>
+<li>
+<p>为什么我的攻击合约在调用目标合约的 <code>rollTheDice()</code> 时，也需要附带 ETH？这个机制在 Solidity 里是怎么写的？</p>
+</li>
+</ul>
+<h1 id="challenge-4-build-a-dex">Challenge 4 (Build a DEX)</h1>
+<h2 id="提示词-1">提示词</h2>
+<p><strong>Role (角色):</strong></p>
+<p>你是一名 <strong>DeFi 架构师</strong> 和 <strong>AMM (自动做市商) 算法专家</strong>。你擅长用通俗易懂的语言解释 Uniswap V2 的核心数学原理。</p>
+<p><strong>我的现状：</strong> 我正在做 SpeedRunEthereum Challenge 4 (Build a DEX)。我不熟悉开发，数学基础也一般。</p>
+<p><strong>核心约束：</strong> <strong>绝对不要直接给我 Solidity 代码</strong>。我要自己写。请用<strong>伪代码 (Pseudo-code)</strong>、<strong>数学公式</strong> 或 <strong>逻辑流程图</strong> 来指导我。</p>
+<p><strong>Task (任务流程):</strong></p>
+<p>请分三个阶段手把手带我完成这个挑战：</p>
+<p><strong>Phase 1: 理解“不变量” (The Mental Model)</strong></p>
+<ul>
+<li>
+<p>纠正我的概念：我不确定 DEX 是否算“状态机”。请解释 <strong>$x \times y = k$ (Constant Product Formula)</strong> 是如何像天平一样工作的？</p>
+</li>
+<li>
+<p><strong>价格机制：</strong> 当我用 ETH 买 Token 时，为什么 Token 的价格会变贵？请用“池子里的资产比例变化”来解释。</p>
+</li>
+<li>
+<p><strong>LP Token：</strong> 为什么我们需要铸造一个新的 <code>Liquidity Token</code> (LP)？它代表了什么？</p>
+</li>
+</ul>
+<p><strong>Phase 2: 核心公式推导 (The Math)</strong></p>
+<p>这是我最怕的部分。请一步步教我推导 <code>price</code> 函数：</p>
+<ul>
+<li>
+<p>给定 <code>input_amount</code> (输入), <code>input_reserve</code> (输入币种储备), <code>output_reserve</code> (输出币种储备)。</p>
+</li>
+<li>
+<p>如何计算 <code>output_amount</code>？</p>
+</li>
+<li>
+<p><strong>关键点：</strong> 请明确告诉我如何在公式中扣除 <strong>0.3% 的手续费</strong>？(提示：乘以 997？)</p>
+</li>
+</ul>
+<p><strong>Phase 3: 开发路线图 (The Step-by-Step Implementation)</strong></p>
+<p>请将开发任务拆解为 4 个具体的函数实现目标。对于每一个函数，请告诉我：</p>
+<ol>
+<li>
+<p><strong>Objective (目标):</strong> 这个函数要干嘛？</p>
+</li>
+<li>
+<p><strong>Logic Flow (逻辑流):</strong> 第一步查什么？第二步算什么？第三步转账给谁？</p>
+</li>
+<li>
+<p><strong>Checklist (检查点):</strong> 有什么常见的坑？(例如：除法取整问题、Slippage 滑点保护)。</p>
+</li>
+</ol>
+<p><em>请按此顺序讲解以下函数：</em></p>
+<ol>
+<li>
+<p><code>init</code> (初始化流动性)</p>
+</li>
+<li>
+<p><code>ethToToken</code> (ETH 换 Token)</p>
+</li>
+<li>
+<p><code>tokenToEth</code> (Token 换 ETH)</p>
+</li>
+<li>
+<p><code>deposit</code> (添加流动性 - ⚠️这是最难的，请详细解释如何计算该给用户多少 LP Token)</p>
+</li>
+<li>
+<p><code>withdraw</code> (移除流动性)</p>
+</li>
+</ol>
+<h1 id="dex-开发路线图基于测试文件的完整分解">DEX 开发路线图：基于测试文件的完整分解</h1>
+<p>根据测试文件，这个挑战分为 <strong>4 个 Checkpoint</strong>。让我为你详细分解每一步。</p>
+<hr>
+<h2 id="-总体架构要求">📋 总体架构要求</h2>
+<p>从测试中可以看出，你的 DEX 合约需要：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>状态变量 / 函数</th><th>类型</th><th>说明</th></tr></thead><tbody><tr><td><strong>totalLiquidity</strong></td><td>public 变量</td><td>追踪池子的总 LP 数量</td></tr><tr><td><strong>getLiquidity(address)</strong></td><td>view 函数</td><td>查询某地址的 LP 余额</td></tr><tr><td><strong>init()</strong></td><td>函数</td><td>初始化池子</td></tr><tr><td><strong>price()</strong></td><td>pure/view 函数</td><td>计算交换价格</td></tr><tr><td><strong>ethToToken()</strong></td><td>payable 函数</td><td>ETH → Token</td></tr><tr><td><strong>tokenToEth()</strong></td><td>函数</td><td>Token → ETH</td></tr><tr><td><strong>deposit()</strong></td><td>payable 函数</td><td>添加流动性</td></tr><tr><td><strong>withdraw()</strong></td><td>函数</td><td>移除流动性</td></tr></tbody></table>
+<h2 id="推荐开发顺序">推荐开发顺序</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>步骤</th><th>函数</th><th>通过的 Checkpoint</th></tr></thead><tbody><tr><td>1</td><td>定义状态变量和事件</td><td>—</td></tr><tr><td>2</td><td><strong>price()</strong></td><td>Checkpoint 3</td></tr><tr><td>3</td><td><strong>init()</strong></td><td>Checkpoint 2</td></tr><tr><td>4</td><td><strong>ethToToken()</strong></td><td>Checkpoint 4 (部分)</td></tr><tr><td>5</td><td><strong>tokenToEth()</strong></td><td>Checkpoint 4 (完成)</td></tr><tr><td>6</td><td><strong>deposit()</strong></td><td>Checkpoint 5 (部分)</td></tr><tr><td>7</td><td><strong>withdraw()</strong></td><td>Checkpoint 5 (完成)</td></tr></tbody></table>
+<hr>
+<h2 id="-checkpoint-2-reserves初始化">✅ Checkpoint 2: Reserves（初始化）</h2>
+<h3 id="需要实现init函数">需要实现：<strong>init</strong> 函数</h3>
+<p><strong>测试在检查什么：</strong></p>
+<ol>
+<li>初始化前 <strong>totalLiquidity</strong> 必须是 0</li>
+<li>调用 init(5 ETH Token + 5 ETH value) 后，totalLiquidity 变成 5</li>
+</ol>
+<p><strong>函数签名：</strong></p>
+<p>init(uint256 tokenAmount) external payable returns (uint256)</p>
+<p><strong>实现逻辑：</strong></p>
+<ol>
+<li>检查 <strong>totalLiquidity == 0</strong>，防止重复初始化</li>
+<li>用 <strong>transferFrom</strong> 把用户的 Token 转入合约</li>
+<li><strong>totalLiquidity = msg.value</strong>（初始 LP 等于存入的 ETH）</li>
+<li>记录用户的流动性份额</li>
+</ol>
+<p><strong>⚠️ 注意事项：</strong></p>
+<ul>
+<li>用户在调用 init 之前，必须先 <strong>approve</strong> Token 给 DEX 合约</li>
+<li>你需要一个 <strong>mapping</strong> 来记录每个地址的 LP 余额</li>
+</ul>
+<hr>
+<h2 id="-checkpoint-3-price价格计算">✅ Checkpoint 3: Price（价格计算）</h2>
+<h3 id="需要实现price函数">需要实现：<strong>price</strong> 函数</h3>
+<p><strong>测试在检查什么：</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>xInput</th><th>xReserves</th><th>yReserves</th><th>预期 yOutput</th></tr></thead><tbody><tr><td>1 ETH</td><td>5 ETH</td><td>5 Token</td><td>831248957812239453 wei</td></tr><tr><td>1 ETH</td><td>10 ETH</td><td>15 Token</td><td>1359916340820223697 wei</td></tr></tbody></table>
+<p><strong>函数签名：</strong></p>
+<p>price(uint256 xInput, uint256 xReserves, uint256 yReserves) public pure returns (uint256)</p>
+<p><strong>核心公式（带 0.3% 手续费）：</strong></p>
+<p>$$yOutput = \frac{yReserves \times xInput \times 997}{xReserves \times 1000 + xInput \times 997}$$</p>
+<p><strong>伪代码：</strong></p>
+<p>inputAmountWithFee = xInput * 997</p>
+<p>numerator = yReserves * inputAmountWithFee</p>
+<p>denominator = (xReserves * 1000) + inputAmountWithFee</p>
+<p>return numerator / denominator</p>
+<p><strong>⚠️ 注意事项：</strong></p>
+<ul>
+<li>必须是 <strong>pure</strong> 或 <strong>view</strong> 函数</li>
+<li>整数除法自动向下取整</li>
+<li>测试会精确检查输出值，公式必须完全正确</li>
+</ul>
+<hr>
+<h2 id="-checkpoint-4-trading交易功能">✅ Checkpoint 4: Trading（交易功能）</h2>
+<h3 id="41-需要实现ethtotoken函数">4.1 需要实现：<strong>ethToToken</strong> 函数</h3>
+<p><strong>测试在检查什么：</strong></p>
+<ol>
+<li>发送 1 ETH 后，DEX 的 ETH 余额增加 1</li>
+<li>发送 0 ETH 应该 <strong>revert</strong></li>
+<li>连续交易时，后一次获得的 Token 更少（滑点效应）</li>
+<li>必须 emit <strong>EthToTokenSwap</strong> 事件</li>
+<li>Token 必须转给调用者</li>
+</ol>
+<p><strong>函数签名：</strong></p>
+<p>ethToToken() public payable returns (uint256)</p>
+<p><strong>实现逻辑：</strong></p>
+<ol>
+<li><strong>require(msg.value > 0)</strong> — 防止发送 0 ETH</li>
+<li>获取 ETH 储备：<strong>address(this).balance - msg.value</strong>（关键！）</li>
+<li>获取 Token 储备：<strong>token.balanceOf(address(this))</strong></li>
+<li>调用 <strong>price()</strong> 计算获得多少 Token</li>
+<li>把 Token 转给 <strong>msg.sender</strong></li>
+<li>emit <strong>EthToTokenSwap</strong> 事件</li>
+</ol>
+<p><strong>事件格式：</strong></p>
+<p>event EthToTokenSwap(address swapper, string action, uint256 ethInput, uint256 tokenOutput)</p>
+<blockquote>
+<p>测试用 <strong>getEventValue(tx1_receipt, 2)</strong> 读取第 3 个参数（index=2），期望值是 ethInput</p>
+</blockquote>
+<p><strong>⚠️ 注意事项：</strong></p>
+<ul>
+<li>计算储备时，<strong>msg.value 已经包含在 balance 里了</strong>！必须减掉</li>
+</ul>
+<hr>
+<h3 id="42-需要实现tokentoeth函数">4.2 需要实现：<strong>tokenToEth</strong> 函数</h3>
+<p><strong>测试在检查什么：</strong></p>
+<ol>
+<li>发送 1 Token 后，DEX 的 Token 余额增加 1</li>
+<li>发送 0 Token 应该 <strong>revert</strong></li>
+<li>必须 emit <strong>TokenToEthSwap</strong> 事件</li>
+<li>连续交易时，后一次获得的 ETH 更少</li>
+</ol>
+<p><strong>函数签名：</strong></p>
+<p>tokenToEth(uint256 tokenInput) public returns (uint256)</p>
+<p><strong>实现逻辑：</strong></p>
+<ol>
+<li><strong>require(tokenInput > 0)</strong></li>
+<li>获取两个储备量</li>
+<li>调用 <strong>price()</strong> 计算获得多少 ETH</li>
+<li><strong>transferFrom</strong> 把用户的 Token 转入合约</li>
+<li>用 <strong>call</strong> 把 ETH 发给用户</li>
+<li>emit <strong>TokenToEthSwap</strong> 事件</li>
+</ol>
+<p><strong>⚠️ 注意事项：</strong></p>
+<ul>
+<li><strong>先转入 Token，再转出 ETH</strong>（重入保护）</li>
+<li>用户必须先 <strong>approve</strong></li>
+</ul>
+<hr>
+<h2 id="-checkpoint-5-liquidity流动性管理">✅ Checkpoint 5: Liquidity（流动性管理）</h2>
+<h3 id="51-需要实现deposit函数">5.1 需要实现：<strong>deposit</strong> 函数</h3>
+<p><strong>测试在检查什么：</strong></p>
+<ol>
+<li>存入 5 ETH 后，<strong>totalLiquidity</strong> 增加 5</li>
+<li>用户的 LP 余额变成 5</li>
+<li>存入 0 ETH 应该 <strong>revert</strong></li>
+<li>必须 emit <strong>LiquidityProvided</strong> 事件</li>
+</ol>
+<p><strong>函数签名：</strong></p>
+<p>deposit() public payable returns (uint256)</p>
+<p><strong>事件格式（顺序很重要！）：</strong></p>
+<p>event LiquidityProvided(address provider, uint256 liquidityMinted, uint256 ethDeposit, uint256 tokenDeposit)</p>
+<p><strong>核心逻辑：</strong></p>
+<ol>
+<li><strong>require(msg.value > 0)</strong></li>
+<li>计算 ETH 储备：<strong>address(this).balance - msg.value</strong></li>
+<li>计算 Token 储备</li>
+<li>计算需要存入多少 Token：</li>
+</ol>
+<p>$$tokenDeposit = \frac{msg.value \times tokenReserve}{ethReserve}$$</p>
+<ol start="5">
+<li>计算铸造多少 LP Token：</li>
+</ol>
+<p>$$liquidityMinted = \frac{msg.value \times totalLiquidity}{ethReserve}$$</p>
+<ol start="6">
+<li>用 <strong>transferFrom</strong> 转入 Token</li>
+<li>更新 <strong>totalLiquidity</strong> 和用户的 LP 余额</li>
+<li>emit 事件</li>
+</ol>
+<p><strong>⚠️ 注意事项：</strong></p>
+<ul>
+<li>如果池子比例是 1:1，存入 5 ETH 应该附带 5 Token</li>
+<li>LP 增发比例 = 资产增加比例</li>
+</ul>
+<hr>
+<h3 id="52-需要实现withdraw函数">5.2 需要实现：<strong>withdraw</strong> 函数</h3>
+<p><strong>测试在检查什么：</strong></p>
+<ol>
+<li>池子 1:1 比例时，提取 1 LP = 提取 1 ETH + 1 Token</li>
+<li>如果 LP 余额不足，应该 <strong>revert</strong></li>
+<li><strong>totalLiquidity</strong> 必须减少</li>
+<li>必须 emit <strong>LiquidityRemoved</strong> 事件</li>
+</ol>
+<p><strong>函数签名：</strong></p>
+<p>withdraw(uint256 amount) public returns (uint256, uint256)</p>
+<p><strong>事件格式：</strong></p>
+<p>event LiquidityRemoved(address provider, uint256 amount, uint256 ethWithdrawn, uint256 tokenWithdrawn)</p>
+<p>测试验证了：<strong>withArgs(deployer.address, 1.5 ETH, 1.5 ETH, 1.5 Token)</strong></p>
+<p><strong>核心逻辑：</strong></p>
+<ol>
+<li><strong>require(用户 LP 余额 >= amount)</strong></li>
+<li>计算能提取多少 ETH 和 Token：</li>
+</ol>
+<p>$$ethWithdrawn = \frac{amount \times ethReserve}{totalLiquidity}$$</p>
+<p>$$tokenWithdrawn = \frac{amount \times tokenReserve}{totalLiquidity}$$</p>
+<ol start="3">
+<li><strong>先减少</strong> 用户的 LP 余额和 totalLiquidity（防重入！）</li>
+<li>发送 ETH 和 Token 给用户</li>
+<li>emit 事件</li>
+</ol>
+<h1 id="知识">知识</h1>
+<h2 id="怎么初始化">怎么初始化</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="solidity"><code><span class="line"><span style="color:#6A737D">    /**</span></span>
+<span class="line"><span style="color:#6A737D">     * </span><span style="color:#F97583">@notice</span><span style="color:#6A737D"> 初始化 DEX，将代币从 ERC20 合约转入 DEX。同时存入 ETH 和 Balloons。</span></span>
+<span class="line"><span style="color:#6A737D">     * </span><span style="color:#F97583">@param</span><span style="color:#E1E4E8"> tokens</span><span style="color:#6A737D"> 要转入 DEX 的代币数量</span></span>
+<span class="line"><span style="color:#6A737D">     * </span><span style="color:#F97583">@return</span><span style="color:#E1E4E8"> totalLiquidity</span><span style="color:#6A737D"> 根据存款铸造的 LP Token 数量</span></span>
+<span class="line"><span style="color:#6A737D">     * 注意：由于初始比例是 1:1，所以可以将 totalLiquidity 初始化为等于合约的 ETH 余额。</span></span>
+<span class="line"><span style="color:#6A737D">     * init() 是由项目方（部署者）调用的，所以初始的流动性确实是项目方放入的。</span></span>
+<span class="line"><span style="color:#6A737D">     *但之后的 deposit() 任何人都可以调用！</span></span>
+<span class="line"><span style="color:#6A737D">     */</span></span>
+<span class="line"><span style="color:#F97583">    function</span><span style="color:#B392F0"> init</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">uint256</span><span style="color:#FFAB70"> tokens</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">public</span><span style="color:#F97583"> payable</span><span style="color:#F97583"> returns</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">uint256</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">        require</span><span style="color:#E1E4E8">(totalLiquidity </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"DEX already initialized"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#6A737D">        //init用户msg.value存入的是eth,项目方1：1存入另一个代币,之后的 deposit() 任何人都可以调用！</span></span>
+<span class="line"><span style="color:#E1E4E8">        token.</span><span style="color:#B392F0">transferFrom</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">msg.sender</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">address</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">this</span><span style="color:#E1E4E8">), tokens);</span></span>
+<span class="line"><span style="color:#E1E4E8">        totalLiquidity </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> msg</span><span style="color:#E1E4E8">.value;</span></span>
+<span class="line"><span style="color:#E1E4E8">        liquidity[</span><span style="color:#79B8FF">msg.sender</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> msg</span><span style="color:#E1E4E8">.value;</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> totalLiquidity;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span></code></pre>
+<h2 id="deposit">deposit</h2>
+<h3 id="tokendeposit-的意义"> tokenDeposit 的意义</h3>
+<p><strong>保持池子比例不变！</strong></p>
+<p>假设当前池子：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>ETH 储备 = 10 ETH</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Token 储备 = 20 Token</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>比例 = 20 / 10 = 2:1 （每 1 ETH 对应 2 Token）</span></span></code></pre>
+<p>用户存入 1 ETH，需要多少 Token？</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>tokenDeposit = 1 × (20 / 10) = 2 Token</span></span></code></pre>
+<p>存入后：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>ETH 储备 = 11 ETH</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Token 储备 = 22 Token</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>比例 = 22 / 11 = 2:1 ✅ 比例不变！</span></span></code></pre>
+<p><strong>如果不按比例存入，会发生什么？</strong></p>
+<ul>
+<li>池子比例被打乱</li>
+<li>价格会突然变化</li>
+<li>套利者可以攻击你的池子</li>
+</ul>
+<hr>
+<h3 id="-liquidityminted-的意义">🎯 liquidityMinted 的意义</h3>
+<p><strong>公平分配 LP Token！</strong></p>
+<p>LP Token 代表你在池子中的 <strong>份额</strong>。</p>
+<p>假设当前池子：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>ETH 储备 = 10 ETH</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>totalLiquidity = 10 LP</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>（每 1 LP 代表池子的 1/10）</span></span></code></pre>
+<p>用户存入 1 ETH：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>liquidityMinted = (1 × 10) / 10 = 1 LP</span></span></code></pre>
+<p>存入后：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>ETH 储备 = 11 ETH</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>totalLiquidity = 11 LP</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>用户持有 1 LP = 池子的 1/11</span></span></code></pre>
+<p><strong>为什么这样计算？</strong></p>
+<ul>
+<li>用户存入了池子的 1/11（1 ETH / 11 ETH）</li>
+<li>所以应该获得总 LP 的 1/11（1 LP / 11 LP）</li>
+</ul>
+<hr>
+<h2 id="要是用户没有token呢只有eth怎么添加流动性">要是用户没有token呢，只有eth怎么添加流动性</h2>
+<h3 id="如果用户只有-eth没有-token"> 如果用户只有 ETH，没有 Token？</h3>
+<p><strong>在这个简化版 DEX 中：用户无法直接添加流动性。</strong></p>
+<p>但在真实世界中，有几种解决方案：</p>
+<hr>
+<h3 id="解决方案-1先用-eth-买-token">解决方案 1：先用 ETH 买 Token</h3>
+<p><strong>用户可以分两步操作：</strong></p>
+<p>Step 1: 用一半 ETH 买 Token</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>ethToToken() 用 0.5 ETH → 得到约 0.5 Token</span></span></code></pre>
+<p>Step 2: 用剩余 ETH + 刚买的 Token 添加流动性</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>deposit() 用 0.5 ETH + 0.5 Token → 得到 LP</span></span></code></pre>
+<p><strong>缺点：</strong> 用户需要操作两次，而且 Step 1 会产生滑点和手续费。</p>
+<hr>
+<h3 id="解决方案-2单边流动性zap-in">解决方案 2：单边流动性（Zap In）</h3>
+<p><strong>一些高级 DEX（如 Uniswap V2 的 Router）提供 “Zap” 功能：</strong></p>
+<p>solidity</p>
+<p>function zapIn() public payable {</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// 1. 用一半 ETH 换成 Token</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>uint256 halfEth = msg.value / 2;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>uint256 tokensBought = _swapEthForToken(halfEth);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>// 2. 用另一半 ETH + 换来的 Token 添加流动性</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>_addLiquidity(halfEth, tokensBought);</span></span></code></pre>
+<p>}</p>
+<p><strong>这是一个一键操作，帮用户自动完成两步！</strong></p>
+<hr>
+<h3 id="-流程对比">📊 流程对比</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>方式</th><th>操作次数</th><th>复杂度</th><th>Gas 费用</th></tr></thead><tbody><tr><td>手动两步</td><td>2 次交易</td><td>用户手动计算</td><td>较低</td></tr><tr><td>Zap In</td><td>1 次交易</td><td>合约自动处理</td><td>较高</td></tr></tbody></table>
+<hr>
+<h3 id="-为什么本-dex-没有实现-zap">🎯 为什么本 DEX 没有实现 Zap？</h3>
+<p><strong>这是一个教学版 DEX，保持简单！</strong></p>
+<p>在 SpeedRunEthereum 挑战中，重点是理解：</p>
+<ul>
+<li>恒定乘积公式</li>
+<li>LP Token 机制</li>
+<li>双边流动性的概念</li>
+</ul>
+<p><strong>Zap 是一个进阶功能</strong>，通常放在 Router 合约中实现。</p>
+<h1 id="5超额抵押">5超额抵押</h1>
+<h2 id="提示词-2">提示词</h2>
+<p><strong>Role (角色):</strong> 你是一名 <strong>DeFi 协议架构师</strong>，擅长用通俗易懂的语言解释 <strong>超额抵押 (Over-collateralization)</strong> 和 <strong>清算 (Liquidation)</strong> 的核心数学原理。 <strong>我的现状：</strong> 我正在开发一个借贷 DApp（抵押 ETH，借出 CORN）。我不想要直接的代码，我想理解背后的逻辑和数学。 <strong>核心约束：</strong> <strong>绝对不要直接给我 Solidity 代码</strong>。请使用 <strong>伪代码 (Pseudo-code)</strong>、<strong>数学公式</strong>、<strong>状态变化表</strong> 或 <strong>逻辑流程图</strong> 来指导我。</p>
+<p><strong>Task (任务流程):</strong> 请按照以下 <strong>4 个 Checkpoint (检查点)</strong>，分步引导我完成开发。在每个 Checkpoint 中，请明确告诉我：</p>
+<ol>
+<li>
+<p><strong>目标是什么？</strong> (Objective)</p>
+</li>
+<li>
+<p><strong>核心公式/逻辑？</strong> (The Math/Logic)</p>
+</li>
+<li>
+<p><strong>潜在的坑？</strong> (Security/Solidity Gotchas)</p>
+</li>
+</ol>
+<p><strong>Checkpoint 1: 账本与存款 (The Bank Vault)</strong></p>
+<ul>
+<li>
+<p><strong>目标：</strong> 建立数据结构来记录谁存了多少 ETH，谁借了多少 CORN。</p>
+</li>
+<li>
+<p><strong>思考引导：</strong> 我需要几个 <code>mapping</code>？是一个记录 ETH，一个记录 CORN 债务吗？</p>
+</li>
+<li>
+<p><strong>价格预言机 (Oracle)：</strong> 假设有一个函数 <code>getEthPrice()</code> 返回 ETH 对 CORN 的价格。请解释为什么我们需要这个价格？</p>
+</li>
+</ul>
+<p><strong>Checkpoint 2: 借贷逻辑与健康因子 (Borrowing &#x26; Health Factor)</strong> 这是最难的部分。请教我如何编写 <code>borrow()</code> 函数：</p>
+<ul>
+<li>
+<p><strong>核心数学：</strong> 如何计算用户的 <strong>抵押率 (Collateralization Ratio)</strong>？</p>
+<ul>
+<li>公式：<code>抵押物价值 (ETH * Price) / 债务价值 (CORN)</code>。</li>
+</ul>
+</li>
+<li>
+<p><strong>Solidity 难点：</strong> Solidity 不支持小数（浮点数）。请教我如何用整数运算来检查 <code>抵押率 >= 120%</code>？(提示：是否需要乘以 100 或 1000？)</p>
+</li>
+<li>
+<p><strong>逻辑流：</strong> 检查健康度 -> 更新债务账本 -> 发送 CORN Token。</p>
+</li>
+</ul>
+<p><strong>Checkpoint 3: 还款与取款 (Repay &#x26; Withdraw)</strong></p>
+<ul>
+<li>
+<p><strong>还款 (Repay)：</strong> 用户还钱后，他的债务账本怎么变？他需要 <code>approve</code> 合约动用他的 CORN 吗？</p>
+</li>
+<li>
+<p><strong>取款 (Withdraw)：</strong> 用户想取回 ETH。</p>
+<ul>
+<li><strong>关键检查：</strong> 怎么防止用户在还有大量债务的情况下取走所有抵押物？请给我一个伪代码判断逻辑（<code>require</code> 语句的逻辑）。</li>
+</ul>
+</li>
+</ul>
+<p><strong>Checkpoint 4: 清算机制 (The Liquidation - The Vulture)</strong></p>
+<ul>
+<li>
+<p><strong>场景：</strong> ETH 价格暴跌，用户的 <code>抵押率 &#x3C; 100%</code> (或者你设定的清算线)。</p>
+</li>
+<li>
+<p><strong>清算人动机：</strong> 为什么清算人愿意帮合约平账？请解释 <strong>10% 奖励</strong> 的数学计算。</p>
+<ul>
+<li>
+<p>如果借款人欠 100 CORN，抵押物只值 90 CORN 了。清算人还 50 CORN，他应该拿走多少价值的 ETH？</p>
+</li>
+<li>
+<p>公式：<code>(RepaidAmount / Price) * 1.10</code> ? 请帮我推导这个公式。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="checkpoint-1-账本与存款-the-bank-vault">Checkpoint 1: 账本与存款 (The Bank Vault)</h2>
+<h3 id="-目标-objective">🎯 目标 (Objective)</h3>
+<p>建立一个可靠的”账本”系统，追踪每个用户的两个核心数据：</p>
+<ol>
+<li><strong>抵押了多少 ETH</strong> (他存进来的”信用凭证”)</li>
+<li><strong>欠了多少 CORN</strong> (他的债务)</li>
+</ol>
+<h3 id="-核心逻辑-the-mathlogic">📐 核心逻辑 (The Math/Logic)</h3>
+<p><strong>数据结构 (伪代码):</strong></p>
+<p>// 我们需要两本独立的账本</p>
+<p>账本_ETH存款 : 地址 → 数量 (wei)</p>
+<p>账本_CORN债务 : 地址 → 数量 (wei)</p>
+<p>是的，你需要<strong>两个 mapping</strong>：</p>
+<ul>
+<li>一个记录用户存入的 ETH 抵押物</li>
+<li>一个记录用户借出的 CORN 债务</li>
+</ul>
+<p><strong>状态变化表 (存款操作):</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>操作</th><th>用户钱包 ETH</th><th>合约持有 ETH</th><th>账本_ETH存款[用户]</th></tr></thead><tbody><tr><td>存入前</td><td>10</td><td>0</td><td>0</td></tr><tr><td>存入 3 ETH 后</td><td>7</td><td>3</td><td>3</td></tr></tbody></table>
+<p><strong>为什么需要价格预言机？</strong></p>
+<p>这是关键的”桥梁”！想象一下：</p>
+<ul>
+<li>用户存了 <strong>1 ETH</strong></li>
+<li>用户想借 <strong>CORN</strong></li>
+</ul>
+<p>问题来了：<strong>1 ETH 能借多少 CORN？</strong></p>
+<p>你必须知道 ETH 和 CORN 之间的<strong>兑换率</strong>。假设：</p>
+<ul>
+<li>
+<p><strong>getEthPrice()</strong> 返回 </p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>2000</span></span></code></pre>
+<p> (表示 1 ETH = 2000 CORN)</p>
+</li>
+</ul>
+<p>那么 1 ETH 的”价值”就是 2000 CORN。这个价格是后续所有计算的基础。</p>
+<p>抵押物价值 (用 CORN 衡量) = ETH数量 × getEthPrice()</p>
+<h3 id="️-潜在的坑-gotchas">⚠️ 潜在的坑 (Gotchas)</h3>
+<ol>
+<li><strong>存款时要用 <strong>msg.value</strong> 而不是传参数</strong>：ETH 是通过交易附带的，不是函数参数。</li>
+<li><strong>永远先更新状态，再做外部操作</strong> (Checks-Effects-Interactions 模式)。</li>
+<li><strong>价格精度问题</strong>：如果 getEthPrice() 返回的精度不一致（比如有的是 18 位小数，有的是 8 位），计算会出大问题。</li>
+</ol>
+<hr>
+<h2 id="checkpoint-2-借贷逻辑与健康因子-borrowing--health-factor">Checkpoint 2: 借贷逻辑与健康因子 (Borrowing &#x26; Health Factor)</h2>
+<h3 id="-目标-objective-1">🎯 目标 (Objective)</h3>
+<p>用户想借 CORN。我们要确保他的<strong>抵押率 ≥ 120%</strong>，否则拒绝借款。</p>
+<h3 id="-核心公式-the-math">📐 核心公式 (The Math)</h3>
+<p><strong>抵押率公式:</strong></p>
+<p>$$\text{抵押率} = \frac{\text{抵押物价值 (CORN计价)}}{\text{债务总额 (CORN)}}$$</p>
+<p>展开：</p>
+<p>$$\text{抵押率} = \frac{\text{ETH存款} \times \text{ETH价格}}{\text{CORN债务}}$$</p>
+<p><strong>健康检查条件:</strong></p>
+<p>我们要求 </p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>抵押率 ≥ 120%</span></span></code></pre>
+<p>，也就是 </p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>抵押率 ≥ 1.2</span></span></code></pre>
+<h3 id="-solidity-整数运算技巧-关键">🔢 Solidity 整数运算技巧 (关键！)</h3>
+<p>Solidity 不支持小数！</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>1.2</span></span></code></pre>
+<p> 无法表示。</p>
+<p><strong>解决方案：把所有比率放大 100 倍（或 1000 倍）</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>真实值</th><th>放大 100 倍表示</th></tr></thead><tbody><tr><td>120%</td><td>120</td></tr><tr><td>100%</td><td>100</td></tr><tr><td>80%</td><td>80</td></tr></tbody></table>
+<p><strong>健康检查的整数版本:</strong></p>
+<p>// 原始公式（有小数）:</p>
+<p>// (ETH存款 × 价格) / CORN债务 >= 1.2</p>
+<p>// 整数版本（放大 100 倍，消除除法误差）:</p>
+<p>// (ETH存款 × 价格 × 100) >= (CORN债务 × 120)</p>
+<p>require(</p>
+<p>ETH存款 × 价格 × 100 >= (CORN债务现有 + CORN借款金额) × 120,</p>
+<p>“抵押不足”</p>
+<p>)</p>
+<p><strong>为什么这样变形？</strong></p>
+<p>把除法变成乘法，避免精度丢失！</p>
+<p>原式: (A / B) >= 1.2</p>
+<p>变形: A >= B × 1.2</p>
+<p>整数版: A × 100 >= B × 120</p>
+<h3 id="-借款逻辑流程图">📊 借款逻辑流程图</h3>
+<p>┌─────────────────────────────────┐</p>
+<p>│      用户调用 borrow(amount)     │</p>
+<p>└─────────────────┬───────────────┘</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>              ▼</span></span></code></pre>
+<p>┌─────────────────────────────────┐</p>
+<p>│  读取: ETH存款, 现有CORN债务     │</p>
+<p>│  读取: 当前ETH价格               │</p>
+<p>└─────────────────┬───────────────┘</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>              ▼</span></span></code></pre>
+<p>┌─────────────────────────────────┐</p>
+<p>│  计算: 新债务 = 现有债务 + amount │</p>
+<p>└─────────────────┬───────────────┘</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>              ▼</span></span></code></pre>
+<p>┌─────────────────────────────────┐</p>
+<p>│  健康检查:                       │</p>
+<p>│  ETH存款 × 价格 × 100            │</p>
+<p>│       >=                        │</p>
+<p>│  新债务 × 120 ?                  │</p>
+<p>└─────────────────┬───────────────┘</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>              ▼</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>       ┌──────┴──────┐</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>       │  通过?       │</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>       └──────┬──────┘</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>      ↙       │       ↘</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>   ❌ 失败    │        ✅ 通过</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>   revert     │</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>              ▼</span></span></code></pre>
+<p>┌─────────────────────────────────┐</p>
+<p>│  更新状态:                       │</p>
+<p>│  账本_CORN债务[用户] += amount   │</p>
+<p>└─────────────────┬───────────────┘</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>              ▼</span></span></code></pre>
+<p>┌─────────────────────────────────┐</p>
+<p>│  发送 CORN Token 给用户          │</p>
+<p>│  (调用 CORN.transfer)            │</p>
+<p>└─────────────────────────────────┘</p>
+<h3 id="️-潜在的坑-gotchas-1">⚠️ 潜在的坑 (Gotchas)</h3>
+<ol>
+<li><strong>先检查，再更新状态，最后转账</strong> (CEI 模式)</li>
+<li><strong>乘法溢出</strong>：虽然 Solidity 0.8+ 有溢出保护，但计算顺序仍要注意</li>
+<li><strong>价格为 0 的边界情况</strong>：如果预言机返回 0，你的公式会怎样？</li>
+<li><strong>债务为 0 时借款</strong>：第一次借款时，现有债务是 0，这没问题</li>
+</ol>
+<hr>
+<h2 id="checkpoint-3-还款与取款-repay--withdraw">Checkpoint 3: 还款与取款 (Repay &#x26; Withdraw)</h2>
+<h3 id="-目标-objective-2">🎯 目标 (Objective)</h3>
+<ul>
+<li><strong>还款 (Repay)</strong>：用户归还 CORN，减少债务</li>
+<li><strong>取款 (Withdraw)</strong>：用户取回 ETH 抵押物</li>
+</ul>
+<h3 id="-还款逻辑-repay">📐 还款逻辑 (Repay)</h3>
+<p><strong>状态变化表:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>操作</th><th>用户CORN余额</th><th>合约CORN余额</th><th>账本_CORN债务[用户]</th></tr></thead><tbody><tr><td>还款前</td><td>500</td><td>0</td><td>100</td></tr><tr><td>还款 50 CORN</td><td>450</td><td>50</td><td>50</td></tr></tbody></table>
+<p><strong>用户需要 approve 吗？</strong></p>
+<p><strong>是的！</strong> 因为还款时，合约需要从用户钱包”拉取” CORN Token。</p>
+<p>流程：</p>
+<ol>
+<li>
+<p>用户调用 </p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>CORN.approve(借贷合约地址, 还款金额)</span></span></code></pre>
+</li>
+<li>
+<p>用户调用 </p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>借贷合约.repay(还款金额)</span></span></code></pre>
+</li>
+<li>
+<p>合约内部调用 </p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>CORN.transferFrom(用户, 合约, 还款金额)</span></span></code></pre>
+</li>
+</ol>
+<p><strong>伪代码:</strong></p>
+<p>function repay(amount):</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// 从用户拉取 CORN (需要用户提前 approve)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>CORN.transferFrom(msg.sender, this, amount)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>// 更新债务账本</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>账本_CORN债务[msg.sender] -= amount</span></span></code></pre>
+<h3 id="-取款逻辑-withdraw">📐 取款逻辑 (Withdraw)</h3>
+<p><strong>核心问题：用户取走 ETH 后，剩余抵押物还能覆盖债务吗？</strong></p>
+<p><strong>伪代码判断逻辑:</strong></p>
+<p>function withdraw(取款ETH数量):</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>剩余ETH = 账本_ETH存款[用户] - 取款ETH数量</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>当前债务 = 账本_CORN债务[用户]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>价格 = getEthPrice()</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>// 关键检查：取款后抵押率仍 >= 120%</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>require(</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    剩余ETH × 价格 × 100 >= 当前债务 × 120,</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    "取款后抵押不足"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>// 如果没有债务，可以随便取</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>// (上面的公式自动处理：0 × 120 = 0，条件满足)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>// 更新状态</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>账本_ETH存款[用户] -= 取款ETH数量</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>// 转账 ETH 给用户</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>发送ETH(用户, 取款ETH数量)</span></span></code></pre>
+<p><strong>状态变化表 (取款检查):</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>场景</th><th>ETH存款</th><th>价格</th><th>债务</th><th>抵押率</th><th>能否全额取款?</th></tr></thead><tbody><tr><td>无债务</td><td>2</td><td>2000</td><td>0</td><td>∞</td><td>✅ 可以</td></tr><tr><td>有债务，超额抵押</td><td>2</td><td>2000</td><td>1000</td><td>400%</td><td>🔸 部分可以</td></tr><tr><td>刚好120%</td><td>1.2</td><td>2000</td><td>2000</td><td>120%</td><td>❌ 不能取</td></tr></tbody></table>
+<h3 id="️-潜在的坑-gotchas-2">⚠️ 潜在的坑 (Gotchas)</h3>
+<ol>
+<li><strong>还款金额 > 债务怎么办？</strong> 应该只还到 0，或者 revert</li>
+<li><strong>取款用 <strong>call</strong> 发送 ETH</strong>，不要用 <strong>transfer</strong></li>
+<li><strong>先更新状态再发送 ETH</strong> (防止重入攻击)</li>
+</ol>
+<hr>
+<h2 id="checkpoint-4-清算机制-the-liquidation---the-vulture">Checkpoint 4: 清算机制 (The Liquidation - The Vulture)</h2>
+<h3 id="-目标-objective-3">🎯 目标 (Objective)</h3>
+<p>当用户的抵押率跌破安全线（比如 100%），允许”清算人”代替用户还债，并获得奖励。</p>
+<h3 id="-场景分析">📐 场景分析</h3>
+<p><strong>初始状态:</strong></p>
+<ul>
+<li>借款人存了 1 ETH，价格 2000 CORN</li>
+<li>借了 1600 CORN</li>
+<li>抵押率 = 2000 / 1600 = 125% ✅</li>
+</ul>
+<p><strong>ETH 暴跌后:</strong></p>
+<ul>
+<li>价格跌到 1800 CORN</li>
+<li>抵押率 = 1800 / 1600 = 112.5% ⚠️ (接近危险)</li>
+</ul>
+<p><strong>继续暴跌:</strong></p>
+<ul>
+<li>价格跌到 1500 CORN</li>
+<li>抵押率 = 1500 / 1600 = 93.75% ❌ (可清算！)</li>
+</ul>
+<h3 id="-清算人的动机-10-奖励">📐 清算人的动机 (10% 奖励)</h3>
+<p><strong>问题：清算人为什么要帮忙？</strong></p>
+<p><strong>答案：他可以折价买到抵押物！</strong></p>
+<p>假设：</p>
+<ul>
+<li>借款人欠 <strong>100 CORN</strong></li>
+<li>抵押物价值 <strong>90 CORN</strong> (水下了)</li>
+<li>清算人还 <strong>50 CORN</strong></li>
+</ul>
+<p><strong>清算人应该拿走多少 ETH？</strong></p>
+<p>$$\text{清算人获得的ETH} = \frac{\text{还款金额}}{\text{ETH价格}} \times (1 + \text{奖励比例})$$</p>
+<p>代入数字： $$\text{清算人获得的ETH} = \frac{50}{价格} \times 1.10$$</p>
+<p><strong>完整推导:</strong></p>
+<p>假设 ETH 价格 = 1500 CORN (已经暴跌)</p>
+<p>清算人还款: 50 CORN</p>
+<p>基础可获得 ETH = 50 / 1500 = 0.0333 ETH</p>
+<p>10% 奖励 = 0.0333 × 0.10 = 0.00333 ETH</p>
+<p>最终获得 = 0.0333 + 0.00333 = 0.0366 ETH</p>
+<p>或者直接: 50 / 1500 × 1.10 = 0.0366 ETH</p>
+<p><strong>用 CORN 验算清算人的利润:</strong></p>
+<ul>
+<li>清算人支付: 50 CORN</li>
+<li>清算人获得: 0.0366 ETH × 1500 = 55 CORN 价值的 ETH</li>
+<li><strong>净赚 5 CORN！</strong> (10% 奖励)</li>
+</ul>
+<h3 id="-整数运算版本">📐 整数运算版本</h3>
+<p>把 10% 奖励表示为整数：</p>
+<p>奖励分子 = 110</p>
+<p>奖励分母 = 100</p>
+<p>清算人获得ETH = (还款金额 × 奖励分子) / (价格 × 奖励分母)</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>          = (还款金额 × 110) / (价格 × 100)</span></span></code></pre>
+<p><strong>伪代码:</strong></p>
+<p>function liquidate(借款人地址, 还款金额):</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// 检查：借款人确实不健康</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>require(</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    借款人ETH × 价格 × 100 &#x3C; 借款人债务 × 清算线,</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    "该用户还很健康"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>// 计算清算人应得的 ETH (含 10% 奖励)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>应得ETH = (还款金额 × 110) / (价格 × 100)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>// 检查：借款人有这么多抵押物</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>require(借款人ETH >= 应得ETH, "抵押物不足")</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>// 清算人支付 CORN</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>CORN.transferFrom(清算人, this, 还款金额)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>// 更新借款人状态</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>账本_CORN债务[借款人] -= 还款金额</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>账本_ETH存款[借款人] -= 应得ETH</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>// 发送 ETH 给清算人</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>发送ETH(清算人, 应得ETH)</span></span></code></pre>
+<h3 id="-清算状态变化表">📊 清算状态变化表</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>对象</th><th>操作前 CORN</th><th>操作后 CORN</th><th>操作前 ETH</th><th>操作后 ETH</th></tr></thead><tbody><tr><td>借款人 (债务)</td><td>100</td><td>50</td><td>0.06</td><td>0.0234</td></tr><tr><td>清算人</td><td>50</td><td>0</td><td>0</td><td>0.0366</td></tr><tr><td>合约</td><td>+50 CORN</td><td>—</td><td>-0.0366 ETH</td><td>—</td></tr></tbody></table>
+<h3 id="️-潜在的坑-gotchas-3">⚠️ 潜在的坑 (Gotchas)</h3>
+<ol>
+<li><strong>部分清算 vs 全额清算</strong>：允许清算一部分债务更灵活</li>
+<li><strong>清算奖励可能超过抵押物</strong>：需要处理”坏账”情况</li>
+<li><strong>闪电贷攻击</strong>：清算人可能用闪电贷获取资金，一个交易完成清算并套利</li>
+<li><strong>抢跑 (Front-running)</strong>：矿工可能看到清算交易后，自己先执行</li>
+</ol>
+<h2 id="知识-1">知识</h2>
+<h3 id="仓位">仓位</h3>
+<p>“仓位”来自金融交易术语：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>术语</th><th>含义</th></tr></thead><tbody><tr><td><strong>仓位 (Position)</strong></td><td>你在市场中持有的资产组合</td></tr><tr><td><strong>开仓</strong></td><td>建立新头寸（借款 = 开仓）</td></tr><tr><td><strong>平仓</strong></td><td>关闭头寸（还清债务 = 平仓）</td></tr><tr><td><strong>爆仓</strong></td><td>仓位不健康被强制清算</td></tr></tbody></table>
+<p>简单说：<strong>仓位 = 你存了多少 + 你欠了多少</strong>，我们通过计算它们的比率来判断是否”健康”。</p>
+<h4 id="-现实世界类比房屋抵押贷款">🏠 现实世界类比：房屋抵押贷款</h4>
+<p>假设你去银行贷款买房：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>你的”仓位”</th><th>金额</th></tr></thead><tbody><tr><td>🏠 <strong>抵押物</strong> (房子)</td><td>价值 100 万</td></tr><tr><td>💰 <strong>债务</strong> (欠银行的钱)</td><td>借了 60 万</td></tr></tbody></table>
+<p><strong>仓位 = 抵押物 + 债务的组合</strong></p>
+<p>银行会计算一个比率来判断你的仓位是否”健康”：</p>
+<p>$$\text{抵押率} = \frac{100万}{60万} = 166%
+$$</p>
+<p>银行说：只要你的抵押率 >= 120%，我们就认为你的仓位是<strong>安全</strong>的。</p>
+<hr>
+<h4 id="-仓位变危险的场景">📉 仓位变”危险”的场景</h4>
+<p><strong>房价暴跌！</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>你的”仓位”</th><th>变化后</th></tr></thead><tbody><tr><td>🏠 <strong>抵押物</strong> (房子)</td><td>价值 <del>100万</del> → <strong>65万</strong></td></tr><tr><td>💰 <strong>债务</strong></td><td>还是欠 60 万</td></tr></tbody></table>
+<p>$$\text{新抵押率} = \frac{65万}{60万} = 108%
+$$</p>
+<p><strong>仓位不安全了！</strong> 银行可能会”清算”你——强制卖掉房子来收回贷款。</p> </div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/solidity语法/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">solidity语法</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/web3学习路径/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">web3学习路径</h4> </a> </div> </nav> </article> <div id="reading-progress" style="position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 9999; transition: width 0.1s ease-out; pointer-events: none;"></div> <script type="module">document.addEventListener("astro:page-load",()=>{const e=document.getElementById("reading-progress");if(!e)return;const t=()=>{const n=document.documentElement.scrollHeight-window.innerHeight;if(n>0){const o=window.scrollY/n*100;e.style.width=`${o}%`}};window.addEventListener("scroll",t),document.addEventListener("astro:before-swap",()=>{window.removeEventListener("scroll",t)},{once:!0})});</script>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try { localStorage.setItem("theme", value); } catch {}
+          });
+        };
+        bindToggle();
+      })();
+    </script> </body> </html> 

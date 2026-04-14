@@ -1,0 +1,118 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>授权漏洞 | Notebook Dispatch</title><meta name="description" content="# 权限/授权漏洞 (Authorization &#38; Access Control) > **标签:** #漏洞类型/访问控制 | #协议类型/所有智能合约 | #严重程度/Critical ## 📌 1. TL;DR (一句话快速回顾) * **本质成因**：由于开发者忘记给"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.Coc4ZbWY.css"></head> <body class> <!-- 首页导航栏：悬浮透明，叠在 Hero 上方 --> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">Notebook Dispatch</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☼</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回主页花园</a> <header class="article-header"> <p class="eyebrow">2026/4/14</p> <h1>授权漏洞</h1> <p class="lead"># 权限/授权漏洞 (Authorization &amp; Access Control) &gt; **标签:** #漏洞类型/访问控制 | #协议类型/所有智能合约 | #严重程度/Critical ## 📌 1. TL;DR (一句话快速回顾) * **本质成因**：由于开发者忘记给</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> </header> <div class="article-content"> <h1 id="权限授权漏洞-authorization--access-control">权限/授权漏洞 (Authorization &#x26; Access Control)</h1>
+<blockquote>
+<p><strong>标签:</strong> #漏洞类型/访问控制 | #协议类型/所有智能合约 | #严重程度/Critical</p>
+</blockquote>
+<h2 id="-1-tldr-一句话快速回顾">📌 1. TL;DR (一句话快速回顾)</h2>
+<ul>
+<li><strong>本质成因</strong>：由于开发者忘记给敏感函数（如提款、所有权转移、初始化、自毁）加上特权修饰符，或者基于错误的逻辑进行了身份校验（如错信了 <code>tx.origin</code> 而不是 <code>msg.sender</code>）。</li>
+<li><strong>攻击路径</strong>：攻击者或者任意的平民账户，直接调用本不该暴露出来的特许管理接口，抢夺系统控制权甚至直接挪走资金池里的资金。</li>
+</ul>
+<hr>
+<h2 id="-2-漏洞底层原理-root-cause">🔍 2. 漏洞底层原理 (Root Cause)</h2>
+<h3 id="正常业务逻辑">正常业务逻辑</h3>
+<ul>
+<li>合约内存在“管理员专享”和“普通用户可用”两套不同的接口体系。比如系统暂停 <code>pause()</code>、修改代理合约 <code>upgradeTo()</code>、动用金库资金 <code>rescueFund()</code> 等关键行为必须要有强校验：只有管理员才能调。</li>
+</ul>
+<h3 id="缺陷剖析">缺陷剖析</h3>
+<ul>
+<li><strong>致命代码/机制</strong>：开发者最容易犯错的大类：
+<ol>
+<li><strong>漏写修饰符</strong>：原本需要 <code>onlyOwner</code> 的函数写成了 <code>public</code> 或 <code>external</code>，变成了“人人可用”。</li>
+<li><strong>错误的身份认证</strong>：把 <code>tx.origin</code>（发出这条交易的初始人）作为身份判定基准以防御钓鱼。</li>
+<li><strong>未锁闭的初始化</strong>：像 <code>initialize()</code> 这样的函数用来代替构造函数（在做可升级合约升级时使用）。但由于代理模式在上线时由于粗心或者机制被绕过而没有调用，导致攻击者趁虚而入自己调用这个函数。</li>
+</ol>
+</li>
+<li><strong>为何产生冲突</strong>：
+<ul>
+<li><em>预期状态：平民账户想乱搞，遭到 <code>require(_owner == msg.sender)</code> 的系统无情拒绝。</em></li>
+<li><em>实际状态：攻击者长驱直入，不仅自己当上了太上皇，还把真正的团队开发者给踢出了权限名单。</em></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="️-3-攻击执行路径-exploit-steps">⚔️ 3. 攻击执行路径 (Exploit Steps)</h2>
+<blockquote>
+<p>以极其经典的“未初始化代理合约抢跑控制权”为例：</p>
+</blockquote>
+<ol>
+<li><strong>[准备阶段]</strong>: 项目方部署一套极高上大的“代理与逻辑分离”智能合约框架，但在脚本里忘记马上调用一次 <code>logicContract.initialize()</code> 来锁定它的归属权。</li>
+<li><strong>[触发阶段]</strong>: 攻击者通过链上扫描工具或者查阅其开源的 Etherscan 源代码，观察到 <code>owner</code> 变量还是一个 <code>0x0000...00</code> （全零默认状态）。</li>
+<li><strong>[利用阶段]</strong>: 攻击者毫不留情，直接组装一笔对该特许 <code>initialize(address newOwner)</code> 函数的调用，并把自己的地址传入了进去。</li>
+<li><strong>[获利退场]</strong>: 漏洞合约直接把系统的顶级管理员设为了攻击者。攻击者随后立刻调用只能由管理员使用的提取金库函数，拿钱走人。开发团队直接被防在了自己的项目外面。</li>
+</ol>
+<hr>
+<h2 id="-4-关键代码示例-snippets">💻 4. 关键代码示例 (Snippets)</h2>
+<h3 id="漏洞代码-vulnerable-code">漏洞代码 (Vulnerable Code)</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="solidity"><code><span class="line"><span style="color:#6A737D">// 灾难教科书</span></span>
+<span class="line"><span style="color:#F97583">contract</span><span style="color:#B392F0"> Vault</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">    address</span><span style="color:#F97583"> public</span><span style="color:#E1E4E8"> owner;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 错误1：构造函数没有锁定权限 (代理合约模式的常见病)</span></span>
+<span class="line"><span style="color:#F97583">    function</span><span style="color:#B392F0"> initialize</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">public</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        owner </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> msg.sender</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">    // 错误2：漏了 onlyOwner 修饰符！这简直是个送钱函数！</span></span>
+<span class="line"><span style="color:#F97583">    function</span><span style="color:#B392F0"> emergencyWithdraw</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">uint</span><span style="color:#FFAB70"> amount</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">external</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">        (</span><span style="color:#79B8FF">bool</span><span style="color:#E1E4E8"> success, ) </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> msg.sender</span><span style="color:#E1E4E8">.call{value</span><span style="color:#F97583">:</span><span style="color:#E1E4E8"> amount}(</span><span style="color:#9ECBFF">""</span><span style="color:#E1E4E8">); </span></span>
+<span class="line"><span style="color:#F97583">        require</span><span style="color:#E1E4E8">(success);</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">    </span></span>
+<span class="line"><span style="color:#6A737D">    // 错误3：防钓鱼弄巧成拙。tx.origin 是这笔交易最初的签名者。</span></span>
+<span class="line"><span style="color:#6A737D">    // 黑客可以构造一个假冒钓鱼合约诱骗老板点击转一两块钱，但其底下隐藏的转账代码，通过 `tx.origin` 会直接把老板判定成操作者，把金库权限移走！</span></span>
+<span class="line"><span style="color:#F97583">    function</span><span style="color:#B392F0"> transferOwnership</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">address</span><span style="color:#FFAB70"> newOwner</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">external</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">        require</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">tx</span><span style="color:#E1E4E8">.origin </span><span style="color:#F97583">==</span><span style="color:#E1E4E8"> owner, </span><span style="color:#9ECBFF">"Not owner"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#E1E4E8">        owner </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> newOwner;</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="攻击核心逻辑-attack-logic">攻击核心逻辑 (Attack Logic)</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="solidity"><code><span class="line"><span style="color:#6A737D">// 最傻瓜式的直截了当</span></span>
+<span class="line"><span style="color:#E1E4E8">vault.</span><span style="color:#B392F0">initialize</span><span style="color:#E1E4E8">(); </span><span style="color:#6A737D">// 第一步：抢走皇帝位置成为 Owner</span></span>
+<span class="line"><span style="color:#E1E4E8">vault.</span><span style="color:#B392F0">emergencyWithdraw</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">address</span><span style="color:#E1E4E8">(vault).balance); </span><span style="color:#6A737D">// 第二步：奉旨拿钱</span></span></code></pre>
+<hr>
+<h2 id="️-5-修复与防范方案-mitigations">🛡️ 5. 修复与防范方案 (Mitigations)</h2>
+<ul>
+<li><strong>协议自身的修复</strong>：
+<ul>
+<li><strong>明确和标准化权限架构</strong>：不要自己写奇怪的权限校验，乖乖使用 <code>OpenZeppelin</code> 的 <code>Ownable</code> (单一管理员) 或 <code>AccessControl</code> (RBAC 多角色细分权限树)。</li>
+<li><strong>永远不要用 tx.origin 处理权限</strong>：这是红线！在身份校验里，只能看且使用 <code>msg.sender</code>。（例外仅仅在于当你想完全拒绝别的智能合约调用你，只准真实的“人类钱包（EOA）”调用时，可以用 <code>require(tx.origin == msg.sender)</code>，但不要拿它做权限判定基底）。</li>
+<li><strong>锁死 Initialize()</strong>：在使用 UUPS 等代理模式升级智能合约的设计中，要在声明 <code>initialize()</code> 时候加上 <code>initializer</code> 修饰符，或在对应的原逻辑合约内调用 <code>_disableInitializers()</code> 彻底锁死后路。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="-6-真实案例与靶场-references">📖 6. 真实案例与靶场 (References)</h2>
+<ul>
+<li><strong>经典黑客事件</strong>：<strong>Parity 多签钱包被毁事件 (2017)</strong>。最抽象安全事故之一：有一位小白通过未受保护的 <code>initWallet</code> 取得了公共基础库合约的控制权，随后因为不知情，好奇地调用了仅所有者可用的 <code>kill</code>（<code>selfdestruct</code> 自毁操作），导致超过当时价值 1.5 亿美元（50多万以太坊）被永久锁死在以太坊虚空里。</li>
+<li><strong>靶场/练习</strong>：Damn Vulnerable DeFi - <code>[Climber]</code> (复杂精妙的高阶基于时间锁的权限偷盗)，Ethernaut - <code>[Fallback]</code>, <code>[Fallout]</code>, <code>[Delegation]</code>, <code>[Telephone]</code>, <code>[Naught Coin]</code>, <code>[Dex Two]</code>。</li>
+<li><strong>拓展阅读</strong>：目前大多数单纯的忘记 <code>onlyOwner</code> 已经在基础编译层面越来越少见。当前的高阶实战里，更多是出在<strong>复杂 DeFi 乐高嵌套时上下文权限错位映射</strong>，或是如上文提到的在可升级治理时间所产生的 <code>Delegatecall</code> 的储蓄槽位权限冲突。</li>
+</ul> </div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/漏洞笔记/闪电贷攻击/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">闪电贷攻击</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/漏洞笔记/预言机操纵漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">预言机操纵漏洞</h4> </a> </div> </nav> </article> <div id="reading-progress" style="position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 9999; transition: width 0.1s ease-out; pointer-events: none;"></div> <script type="module">document.addEventListener("astro:page-load",()=>{const e=document.getElementById("reading-progress");if(!e)return;const t=()=>{const n=document.documentElement.scrollHeight-window.innerHeight;if(n>0){const o=window.scrollY/n*100;e.style.width=`${o}%`}};window.addEventListener("scroll",t),document.addEventListener("astro:before-swap",()=>{window.removeEventListener("scroll",t)},{once:!0})});</script>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try { localStorage.setItem("theme", value); } catch {}
+          });
+        };
+        bindToggle();
+      })();
+    </script> </body> </html> 
