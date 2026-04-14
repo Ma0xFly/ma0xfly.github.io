@@ -10,53 +10,41 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">漏洞笔记</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>拒绝服务攻击漏洞</h1> <p class="lead"># 拒绝服务攻击漏洞 (Denial of Service - DoS) &gt; **标签:** #漏洞类型/执行流中断 | #协议类型/DeFi/拍卖/分红机制 | #严重程度/High ## 📌 1. TL;DR (一句话快速回顾) * **本质成因**：智能合约在处理核心业务</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/漏洞笔记/拒绝服务攻击漏洞.md</p> </header> <div class="article-content"><h1>拒绝服务攻击漏洞 (Denial of Service - DoS)</h1>
-<blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">漏洞笔记</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>拒绝服务攻击漏洞</h1> <p class="lead"># 拒绝服务攻击漏洞 (Denial of Service - DoS) &gt; **标签:** #漏洞类型/执行流中断 | #协议类型/DeFi/拍卖/分红机制 | #严重程度/High ## 📌 1. TL;DR (一句话快速回顾) * **本质成因**：智能合约在处理核心业务</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/漏洞笔记/拒绝服务攻击漏洞.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">📌 1. TL;DR (一句话快速回顾)</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">🔍 2. 漏洞底层原理 (Root Cause)</a> </li><li class="article-outline__item depth-3"> <a href="#section-3">正常业务逻辑</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">缺陷剖析</a> </li><li class="article-outline__item depth-2"> <a href="#section-5">⚔️ 3. 攻击执行路径 (Exploit Steps)</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">路径 1：Revert 霸座攻击 (King)</a> </li><li class="article-outline__item depth-3"> <a href="#section-7">路径 2：Gas 吸血鬼攻击 (Denial)</a> </li><li class="article-outline__item depth-2"> <a href="#section-8">💻 4. 关键代码示例 (Snippets)</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">漏洞代码 (被动退款卡死型)</a> </li><li class="article-outline__item depth-3"> <a href="#section-10">攻击核心逻辑 (Attacker Contract)</a> </li><li class="article-outline__item depth-2"> <a href="#section-11">🛡️ 5. 修复与防范方案 (Mitigations)</a> </li><li class="article-outline__item depth-2"> <a href="#section-12">📖 6. 真实案例与靶场 (References)</a> </li> </ol> </nav> <div class="article-content"><h1>拒绝服务攻击漏洞 (Denial of Service - DoS)</h1><blockquote>
 <p><strong>标签:</strong> #漏洞类型/执行流中断 | #协议类型/DeFi/拍卖/分红机制 | #严重程度/High</p>
 </blockquote>
-<h2>📌 1. TL;DR (一句话快速回顾)</h2>
-<ul>
+<h2 id="section-1">📌 1. TL;DR (一句话快速回顾)</h2><ul>
 <li><strong>本质成因</strong>：智能合约在处理核心业务逻辑时（例如退款、更新统治者、批量发工资），过度依赖于外部调用的成功执行，或者存在遍历无上限的数组导致 Gas 耗尽。</li>
 <li><strong>攻击路径</strong>：攻击者通过部署一个没有 <code>receive</code> / <code>fallback</code> 函数的智能合约，或是编写一个在收款时恶意耗尽所有可用 Gas 的逻辑，强行参与系统的关键环节。当漏洞合约试图向它发送资金或调用其代码时，整个交易被迫失败回滚（<code>revert</code>），导致整个系统的业务被永久卡死阻塞。</li>
 </ul>
 <hr>
-<h2>🔍 2. 漏洞底层原理 (Root Cause)</h2>
-<h3>正常业务逻辑</h3>
-<ul>
+<h2 id="section-2">🔍 2. 漏洞底层原理 (Root Cause)</h2><h3 id="section-3">正常业务逻辑</h3><ul>
 <li>在夺宝游戏、拍卖出价、或平台收益分红时，如果有新的人出价更高，系统需要把前一个人的资金退还，或者按名单群发分红。</li>
 </ul>
-<h3>缺陷剖析</h3>
-<h4>缺陷A：未捕获异常导致全局崩溃 (Unchecked External Call DoS / Revert)</h4>
-<ul>
+<h3 id="section-4">缺陷剖析</h3><h4>缺陷A：未捕获异常导致全局崩溃 (Unchecked External Call DoS / Revert)</h4><ul>
 <li><strong>致命原理</strong>：Solidity 使用 <code>transfer()</code> 在处理向智能合约账户发送以太币时，如果对方是一个不接收 ETH 的空壳合约，或故意在其 <code>receive()</code> 中写了 <code>revert()</code>，这条转账语句就会发生致命错误，并<strong>连坐中止整个外部调用者的后续代码</strong>，导致所有状态全部撤销归零。</li>
 <li><strong>现象</strong>：国王游戏里，我想退钱给上一个国王，但上一个国王是个不可接收钱的合约，我的退钱动作永远抛异常，因此也没有人能把它的国王头衔抢走。</li>
 </ul>
-<h4>缺陷B：Gas 限额耗尽勒索 (Gas Limit DoS / Out Of Gas)</h4>
-<ul>
+<h4>缺陷B：Gas 限额耗尽勒索 (Gas Limit DoS / Out Of Gas)</h4><ul>
 <li><strong>致命原理</strong>：以太坊的每一个区块和每一笔交易都有 Gas 上限。如果在一笔交易中，漏洞合约试图向数十万人的数组里循环派发资金，或者攻击者利用外呼时 (<code>call</code>) 未限制转发的 Gas，恶意接收者就可以编写一个死循环，吞噬掉你全部的手续费。</li>
 <li><strong>现象</strong>：当外部调用吃掉所有的 Gas 后，即便退出了调用，当前合约也没有多余的 Gas 能够用来更新关键的状态变量了，交易直接爆掉。</li>
 </ul>
 <hr>
-<h2>⚔️ 3. 攻击执行路径 (Exploit Steps)</h2>
-<blockquote>
+<h2 id="section-5">⚔️ 3. 攻击执行路径 (Exploit Steps)</h2><blockquote>
 <p>以 Ethernaut 中经典的“King (被动退款 DoS)”和“Denial (耗尽 Gas DoS)”为例：</p>
 </blockquote>
-<h3>路径 1：Revert 霸座攻击 (King)</h3>
-<ol>
+<h3 id="section-6">路径 1：Revert 霸座攻击 (King)</h3><ol>
 <li><strong>[准备阶段]</strong>: 攻击者发现了一个“拍卖出价”合约，当前的标价是 <code>1 ETH</code>。合约逻辑是：谁出价比 <code>1 ETH</code> 高，合约就把现有的拍卖金退还给老国王，然后把新买家立为新国王。</li>
 <li><strong>[触发阶段]</strong>: 攻击者不是用自己的钱包地址，而是<strong>专门部署一个带毒的智能合约 (AttackerContract)</strong>。这个合约极其简陋，连个接客退款的 <code>receive()</code> 函数都没写，然后它向拍卖合约出价 <code>1.1 ETH</code>，成功当上了新国王。</li>
 <li><strong>[卡死全盘]</strong>: 第三个人试图花 <code>1.5 ETH</code> 当国王。拍卖合约想把之前的 <code>1.1 ETH</code> 退还给黑客的合约，结果因为黑客合约“拒收转账”引发底层的 <code>revert</code>。因为交易回滚，第三人永远当不上国王，黑客合约永久霸占在这个位置上。</li>
 </ol>
-<h3>路径 2：Gas 吸血鬼攻击 (Denial)</h3>
-<ol>
+<h3 id="section-7">路径 2：Gas 吸血鬼攻击 (Denial)</h3><ol>
 <li><strong>[准备阶段]</strong>: 一个资金合伙池每次有资金流入，都会按照名单，使用 <code>call</code> 给所有合伙人发放利润。</li>
 <li><strong>[埋藏炸弹]</strong>: 黑客把自己编写的吸血鬼智能合约注册成为了其中一名合伙人。这个智能合约的 <code>receive()</code> 里面只写了一个动作：陷入死循环 (如 <code>while(true){}</code>)，或者疯狂重连，直至耗尽收到的执行燃料。</li>
 <li><strong>[引爆卡死]</strong>: 资金池启动分发业务，发给其他人都很正常。轮到给黑客合约打款时，黑客合约像黑洞一样吸干了系统给予这笔交易的所有剩余 Gas，最终抛出 <code>Out of Gas</code>，池子剩余的业务代码全部无法执行。</li>
 </ol>
 <hr>
-<h2>💻 4. 关键代码示例 (Snippets)</h2>
-<h3>漏洞代码 (被动退款卡死型)</h3>
-<pre><code class="language-solidity">contract Auction {
+<h2 id="section-8">💻 4. 关键代码示例 (Snippets)</h2><h3 id="section-9">漏洞代码 (被动退款卡死型)</h3><pre><code class="language-solidity">contract Auction {
     address public currentLeader;
     uint256 public highestBid;
 
@@ -74,8 +62,7 @@
     }
 }
 </code></pre>
-<h3>攻击核心逻辑 (Attacker Contract)</h3>
-<pre><code class="language-solidity">contract BadKingAttack {
+<h3 id="section-10">攻击核心逻辑 (Attacker Contract)</h3><pre><code class="language-solidity">contract BadKingAttack {
     // 强行出价抢占王座
     function hack(address target) external payable {
         (bool ok, ) = target.call{value: msg.value}(&quot;&quot;);
@@ -90,8 +77,7 @@
 }
 </code></pre>
 <hr>
-<h2>🛡️ 5. 修复与防范方案 (Mitigations)</h2>
-<ul>
+<h2 id="section-11">🛡️ 5. 修复与防范方案 (Mitigations)</h2><ul>
 <li><strong>改“主动推送 (Push)”为“被动拉取 (Pull)”机制</strong>：这是智能合约退款机制的黄金守则。<strong>不要在处理核心新业务（如上新买家）时夹带给老买家的主动发钱行为</strong>。<ul>
 <li>将前任领导者的应退款项存入一个他自己的挂账账本 (<code>pendingReturns[oldLeader] += amount</code>)，然后立刻完成主流程的状态更新。如果他想提款，让他自己触发单独的 <code>withdraw()</code> 提现函数。这是最高级的隔断手段。</li>
 </ul>
@@ -104,8 +90,7 @@
 <li><strong>警惕无限数组循环遍历</strong>：所有对 <code>for</code> 和 <code>while</code> 数组遍历的操作，必须设置单次批处理上限或分页，以防止日后人数过多导致交易天然超过以太坊单块 Gas Limit。</li>
 </ul>
 <hr>
-<h2>📖 6. 真实案例与靶场 (References)</h2>
-<ul>
+<h2 id="section-12">📖 6. 真实案例与靶场 (References)</h2><ul>
 <li><strong>经典黑客事件</strong>：<strong>GovernMental 资金盘锁死事件 (2016)</strong>。这是一个当时的庞氏游戏合约，规则是长时间没人接盘，最后一个人通吃。当其准备向 1100 名早期玩家分发以太币时，触发了庞大的数组解绑循环动作。这极巨的遍历所需 Gas 超过了当年以太坊网络硬编码的单区块 Gas 上限！导致那笔退款交易天然永远无法被矿工打包放入区块内，数万以太坊被永久“卡死”在代码里。</li>
 <li><strong>靶场/练习</strong>：Ethernaut - <code>[King]</code> (经典的无 receive() 回滚霸座), <code>[Denial]</code> (调用 call 时外部耗尽所有 Gas 拖网)。</li>
 <li><strong>拓展阅读</strong>：DoS 的广义变种还可以是“利用特定的抢跑逻辑锁死池子的汇率或开启状态”，甚至是人为塞满内存导致后续交易无法创建新插槽等极度冷门的底层攻击。总之，永远对别人的地址执行持悲观隔离态度。</li>

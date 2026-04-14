@@ -10,23 +10,18 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">漏洞笔记</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>预言机操纵漏洞</h1> <p class="lead"># 预言机操纵漏洞 (Oracle Manipulation) &gt; **标签:** #漏洞类型/价格操纵 | #协议类型/DeFi/借贷/合成资产 | #严重程度/Critical ## 📌 1. TL;DR (一句话快速回顾) * **本质成因**：智能合约无法直接感知外部世</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/漏洞笔记/预言机操纵漏洞.md</p> </header> <div class="article-content"><h1>预言机操纵漏洞 (Oracle Manipulation)</h1>
-<blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">漏洞笔记</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>预言机操纵漏洞</h1> <p class="lead"># 预言机操纵漏洞 (Oracle Manipulation) &gt; **标签:** #漏洞类型/价格操纵 | #协议类型/DeFi/借贷/合成资产 | #严重程度/Critical ## 📌 1. TL;DR (一句话快速回顾) * **本质成因**：智能合约无法直接感知外部世</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/漏洞笔记/预言机操纵漏洞.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">📌 1. TL;DR (一句话快速回顾)</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">🔍 2. 漏洞底层原理 (Root Cause)</a> </li><li class="article-outline__item depth-3"> <a href="#section-3">正常业务逻辑</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">缺陷剖析</a> </li><li class="article-outline__item depth-2"> <a href="#section-5">⚔️ 3. 攻击执行路径 (Exploit Steps)</a> </li><li class="article-outline__item depth-2"> <a href="#section-6">💻 4. 关键代码示例 (Snippets)</a> </li><li class="article-outline__item depth-3"> <a href="#section-7">漏洞代码 (Vulnerable Code)</a> </li><li class="article-outline__item depth-3"> <a href="#section-8">攻击核心逻辑 (Attack Logic)</a> </li><li class="article-outline__item depth-2"> <a href="#section-9">🛡️ 5. 修复与防范方案 (Mitigations)</a> </li><li class="article-outline__item depth-2"> <a href="#section-10">📖 6. 真实案例与靶场 (References)</a> </li> </ol> </nav> <div class="article-content"><h1>预言机操纵漏洞 (Oracle Manipulation)</h1><blockquote>
 <p><strong>标签:</strong> #漏洞类型/价格操纵 | #协议类型/DeFi/借贷/合成资产 | #严重程度/Critical</p>
 </blockquote>
-<h2>📌 1. TL;DR (一句话快速回顾)</h2>
-<ul>
+<h2 id="section-1">📌 1. TL;DR (一句话快速回顾)</h2><ul>
 <li><strong>本质成因</strong>：智能合约无法直接感知外部世界的资产价格，当协议<strong>单一、直接、实时</strong>地依赖某个流动性不深的链上现货池（如 Uniswap V2 瞬时价格）作为核心资产计价依据时，该价格就极易被扭曲。</li>
 <li><strong>攻击路径</strong>：攻击者利用自有巨资或闪电贷，在目标预言机池中进行天量单向交易（砸盘或拉盘），人为制造出一个极端脱离公允价值的“假报价”，趁机在受害者协议中“高价抵押”或“低成本清算”。</li>
 </ul>
 <hr>
-<h2>🔍 2. 漏洞底层原理 (Root Cause)</h2>
-<h3>正常业务逻辑</h3>
-<ul>
+<h2 id="section-2">🔍 2. 漏洞底层原理 (Root Cause)</h2><h3 id="section-3">正常业务逻辑</h3><ul>
 <li>借贷协议（如 Compound）为了判断用户的抵押物（比如 100个 ETH）能借出多少稳定币，需要去问预言机：“现在 1 个 ETH 值多少 DAI？” 预言机返回价格，协议据此放款。</li>
 </ul>
-<h3>缺陷剖析</h3>
-<ul>
+<h3 id="section-4">缺陷剖析</h3><ul>
 <li><strong>致命代码/机制</strong>：开发者图省事，直接写了一个 <code>getPrice()</code> 函数去读取 Uniswap 池子里的 <code>balance(DAI) / balance(ETH)</code> 当作报价。</li>
 <li><strong>为何产生冲突</strong>：<ul>
 <li><em>预期状态：Uniswap 池子的比例代表了市场的公允价格。</em></li>
@@ -35,8 +30,7 @@
 </li>
 </ul>
 <hr>
-<h2>⚔️ 3. 攻击执行路径 (Exploit Steps)</h2>
-<blockquote>
+<h2 id="section-5">⚔️ 3. 攻击执行路径 (Exploit Steps)</h2><blockquote>
 <p>最典型的玩法：闪电贷 + 瞬时预言机操纵</p>
 </blockquote>
 <ol>
@@ -46,9 +40,7 @@
 <li><strong>[获利退场]</strong>: 攻击者把刚买的 TokenA 在 Uniswap 砸回去换回 USDC（或者直接不换了亏掉这点手续费），归还闪电贷。剩下的 WBTC、WETH 成为纯利润。借贷协议剩下了一堆高估值的垃圾 TokenA 坏账。</li>
 </ol>
 <hr>
-<h2>💻 4. 关键代码示例 (Snippets)</h2>
-<h3>漏洞代码 (Vulnerable Code)</h3>
-<pre><code class="language-solidity">// 危险！这就是一个最脆弱的现价预言机实现
+<h2 id="section-6">💻 4. 关键代码示例 (Snippets)</h2><h3 id="section-7">漏洞代码 (Vulnerable Code)</h3><pre><code class="language-solidity">// 危险！这就是一个最脆弱的现价预言机实现
 function getUnderlyingPrice(address cToken) external view returns (uint) {
     address pair = IUniswapV2Factory(factory).getPair(cToken, WETH);
     
@@ -59,8 +51,7 @@ function getUnderlyingPrice(address cToken) external view returns (uint) {
     return reserve1 * (10 ** 18) / reserve0; 
 }
 </code></pre>
-<h3>攻击核心逻辑 (Attack Logic)</h3>
-<pre><code class="language-solidity">function attack() external {
+<h3 id="section-8">攻击核心逻辑 (Attack Logic)</h3><pre><code class="language-solidity">function attack() external {
     // 1. 在预言机池子里疯狂拉盘 TokenA
     uniswapRouter.swapExactTokensForTokens(
         hudreandsOfMillionsUSDC, ... 
@@ -72,8 +63,7 @@ function getUnderlyingPrice(address cToken) external view returns (uint) {
 }
 </code></pre>
 <hr>
-<h2>🛡️ 5. 修复与防范方案 (Mitigations)</h2>
-<ul>
+<h2 id="section-9">🛡️ 5. 修复与防范方案 (Mitigations)</h2><ul>
 <li><strong>协议自身的修复</strong>：<ul>
 <li><strong>(首选) 使用去中心化预言机网络</strong>：如 Chainlink 等节点报价网络。Chainlink 的价格是无数个节点在链下抓取各大中心化交易所（Binance, Coinbase等）的均价提交上来的，你很难用链上的一笔闪电贷去影响它。</li>
 <li><strong>不要使用瞬时现价 (Spot Price)</strong>：如果你非要用 AMM 来报价，必须使用时间加权平均价（TWAP）。（但注意：TWAP 也有它的克星，详见下一篇笔记）。</li>
@@ -82,13 +72,12 @@ function getUnderlyingPrice(address cToken) external view returns (uint) {
 </li>
 </ul>
 <hr>
-<h2>📖 6. 真实案例与靶场 (References)</h2>
-<ul>
+<h2 id="section-10">📖 6. 真实案例与靶场 (References)</h2><ul>
 <li><strong>经典黑客事件</strong>：<strong>Mango Markets 被黑事件（1.1亿美金）</strong>, <strong>DeFi 发展史上最泛滥的死法</strong>。早期诸如 bZx, Harvest Finance, Value DeFi 等被反复收割。</li>
 <li><strong>靶场/练习</strong>：Damn Vulnerable DeFi - <code>[Puppet]</code>, <code>[Puppet v2]</code> (这俩生动演示了分别用 Uniswap V1 和 V2 搞预言机操纵的惨案)。</li>
 <li><strong>拓展阅读</strong>：预言机安全不仅是代码问题，更是经济学问题。当操纵预言机的成本（滑点、手续费）<strong>低于</strong>你在受害者协议里薅出来的利润时，攻击必然发生。</li>
 </ul>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/漏洞笔记/整型溢出与精度计算漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">整型溢出与精度计算漏洞</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/漏洞笔记/Curve只读重入漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">Curve只读重入漏洞</h4> </a> </div> </nav> </article>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/漏洞笔记/授权漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">授权漏洞</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/漏洞笔记/整型溢出与精度计算漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">整型溢出与精度计算漏洞</h4> </a> </div> </nav> </article>  </main> <script>
       (() => {
         const root = document.documentElement;
         const bindToggle = () => {

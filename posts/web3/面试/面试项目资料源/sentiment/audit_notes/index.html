@@ -10,13 +10,11 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  <span class="directory-sep">/</span> <span class="directory-text">面试项目资料源</span>  <span class="directory-sep">/</span> <span class="directory-text">sentiment</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>audit_notes</h1> <p class="lead"># Sentiment 2023-04-04 只读重入事件审计笔记 &gt; 审计范围: `src/sentiment/modules/AccountManager/src/core/AccountManager.sol`、`src/sentiment/modules/Weighted</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/面试/面试项目资料源/sentiment/audit_notes.md</p> </header> <div class="article-content"><h1>Sentiment 2023-04-04 只读重入事件审计笔记</h1>
-<blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  <span class="directory-sep">/</span> <span class="directory-text">面试项目资料源</span>  <span class="directory-sep">/</span> <span class="directory-text">sentiment</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>audit_notes</h1> <p class="lead"># Sentiment 2023-04-04 只读重入事件审计笔记 &gt; 审计范围: `src/sentiment/modules/AccountManager/src/core/AccountManager.sol`、`src/sentiment/modules/Weighted</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/面试/面试项目资料源/sentiment/audit_notes.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">合约概览</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">资金在哪</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">逐函数分析</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">WeightedBalancerLPOracle.getPrice()</a> </li><li class="article-outline__item depth-3"> <a href="#section-5">AccountManager.borrow()</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">AccountManager.exec()</a> </li><li class="article-outline__item depth-3"> <a href="#section-7">AccountManager.withdraw()</a> </li><li class="article-outline__item depth-2"> <a href="#section-8">🔍 发现的问题</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">问题1: Balancer BPT 预言机在 exitPool() 中间态读取到不一致快照</a> </li><li class="article-outline__item depth-3"> <a href="#section-10">问题2: borrow() 直接把可操纵的抵押估值兑现成真实放款</a> </li><li class="article-outline__item depth-2"> <a href="#section-11">💡 收获与心得</a> </li> </ol> </nav> <div class="article-content"><h1>Sentiment 2023-04-04 只读重入事件审计笔记</h1><blockquote>
 <p>审计范围: <code>src/sentiment/modules/AccountManager/src/core/AccountManager.sol</code>、<code>src/sentiment/modules/WeightedBalancerLPOracle/src/balancer/WeightedBalancerLPOracle.sol</code>、<code>test/poc.t.sol</code>、根 <code>README.md</code>
 Solidity 版本: 主要模块 <code>0.8.17</code>，<code>ReentrancyGuard</code> 为 <code>pragma &gt;=0.8.0</code></p>
 </blockquote>
-<h2>合约概览</h2>
-<p>我先按 README 给的顺序看，结论很快就冒出来了：这次不是单点 bug，而是两个模块刚好在最糟糕的时机“握手成功”。</p>
+<h2 id="section-1">合约概览</h2><p>我先按 README 给的顺序看，结论很快就冒出来了：这次不是单点 bug，而是两个模块刚好在最糟糕的时机“握手成功”。</p>
 <ul>
 <li><code>AccountManager</code> 是资金边界。用户开账户、存抵押、借款、调用外部协议，基本都从这里过。</li>
 <li><code>WeightedBalancerLPOracle</code> 是价格边界。它不自己维护价格，而是临时去 Balancer Vault 读池子余额，再配上底层资产价格算 BPT 价格。</li>
@@ -45,8 +43,7 @@ Solidity 版本: 主要模块 <code>0.8.17</code>，<code>ReentrancyGuard</code>
 <li>所以如果某个外部调用在中途把控制权交出去，攻击者又想重新进入 <code>AccountManager</code> 的另一个 <code>nonReentrant</code> 函数，就会因为 <code>require(locked == 1)</code> 失败而回滚。</li>
 </ul>
 <p>这套东西对“经典重入”很好使，比如我在 <code>withdraw()</code> 里先转账，转账时对方 fallback 又回头调一次 <code>withdraw()</code>。但这次不是这个故事：这次更像是 Balancer 自己正处在一个中间态，Sentiment 去读了它的脏数据。也就是说，<strong>锁保护的是 <code>AccountManager</code> 的执行栈，不是 Balancer 的状态一致性。</strong></p>
-<h2>资金在哪</h2>
-<p>正常路径大概是：</p>
+<h2 id="section-2">资金在哪</h2><p>正常路径大概是：</p>
 <p><code>用户 -&gt; AccountManager.deposit() -&gt; 账户内抵押</code></p>
 <p><code>用户 -&gt; AccountManager.borrow() -&gt; LToken.lendTo(account, amt) -&gt; 账户内拿到借款</code></p>
 <p><code>riskEngine -&gt; oracle -&gt; 读取抵押价值 -&gt; 决定借/提是否允许</code></p>
@@ -114,9 +111,7 @@ AccountManager ---------------------&gt; RiskEngine
                                  借出真实 USDC / USDT / WETH / FRAX
 </code></pre>
 <p>也就是说，真正被偷走的不是“预言机里的数字”，而是 Sentiment lending pool 里的 <code>USDC / USDT / WETH / FRAX</code>。预言机只是把风控门禁骗开了。</p>
-<h2>逐函数分析</h2>
-<h3><code>WeightedBalancerLPOracle.getPrice()</code></h3>
-<ul>
+<h2 id="section-3">逐函数分析</h2><h3 id="section-4"><code>WeightedBalancerLPOracle.getPrice()</code></h3><ul>
 <li>干了什么：先 <code>vault.getPoolTokens(poolId)</code> 读池子底层余额，再读 <code>getNormalizedWeights()</code>，最后用底层资产价格和 <code>totalSupply()</code> 算 BPT 单价。</li>
 <li>谁能调用：任何依赖它取价的上层模块，典型就是风控。</li>
 <li>我注意到：它是 <code>view</code>，而且完全信任 Balancer 在这一瞬间返回的 <code>balances</code> 和 <code>totalSupply()</code> 彼此一致。</li>
@@ -223,8 +218,7 @@ AccountManager ---------------------&gt; RiskEngine
 <li><code>before -&gt; during</code> 的明显抬升，才是中间态脏读</li>
 </ul>
 <p>所以我会把这个函数的风险标签记成：<strong>不是数学公式错了，而是它把外部协议的瞬时读数误当成了原子快照。</strong></p>
-<h3><code>AccountManager.borrow()</code></h3>
-<ul>
+<h3 id="section-5"><code>AccountManager.borrow()</code></h3><ul>
 <li>干了什么：检查目标资产是否有 LToken，必要时把借款 token 记到账户资产列表里，随后直接 <code>lendTo(account, amt)</code>，最后才调 <code>riskEngine.isAccountHealthy(account)</code>。</li>
 <li>谁能调用：账户 owner。</li>
 <li>我注意到：这里的风控校验是“借完再看健不健康”，而不是“先算这笔借款能不能借，再放款”。</li>
@@ -246,22 +240,18 @@ AccountManager ---------------------&gt; RiskEngine
 <li>而是“某个底层资产的放贷池 + 借款记账入口”</li>
 </ul>
 <p>如果类比别的协议，它扮演的角色有点像“每个资产各自一套借贷市场的池子合约”。</p>
-<h3><code>AccountManager.exec()</code></h3>
-<ul>
+<h3 id="section-6"><code>AccountManager.exec()</code></h3><ul>
 <li>干了什么：允许账户 owner 通过受控 target 和 calldata 代表账户跟外部协议交互。</li>
 <li>谁能调用：账户 owner。</li>
 <li>我注意到：它的 <code>nonReentrant</code> 只能保护 <code>AccountManager</code> 自己的执行栈。换句话说，它能拦“我还没跑完，你又回来调我”，但拦不住“我去读的那个外部协议，自己现在正处于脏状态”。</li>
 <li>这里有意思的是：攻击者确实需要 <code>exec()</code> 这类能力去铺 Sentiment 账户内的 BPT 头寸，但真正制造只读重入窗口的关键 <code>exitPool()</code> 不一定非要在这条持锁路径里做。</li>
 </ul>
-<h3><code>AccountManager.withdraw()</code></h3>
-<ul>
+<h3 id="section-7"><code>AccountManager.withdraw()</code></h3><ul>
 <li>干了什么：先 <code>isWithdrawAllowed()</code>，再把 token 从账户提给 owner。</li>
 <li>谁能调用：账户 owner。</li>
 <li>我注意到：它和 <code>borrow()</code> 一样，安全性本质上也绑定在 <code>riskEngine</code> 对抵押价格的判断上。价格一旦是假的，提款门槛也会一起变假。</li>
 </ul>
-<h2>🔍 发现的问题</h2>
-<h3>问题1: Balancer BPT 预言机在 <code>exitPool()</code> 中间态读取到不一致快照</h3>
-<ul>
+<h2 id="section-8">🔍 发现的问题</h2><h3 id="section-9">问题1: Balancer BPT 预言机在 <code>exitPool()</code> 中间态读取到不一致快照</h3><ul>
 <li><strong>严重程度</strong>: Critical</li>
 <li><strong>怎么发现的</strong>: 我先从 README 里的“先放款、后健康检查”往回找，发现真正能把账户健康度抬上去的只有预言机。再看 <code>WeightedBalancerLPOracle.getPrice()</code>，它一边读 <code>Vault.getPoolTokens()</code>，一边读 <code>IPool(token).totalSupply()</code>，马上就警觉了：如果 Balancer 在某个流程里这两个值不是同时更新，BPT 价格就会飘。官方复盘也明确点名了 <code>exitPool()</code> 的 ETH 回调窗口正好会制造这个中间态。</li>
 <li><strong>问题本质</strong>: 预言机把 Balancer 的瞬时状态当成原子快照使用，但 <code>exitPool()</code> 期间实际上会出现“<code>totalSupply()</code> 已减少、<code>balances</code> 尚未减少”的不一致窗口，导致 BPT 价格被严重高估。</li>
@@ -293,8 +283,7 @@ AccountManager ---------------------&gt; RiskEngine
 <li><strong>代码位置</strong>: <code>src/sentiment/modules/WeightedBalancerLPOracle/src/balancer/WeightedBalancerLPOracle.sol:43</code></li>
 <li><strong>修复思路</strong>: 不要把 Balancer <code>view</code> 读数当成天然安全。至少要按 Balancer 官方建议，在取价前做一次 no-op 的 <code>manageUserBalance([])</code>/等价 reentrancy check；更稳一点是把这种可重入状态下的 spot 价格移出借贷风控主路径，改用有边界条件的缓存价、TWAP、或显式暂停借贷。</li>
 </ul>
-<h3>问题2: <code>borrow()</code> 直接把可操纵的抵押估值兑现成真实放款</h3>
-<ul>
+<h3 id="section-10">问题2: <code>borrow()</code> 直接把可操纵的抵押估值兑现成真实放款</h3><ul>
 <li><strong>严重程度</strong>: High</li>
 <li><strong>怎么发现的</strong>: 在确认预言机会高估 BPT 之后，我回头看资金边界，最想问的一句就是“谁先拿钱？”答案是 <code>borrow()</code> 里先 <code>lendTo(account, amt)</code>，再 <code>isAccountHealthy(account)</code>。也就是说，这里不是先算额度，而是先把钱推进账户，再把生死交给风控判断。</li>
 <li><strong>问题本质</strong>: 借款路径没有把“预言机可信”当成前置条件，而是直接用风控结果为已经发生的放款背书；只要健康检查恰好吃到脏价格，协议就会把虚高抵押价值立刻兑换成真资产。</li>
@@ -328,8 +317,7 @@ AccountManager ---------------------&gt; RiskEngine
 <li><strong>代码位置</strong>: <code>src/sentiment/modules/AccountManager/src/core/AccountManager.sol:224</code></li>
 <li><strong>修复思路</strong>: 借款前先做额度计算和价格安全校验，不要让 <code>lendTo()</code> 成为风控前置检查的一部分。更具体一点，可以把“借后健康度”预演成纯检查逻辑，或者对特定 LP 抵押启用单独的 oracle freshness / reentrancy guard / borrow cooldown。</li>
 </ul>
-<h2>💡 收获与心得</h2>
-<ul>
+<h2 id="section-11">💡 收获与心得</h2><ul>
 <li><code>view</code> 不是安全词。只要它读的是外部协议的中间态，它一样可以成为攻击入口。</li>
 <li>这里的“中间态”我给自己下个直白定义：一次操作还没完整做完时，合约短暂处在的过渡状态。也就是本来应该一起保持一致的几个量，在执行过程中不是同一瞬间更新，于是外部刚好在半路读取时，就会读到“半新半旧”的假快照。</li>
 <li>放到这次 Balancer 场景里，就是 <code>exitPool()</code> 过程中，<code>totalSupply()</code> 和 Vault 里的 <code>balances</code> 没有在同一个时刻对外表现为一致。于是 <code>WeightedBalancerLPOracle.getPrice()</code> 读到的不是最终状态，而是中途状态，这就是这次只读重入能成立的基础。</li>

@@ -10,19 +10,16 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">代理模式</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>Diamond_Proxy</h1> <p class="lead"># Diamond Proxy（钻石代理 / ERC-2535） &gt; **一句话总结**：Diamond Proxy 是一种**多面代理（Multi-Facet Proxy）**标准，将一个 Proxy 的后端拆分成多个独立的 **Facet（切面）**合约，每个 Facet 承</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/代理模式/Diamond_Proxy.md</p> </header> <div class="article-content"><h1>Diamond Proxy（钻石代理 / ERC-2535）</h1>
-<blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">代理模式</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>Diamond_Proxy</h1> <p class="lead"># Diamond Proxy（钻石代理 / ERC-2535） &gt; **一句话总结**：Diamond Proxy 是一种**多面代理（Multi-Facet Proxy）**标准，将一个 Proxy 的后端拆分成多个独立的 **Facet（切面）**合约，每个 Facet 承</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/代理模式/Diamond_Proxy.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">1. 核心理念与解决的痛点 (Motivation)</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">2. 架构与 Delegatecall 上下文 (Architecture)</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">A. 架构图 (ASCII Art)</a> </li><li class="article-outline__item depth-3"> <a href="#section-5">B. Delegatecall 执行上下文表</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">C. 升级逻辑归属</a> </li><li class="article-outline__item depth-2"> <a href="#section-7">3. 核心接口与源码骨架 (Core Interfaces &amp; Code)</a> </li><li class="article-outline__item depth-3"> <a href="#section-8">A. IDiamondCut — 切割接口</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">B. IDiamondLoupe — 内省接口</a> </li><li class="article-outline__item depth-3"> <a href="#section-10">C. 关键函数源码骨架</a> </li><li class="article-outline__item depth-2"> <a href="#section-11">4. 存储管理与碰撞防御 (Storage Safety)</a> </li><li class="article-outline__item depth-2"> <a href="#section-12">5. 安全攻击面与审计要点 (Security &amp; Attack Surface)</a> </li><li class="article-outline__item depth-3"> <a href="#section-13">A. 该模式的固有攻击面</a> </li><li class="article-outline__item depth-3"> <a href="#section-14">B. 安全最佳实践清单</a> </li><li class="article-outline__item depth-2"> <a href="#section-15">6. 横向对比与适用场景 (Comparison &amp; When to Use)</a> </li><li class="article-outline__item depth-3"> <a href="#section-16">最佳适用场景</a> </li><li class="article-outline__item depth-3"> <a href="#section-17">不适用场景</a> </li> </ol> </nav> <div class="article-content"><h1>Diamond Proxy（钻石代理 / ERC-2535）</h1><blockquote>
 <p><strong>一句话总结</strong>：Diamond Proxy 是一种**多面代理（Multi-Facet Proxy）**标准，将一个 Proxy 的后端拆分成多个独立的 <strong>Facet（切面）<strong>合约，每个 Facet 承载不同的功能模块。它通过函数选择器路由表实现</strong>函数级别的精准增删替换</strong>，彻底突破了单个合约 24KB 的大小限制。</p>
 </blockquote>
-<h2>📜 核心元数据与参阅资料 (Metadata &amp; References)</h2>
-<ul>
+<h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><ul>
 <li><strong>关联 EIP/ERC 编号</strong>：<a href="https://eips.ethereum.org/EIPS/eip-2535">ERC-2535: Diamonds, Multi-Facet Proxy</a> | <a href="https://eips.ethereum.org/EIPS/eip-1967">EIP-1967: Standard Proxy Storage Slots</a></li>
 <li><strong>权威参考实现</strong>：<a href="https://github.com/mudgen/diamond-3-hardhat">diamond-3-hardhat (Reference Implementation)</a></li>
 <li><strong>底层基座依赖</strong>：EIP-1967 标准存储槽（可选）、ERC-165 接口自省（Loupe 部分）</li>
 </ul>
 <hr>
-<h2>1. 核心理念与解决的痛点 (Motivation)</h2>
-<ul>
+<h2 id="section-2">1. 核心理念与解决的痛点 (Motivation)</h2><ul>
 <li><strong>前代模式 (Transparent / UUPS) 的缺陷</strong>：<ol>
 <li><strong>24KB 硬限制</strong>：EVM 规定单个合约最大 24KB。一旦 DeFi 协议功能爆炸式增长（如同时包含 ERC20、治理、质押、清算模块），一个 Implementation 根本装不下。</li>
 <li><strong>整体替换的暴力升级</strong>：Transparent / UUPS 升级时必须<strong>完全替换</strong>整个 Implementation，即使你只想修一个小 bug 或加一个小函数。</li>
@@ -56,9 +53,7 @@
 </tr>
 </tbody></table>
 <hr>
-<h2>2. 架构与 Delegatecall 上下文 (Architecture)</h2>
-<h3>A. 架构图 (ASCII Art)</h3>
-<pre><code>                    ┌──────────────────────────┐
+<h2 id="section-3">2. 架构与 Delegatecall 上下文 (Architecture)</h2><h3 id="section-4">A. 架构图 (ASCII Art)</h3><pre><code>                    ┌──────────────────────────┐
                     │   Diamond (主合约)         │
                     │                          │
                     │   • 存储所有状态数据        │
@@ -76,8 +71,7 @@
    └─────────────┘ └─────────────┘ └─────────────┘
 </code></pre>
 <p><strong>路由机制</strong>：Diamond 的 <code>fallback()</code> 中维护了一张 <code>mapping(bytes4 =&gt; address)</code>，根据函数选择器（前 4 字节）查找对应 Facet 地址，然后 <code>delegatecall</code> 到该 Facet。</p>
-<h3>B. Delegatecall 执行上下文表</h3>
-<table>
+<h3 id="section-5">B. Delegatecall 执行上下文表</h3><table>
 <thead>
 <tr>
 <th align="left">属性</th>
@@ -101,8 +95,7 @@
 <td align="left">透传</td>
 </tr>
 </tbody></table>
-<h3>C. 升级逻辑归属</h3>
-<table>
+<h3 id="section-6">C. 升级逻辑归属</h3><table>
 <thead>
 <tr>
 <th align="left">属性</th>
@@ -127,9 +120,7 @@
 </tr>
 </tbody></table>
 <hr>
-<h2>3. 核心接口与源码骨架 (Core Interfaces &amp; Code)</h2>
-<h3>A. IDiamondCut — 切割接口</h3>
-<pre><code class="language-solidity">interface IDiamondCut {
+<h2 id="section-7">3. 核心接口与源码骨架 (Core Interfaces &amp; Code)</h2><h3 id="section-8">A. IDiamondCut — 切割接口</h3><pre><code class="language-solidity">interface IDiamondCut {
     enum FacetCutAction { Add, Replace, Remove }
     
     struct FacetCut {
@@ -148,8 +139,7 @@
     event DiamondCut(FacetCut[] _diamondCut, address _init, bytes _calldata);
 }
 </code></pre>
-<h3>B. IDiamondLoupe — 内省接口</h3>
-<pre><code class="language-solidity">interface IDiamondLoupe {
+<h3 id="section-9">B. IDiamondLoupe — 内省接口</h3><pre><code class="language-solidity">interface IDiamondLoupe {
     struct Facet {
         address facetAddress;
         bytes4[] functionSelectors;
@@ -162,9 +152,7 @@
 }
 </code></pre>
 <p>Loupe 接口让任何人都可以<strong>查询 Diamond 当前有哪些 Facet 和函数</strong>，提供完全的透明性和链上可审计性。</p>
-<h3>C. 关键函数源码骨架</h3>
-<h4><code>fallback()</code> — 选择器路由核心</h4>
-<pre><code class="language-solidity">fallback() external payable {
+<h3 id="section-10">C. 关键函数源码骨架</h3><h4><code>fallback()</code> — 选择器路由核心</h4><pre><code class="language-solidity">fallback() external payable {
     // 从 Diamond Storage 中读取路由表
     DiamondStorage storage ds = diamondStorage();
     // 用 calldata 前 4 字节查找对应的 Facet 地址
@@ -183,8 +171,7 @@
 </code></pre>
 <p><em>与 Transparent/UUPS 的本质差异</em>：这里不是查 EIP-1967 的单一 Implementation 地址，而是查一张 <code>mapping(bytes4 =&gt; address)</code> 的路由映射表。</p>
 <hr>
-<h2>4. 存储管理与碰撞防御 (Storage Safety)</h2>
-<blockquote>
+<h2 id="section-11">4. 存储管理与碰撞防御 (Storage Safety)</h2><blockquote>
 <p><strong>这是 Diamond 模式最具挑战性的部分。</strong> 由于多个 Facet 共享 Diamond 的存储空间（delegatecall 的本质），任何两个 Facet 如果不小心用了相同的 Slot，就会互相覆盖对方的数据（Storage Collision）。</p>
 </blockquote>
 <ul>
@@ -218,16 +205,13 @@ function deposit() external payable {
 <li><strong>碰撞风险点</strong>：如果两个 Facet 的 Library 使用了相同的 <code>keccak256</code> 输入字符串（如都写了 <code>&quot;diamond.storage.default&quot;</code>），它们会共享同一个存储区域并互相覆盖。开发者必须确保每个 Facet 的字符串标识全局唯一。</li>
 </ul>
 <hr>
-<h2>5. 安全攻击面与审计要点 (Security &amp; Attack Surface)</h2>
-<h3>A. 该模式的固有攻击面</h3>
-<ul>
+<h2 id="section-12">5. 安全攻击面与审计要点 (Security &amp; Attack Surface)</h2><h3 id="section-13">A. 该模式的固有攻击面</h3><ul>
 <li><strong>💀 <code>diamondCut</code> 权限劫持</strong>：此函数允许通过 <code>delegatecall</code> 在 Diamond 的存储上执行<strong>任意代码</strong>（_init + _calldata 参数），必须是整个合约最高级别的权限保护对象。劫持 <code>diamondCut</code> = 完全控制合约。</li>
 <li><strong>函数选择器冲突</strong>：正确实现的 <code>diamondCut</code> 应阻止添加已存在的选择器（Add 操作时先检查该 selector 是否已被注册），杜绝同一个 selector 被映射到两个不同的 Facet。</li>
 <li><strong><code>selfdestruct</code> 灾难</strong>：在 Facet 中使用 <code>selfdestruct</code> 会<strong>毁灭整个 Diamond 主合约</strong>（因为 delegatecall 的执行上下文是 Diamond 自己）。</li>
 <li><strong>存储冲突</strong>：多个 Facet 共享存储空间时，如果 Diamond Storage 的字符串标识不唯一，会导致跨模块数据覆盖。</li>
 </ul>
-<h3>B. 安全最佳实践清单</h3>
-<ol>
+<h3 id="section-14">B. 安全最佳实践清单</h3><ol>
 <li><strong><code>diamondCut</code> 权限管控</strong>：使用多签 / DAO / 时间锁严格限制。</li>
 <li><strong>禁止 <code>selfdestruct</code></strong>：在所有 Facet 中禁用此操作码。</li>
 <li><strong>Diamond Storage 隔离</strong>：每个 Facet 的存储字符串标识必须全局唯一。</li>
@@ -235,8 +219,7 @@ function deposit() external payable {
 <li><strong>Loupe 自检</strong>：部署后通过 Loupe 接口验证所有 Facet 和 Selector 的注册状态。</li>
 </ol>
 <hr>
-<h2>6. 横向对比与适用场景 (Comparison &amp; When to Use)</h2>
-<table>
+<h2 id="section-15">6. 横向对比与适用场景 (Comparison &amp; When to Use)</h2><table>
 <thead>
 <tr>
 <th align="left"></th>
@@ -282,15 +265,13 @@ function deposit() external payable {
 <td align="left">追求省 Gas 的主流项目</td>
 </tr>
 </tbody></table>
-<h3>最佳适用场景</h3>
-<ul>
+<h3 id="section-16">最佳适用场景</h3><ul>
 <li><strong>巨型 DeFi 协议</strong>：合约功能远超 24KB 限制（如同时包含 AMM、借贷、治理、质押子模块）。</li>
 <li><strong>模块化管理需求</strong>：不同功能模块由不同团队独立开发、独立升级，互不影响。</li>
 <li><strong>Facet 复用</strong>：已部署的 Facet 可被多个 Diamond 共用，节省部署成本。</li>
 <li><strong>可选不可变性</strong>：Diamond 可以在后期冻结 <code>diamondCut</code> 权限，变为不可升级。</li>
 </ul>
-<h3>不适用场景</h3>
-<ul>
+<h3 id="section-17">不适用场景</h3><ul>
 <li>简单的中小型合约（架构过度工程化，引入不必要的复杂性）。</li>
 <li>团队不熟悉 Diamond Storage 模式（极易犯存储冲突错误）。</li>
 </ul>

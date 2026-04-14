@@ -10,12 +10,10 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">代理模式</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>代理模式是什么</h1> <p class="lead"># 代理模式核心概念 &gt; **一句话总结**：代理模式（Proxy Pattern）是以太坊智能合约&quot;可升级&quot;的底层基石，利用 `delegatecall` 操作码实现**代码与数据的物理分离**——用户永远与同一个地址（Proxy）交互，而 Proxy 背后指向的业务逻辑代码（</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/代理模式/代理模式是什么.md</p> </header> <div class="article-content"><h1>代理模式核心概念</h1>
-<blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">代理模式</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>代理模式是什么</h1> <p class="lead"># 代理模式核心概念 &gt; **一句话总结**：代理模式（Proxy Pattern）是以太坊智能合约&quot;可升级&quot;的底层基石，利用 `delegatecall` 操作码实现**代码与数据的物理分离**——用户永远与同一个地址（Proxy）交互，而 Proxy 背后指向的业务逻辑代码（</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/代理模式/代理模式是什么.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">1. delegatecall 的魔法</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">2. &quot;升级&quot;到底在干什么？</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">升级前后的变化</a> </li><li class="article-outline__item depth-3"> <a href="#section-5">关于代币的疑问</a> </li><li class="article-outline__item depth-2"> <a href="#section-6">3. Initializable — 为什么不用 constructor？</a> </li><li class="article-outline__item depth-2"> <a href="#section-7">4. EIP-1967：标准化存储槽</a> </li><li class="article-outline__item depth-2"> <a href="#section-8">5. 代理模式全家族速查表</a> </li><li class="article-outline__item depth-2"> <a href="#section-9">6. 通用安全红线</a> </li> </ol> </nav> <div class="article-content"><h1>代理模式核心概念</h1><blockquote>
 <p><strong>一句话总结</strong>：代理模式（Proxy Pattern）是以太坊智能合约&quot;可升级&quot;的底层基石，利用 <code>delegatecall</code> 操作码实现<strong>代码与数据的物理分离</strong>——用户永远与同一个地址（Proxy）交互，而 Proxy 背后指向的业务逻辑代码（Implementation）可以随时被替换。</p>
 </blockquote>
-<h2>📜 核心元数据与参阅资料 (Metadata &amp; References)</h2>
-<blockquote>
+<h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><blockquote>
 <p><strong>信息源原则</strong>：代理模式笔记必须以 <strong>EIP 官方提案原文</strong> 和 <strong>OpenZeppelin / Solady</strong> 等权威参考实现源码为第一手真理源。</p>
 </blockquote>
 <ul>
@@ -23,8 +21,7 @@
 <li><strong>权威参考实现</strong>：<a href="https://github.com/OpenZeppelin/openzeppelin-contracts/tree/master/contracts/proxy">OpenZeppelin Proxy Contracts</a></li>
 </ul>
 <hr>
-<h2>1. <code>delegatecall</code> 的魔法</h2>
-<p><code>delegatecall</code> 是以太坊中一种特殊的调用方式。它的核心规则是：</p>
+<h2 id="section-2">1. <code>delegatecall</code> 的魔法</h2><p><code>delegatecall</code> 是以太坊中一种特殊的调用方式。它的核心规则是：</p>
 <blockquote>
 <p><strong>在调用方（Proxy）的存储空间和上下文中，执行被调用方（Implementation）的代码。</strong></p>
 </blockquote>
@@ -54,15 +51,13 @@
 </tbody></table>
 <p>这就是为什么<strong>数据一直在 Proxy 里，代码可以换</strong>。</p>
 <hr>
-<h2>2. &quot;升级&quot;到底在干什么？</h2>
-<p>所谓的&quot;升级合约&quot;，<strong>不是</strong>修改已有的代码，而是：</p>
+<h2 id="section-3">2. &quot;升级&quot;到底在干什么？</h2><p>所谓的&quot;升级合约&quot;，<strong>不是</strong>修改已有的代码，而是：</p>
 <ol>
 <li>部署一个<strong>全新的</strong> Implementation 合约（包含新的业务逻辑/修复了 bug/增加了新功能）。</li>
 <li>告诉 Proxy：&quot;从现在起，你不要再去找旧的 Implementation 了，改去找这个新的。&quot;</li>
 <li>Proxy 内部把指向的地址从 <code>旧Implementation</code> 改成 <code>新Implementation</code>。</li>
 </ol>
-<h3>升级前后的变化</h3>
-<table>
+<h3 id="section-4">升级前后的变化</h3><table>
 <thead>
 <tr>
 <th>项目</th>
@@ -96,15 +91,13 @@
 <td><code>0xABC...</code>（用户无感）</td>
 </tr>
 </tbody></table>
-<h3>关于代币的疑问</h3>
-<blockquote>
+<h3 id="section-5">关于代币的疑问</h3><blockquote>
 <p>&quot;换了地址，内部的 token 又怎么办？&quot;</p>
 </blockquote>
 <p>答案是：<strong>Proxy 的地址不会换，所以 token 不受任何影响。</strong></p>
 <p>代币是存储在 ERC20 代币合约内部的 <code>balances</code> mapping 里的，key 就是持有者的地址。因为用户和外部合约看到的地址始终是 Proxy 的地址，Proxy 地址不变，所以代币余额、授权（allowance）、NFT 持有关系等都不会受到影响。</p>
 <hr>
-<h2>3. <code>Initializable</code> — 为什么不用 constructor？</h2>
-<p>在代理模式中，Implementation 合约的 <code>constructor</code> <strong>只会在部署 Implementation 合约本身时执行一次</strong>，不会在 Proxy 的上下文中执行。</p>
+<h2 id="section-6">3. <code>Initializable</code> — 为什么不用 constructor？</h2><p>在代理模式中，Implementation 合约的 <code>constructor</code> <strong>只会在部署 Implementation 合约本身时执行一次</strong>，不会在 Proxy 的上下文中执行。</p>
 <p>因此，代理模式的初始化<strong>不能用 constructor</strong>，而是改用一个带有 <code>initializer</code> 修饰符的普通函数（通常叫 <code>initialize</code>），并且确保它只能被调用一次：</p>
 <pre><code class="language-solidity">function initialize(address admin, address proposer, address sweeper) external initializer {
     __Ownable_init(msg.sender);    // 初始化 Ownable
@@ -119,8 +112,7 @@
 }
 </code></pre>
 <hr>
-<h2>4. EIP-1967：标准化存储槽</h2>
-<p>所有主流代理模式都遵循 <a href="https://eips.ethereum.org/EIPS/eip-1967">EIP-1967</a> 存储槽标准，将 Proxy 的内部变量（如 Implementation 地址、Admin 地址）存放在<strong>伪随机的存储槽</strong>中：</p>
+<h2 id="section-7">4. EIP-1967：标准化存储槽</h2><p>所有主流代理模式都遵循 <a href="https://eips.ethereum.org/EIPS/eip-1967">EIP-1967</a> 存储槽标准，将 Proxy 的内部变量（如 Implementation 地址、Admin 地址）存放在<strong>伪随机的存储槽</strong>中：</p>
 <pre><code class="language-solidity">// Implementation 地址存储槽
 bytes32 constant IMPLEMENTATION_SLOT = bytes32(uint256(keccak256(&quot;eip1967.proxy.implementation&quot;)) - 1);
 // = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc
@@ -135,8 +127,7 @@ bytes32 constant BEACON_SLOT = bytes32(uint256(keccak256(&quot;eip1967.proxy.bea
 </code></pre>
 <p>这样做是为了<strong>避免 Proxy 的内部变量与 Implementation 的状态变量发生存储碰撞</strong>。详见 <a href="../EIP%E6%A0%87%E5%87%86/EIP-1967.md">EIP-1967 专题笔记</a>。</p>
 <hr>
-<h2>5. 代理模式全家族速查表</h2>
-<table>
+<h2 id="section-8">5. 代理模式全家族速查表</h2><table>
 <thead>
 <tr>
 <th align="left">模式</th>
@@ -195,8 +186,7 @@ bytes32 constant BEACON_SLOT = bytes32(uint256(keccak256(&quot;eip1967.proxy.bea
 </tr>
 </tbody></table>
 <hr>
-<h2>6. 通用安全红线</h2>
-<ol>
+<h2 id="section-9">6. 通用安全红线</h2><ol>
 <li><strong>存储布局一致性</strong>：升级时新的 Implementation 必须保持与旧版<strong>完全一致的存储变量布局</strong>（只能追加，不能修改或删除已有变量的顺序和类型）。</li>
 <li><strong><code>_disableInitializers()</code></strong>：Implementation 的 constructor 中必须调用此函数，防止裸合约被人恶意初始化。</li>
 <li><strong>多签/DAO 管理</strong>：掌控升级权限的 Admin/Owner 角色必须使用多签钱包或 DAO 治理，避免单点失败。</li>

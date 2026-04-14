@@ -10,15 +10,12 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   </div> <p class="eyebrow">2026/4/15</p> <h1>solidity语法</h1> <p class="lead">1 ether = 1 000 000 000 gwei （10⁹ gwei -- 1e9） = 1 000 000 000 000 000 000 wei （10¹⁸ wei -- 1e18） # 数据类型和结构 address：地址 uint256[] a, bytes[] </p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/solidity语法.md</p> </header> <div class="article-content"><p>1 ether<br>= 1 000 000 000 gwei  （10⁹ gwei -- 1e9）
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   </div> <p class="eyebrow">2026/4/15</p> <h1>solidity语法</h1> <p class="lead">1 ether = 1 000 000 000 gwei （10⁹ gwei -- 1e9） = 1 000 000 000 000 000 000 wei （10¹⁸ wei -- 1e18） # 数据类型和结构 address：地址 uint256[] a, bytes[] </p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/solidity语法.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-3"> <a href="#section-1">bytes:</a> </li><li class="article-outline__item depth-3"> <a href="#section-2">结构体：</a> </li><li class="article-outline__item depth-3"> <a href="#section-3">contract:</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">event</a> </li><li class="article-outline__item depth-3"> <a href="#section-5">异常处理：Require vs Error</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">Mappings (映射)：</a> </li><li class="article-outline__item depth-3"> <a href="#section-7">1. 身份验证：msg.sender vs tx.origin</a> </li><li class="article-outline__item depth-3"> <a href="#section-8">2. 资金上下文：msg.value</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">3. 区块与交易属性</a> </li><li class="article-outline__item depth-2"> <a href="#section-10">1. 核心指令集分类与特性</a> </li><li class="article-outline__item depth-3"> <a href="#section-11">🧮 算术与逻辑运算 (Arithmetic &amp; Logic)</a> </li><li class="article-outline__item depth-3"> <a href="#section-12">📦 内存与存储管理 (Memory &amp; Storage)</a> </li><li class="article-outline__item depth-3"> <a href="#section-13">🚦 流程控制与系统交互 (Flow Control &amp; System)</a> </li><li class="article-outline__item depth-2"> <a href="#section-14">2. 🌍 执行环境与区块上下文 (Context)</a> </li><li class="article-outline__item depth-3"> <a href="#section-15">👤 账户与调用上下文 (Environmental Operations)</a> </li><li class="article-outline__item depth-3"> <a href="#section-16">🧱 区块链系统级属性 (Block Operations)</a> </li><li class="article-outline__item depth-2"> <a href="#section-17">1. 核心：四大存储区域</a> </li><li class="article-outline__item depth-2"> <a href="#section-18">2. 深度解析：存储关键字</a> </li><li class="article-outline__item depth-3"> <a href="#section-19">Storage - 合约的“硬盘”</a> </li><li class="article-outline__item depth-3"> <a href="#section-20">Memory - 函数的“RAM”</a> </li><li class="article-outline__item depth-3"> <a href="#section-21">Calldata - 交易的“原始数据流”</a> </li><li class="article-outline__item depth-2"> <a href="#section-22">3. 底层机制：Storage的Slot（槽位）布局</a> </li><li class="article-outline__item depth-3"> <a href="#section-23">Slot 布局规则</a> </li><li class="article-outline__item depth-3"> <a href="#section-24">紧凑打包的底层 Opcode 原理</a> </li><li class="article-outline__item depth-3"> <a href="#section-25">存储碰撞 (Storage Collision) 与高级 Slot 计算</a> </li><li class="article-outline__item depth-3"> <a href="#section-26">调试工具</a> </li><li class="article-outline__item depth-2"> <a href="#section-27">4.ABI Calldata 编码规范</a> </li><li class="article-outline__item depth-3"> <a href="#section-28">静态编码</a> </li><li class="article-outline__item depth-3"> <a href="#section-29">动态类型（Dynamic Types）的编码</a> </li><li class="article-outline__item depth-2"> <a href="#section-30">可见性 (Visibility)</a> </li><li class="article-outline__item depth-3"> <a href="#section-31">🛡️ 安全工程师审计 Note</a> </li><li class="article-outline__item depth-2"> <a href="#section-32">状态可变性 (State Mutability)</a> </li><li class="article-outline__item depth-3"> <a href="#section-33">🔍 深度辨析</a> </li><li class="article-outline__item depth-3"> <a href="#section-34">💡 Gas 特性</a> </li><li class="article-outline__item depth-2"> <a href="#section-35">合约创建 (new)</a> </li><li class="article-outline__item depth-3"> <a href="#section-36">关键参数</a> </li><li class="article-outline__item depth-3"> <a href="#section-37">🛡️ 审计 Note</a> </li><li class="article-outline__item depth-2"> <a href="#section-38">事件日志 (emit)</a> </li><li class="article-outline__item depth-3"> <a href="#section-39">核心特性</a> </li><li class="article-outline__item depth-3"> <a href="#section-40">🛡️ 审计 Note</a> </li><li class="article-outline__item depth-2"> <a href="#section-41">异常处理</a> </li><li class="article-outline__item depth-3"> <a href="#section-42">1. 机制对比：require vs if-else</a> </li><li class="article-outline__item depth-3"> <a href="#section-43">2. 写法演进：Custom Error vs String</a> </li><li class="article-outline__item depth-3"> <a href="#section-44">3. 演进史 (Cheat Sheet)</a> </li><li class="article-outline__item depth-2"> <a href="#section-45">三种call调用方式</a> </li><li class="article-outline__item depth-3"> <a href="#section-46">1. 核心状态横向对比</a> </li><li class="article-outline__item depth-3"> <a href="#section-47">2. 底层机制与攻防视角拆解</a> </li><li class="article-outline__item depth-3"> <a href="#section-48">3. 实际例子</a> </li><li class="article-outline__item depth-3"> <a href="#section-49">继承</a> </li><li class="article-outline__item depth-3"> <a href="#section-50">Override and virtual 重写和虚拟</a> </li><li class="article-outline__item depth-3"> <a href="#section-51">接收 ETH：receive 与 fallback</a> </li><li class="article-outline__item depth-3"> <a href="#section-52">发送 ETH：transfer vs send vs call</a> </li><li class="article-outline__item depth-3"> <a href="#section-53">数学安全：SafeMath 与 unchecked</a> </li><li class="article-outline__item depth-3"> <a href="#section-54">ABI 编码与解码 (ABI Encoding &amp; Decoding)</a> </li><li class="article-outline__item depth-3"> <a href="#section-55">OpenZeppelin Address 库</a> </li><li class="article-outline__item depth-2"> <a href="#section-56">SafeERC20 &amp; SafeTransferLib</a> </li><li class="article-outline__item depth-3"> <a href="#section-57">1. 核心痛点：为什么不能直接 transfer？</a> </li><li class="article-outline__item depth-3"> <a href="#section-58">2. 深度对比表</a> </li><li class="article-outline__item depth-3"> <a href="#section-59">3. 代码实战对比</a> </li><li class="article-outline__item depth-2"> <a href="#section-60">位图 (Bitmap)：极致压缩的空间魔法</a> </li><li class="article-outline__item depth-3"> <a href="#section-61">传统做法 vs. 位图做法</a> </li><li class="article-outline__item depth-3"> <a href="#section-62">代码里的数学逻辑</a> </li><li class="article-outline__item depth-2"> <a href="#section-63">默克尔证明 (Merkle Proof)：零知识验证的鼻祖</a> </li><li class="article-outline__item depth-3"> <a href="#section-64">场景：白名单空投</a> </li><li class="article-outline__item depth-3"> <a href="#section-65">怎么验证？(Proof)</a> </li><li class="article-outline__item depth-3"> <a href="#section-66">为什么用户有其它兄弟节点值</a> </li><li class="article-outline__item depth-3"> <a href="#section-67">总结</a> </li><li class="article-outline__item depth-3"> <a href="#section-68">一个.sol多个合约地址是不同，owner不一定同</a> </li><li class="article-outline__item depth-3"> <a href="#section-69">private 只阻止合约间源码访问，并不加密或隐藏链上存储。</a> </li> </ol> </nav> <div class="article-content"><p>1 ether<br>= 1 000 000 000 gwei  （10⁹ gwei -- 1e9）
 = 1 000 000 000 000 000 000 wei （10¹⁸ wei -- 1e18）</p>
-<h1>数据类型和结构</h1>
-<p>address：地址</p>
+<h1>数据类型和结构</h1><p>address：地址</p>
 <p>uint256[] a, bytes[] b;数组</p>
-<h3>bytes:</h3>
-<p>bytes  是 Solidity 的定长字节数组类型，默认 32 字节（= 256 位），长度不可高于32字节，内容可读可写。</p>
-<h3>结构体：</h3>
-<pre><code class="language-solidity">  struct Person { //定义结构体
+<h3 id="section-1">bytes:</h3><p>bytes  是 Solidity 的定长字节数组类型，默认 32 字节（= 256 位），长度不可高于32字节，内容可读可写。</p>
+<h3 id="section-2">结构体：</h3><pre><code class="language-solidity">  struct Person { //定义结构体
        uint256 my_favorite_number;
       string name;
   }
@@ -26,16 +23,13 @@
   Person public friend = Person(7, &#39;Pat&#39;);
 //等于 Person public friend = Person({my_favorite_number:7, name:&#39;Pat&#39;});
 </code></pre>
-<h3>contract:</h3>
-<p>定义合约，可以理解为结构体，这个合同就是一个新的结构，可以定义变量。</p>
-<h3>event</h3>
-<ul>
+<h3 id="section-3">contract:</h3><p>定义合约，可以理解为结构体，这个合同就是一个新的结构，可以定义变量。</p>
+<h3 id="section-4">event</h3><ul>
 <li>日志（Log），写入链上但不可读</li>
 <li>用于前端监听或记录行为</li>
 <li>emit 触发</li>
 </ul>
-<h3>异常处理：Require vs  Error</h3>
-<p><strong>核心差异</strong>：ABI 编码方式决定 Gas 效率与调试能力。</p>
+<h3 id="section-5">异常处理：Require vs  Error</h3><p><strong>核心差异</strong>：ABI 编码方式决定 Gas 效率与调试能力。</p>
 <table>
 <thead>
 <tr>
@@ -82,8 +76,7 @@
 </ul>
 </li>
 </ul>
-<h3>Mappings (映射)：</h3>
-<pre><code class="language-solidity">mapping (string =&gt; uint256) public nameToFavoriteNumber;
+<h3 id="section-6">Mappings (映射)：</h3><pre><code class="language-solidity">mapping (string =&gt; uint256) public nameToFavoriteNumber;
 </code></pre>
 <p>mapping 是键到值的一一对应关系，所有键默认存在且初始值为零值，无法遍历、无法删除整个映射，存储在 storage 中。</p>
 <p><strong>为什么用</strong></p>
@@ -109,10 +102,8 @@
 </li>
 </ul>
 <p><strong>这就是为什么说映射“不昂贵”——因为它消除了 $n-1$ 次多余的 SLOAD 操作。</strong></p>
-<h1>全局变量与上下文</h1>
-<p>这些变量由 EVM 在每次交易或函数调用时自动注入，用于获取当前运行环境的信息。</p>
-<h3>1. 身份验证：<code>msg.sender</code> vs <code>tx.origin</code></h3>
-<table>
+<h1>全局变量与上下文</h1><p>这些变量由 EVM 在每次交易或函数调用时自动注入，用于获取当前运行环境的信息。</p>
+<h3 id="section-7">1. 身份验证：<code>msg.sender</code> vs <code>tx.origin</code></h3><table>
 <thead>
 <tr>
 <th><strong>变量</strong></th>
@@ -134,8 +125,7 @@
 <td>❌ <strong>高危</strong>。严禁用于鉴权，易遭钓鱼攻击。</td>
 </tr>
 </tbody></table>
-<h4>🕵️‍♂️ 场景深度解析</h4>
-<p>假设调用链为：<strong>用户 (User) $\rightarrow$ 攻击者合约 (Malicious) $\rightarrow$ 受害者合约 (Target)</strong></p>
+<h4>🕵️‍♂️ 场景深度解析</h4><p>假设调用链为：<strong>用户 (User) $\rightarrow$ 攻击者合约 (Malicious) $\rightarrow$ 受害者合约 (Target)</strong></p>
 <ul>
 <li><p><strong>对于 Malicious 合约</strong>：</p>
 <ul>
@@ -154,8 +144,7 @@
 </ul>
 </li>
 </ul>
-<h4>🛡️ 安全审计警示：<code>tx.origin</code> 钓鱼攻击</h4>
-<p>如果 <code>Target</code> 合约写了这样的代码：</p>
+<h4>🛡️ 安全审计警示：<code>tx.origin</code> 钓鱼攻击</h4><p>如果 <code>Target</code> 合约写了这样的代码：</p>
 <pre><code class="language-solidity">// ❌ 错误写法：极度危险！
 function withdraw() public {
     require(tx.origin == owner, &quot;Not owner&quot;);
@@ -167,8 +156,7 @@ function withdraw() public {
 <pre><code class="language-solidity">require(msg.sender == tx.origin, &quot;No contracts allowed&quot;);
 </code></pre>
 <hr>
-<h3>2. 资金上下文：<code>msg.value</code></h3>
-<ul>
+<h3 id="section-8">2. 资金上下文：<code>msg.value</code></h3><ul>
 <li><p><strong>定义</strong>：表示调用当前函数时<strong>附带</strong>发送的以太币数量。</p>
 </li>
 <li><p><strong>单位</strong>：Wei ($1 \text{ ETH} = 10^{18} \text{ Wei}$)。</p>
@@ -176,8 +164,7 @@ function withdraw() public {
 <li><p><strong>限制</strong>：函数必须标记为 <code>payable</code>，否则发送 ETH 会导致交易回滚。</p>
 </li>
 </ul>
-<h4>🛡️ 安全审计警示：循环中的陷阱</h4>
-<p><code>msg.value</code> 是全局上下文，在 <code>delegatecall</code> 或循环中容易被误用。</p>
+<h4>🛡️ 安全审计警示：循环中的陷阱</h4><p><code>msg.value</code> 是全局上下文，在 <code>delegatecall</code> 或循环中容易被误用。</p>
 <p><strong>错误示例（批量充值）</strong>：</p>
 <pre><code class="language-solidity">function batchDeposit(address[] calldata users) external payable {
     for (uint i = 0; i &lt; users.length; i++) {
@@ -188,8 +175,7 @@ function withdraw() public {
 }
 </code></pre>
 <hr>
-<h3>3. 区块与交易属性</h3>
-<p>作为审计员，以下变量也必须熟记，因为它们常涉及<strong>随机数攻击</strong>和<strong>重放攻击</strong>。</p>
+<h3 id="section-9">3. 区块与交易属性</h3><p>作为审计员，以下变量也必须熟记，因为它们常涉及<strong>随机数攻击</strong>和<strong>重放攻击</strong>。</p>
 <table>
 <thead>
 <tr>
@@ -224,19 +210,15 @@ function withdraw() public {
 <td>常用于防止“Gas Griefing”攻击，或在 Relayer 逻辑中检查 Gas 是否足够。</td>
 </tr>
 </tbody></table>
-<h4>block.timestamp</h4>
-<p>block.timestamp 表示：当前区块被挖出的时间戳，单位是秒（不是毫秒！）</p>
+<h4>block.timestamp</h4><p>block.timestamp 表示：当前区块被挖出的时间戳，单位是秒（不是毫秒！）</p>
 <p><strong>举例说明</strong>
 假设现在是 2026-02-01 18:39:19：</p>
 <pre><code class="language-solidity">block.timestamp = 1738408759 // 这是一个很大的数字（秒）
 </code></pre>
 <p>当你写 deadline = block.timestamp + 10; 时：意思是：部署合约的时刻 + 10秒 = 截止时间</p>
-<h1>EVM 指令集（字节码操作）</h1>
-<p>EVM (Ethereum Virtual Machine) 是一个基于栈（Stack-based）的虚拟机，它的设计极简且专门针对智能合约进行了高度定制。所有的指令执行都在模 $2^{256}$ 的上下文中进行，操作数通常取自栈顶，结果重新压回栈顶。</p>
-<h2>1. 核心指令集分类与特性</h2>
-<p>我们可以将 EVM 的操作码（Opcodes）按功能抽象为以下几大类。</p>
-<h3>🧮 算术与逻辑运算 (Arithmetic &amp; Logic)</h3>
-<table>
+<h1>EVM 指令集（字节码操作）</h1><p>EVM (Ethereum Virtual Machine) 是一个基于栈（Stack-based）的虚拟机，它的设计极简且专门针对智能合约进行了高度定制。所有的指令执行都在模 $2^{256}$ 的上下文中进行，操作数通常取自栈顶，结果重新压回栈顶。</p>
+<h2 id="section-10">1. 核心指令集分类与特性</h2><p>我们可以将 EVM 的操作码（Opcodes）按功能抽象为以下几大类。</p>
+<h3 id="section-11">🧮 算术与逻辑运算 (Arithmetic &amp; Logic)</h3><table>
 <thead>
 <tr>
 <th align="left"><strong>类型</strong></th>
@@ -276,8 +258,7 @@ function withdraw() public {
 <td align="left">🟡 基础 30 Gas + 按字数动态增加成本</td>
 </tr>
 </tbody></table>
-<h3>📦 内存与存储管理 (Memory &amp; Storage)</h3>
-<p><strong>核心机制</strong>：决定数据在哪个存储区流动，直接影响合约交互成本。这也是 Gas 优化的绝对核心。</p>
+<h3 id="section-12">📦 内存与存储管理 (Memory &amp; Storage)</h3><p><strong>核心机制</strong>：决定数据在哪个存储区流动，直接影响合约交互成本。这也是 Gas 优化的绝对核心。</p>
 <table>
 <thead>
 <tr>
@@ -312,8 +293,7 @@ function withdraw() public {
 <td align="left">🟡 远比 <code>SSTORE</code> 便宜，是实现重入锁（Reentrancy Guard）的完美方案</td>
 </tr>
 </tbody></table>
-<h3>🚦 流程控制与系统交互 (Flow Control &amp; System)</h3>
-<table>
+<h3 id="section-13">🚦 流程控制与系统交互 (Flow Control &amp; System)</h3><table>
 <thead>
 <tr>
 <th align="left"><strong>功能组</strong></th>
@@ -354,26 +334,21 @@ function withdraw() public {
 </tr>
 </tbody></table>
 <hr>
-<h2>2. 🌍 执行环境与区块上下文 (Context)</h2>
-<p>这些指令<strong>不改变状态</strong>，而是作为全局单例向合约提供“我在哪、谁调了我、外面发生了什么”的只读环境信息。</p>
-<h3>👤 账户与调用上下文 (Environmental Operations)</h3>
-<ul>
+<h2 id="section-14">2. 🌍 执行环境与区块上下文 (Context)</h2><p>这些指令<strong>不改变状态</strong>，而是作为全局单例向合约提供“我在哪、谁调了我、外面发生了什么”的只读环境信息。</p>
+<h3 id="section-15">👤 账户与调用上下文 (Environmental Operations)</h3><ul>
 <li><code>ADDRESS</code> / <code>BALANCE</code>: 当前正在运行的合约地址 / 余额查询。</li>
 <li><code>CALLER</code> (即 <code>msg.sender</code>): <strong>直接调用</strong>当前上下文的账户。</li>
 <li><code>ORIGIN</code> (即 <code>tx.origin</code>): 触发整条调用链的<strong>原始 EOA</strong> (<strong>🛡️ 警惕：严禁用于权限判断，防范钓鱼攻击</strong>)。</li>
 <li><code>CALLVALUE</code> (即 <code>msg.value</code>): 附带发送给本合约的 ETH 数量 (Wei)。</li>
 <li><code>CALLDATALOAD</code> / <code>CALLDATASIZE</code> / <code>CALLDATACOPY</code>: 获取外部调用者发送的原始输入数据流 (常被用于 Gas 高级优化或底层 ABI 自定义解码)。</li>
 </ul>
-<h3>🧱 区块链系统级属性 (Block Operations)</h3>
-<ul>
+<h3 id="section-16">🧱 区块链系统级属性 (Block Operations)</h3><ul>
 <li><code>TIMESTAMP</code> (即 <code>block.timestamp</code>): 当前区块时间戳 (<strong>🛡️ 警惕：可被矿工在极小范围内微调，严禁作为强随机数种子</strong>)。</li>
 <li><code>NUMBER</code> (即 <code>block.number</code>): 当前的区块高度。</li>
 <li><code>PREVRANDAO</code>: 获取前一个区块的 RANDAO 混合值。自以太坊“合并”硬分叉后，取代了毫无意义的 <code>DIFFICULTY</code> 操作码。</li>
 <li><code>GASLIMIT</code> / <code>GASPRICE</code> / <code>GAS</code>: 查询系统层面的气数限制、单价参数以及本交易当前还剩下多少 Gas。</li>
 </ul>
-<h1>Solidity 数据存储的 EVM 机制</h1>
-<h2>1. 核心：四大存储区域</h2>
-<p>决定了数据的<strong>存储位置</strong>、<strong>生命周期</strong>、<strong>访问成本</strong>和<strong>可变性</strong>。</p>
+<h1>Solidity 数据存储的 EVM 机制</h1><h2 id="section-17">1. 核心：四大存储区域</h2><p>决定了数据的<strong>存储位置</strong>、<strong>生命周期</strong>、<strong>访问成本</strong>和<strong>可变性</strong>。</p>
 <table>
 <thead>
 <tr>
@@ -442,9 +417,7 @@ function withdraw() public {
 </ul>
 </blockquote>
 <hr>
-<h2>2. 深度解析：存储关键字</h2>
-<h3>Storage - 合约的“硬盘”</h3>
-<ul>
+<h2 id="section-18">2. 深度解析：存储关键字</h2><h3 id="section-19">Storage - 合约的“硬盘”</h3><ul>
 <li><p><strong>特性</strong>：数据永久写在区块链上，全网节点同步。</p>
 </li>
 <li><p><strong>底层</strong>：操作对应 <code>SLOAD</code> (读) 和 <code>SSTORE</code> (写) 指令。</p>
@@ -463,8 +436,7 @@ function withdraw() public {
     }
 }
 </code></pre>
-<h3>Memory - 函数的“RAM”</h3>
-<ul>
+<h3 id="section-20">Memory - 函数的“RAM”</h3><ul>
 <li><p><strong>特性</strong>：临时数据，函数调用结束即销毁。</p>
 </li>
 <li><p><strong>场景</strong>：处理变长数据（string, bytes, array）或进行中间计算。</p>
@@ -477,8 +449,7 @@ function withdraw() public {
     string memory strCopy = s; 
 }
 </code></pre>
-<h3>Calldata - 交易的“原始数据流”</h3>
-<ul>
+<h3 id="section-21">Calldata - 交易的“原始数据流”</h3><ul>
 <li><p><strong>特性</strong>：包含函数选择器和参数的只读字节流。</p>
 </li>
 <li><p><strong>优势</strong>：不需要像 memory 那样把数据复制到内存中，因此处理大数组时最省 Gas。</p>
@@ -487,11 +458,9 @@ function withdraw() public {
 </li>
 </ul>
 <hr>
-<h2>3. 底层机制：Storage的Slot（槽位）布局</h2>
-<p>EVM 存储(storage)是一个键值对（Key-Value）数据结构，其中的键（通常称为插槽 Slots）和值均为 32 字节长。这是每个智能合约的持久化内存：所有保存在其中的数值都会在不同的交易和区块之间无限期保留。每个智能合约只能访问和修改属于自己的存储空间。如果你尝试访问一个尚未存入任何数值的插槽，它将始终返回 0 而不会抛出任何错误。</p>
+<h2 id="section-22">3. 底层机制：Storage的Slot（槽位）布局</h2><p>EVM 存储(storage)是一个键值对（Key-Value）数据结构，其中的键（通常称为插槽 Slots）和值均为 32 字节长。这是每个智能合约的持久化内存：所有保存在其中的数值都会在不同的交易和区块之间无限期保留。每个智能合约只能访问和修改属于自己的存储空间。如果你尝试访问一个尚未存入任何数值的插槽，它将始终返回 0 而不会抛出任何错误。</p>
 <p>EVM 的 Storage 是一个巨大的键值对映射：<code>key(Slot) -&gt; value(32 bytes)</code>。</p>
-<h3>Slot 布局规则</h3>
-<ol>
+<h3 id="section-23">Slot 布局规则</h3><ol>
 <li><p><strong>大小</strong>：每个 Slot 为 32 字节（256 位）。</p>
 </li>
 <li><p><strong>顺序</strong>：状态变量按声明顺序分配 Slot，从 0 开始。</p>
@@ -521,8 +490,7 @@ function withdraw() public {
     uint256 public e;
 }
 </code></pre>
-<h3>紧凑打包的底层 Opcode 原理</h3>
-<p>因为 EVM 的 <code>SLOAD</code> 和 <code>SSTORE</code> <strong>每次只能操作完整的 32 字节（256 位）</strong>。当我们在 Solidity 中读取或写入被“打包”在同一个 Slot 里的变量（比如上面的 <code>c</code> 或 <code>d</code>）时，EVM 必须在底层施加额外的“位掩码运算”（Bitwise Operations）来隔离数据。</p>
+<h3 id="section-24">紧凑打包的底层 Opcode 原理</h3><p>因为 EVM 的 <code>SLOAD</code> 和 <code>SSTORE</code> <strong>每次只能操作完整的 32 字节（256 位）</strong>。当我们在 Solidity 中读取或写入被“打包”在同一个 Slot 里的变量（比如上面的 <code>c</code> 或 <code>d</code>）时，EVM 必须在底层施加额外的“位掩码运算”（Bitwise Operations）来隔离数据。</p>
 <p><strong>1. 读取打包变量（如读取 <code>c</code>）</strong></p>
 <p>当逻辑中用到 <code>c</code> 时，EVM 不能凭空单独抽出 8 个字节，底层的字节码流程大体如下：</p>
 <ol>
@@ -559,12 +527,10 @@ function withdraw() public {
 <li><strong>单独写变贵了</strong>：你会发现，为了更新一个极小的变量 <code>c</code>，底层不仅触发了昂贵的 <code>SSTORE</code>，还被迫执行了额外的 <code>SLOAD</code> 和若干次按位掩码。因此，除非你确信这些变量会在<strong>同一个调用周期</strong>被批量访问，否则<em>强行打包实际上不仅消耗额外的计算步骤，还会增加单独修改某一项的 Gas 成本！</em></li>
 </ul>
 </blockquote>
-<h3>存储碰撞 (Storage Collision) 与高级 Slot 计算</h3>
-<p>如果所有的状态变量都是像 <code>uint256</code> 这样固定大小的类型，它们在 Slot 里的排布是紧挨着的（即使打包，也绝不会越界）。
+<h3 id="section-25">存储碰撞 (Storage Collision) 与高级 Slot 计算</h3><p>如果所有的状态变量都是像 <code>uint256</code> 这样固定大小的类型，它们在 Slot 里的排布是紧挨着的（即使打包，也绝不会越界）。
 但当遇到<strong>动态数组 (Dynamic Array)</strong> 和 <strong>映射 (Mapping)</strong> 这种大小不可预估的数据结构时，如果仍按顺序分配，后边声明的变量就没地方放了。</p>
 <p>对此，EVM 采用了极度分散的 <strong>Keccak256 哈希计算法则</strong> 来为这些动态数据寻找“安全的远方坑位”。</p>
-<h4>核心哈希公式与排布原理</h4>
-<p><strong>A. 动态数组 (Dynamic Arrays) 如 <code>uint256[] public arr</code></strong>
+<h4>核心哈希公式与排布原理</h4><p><strong>A. 动态数组 (Dynamic Arrays) 如 <code>uint256[] public arr</code></strong>
 如果是动态数组，它原本声明占用的 Slot（我们称之为基准槽位 <code>p</code>），<strong>并不存储数组的具体数据，而是存储这个数组当前的长度 (<code>length</code>)</strong>。
 真正存放数组元素的地方，是在遥远的哈希槽位空间：</p>
 <ul>
@@ -589,8 +555,7 @@ function withdraw() public {
 <blockquote>
 <p>也就是说，EVM 把<strong>键的实际内容 (key)</strong> 与<strong>该映射声明时的原始槽位编号 (p)</strong> 一起拼接打包做哈希运算，算出了一个极其随机且唯一的位置。即使另一个地址（不同的 key），或者另一个 mapping（不同的 p），经过哈希后的位置也会天差地别。</p>
 </blockquote>
-<h4>💥 何谓“存储碰撞 (Storage Collision)”？</h4>
-<p>EVM 有 $2^{256}$ 个插槽，这是一个什么概念？
+<h4>💥 何谓“存储碰撞 (Storage Collision)”？</h4><p>EVM 有 $2^{256}$ 个插槽，这是一个什么概念？
 $2^{256}$ 大约等于 $1.15 \times 10^{77}$。这不仅是个“天文数字”，它甚至接近<strong>整个可观测宇宙中所有原子的总和</strong>（约 $10^{80}$ 个）。
 在这个无垠荒野中，即使地球上每台电脑每秒进行上亿次哈希去寻找，直到太阳系毁灭，找到两个相同槽位（哈希碰撞）的概率也无限趋近于 <strong>0</strong>。这正是 Mapping “算出一个极其随机的位置”而永远不用担心撞车（哈希冲突）的底气所在。</p>
 <p>但是，导致碰撞的往往是<strong>人为设计缺陷</strong>，其中最典型的重灾区是<strong>代理合约模式 (Proxy Pattern)</strong>！</p>
@@ -634,8 +599,7 @@ contract LogicV1 {
 这就是著名的 <strong>EIP-1967 (标准代理存储插槽)</strong> 诞生缘由。通过计算绝对不可能被变量声明顺序碰到的极远端“随机”常数槽位，来存放代理相关的状态变量：
 <code>StorageSlot_Implementation = keccak256(&quot;eip1967.proxy.implementation&quot;) - 1;</code></p>
 <hr>
-<h3>调试工具</h3>
-<p>使用 web3.js 或 foundry 查看链上 Slot 数据（通过这些指令你能亲自验证哈希落点）：</p>
+<h3 id="section-26">调试工具</h3><p>使用 web3.js 或 foundry 查看链上 Slot 数据（通过这些指令你能亲自验证哈希落点）：</p>
 <pre><code class="language-javascript">// 读取合约地址 atAddress 在 Slot position 的 32字节数据
 await web3.eth.getStorageAt(&quot;0xAddress...&quot;, 0); 
 </code></pre>
@@ -643,9 +607,7 @@ await web3.eth.getStorageAt(&quot;0xAddress...&quot;, 0);
 <pre><code class="language-bash">cast storage 0xAddress... 0
 </code></pre>
 <hr>
-<h2>4.ABI Calldata 编码规范</h2>
-<h3>静态编码</h3>
-<p>在以太坊中，每次外部账户或合约调用另一个合约时，<strong>都会附带一段参数数据</strong>。这段数据就是 <code>calldata</code>。  </p>
+<h2 id="section-27">4.ABI Calldata 编码规范</h2><h3 id="section-28">静态编码</h3><p>在以太坊中，每次外部账户或合约调用另一个合约时，<strong>都会附带一段参数数据</strong>。这段数据就是 <code>calldata</code>。  </p>
 <p>当你调用 <code>myFunction(5, 9)</code> 时，发送的数据实际上是一串十六进制编码。</p>
 <p><strong>编码结构：</strong> <code>[4字节 函数选择器]</code> + <code>[32字节 参数1]</code> + <code>[32字节 参数2]</code> ...</p>
 <p>函数选择器（function selector）是函数签名经过 <code>keccak256</code> 哈希取前 4 字节：<code>bytes4(keccak256(&quot;myFunction(uint256,uint256)&quot;));</code> 这 4 个字节明确告诉 EVM 要调用哪个函数。后面的参数数据是每个参数的 32 字节 ABI 编码值（数字右对齐）。</p>
@@ -657,8 +619,7 @@ await web3.eth.getStorageAt(&quot;0xAddress...&quot;, 0);
 0x3c6bb436 0000000000000000000000000000000000000000000000000000000000000005
 0000000000000000000000000000000000000000000000000000000000000009
 </code></pre>
-<h3>动态类型（Dynamic Types）的编码</h3>
-<p>上面的例子参数是 <code>uint256</code> 等<strong>定长（静态）类型</strong>。但如果函数参数里有 <code>bytes</code>, <code>string</code> 或者数组（如 <code>uint256[]</code>）这类<strong>动态类型</strong>，ABI 编码的规则就会发生巨大变化。这正是 ABI 编码攻击的温床。</p>
+<h3 id="section-29">动态类型（Dynamic Types）的编码</h3><p>上面的例子参数是 <code>uint256</code> 等<strong>定长（静态）类型</strong>。但如果函数参数里有 <code>bytes</code>, <code>string</code> 或者数组（如 <code>uint256[]</code>）这类<strong>动态类型</strong>，ABI 编码的规则就会发生巨大变化。这正是 ABI 编码攻击的温床。</p>
 <p>对于动态类型，EVM 无法预先知道它有多长。因此 ABI 规范引入了 <strong>指针（Offset）</strong> 的概念。</p>
 <p><strong>动态类型的编码结构变成这样：</strong> 
 <code>[4字节 选择器]</code> + <code>[32字节 静态参数/动态类型的头部指针]</code> + <code>[32字节 动态数据长度 Length]</code> + <code>[实际动态数据 Content]</code></p>
@@ -677,16 +638,14 @@ function execute(address target, bytes calldata actionData)
 0x44        [0000...00000000000000000000000000000044]  // (跟随指针 0x60 + 0x04 = 0x64 位置) actionData 的真实【长度】
 0x64        [0x85fb709d...真实数据内容...]              // actionData 的真实【内容】
 </code></pre>
-<h4>致命的误解（漏洞根源）</h4>
-<p><strong>初级开发者往往会这样想：</strong> 因为 <code>target</code> 占了 32 字节，<code>actionData的指针</code> 占了 32 字节，<code>actionData的长度</code> 占了 32 字节。加上开头的 4 字节选择器。 那么 <code>actionData</code> 的真实内容<strong>永远、绝对</strong>是从第 100 个字节（<code>4 + 32 + 32 + 32 = 100</code>，即 0x64）开始的。</p>
+<h4>致命的误解（漏洞根源）</h4><p><strong>初级开发者往往会这样想：</strong> 因为 <code>target</code> 占了 32 字节，<code>actionData的指针</code> 占了 32 字节，<code>actionData的长度</code> 占了 32 字节。加上开头的 4 字节选择器。 那么 <code>actionData</code> 的真实内容<strong>永远、绝对</strong>是从第 100 个字节（<code>4 + 32 + 32 + 32 = 100</code>，即 0x64）开始的。</p>
 <p>于是，他们用内联汇编写下了这样“自作聪明”的优化代码：</p>
 <pre><code class="language-solidity">uint256 calldataOffset = 4 + 32 * 3; // 4 + 96 = 100
 assembly {
     selector := calldataload(calldataOffset)
 }
 </code></pre>
-<h4>黑客的魔法（ABI Smuggling）</h4>
-<p>ABI 规范中，<strong>参数 2 的指针（Offset）是可以由调用者随便填的！</strong> 它不要求紧紧挨在后面。</p>
+<h4>黑客的魔法（ABI Smuggling）</h4><p>ABI 规范中，<strong>参数 2 的指针（Offset）是可以由调用者随便填的！</strong> 它不要求紧紧挨在后面。</p>
 <p>黑客如果把这一段 Calldata 结构手动篡改，将指针指得远远的：</p>
 <pre><code class="language-solidity">位置        装填的内容（黑客伪造视角）                     实际用途
 -----------------------------------------------------------------------------------------
@@ -703,9 +662,7 @@ assembly {
 </code></pre>
 <p>通过修改一段 Calldata 里的 Offset 指针，黑客成功在第 <code>0x64</code>（100 字节）的位置留下了一具替身（合法权限签章）供保安检查；而把真正的炸弹（越权执行逻辑）藏在了 Calldata 的末尾，并把合法的通行指针（Offset）塞给了底层的执行器。</p>
 <hr>
-<h1>Solidity 核心关键字</h1>
-<h2>可见性 (Visibility)</h2>
-<p>决定了函数或变量的调用范围。这是访问控制的第一道防线。</p>
+<h1>Solidity 核心关键字</h1><h2 id="section-30">可见性 (Visibility)</h2><p>决定了函数或变量的调用范围。这是访问控制的第一道防线。</p>
 <table>
 <thead>
 <tr>
@@ -752,14 +709,12 @@ assembly {
 <td align="left"></td>
 </tr>
 </tbody></table>
-<h3>🛡️ 安全工程师审计 Note</h3>
-<ol>
+<h3 id="section-31">🛡️ 安全工程师审计 Note</h3><ol>
 <li><strong>Private != Secret</strong>: 不要把密码、私钥存在 <code>private</code> 变量里。黑客可以通过 <code>web3.eth.getStorageAt</code> 直接读取 Slot 数据。</li>
 <li><strong>External vs Public</strong>: 如果一个函数只被外部调用（如 UI 交互），务必标记为 <code>external</code>。这不仅逻辑清晰，处理复杂参数时还能显著节省 Gas。</li>
 </ol>
 <hr>
-<h2>状态可变性 (State Mutability)</h2>
-<p>限制函数对链上状态（State）和全局变量的访问权限。</p>
+<h2 id="section-32">状态可变性 (State Mutability)</h2><p>限制函数对链上状态（State）和全局变量的访问权限。</p>
 <table>
 <thead>
 <tr>
@@ -799,8 +754,7 @@ assembly {
 <td align="center"></td>
 </tr>
 </tbody></table>
-<h3>🔍 深度辨析</h3>
-<ul>
+<h3 id="section-33">🔍 深度辨析</h3><ul>
 <li><strong><code>view</code> (只读)</strong>: 可以读取状态变量、其他 <code>view/pure</code> 函数、以及全局变量（如 <code>block.timestamp</code>, <code>msg.sender</code>）。<ul>
 <li><em>例子</em>: <code>balanceOf(address)</code>。</li>
 </ul>
@@ -810,19 +764,16 @@ assembly {
 </ul>
 </li>
 </ul>
-<h3>💡 Gas 特性</h3>
-<ul>
+<h3 id="section-34">💡 Gas 特性</h3><ul>
 <li><strong>外部调用 (StaticCall)</strong>: 如果从链下（如前端、Metamask）调用 <code>view</code>/<code>pure</code> 函数，<strong>不消耗 Gas</strong>。</li>
 <li><strong>内部调用</strong>: 如果被另一个非 <code>view</code>/<code>pure</code> 的函数在链上调用，<strong>会消耗 Gas</strong>。</li>
 </ul>
 <hr>
-<h2>合约创建 (new)</h2>
-<p><code>new</code> 关键字用于在代码中动态部署新合约。这不仅仅是实例化，而是一次<strong>完整的部署交易</strong>。</p>
+<h2 id="section-35">合约创建 (new)</h2><p><code>new</code> 关键字用于在代码中动态部署新合约。这不仅仅是实例化，而是一次<strong>完整的部署交易</strong>。</p>
 <pre><code class="language-solidity">// 语法：new 合约名{选项}(构造函数参数)
 ContractName instance = new ContractName{value: 1 ether, salt: bytes32(0)}(arg1, arg2);
 </code></pre>
-<h3>关键参数</h3>
-<ul>
+<h3 id="section-36">关键参数</h3><ul>
 <li><strong><code>value</code> (可选)</strong>: 部署的同时向新合约转入 ETH（前提是新合约的 <code>constructor</code> 是 <code>payable</code> 的）。</li>
 <li><strong><code>salt</code> (可选)</strong>: 启用 <strong>CREATE2</strong> 操作码。<ul>
 <li><strong>CREATE (无 salt)</strong>: 地址取决于 <code>keccak256(sender_address, nonce)</code>。</li>
@@ -830,22 +781,19 @@ ContractName instance = new ContractName{value: 1 ether, salt: bytes32(0)}(arg1,
 </ul>
 </li>
 </ul>
-<h3>🛡️ 审计 Note</h3>
-<ul>
+<h3 id="section-37">🛡️ 审计 Note</h3><ul>
 <li><strong>返回值</strong>: 返回的是合约实例（<code>ContractName</code> 类型），可以直接调用其函数。</li>
 <li><strong>失败回滚</strong>: 如果新合约部署失败（构造函数 revert），发起 <code>new</code> 的整个交易也会 revert。</li>
 </ul>
 <hr>
-<h2>事件日志 (emit)</h2>
-<p><code>emit</code> 用于触发 <code>event</code>，将数据写入交易回执的日志（Logs）区域。</p>
+<h2 id="section-38">事件日志 (emit)</h2><p><code>emit</code> 用于触发 <code>event</code>，将数据写入交易回执的日志（Logs）区域。</p>
 <pre><code class="language-solidity">// 定义事件
 event Transfer(address indexed from, address indexed to, uint256 value);
 
 // 触发事件
 emit Transfer(msg.sender, _to, _amount);
 </code></pre>
-<h3>核心特性</h3>
-<ol>
+<h3 id="section-39">核心特性</h3><ol>
 <li><strong>Gas 廉价</strong>: 存储数据在 Logs 比存储在 Storage (<code>SSTORE</code>) 便宜得多（约 1/10 成本）。</li>
 <li><strong>不可读取</strong>: <strong>智能合约本身无法读取自己或别人 emit 的事件数据！</strong> 这是一个单向通道（Write-only），专门给链下世界（前端、The Graph）看的。</li>
 <li><strong>索引 (<code>indexed</code>)</strong>:<ul>
@@ -855,13 +803,10 @@ emit Transfer(msg.sender, _to, _amount);
 </ul>
 </li>
 </ol>
-<h3>🛡️ 审计 Note</h3>
-<ul>
+<h3 id="section-40">🛡️ 审计 Note</h3><ul>
 <li><strong>虚假事件</strong>: 恶意合约可以 <code>emit Transfer</code> 但实际上不转账。前端如果只监听事件而不检查链上状态，可能会被骗（假充值攻击）。</li>
 </ul>
-<h2>异常处理</h2>
-<h3>1. 机制对比：<code>require</code> vs <code>if-else</code></h3>
-<p><strong>核心区别</strong>：<code>require</code> 是具有<strong>回滚能力</strong>的断路器，而 <code>if-else</code> 仅为流程控制。</p>
+<h2 id="section-41">异常处理</h2><h3 id="section-42">1. 机制对比：<code>require</code> vs <code>if-else</code></h3><p><strong>核心区别</strong>：<code>require</code> 是具有<strong>回滚能力</strong>的断路器，而 <code>if-else</code> 仅为流程控制。</p>
 <p><strong>核心特性：原子性与状态回滚 (Atomicity &amp; Reversion)</strong></p>
 <p>区块链交易必须是原子的（全成功或全失败）。</p>
 <ul>
@@ -889,8 +834,7 @@ emit Transfer(msg.sender, _to, _amount);
 </li>
 </ul>
 <hr>
-<h3>2. 写法演进：<code>Custom Error</code> vs <code>String</code></h3>
-<p><strong>核心结论</strong>：生产环境应始终使用 <code>revert CustomError()</code>。</p>
+<h3 id="section-43">2. 写法演进：<code>Custom Error</code> vs <code>String</code></h3><p><strong>核心结论</strong>：生产环境应始终使用 <code>revert CustomError()</code>。</p>
 <p><strong>A. 成本优势 (Gas Savings)</strong></p>
 <ul>
 <li><p><strong>传统写法</strong> (<code>require(cond, &quot;Long String&quot;)</code>)</p>
@@ -922,8 +866,7 @@ revert TooEarly(deadline, block.timestamp);
 </li>
 </ul>
 <hr>
-<h3>3. 演进史 (Cheat Sheet)</h3>
-<table>
+<h3 id="section-44">3. 演进史 (Cheat Sheet)</h3><table>
 <thead>
 <tr>
 <th><strong>阶段</strong></th>
@@ -957,9 +900,7 @@ revert TooEarly(deadline, block.timestamp);
 <td>编译器版本 ≥ 0.8.26 支持</td>
 </tr>
 </tbody></table>
-<h2>三种call调用方式</h2>
-<h3>1. 核心状态横向对比</h3>
-<p>为了清晰建立底层心智模型，请牢记这三个变量的流转路径。假设 <strong>合约 A</strong> 发起操作去交互 <strong>合约 B</strong>：</p>
+<h2 id="section-45">三种call调用方式</h2><h3 id="section-46">1. 核心状态横向对比</h3><p>为了清晰建立底层心智模型，请牢记这三个变量的流转路径。假设 <strong>合约 A</strong> 发起操作去交互 <strong>合约 B</strong>：</p>
 <table>
 <thead>
 <tr>
@@ -993,9 +934,7 @@ revert TooEarly(deadline, block.timestamp);
 </tr>
 </tbody></table>
 <hr>
-<h3>2. 底层机制与攻防视角拆解</h3>
-<h4><strong>A. <code>call</code> (标准调用)</strong></h4>
-<ul>
+<h3 id="section-47">2. 底层机制与攻防视角拆解</h3><h4><strong>A. <code>call</code> (标准调用)</strong></h4><ul>
 <li><p><strong>机制本质</strong>：EVM 会创建一个全新的子上下文（Sub-context）。指令流转到目标合约 B，在 B 的存储空间中执行代码。</p>
 </li>
 <li><p><strong>攻防聚焦点</strong>：</p>
@@ -1007,8 +946,7 @@ revert TooEarly(deadline, block.timestamp);
 </ul>
 </li>
 </ul>
-<h4><strong>B. <code>delegatecall</code> (代码借用/代理基石)</strong></h4>
-<ul>
+<h4><strong>B. <code>delegatecall</code> (代码借用/代理基石)</strong></h4><ul>
 <li><p><strong>机制本质</strong>：这是你在 Day 1 研究 Proxy 模式的核心引擎。它仅仅是把合约 B 的<strong>字节码</strong>借过来，放在合约 A 的<strong>存储、余额和发起者上下文</strong>中运行。</p>
 </li>
 <li><p><strong>攻防聚焦点</strong>：</p>
@@ -1020,16 +958,14 @@ revert TooEarly(deadline, block.timestamp);
 </ul>
 </li>
 </ul>
-<h4><strong>C. <code>staticcall</code> (纯净查询)</strong></h4>
-<ul>
+<h4><strong>C. <code>staticcall</code> (纯净查询)</strong></h4><ul>
 <li><p><strong>机制本质</strong>：以太坊拜占庭硬分叉引入，用于强制在子上下文中实行<strong>只读限制</strong>。如果在 <code>staticcall</code> 的执行流中触发了任何改变状态的操作码（如 <code>SSTORE</code>, <code>CREATE</code>, <code>LOG0</code> 等），EVM 会直接抛出异常。</p>
 </li>
 <li><p><strong>生产应用</strong>：在你的 MemeScan 项目中，当你需要去链上验证某个 Meme 币在 DEX 池子中的真实储备量或价格预言机数据时，底层就是通过 <code>staticcall</code> 实现的。它保证了查询动作绝对安全，不会意外触发目标合约的恶意状态变更逻辑。</p>
 </li>
 </ul>
 <hr>
-<h3>3. 实际例子</h3>
-<p>如果面试官问：“在一个交易链 <code>User -&gt; Contract A -&gt; (delegatecall) -&gt; Contract B -&gt; (call) -&gt; Contract C</code> 中，Contract C 眼里的 <code>msg.sender</code> 是谁？”</p>
+<h3 id="section-48">3. 实际例子</h3><p>如果面试官问：“在一个交易链 <code>User -&gt; Contract A -&gt; (delegatecall) -&gt; Contract B -&gt; (call) -&gt; Contract C</code> 中，Contract C 眼里的 <code>msg.sender</code> 是谁？”</p>
 <p><strong>你的推演逻辑：</strong></p>
 <ol>
 <li><p><code>User</code> 调用 A。A 的上下文：<code>sender</code> = User。</p>
@@ -1042,24 +978,18 @@ revert TooEarly(deadline, block.timestamp);
 <p> <strong>结论：</strong> Contract C 看到的 <code>msg.sender</code> 是 <strong>Contract A</strong>。</p>
 </li>
 </ol>
-<h1>继承性</h1>
-<h3>继承</h3>
-<p>is关键字表示继承，并将父合约<code>SimpleStorage</code>与其子合约<code>AddFiveStorage</code>关联起来。</p>
+<h1>继承性</h1><h3 id="section-49">继承</h3><p>is关键字表示继承，并将父合约<code>SimpleStorage</code>与其子合约<code>AddFiveStorage</code>关联起来。</p>
 <pre><code class="language-solidity">import {SimpleStorage} from&quot;./SimpleStorage.sol&quot;;
 
 contract AddFiveStorage is SimpleStorage {}
 </code></pre>
-<h3>Override and virtual 重写和虚拟</h3>
-<p>通过使用override关键字来修改SimpleStorage中的现有函数。假设我们想要修改store函数，在要存储的喜好数字上加上“5”。</p>
+<h3 id="section-50">Override and virtual 重写和虚拟</h3><p>通过使用override关键字来修改SimpleStorage中的现有函数。假设我们想要修改store函数，在要存储的喜好数字上加上“5”。</p>
 <p>如果我们复制<code>store</code>函数的确切签名，将会出现错误：重写函数缺少“override”说明符，尝试重写一个非虚函数。所以加上这些关键字</p>
 <pre><code class="language-solidity">function store(uint256 favNumber) public virtual{}
 </code></pre>
 <p>}最后，我们可以将新功能添加到<code>AddFiveStorage</code>中的<code>store</code>函数，使其能够在存储的<code>favoriteNumber</code>上加上“5”：</p>
-<h1>常用函数与库</h1>
-<h3>接收 ETH：<code>receive</code> 与 <code>fallback</code></h3>
-<p>这两个函数决定了合约如何“被动”接收 ETH 或处理未知调用。</p>
-<h4>核心逻辑流 (EVM Routing)</h4>
-<p>当一笔交易到达合约时，EVM 按以下逻辑判断执行哪个函数：</p>
+<h1>常用函数与库</h1><h3 id="section-51">接收 ETH：<code>receive</code> 与 <code>fallback</code></h3><p>这两个函数决定了合约如何“被动”接收 ETH 或处理未知调用。</p>
+<h4>核心逻辑流 (EVM Routing)</h4><p>当一笔交易到达合约时，EVM 按以下逻辑判断执行哪个函数：</p>
 <ol>
 <li><p><strong>是否有数据 (<code>msg.data</code>)?</strong></p>
 <ul>
@@ -1095,8 +1025,7 @@ contract AddFiveStorage is SimpleStorage {}
 </li>
 </ol>
 <hr>
-<h3>发送 ETH：<code>transfer</code> vs <code>send</code> vs <code>call</code></h3>
-<p>这是资金流出的关键出口，也是 <strong>Reentrancy (重入攻击)</strong> 的高发地。</p>
+<h3 id="section-52">发送 ETH：<code>transfer</code> vs <code>send</code> vs <code>call</code></h3><p>这是资金流出的关键出口，也是 <strong>Reentrancy (重入攻击)</strong> 的高发地。</p>
 <table>
 <thead>
 <tr>
@@ -1133,8 +1062,7 @@ contract AddFiveStorage is SimpleStorage {}
 <td>✅ <strong>推荐</strong></td>
 </tr>
 </tbody></table>
-<h4>为什么不再推荐 <code>transfer</code>？ (The 2300 Gas Myth)</h4>
-<p>以前推荐 transfer 是因为它自带 2300 Gas 限制，天然防止重入。</p>
+<h4>为什么不再推荐 <code>transfer</code>？ (The 2300 Gas Myth)</h4><p>以前推荐 transfer 是因为它自带 2300 Gas 限制，天然防止重入。</p>
 <p>但在 EIP-1884 (Istanbul 硬分叉) 后，SLOAD 等操作码涨价了。</p>
 <ul>
 <li><p><strong>后果</strong>：以前能在 2300 Gas 内完成接收逻辑的合约（如 Gnosis Safe 的某些旧版本），现在可能会因为 Gas 不够而接收失败。</p>
@@ -1142,8 +1070,7 @@ contract AddFiveStorage is SimpleStorage {}
 <li><p><strong>现状</strong>：为了兼容性，<strong>必须使用 <code>call</code></strong>，即使它有重入风险。</p>
 </li>
 </ul>
-<h4>🛡️ 安全审计 Note</h4>
-<ol>
+<h4>🛡️ 安全审计 Note</h4><ol>
 <li><p><strong>Unchecked Return Value (未检查返回值)</strong>：</p>
 <ul>
 <li><p>使用 <code>send</code> 或 <code>call</code> 时，<strong>必须</strong>检查 <code>bool success</code>。</p>
@@ -1171,9 +1098,7 @@ balances[msg.sender] -= amount;
 require(success, &quot;Transfer failed&quot;);
 </code></pre>
 <hr>
-<h3>数学安全：<code>SafeMath</code> 与 <code>unchecked</code></h3>
-<h4>历史背景</h4>
-<ul>
+<h3 id="section-53">数学安全：<code>SafeMath</code> 与 <code>unchecked</code></h3><h4>历史背景</h4><ul>
 <li><p><strong>Solidity &lt; 0.8.0</strong>: 整数溢出（Overflow/Underflow）会“回绕”（Wrap around）。</p>
 <ul>
 <li><p><code>uint8(255) + 1</code> 变成 <code>0</code>。这是无数黑客事件的根源。</p>
@@ -1191,8 +1116,7 @@ require(success, &quot;Transfer failed&quot;);
 </ul>
 </li>
 </ul>
-<h4><code>unchecked</code> 代码块</h4>
-<p> <code>unchecked</code>，是为了 <strong>Gas 优化</strong>。</p>
+<h4><code>unchecked</code> 代码块</h4><p> <code>unchecked</code>，是为了 <strong>Gas 优化</strong>。</p>
 <p>如果开发者<strong>确定</strong>数学计算绝对不会溢出（例如循环计数器），可以手动关闭编译器的检查以节省 Gas。</p>
 <pre><code class="language-solidity">// Gas 优化示例
 function loop(uint256[] memory arr) external pure {
@@ -1207,18 +1131,15 @@ function loop(uint256[] memory arr) external pure {
     }
 }
 </code></pre>
-<h4>安全审计 Note</h4>
-<ul>
+<h4>安全审计 Note</h4><ul>
 <li><p><strong>滥用 <code>unchecked</code></strong>：如果你在审计中看到 <code>unchecked</code>，<strong>必须打起十二分精神</strong>。</p>
 </li>
 <li><p><strong>检查点</strong>：证明在任何极端情况下，该计算块内的逻辑确实不会溢出。如果无法数学证明，这就是一个潜在漏洞。</p>
 </li>
 </ul>
 <hr>
-<h3>ABI 编码与解码 (ABI Encoding &amp; Decoding)</h3>
-<p>在 EVM 中，数据必须被“序列化”成十六进制的字节流才能进行传输（例如函数调用、哈希计算）。Solidity 提供了多种编码方式，<strong>安全性</strong>和<strong>格式</strong>大不相同。</p>
-<h4>1. <code>abi.encode</code> (标准编码)</h4>
-<p>最常用的编码方式，严格遵循 ABI 规范。</p>
+<h3 id="section-54">ABI 编码与解码 (ABI Encoding &amp; Decoding)</h3><p>在 EVM 中，数据必须被“序列化”成十六进制的字节流才能进行传输（例如函数调用、哈希计算）。Solidity 提供了多种编码方式，<strong>安全性</strong>和<strong>格式</strong>大不相同。</p>
+<h4>1. <code>abi.encode</code> (标准编码)</h4><p>最常用的编码方式，严格遵循 ABI 规范。</p>
 <ul>
 <li><p><strong>特性</strong>：<strong>自动填充 (Padding)</strong>。每个参数都会被补全为 32 字节（256位）。</p>
 </li>
@@ -1234,8 +1155,7 @@ function loop(uint256[] memory arr) external pure {
 // 总长: 64字节
 bytes memory data = abi.encode(1, 2); 
 </code></pre>
-<h4>2. <code>abi.encodePacked</code> (紧凑编码)</h4>
-<ul>
+<h4>2. <code>abi.encodePacked</code> (紧凑编码)</h4><ul>
 <li><p><strong>特性</strong>：<strong>无填充</strong>。直接把数据拼接在一起，节省空间。</p>
 </li>
 <li><p><strong>用途</strong>：常用于计算哈希（<code>keccak256</code>），因为数据更短，省 Gas。</p>
@@ -1252,8 +1172,7 @@ keccak256(abi.encodePacked(a, b));
 <p>  <strong>防御</strong>：在两个动态参数之间加一个固定参数（如 <code>uint</code>），或者改用 <code>abi.encode</code>。</p>
 </li>
 </ul>
-<h4>3. 函数调用编码三剑客</h4>
-<p>用于构造低级调用 (<code>call</code>) 的 Payload。</p>
+<h4>3. 函数调用编码三剑客</h4><p>用于构造低级调用 (<code>call</code>) 的 Payload。</p>
 <table>
 <thead>
 <tr>
@@ -1297,8 +1216,7 @@ abi.encodeWithSignature(&quot;transfer(address,uint256)&quot;, to, amount);
 // 3. 灵活：用于代理合约或动态调用
 abi.encodeWithSelector(IERC20.transfer.selector, to, amount);
 </code></pre>
-<h4>4. <code>abi.decode</code> (解码)</h4>
-<p>将二进制数据还原为 Solidity 变量。</p>
+<h4>4. <code>abi.decode</code> (解码)</h4><p>将二进制数据还原为 Solidity 变量。</p>
 <ul>
 <li><p><strong>语法</strong>：<code>abi.decode(bytesData, (type1, type2))</code></p>
 </li>
@@ -1309,10 +1227,8 @@ abi.encodeWithSelector(IERC20.transfer.selector, to, amount);
 (uint256 a, uint256 b) = abi.decode(data, (uint256, uint256));
 </code></pre>
 <hr>
-<h3>OpenZeppelin <code>Address</code> 库</h3>
-<p>通常通过 <code>using Address for address;</code> 引入。它为 <code>address</code> 类型提供了一系列“增强版”的低级操作函数。</p>
-<h4>1. <code>functionCall</code> (最核心)</h4>
-<p><strong>定义</strong>：<code>target.functionCall(data)</code> 是底层 <code>.call</code> 的封装版本。</p>
+<h3 id="section-55">OpenZeppelin <code>Address</code> 库</h3><p>通常通过 <code>using Address for address;</code> 引入。它为 <code>address</code> 类型提供了一系列“增强版”的低级操作函数。</p>
+<h4>1. <code>functionCall</code> (最核心)</h4><p><strong>定义</strong>：<code>target.functionCall(data)</code> 是底层 <code>.call</code> 的封装版本。</p>
 <p><strong>它比原生 <code>.call</code> 多做了两件事：</strong></p>
 <ol>
 <li><p><strong>检查目标</strong>：确保 <code>target</code> 是一个合约（代码长度 &gt; 0），防止调用空地址成功。</p>
@@ -1339,8 +1255,7 @@ abi.encodeWithSelector(IERC20.transfer.selector, to, amount);
 </li>
 </ul>
 <hr>
-<h4>2. <code>isContract</code> (常见检查)</h4>
-<p><strong>定义</strong>：<code>address.isContract()</code> 返回 <code>true</code> 如果该地址包含代码。</p>
+<h4>2. <code>isContract</code> (常见检查)</h4><p><strong>定义</strong>：<code>address.isContract()</code> 返回 <code>true</code> 如果该地址包含代码。</p>
 <p>底层逻辑：</p>
 <p>检查 extcodesize(addr) 是否大于 0。</p>
 <p>⚠️ <strong>安全审计警示 (Bypass Warning)</strong></p>
@@ -1353,8 +1268,7 @@ abi.encodeWithSelector(IERC20.transfer.selector, to, amount);
 </li>
 </ul>
 <hr>
-<h4>3. <code>sendValue</code> (安全的转账)</h4>
-<p><strong>定义</strong>：<code>recipient.sendValue(amount)</code> 是转账 ETH 的推荐方式。</p>
+<h4>3. <code>sendValue</code> (安全的转账)</h4><p><strong>定义</strong>：<code>recipient.sendValue(amount)</code> 是转账 ETH 的推荐方式。</p>
 <p>作用：</p>
 <p>它是 address.transfer 的现代替代品。它使用底层的 .call{value: amount}(&quot;&quot;)，但自动检查返回值。</p>
 <p><strong>底层逻辑</strong>：</p>
@@ -1373,8 +1287,7 @@ abi.encodeWithSelector(IERC20.transfer.selector, to, amount);
 </li>
 </ul>
 <hr>
-<h4>总结对比</h4>
-<table>
+<h4>总结对比</h4><table>
 <thead>
 <tr>
 <th><strong>原生方法</strong></th>
@@ -1398,9 +1311,7 @@ abi.encodeWithSelector(IERC20.transfer.selector, to, amount);
 <td>封装了代码长度检查（注意构造函数绕过风险）。</td>
 </tr>
 </tbody></table>
-<h2>SafeERC20 &amp; SafeTransferLib</h2>
-<h3>1. 核心痛点：为什么不能直接 <code>transfer</code>？</h3>
-<p><strong>根本原因</strong>：ERC-20 标准执行不严，导致链上存在“怪异代币”（Weird ERC20s）。</p>
+<h2 id="section-56">SafeERC20 &amp; SafeTransferLib</h2><h3 id="section-57">1. 核心痛点：为什么不能直接 <code>transfer</code>？</h3><p><strong>根本原因</strong>：ERC-20 标准执行不严，导致链上存在“怪异代币”（Weird ERC20s）。</p>
 <table>
 <thead>
 <tr>
@@ -1425,8 +1336,7 @@ abi.encodeWithSelector(IERC20.transfer.selector, to, amount);
 </tbody></table>
 <p><strong>解决方案</strong>：这两个库都采用了 <strong>“低级调用 (<code>call</code>) + 兼容性解码”</strong> 的策略，强制统一了行为。</p>
 <hr>
-<h3>2. 深度对比表</h3>
-<table>
+<h3 id="section-58">2. 深度对比表</h3><table>
 <thead>
 <tr>
 <th><strong>特性</strong></th>
@@ -1471,9 +1381,7 @@ abi.encodeWithSelector(IERC20.transfer.selector, to, amount);
 </tr>
 </tbody></table>
 <hr>
-<h3>3. 代码实战对比</h3>
-<h4>方式一：OpenZeppelin (标准流)</h4>
-<pre><code class="language-solidity">import {SafeERC20} from &quot;@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol&quot;;
+<h3 id="section-59">3. 代码实战对比</h3><h4>方式一：OpenZeppelin (标准流)</h4><pre><code class="language-solidity">import {SafeERC20} from &quot;@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol&quot;;
 import {IERC20} from &quot;@openzeppelin/contracts/token/ERC20/IERC20.sol&quot;;
 
 contract StandardDeFi {
@@ -1485,8 +1393,7 @@ contract StandardDeFi {
     }
 }
 </code></pre>
-<h4>方式二：Solady (极客流)</h4>
-<pre><code class="language-solidity">import {SafeTransferLib} from &quot;solady/utils/SafeTransferLib.sol&quot;;
+<h4>方式二：Solady (极客流)</h4><pre><code class="language-solidity">import {SafeTransferLib} from &quot;solady/utils/SafeTransferLib.sol&quot;;
 
 contract OptimizedDeFi {
     using SafeTransferLib for address; // ⚠️ 绑定在 address 上
@@ -1503,11 +1410,8 @@ contract OptimizedDeFi {
 }
 </code></pre>
 <hr>
-<h1>gas优化机制</h1>
-<h2>位图 (Bitmap)：极致压缩的空间魔法</h2>
-<p>在以太坊上，存储数据（写硬盘）是最贵的，计算（CPU跑）相对便宜。</p>
-<h3>传统做法 vs. 位图做法</h3>
-<p>假设你要记录 <strong>256 个批次（Batch）</strong> 的奖励是否被领取过。</p>
+<h1>gas优化机制</h1><h2 id="section-60">位图 (Bitmap)：极致压缩的空间魔法</h2><p>在以太坊上，存储数据（写硬盘）是最贵的，计算（CPU跑）相对便宜。</p>
+<h3 id="section-61">传统做法 vs. 位图做法</h3><p>假设你要记录 <strong>256 个批次（Batch）</strong> 的奖励是否被领取过。</p>
 <ul>
 <li><p>传统做法（Mapping）：</p>
 <p>  你定义一个 mapping(uint256 =&gt; bool) isClaimed。</p>
@@ -1532,9 +1436,7 @@ contract OptimizedDeFi {
 </ul>
 </li>
 </ul>
-<h3>代码里的数学逻辑</h3>
-<h4>定位坐标</h4>
-<p>在合约代码中，你看到了这两行：</p>
+<h3 id="section-62">代码里的数学逻辑</h3><h4>定位坐标</h4><p>在合约代码中，你看到了这两行：</p>
 <pre><code class="language-solidity">uint256 wordPosition = inputClaim.batchNumber / 256; 
 uint256 bitPosition = inputClaim.batchNumber % 256;
 </code></pre>
@@ -1557,8 +1459,7 @@ uint256 bitPosition = inputClaim.batchNumber % 256;
 </ul>
 </li>
 </ul>
-<h4>设置状态</h4>
-<p>写入状态 (OR 运算)
+<h4>设置状态</h4><p>写入状态 (OR 运算)
 使用 <code>|</code> (OR) 操作符，因为 <code>x | 1 = 1</code>，<code>x | 0 = x</code>。</p>
 <pre><code class="language-solidity">// 将第 bitPosition 位置为 1
 storage[wordPosition] = storage[wordPosition] | (1 &lt;&lt; bitPosition);
@@ -1569,10 +1470,8 @@ storage[wordPosition] = storage[wordPosition] | (1 &lt;&lt; bitPosition);
 bool isClaimed = (storage[wordPosition] &amp; (1 &lt;&lt; bitPosition)) != 0;
 </code></pre>
 <hr>
-<h2>默克尔证明 (Merkle Proof)：零知识验证的鼻祖</h2>
-<p>如果说位图是为了省<strong>状态存储</strong>，那么默克尔树就是为了省<strong>名单存储</strong>。</p>
-<h3>场景：白名单空投</h3>
-<p>假设你要给 10,000 个用户发空投。</p>
+<h2 id="section-63">默克尔证明 (Merkle Proof)：零知识验证的鼻祖</h2><p>如果说位图是为了省<strong>状态存储</strong>，那么默克尔树就是为了省<strong>名单存储</strong>。</p>
+<h3 id="section-64">场景：白名单空投</h3><p>假设你要给 10,000 个用户发空投。</p>
 <ul>
 <li><p><strong>笨办法</strong>：把 10,000 个地址全部写死在合约里数组 <code>address[] public winners</code>。</p>
 <ul>
@@ -1592,8 +1491,7 @@ bool isClaimed = (storage[wordPosition] &amp; (1 &lt;&lt; bitPosition)) != 0;
 </ol>
 </li>
 </ul>
-<h3>怎么验证？(Proof)</h3>
-<p>当用户A来领奖时，她会说：“我在那 10,000 个人里，我要领钱。”</p>
+<h3 id="section-65">怎么验证？(Proof)</h3><p>当用户A来领奖时，她会说：“我在那 10,000 个人里，我要领钱。”</p>
 <p>合约问：“我手上只有一张根节点的指纹（Root），你没有存名单在链上，我怎么信你？”</p>
 <p>Al 拿出一张纸条，上面写着 <strong>Merkle Proof（默克尔证明）</strong>。这个证明包含了一组哈希值（通常叫“兄弟节点”）。</p>
 <p><strong>验证过程</strong>：</p>
@@ -1609,10 +1507,8 @@ bool isClaimed = (storage[wordPosition] &amp; (1 &lt;&lt; bitPosition)) != 0;
 <li><p><strong>关键判断</strong>：如果算出来的最终结果，和合约里存的 <strong>Root</strong> 一模一样，那就证明 Alice 确实在原始名单里，且金额没造假。</p>
 </li>
 </ol>
-<h3>为什么用户有其它兄弟节点值</h3>
-<p>默克尔证明的数据流转其实分为三个阶段。用户之所以能拿到兄弟节点的数据，是因为在游戏开始前，项目方已经把一切都算好了。</p>
-<h4>阶段一：项目方准备期（链下）</h4>
-<p>在合约部署之前，项目方手上有那份完整的 10,000 人获奖名单（比如一个 Excel 表）。</p>
+<h3 id="section-66">为什么用户有其它兄弟节点值</h3><p>默克尔证明的数据流转其实分为三个阶段。用户之所以能拿到兄弟节点的数据，是因为在游戏开始前，项目方已经把一切都算好了。</p>
+<h4>阶段一：项目方准备期（链下）</h4><p>在合约部署之前，项目方手上有那份完整的 10,000 人获奖名单（比如一个 Excel 表）。</p>
 <ol>
 <li><p>项目方写一个脚本（Python 或 JS），把这 10,000 个人生成一棵完整的默克尔树。</p>
 </li>
@@ -1621,16 +1517,14 @@ bool isClaimed = (storage[wordPosition] &amp; (1 &lt;&lt; bitPosition)) != 0;
 <li><p>项目方算出树根（Root）。</p>
 </li>
 </ol>
-<h4>阶段二：部署与存储（各奔东西）</h4>
-<p>这时候，数据分家了：</p>
+<h4>阶段二：部署与存储（各奔东西）</h4><p>这时候，数据分家了：</p>
 <ul>
 <li><p><strong>Root (32字节)</strong>：被部署到了<strong>区块链上的智能合约</strong>里。合约只知道这个。</p>
 </li>
 <li><p><strong>整棵树的数据 (几兆的文件)</strong>：被存到了<strong>项目方的网站服务器</strong>或者 IPFS 上。这就好比一本“答案全书”。</p>
 </li>
 </ul>
-<h4>阶段三：用户领取（前端喂饭）</h4>
-<p>这就是你困惑的地方。</p>
+<h4>阶段三：用户领取（前端喂饭）</h4><p>这就是你困惑的地方。</p>
 <ol>
 <li><p>当 A 打开领奖网页（DApp）并连接钱包。</p>
 </li>
@@ -1643,8 +1537,7 @@ bool isClaimed = (storage[wordPosition] &amp; (1 &lt;&lt; bitPosition)) != 0;
 <li><p>Alice 只需要点一下“确认”，交易就带着 Proof 发送给合约了。</p>
 </li>
 </ol>
-<h3>总结</h3>
-<p>用户<strong>不需要</strong>知道兄弟节点的数据，也不需要自己去算。</p>
+<h3 id="section-67">总结</h3><p>用户<strong>不需要</strong>知道兄弟节点的数据，也不需要自己去算。</p>
 <ul>
 <li><p><strong>数据可用性</strong>：由项目方的前端/后端提供。</p>
 </li>
@@ -1655,12 +1548,9 @@ bool isClaimed = (storage[wordPosition] &amp; (1 &lt;&lt; bitPosition)) != 0;
 </ul>
 <p>这就是 Web3 中经典的 <strong>“链下计算，链上验证”</strong> 模式。</p>
 <hr>
-<h1>易混淆</h1>
-<h3>一个.sol多个合约地址是不同，owner不一定同</h3>
-<p>在 Solidity 中：</p>
+<h1>易混淆</h1><h3 id="section-68">一个.sol多个合约地址是不同，owner不一定同</h3><p>在 Solidity 中：</p>
 <p>每个 <code>contract</code> 关键字定义的都是一个<strong>独立的合约类型</strong>，<br>编译器会为每个合约单独生成字节码、单独部署到链上、各自拥有独立 storage。 会有两份地址、两份 storage</p>
-<h3><code>private</code> 只阻止合约间源码访问，并不加密或隐藏链上存储。</h3>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/ERC标准/ERC-827/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-827</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/SpeedrunEthereum/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">SpeedrunEthereum</h4> </a> </div> </nav> </article>  </main> <script>
+<h3 id="section-69"><code>private</code> 只阻止合约间源码访问，并不加密或隐藏链上存储。</h3></div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/ERC标准/ERC-721/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-721</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/SpeedrunEthereum/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">SpeedrunEthereum</h4> </a> </div> </nav> </article>  </main> <script>
       (() => {
         const root = document.documentElement;
         const bindToggle = () => {

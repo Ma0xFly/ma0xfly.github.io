@@ -10,12 +10,10 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>ERC-4626</h1> <p class="lead"># ERC-4626: 代币化金库标准 (Tokenized Vault Standard) &gt; **一句话总结**：ERC-4626 统一定义了代表单一底层 ERC-20 代币的生息金库（Yield-bearing Vaults）的 API 接口，彻底解决了各种生息协议之间无法</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/ERC标准/ERC-4626.md</p> </header> <div class="article-content"><h1>ERC-4626: 代币化金库标准 (Tokenized Vault Standard)</h1>
-<blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>ERC-4626</h1> <p class="lead"># ERC-4626: 代币化金库标准 (Tokenized Vault Standard) &gt; **一句话总结**：ERC-4626 统一定义了代表单一底层 ERC-20 代币的生息金库（Yield-bearing Vaults）的 API 接口，彻底解决了各种生息协议之间无法</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/ERC标准/ERC-4626.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">1. 核心理念与痛点解决 (Core Concept)</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">2. 核心运转与数据结构 (Core Interfaces)</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">为什么不能是 1:1 兑换？（虚拟汇率魔法）</a> </li><li class="article-outline__item depth-2"> <a href="#section-5">3. 核心接口与数据结构 (Core Interfaces)</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">A. 核心状态结构 (State Variables)</a> </li><li class="article-outline__item depth-3"> <a href="#section-7">B. 关键机制与底层逻辑 (Core Functions)</a> </li><li class="article-outline__item depth-3"> <a href="#section-8">C. 关键事件 (Events)</a> </li><li class="article-outline__item depth-2"> <a href="#section-9">4. 关键机制与难点解析一：永远偏袒银楼的取整法则 (Rounding)</a> </li><li class="article-outline__item depth-2"> <a href="#section-10">5. 关键机制与难点解析二：通用的致命绞肉机 (Inflation Attack)</a> </li><li class="article-outline__item depth-3"> <a href="#section-11">1. 通胀/捐赠攻击 (Inflation / Donation Attack) 🌟🌟🌟</a> </li><li class="article-outline__item depth-3"> <a href="#section-12">2. 暗流涌动的价格操纵</a> </li> </ol> </nav> <div class="article-content"><h1>ERC-4626: 代币化金库标准 (Tokenized Vault Standard)</h1><blockquote>
 <p><strong>一句话总结</strong>：ERC-4626 统一定义了代表单一底层 ERC-20 代币的生息金库（Yield-bearing Vaults）的 API 接口，彻底解决了各种生息协议之间无法低成本路由组合的痛点。</p>
 </blockquote>
-<h2>📜 核心元数据与参阅资料 (Metadata &amp; References)</h2>
-<blockquote>
+<h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><blockquote>
 <p><strong>信息源原则</strong>：底层的通信/代币标准必须以 <strong>Ethereum EIP 官方文档 (ethereum.org/EIPS)</strong> 和最主流的防呆实现库（如 <strong>OpenZeppelin</strong> 或 <strong>Solmate</strong>）的源码作为<strong>唯一第一手真理源</strong>。切忌大量摘抄二手的科普文章。</p>
 </blockquote>
 <ul>
@@ -25,17 +23,14 @@
 <li><strong>依赖基座标准</strong>：必须完全兼容 ERC-20 标准。</li>
 </ul>
 <hr>
-<h2>1. 核心理念与痛点解决 (Core Concept)</h2>
-<p>在它出现之前，Aave、Yearn、Compound 都有自己独立的一套“储户存折”标准（如 aToken, yvToken, cToken）。开发人员必须给每一家平台写专门的代码适配器，严重阻碍了 DeFi 的可组合性。ERC-4626 成功统一定义了生息金库的“出入金” API 交互。</p>
+<h2 id="section-2">1. 核心理念与痛点解决 (Core Concept)</h2><p>在它出现之前，Aave、Yearn、Compound 都有自己独立的一套“储户存折”标准（如 aToken, yvToken, cToken）。开发人员必须给每一家平台写专门的代码适配器，严重阻碍了 DeFi 的可组合性。ERC-4626 成功统一定义了生息金库的“出入金” API 交互。</p>
 <p>最重要的是：<strong>每一个实现了 ERC-4626 的金库，其发行的份额 (Share) 本身也是一个标准的无缝 ERC-20 代币</strong>。</p>
-<h2>2. 核心运转与数据结构 (Core Interfaces)</h2>
-<p>理解 4626 金库运作的核心，在于搞懂两个概念的彻底剥离：</p>
+<h2 id="section-3">2. 核心运转与数据结构 (Core Interfaces)</h2><p>理解 4626 金库运作的核心，在于搞懂两个概念的彻底剥离：</p>
 <ul>
 <li><strong>Asset（底层资产/真金白银）</strong>：金库真正在运转的基础 ERC-20 代币（例如 USDC、DAI）。这是你拿去银楼投资的原始本金。</li>
 <li><strong>Share（金库份额/动态股权凭证）</strong>：银楼给你开具的“金库股份提货单”。当你存入 Asset，金库铸造 Share 给你；当你退出，你把 Share 还给金库销毁，换回本金与利息。</li>
 </ul>
-<h3>为什么不能是 1:1 兑换？（虚拟汇率魔法）</h3>
-<p>在 4626 金库里，Share 并不是死板地永远锚定 1 美金。它是一张**“自带复利光环的动态收据”**。它的单价是随着金库总资产动态缩放的，这与 Curve 的 Virtual Price 异曲同工。</p>
+<h3 id="section-4">为什么不能是 1:1 兑换？（虚拟汇率魔法）</h3><p>在 4626 金库里，Share 并不是死板地永远锚定 1 美金。它是一张**“自带复利光环的动态收据”**。它的单价是随着金库总资产动态缩放的，这与 Curve 的 Virtual Price 异曲同工。</p>
 <p>它永远在底层精密维护着一个神圣的资金恒等式：
 $$\frac{\text{你的股份 (UserShares)}}{\text{总发行的股份 (TotalSupply)}} = \frac{\text{你应该拿走的真金 (UserAssets)}}{\text{金库目前所有的真金 (TotalAssets)}}$$</p>
 <p><strong>动态运转逻辑（大白话）：</strong></p>
@@ -46,22 +41,18 @@ $$\frac{\text{你的股份 (UserShares)}}{\text{总发行的股份 (TotalSupply)
 <li><strong>结论</strong>：随着金库不断赚取复利赚取利润，$\text{TotalAssets}$（分子）变大，<strong>1 张 Share 对应能提取出的 Asset 永远单边稳步上涨</strong>。你的财富就这样跟着股份增值了。</li>
 </ol>
 <hr>
-<h2>3. 核心接口与数据结构 (Core Interfaces)</h2>
-<blockquote>
+<h2 id="section-5">3. 核心接口与数据结构 (Core Interfaces)</h2><blockquote>
 <p><strong>💡 核心视角切换：</strong> 用户手里总是捏着 Shares 走来走去，而金库保险箱里永远死死锁着 Assets（真金白银）。</p>
 </blockquote>
-<h3>A. 核心状态结构 (State Variables)</h3>
-<pre><code class="language-solidity">// 为了计算汇率，金库唯一需要知道的两件事：
+<h3 id="section-6">A. 核心状态结构 (State Variables)</h3><pre><code class="language-solidity">// 为了计算汇率，金库唯一需要知道的两件事：
 // 1. 池子里到底有多少真金白银？(通常由 IERC20(asset).balanceOf(address(this)) 获取)
 // 2. 我这金楼一共开出去了多少张凭证？(由于 4626 本身就是继承 ERC-20 的，它自带 _totalSupply 账本)
 
 IERC20 private immutable _asset; // 永远锚定且无法更改的底层基础资产
 uint8 private immutable _underlyingDecimals; // 基础资产的精度
 </code></pre>
-<h3>B. 关键机制与底层逻辑 (Core Functions)</h3>
-<p>ERC-4626 在大堂里开设了四个方向极其对称的结账窗口。</p>
-<h4>1. <code>deposit</code> (定投本金，按汇率拿股)</h4>
-<p>最常见的常规存款。</p>
+<h3 id="section-7">B. 关键机制与底层逻辑 (Core Functions)</h3><p>ERC-4626 在大堂里开设了四个方向极其对称的结账窗口。</p>
+<h4>1. <code>deposit</code> (定投本金，按汇率拿股)</h4><p>最常见的常规存款。</p>
 <ul>
 <li><strong>白话逻辑解析</strong>：“我要存入确切的 100 U 真金本金，全给我存进去，能按汇率换多少股份算多少。” (正向推演)</li>
 <li><strong>核心源码骨架</strong>：<pre><code class="language-solidity">function deposit(uint256 assets, address receiver) public virtual returns (uint256) {
@@ -80,8 +71,7 @@ uint8 private immutable _underlyingDecimals; // 基础资产的精度
 </code></pre>
 </li>
 </ul>
-<h4>2. <code>mint</code> (定量认购，补齐本金)</h4>
-<ul>
+<h4>2. <code>mint</code> (定量认购，补齐本金)</h4><ul>
 <li><strong>白话逻辑解析</strong>：“我是强迫症，我就要刚好凑齐确切的 10 股 Share 整数，你算算要收我多少 U 真金？” (反向推演)</li>
 <li><strong>核心源码骨架</strong>：<pre><code class="language-solidity">function mint(uint256 shares, address receiver) public virtual returns (uint256) {
     // 反向推演出为了凑齐这些股份，用户必须交多少钱 (向上取整要求用户多交一点保护金库)
@@ -96,8 +86,7 @@ uint8 private immutable _underlyingDecimals; // 基础资产的精度
 </code></pre>
 </li>
 </ul>
-<h4>3. <code>redeem</code> / <code>withdraw</code> (出金窗口：定销股份 / 定量索赔)</h4>
-<p>这两者的关系与入金完全镜像对称。</p>
+<h4>3. <code>redeem</code> / <code>withdraw</code> (出金窗口：定销股份 / 定量索赔)</h4><p>这两者的关系与入金完全镜像对称。</p>
 <ul>
 <li><strong>核心源码骨架</strong>：<pre><code class="language-solidity">// redeem 诉求：我有 100 股 Share 全给销毁了，金库能退我多少钱就退我多少钱。
 function redeem(uint256 shares, address receiver, address owner) public virtual returns (uint256) {
@@ -119,13 +108,11 @@ function redeem(uint256 shares, address receiver, address owner) public virtual 
 </code></pre>
 </li>
 </ul>
-<h3>C. 关键事件 (Events)</h3>
-<ul>
+<h3 id="section-8">C. 关键事件 (Events)</h3><ul>
 <li><code>Deposit(...)</code> 和 <code>Withdraw(...)</code>：当资金进出金库时触发。记录了进出的真金白银数量 <code>assets</code> 以及增发的凭证数量 <code>shares</code>，供仪表盘平台实时回退推演收益率 (APY)。</li>
 </ul>
 <hr>
-<h2>4. 关键机制与难点解析一：永远偏袒银楼的取整法则 (Rounding)</h2>
-<p>这是 4626 标准中最硬核、也是无数黑客试图寻找破绽的审计重灾区。</p>
+<h2 id="section-9">4. 关键机制与难点解析一：永远偏袒银楼的取整法则 (Rounding)</h2><p>这是 4626 标准中最硬核、也是无数黑客试图寻找破绽的审计重灾区。</p>
 <p>由于 Solidity 语言只有整数运算、没有小数，在处理汇率除法时必定产生小数点截断误差。为了防止极客套利机器人利用百万分之一的精度误差来循环薅秃银楼，ERC-4626 制定了极其冷酷的**“铁律：协议永远不亏，用户必须吃亏”**：</p>
 <ul>
 <li><strong>当系统要发给你东西时（比如你想存钱要 Share，或烧 Share 要退钱），必须 向下取整 (Round Down)</strong>。哪怕经过精密计算该发给你 9.99 份财产，对不起，无情抹零，只发给 9 份。</li>
@@ -133,10 +120,8 @@ function redeem(uint256 shares, address receiver, address owner) public virtual 
 </ul>
 <p>这种极度自私的霸王条款，直接一刀切底堵死了套利机器人通过成千上万次高频碎片交互来榨毁金库资金池的可能。</p>
 <hr>
-<h2>5. 关键机制与难点解析二：通用的致命绞肉机 (Inflation Attack)</h2>
-<p>所有的统一度量衡都会带来一种恐怖的通病：只要底层逻辑有那么一点点未封死的漏洞，就会引发全行业的批量惨绝灭顶之灾。</p>
-<h3>1. 通胀/捐赠攻击 (Inflation / Donation Attack) 🌟🌟🌟</h3>
-<p>这是 ERC-4626 最经典、杀伤力最广的初见杀漏洞。专杀防备不严的新银楼。</p>
+<h2 id="section-10">5. 关键机制与难点解析二：通用的致命绞肉机 (Inflation Attack)</h2><p>所有的统一度量衡都会带来一种恐怖的通病：只要底层逻辑有那么一点点未封死的漏洞，就会引发全行业的批量惨绝灭顶之灾。</p>
+<h3 id="section-11">1. 通胀/捐赠攻击 (Inflation / Donation Attack) 🌟🌟🌟</h3><p>这是 ERC-4626 最经典、杀伤力最广的初见杀漏洞。专杀防备不严的新银楼。</p>
 <ul>
 <li><p><strong>黑客连招</strong>：</p>
 <ol>
@@ -161,9 +146,8 @@ function redeem(uint256 shares, address receiver, address owner) public virtual 
 </ul>
 </li>
 </ul>
-<h3>2. 暗流涌动的价格操纵</h3>
-<p>如果金库底层 <code>totalAssets</code> 的判断依据是 Uniswap 等外部流动性池的即时外汇价格，由于我们在 Aave 学过了<strong>闪电贷</strong>的核武器属性，黑客就可以在同一秒钟瞬间操纵出一个极端的短期低价。在系统以为资产暴跌的这一瞬间“白菜价爆买”巨量 Shares，下一秒价格流动恢复后再从容退股砸盘吸血。因此，凡是 4626 金库的资产估值，必须使用坚若磐石的时间加权预言机（TWAP）或严苛的极速校验。</p>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/ERC标准/ERC-3643/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-3643</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/ERC标准/ERC-6093/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-6093</h4> </a> </div> </nav> </article>  </main> <script>
+<h3 id="section-12">2. 暗流涌动的价格操纵</h3><p>如果金库底层 <code>totalAssets</code> 的判断依据是 Uniswap 等外部流动性池的即时外汇价格，由于我们在 Aave 学过了<strong>闪电贷</strong>的核武器属性，黑客就可以在同一秒钟瞬间操纵出一个极端的短期低价。在系统以为资产暴跌的这一瞬间“白菜价爆买”巨量 Shares，下一秒价格流动恢复后再从容退股砸盘吸血。因此，凡是 4626 金库的资产估值，必须使用坚若磐石的时间加权预言机（TWAP）或严苛的极速校验。</p>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/ERC标准/ERC-3156/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-3156</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/ERC标准/ERC-3643/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-3643</h4> </a> </div> </nav> </article>  </main> <script>
       (() => {
         const root = document.documentElement;
         const bindToggle = () => {

@@ -10,12 +10,10 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>ERC-721</h1> <p class="lead"># ERC-721: 非同质化代币标准 (NFT) &gt; **一句话总结**：ERC-721 是以太坊上用于构建**非同质化代币 (Non-Fungible Token, NFT)** 的黄金级基础设施，它抛弃了账户余额的简单加减法，创造性地引入了能精确追踪“每一件唯一物品属于谁”</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/ERC标准/ERC-721.md</p> </header> <div class="article-content"><h1>ERC-721: 非同质化代币标准 (NFT)</h1>
-<blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>ERC-721</h1> <p class="lead"># ERC-721: 非同质化代币标准 (NFT) &gt; **一句话总结**：ERC-721 是以太坊上用于构建**非同质化代币 (Non-Fungible Token, NFT)** 的黄金级基础设施，它抛弃了账户余额的简单加减法，创造性地引入了能精确追踪“每一件唯一物品属于谁”</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/ERC标准/ERC-721.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">1. 核心理念与痛点解决 (Core Concept)</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">2. 核心接口与数据结构 (Core Interfaces)</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">A. 核心状态结构 (State Variables)</a> </li><li class="article-outline__item depth-3"> <a href="#section-5">B. 关键机制与底层逻辑 (Core Functions)</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">C. 关键事件 (Events)</a> </li><li class="article-outline__item depth-2"> <a href="#section-7">3. 标准业务工作流 (Standard Workflow)</a> </li><li class="article-outline__item depth-2"> <a href="#section-8">4. 关键机制与难点解析 (Key Mechanics)</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">A. 核心难点一：能“敲门”的安全转账防呆机制</a> </li><li class="article-outline__item depth-3"> <a href="#section-10">B. 核心难点二：双刃剑 —— 安全转账引发的毁灭性“重入攻击”</a> </li><li class="article-outline__item depth-2"> <a href="#section-11">5. 周边生态与后续演进 (Ecosystem)</a> </li> </ol> </nav> <div class="article-content"><h1>ERC-721: 非同质化代币标准 (NFT)</h1><blockquote>
 <p><strong>一句话总结</strong>：ERC-721 是以太坊上用于构建<strong>非同质化代币 (Non-Fungible Token, NFT)</strong> 的黄金级基础设施，它抛弃了账户余额的简单加减法，创造性地引入了能精确追踪“每一件唯一物品属于谁”的产权记账模型。</p>
 </blockquote>
-<h2>📜 核心元数据与参阅资料 (Metadata &amp; References)</h2>
-<blockquote>
+<h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><blockquote>
 <p><strong>信息源原则</strong>：底层的通信/代币标准必须以 <strong>Ethereum EIP 官方文档 (ethereum.org/EIPS)</strong> 和最主流的防呆实现库（如 <strong>OpenZeppelin</strong> 或 <strong>Solmate</strong>）的源码作为<strong>唯一第一手真理源</strong>。切忌大量摘抄二手的科普文章。</p>
 </blockquote>
 <ul>
@@ -25,8 +23,7 @@
 <li><strong>依赖基座标准</strong>：必须与 ERC-165 (接口自省) 配合使用。</li>
 </ul>
 <hr>
-<h2>1. 核心理念与痛点解决 (Core Concept)</h2>
-<ul>
+<h2 id="section-2">1. 核心理念与痛点解决 (Core Concept)</h2><ul>
 <li><strong>传统痛点/背景</strong>：ERC-20 虽然伟大，但它只能处理“钱（同质化资产）”。如果你想在链上卖一只具有独一无二基因的加密猫（CryptoKitties），或者发行带座位的演唱会门票、甚至房产证，ERC-20 根本做不到，因为它无法区分“你的 1 个币”和“我的 1 个币”有什么不同。</li>
 <li><strong>破局思路</strong>：ERC-721 彻底改变了记账逻辑。它不再核心关注“你拥有多少个币”，而是死死盯住一个全局唯一的数字身份证号 —— <code>uint256 tokenId</code>。在这个宇宙里，任何一个动作（转账、授权）都必须精确带上这个 <code>tokenId</code>。</li>
 <li><strong>专属名词解释</strong>：<ul>
@@ -35,12 +32,10 @@
 </li>
 </ul>
 <hr>
-<h2>2. 核心接口与数据结构 (Core Interfaces)</h2>
-<blockquote>
+<h2 id="section-3">2. 核心接口与数据结构 (Core Interfaces)</h2><blockquote>
 <p>与 ERC-20 只要两个账本不同，ERC-721 需要同时追踪&quot;具体归属&quot;、&quot;数量&quot;以及复杂的&quot;多层级授权&quot;。</p>
 </blockquote>
-<h3>A. 核心状态结构 (State Variables)</h3>
-<pre><code class="language-solidity">// 1. 灵魂账本：查户口本。输入 tokenId，精准返回这件艺术品现在在哪个地址手里。
+<h3 id="section-4">A. 核心状态结构 (State Variables)</h3><pre><code class="language-solidity">// 1. 灵魂账本：查户口本。输入 tokenId，精准返回这件艺术品现在在哪个地址手里。
 mapping(uint256 =&gt; address) private _ownerOf;
 
 // 2. 统计账本：查土豪榜。输入地址，返回该地址在这个集合里总共收藏了多少个 NFT。
@@ -52,9 +47,7 @@ mapping(uint256 =&gt; address) private _approvals;
 // 4. 全局授权：谁能动我名下所有的猴子？（通常授权给 OpenSea 这样的交易所）
 mapping(address =&gt; mapping(address =&gt; bool)) private _isApprovedForAll;
 </code></pre>
-<h3>B. 关键机制与底层逻辑 (Core Functions)</h3>
-<h4>1. <code>ownerOf</code> (追踪所有权) 与身份验证门禁</h4>
-<p>几乎所有 Web3 游戏、Discord 会员群判定玩家是否有资格的唯一下层依据。</p>
+<h3 id="section-5">B. 关键机制与底层逻辑 (Core Functions)</h3><h4>1. <code>ownerOf</code> (追踪所有权) 与身份验证门禁</h4><p>几乎所有 Web3 游戏、Discord 会员群判定玩家是否有资格的唯一下层依据。</p>
 <ul>
 <li><strong>白话逻辑解析</strong>：极其简单，直接查库返回 <code>_ownerOf</code> 的映射值。</li>
 <li><strong>核心源码骨架</strong>：<pre><code class="language-solidity">function ownerOf(uint256 id) public view returns (address owner) {
@@ -65,8 +58,7 @@ mapping(address =&gt; mapping(address =&gt; bool)) private _isApprovedForAll;
 </code></pre>
 </li>
 </ul>
-<h4>2. <code>transferFrom</code> (单品过户流转)</h4>
-<p>变更主人。这是最核心的数据一致性更新流。</p>
+<h4>2. <code>transferFrom</code> (单品过户流转)</h4><p>变更主人。这是最核心的数据一致性更新流。</p>
 <ul>
 <li><strong>白话逻辑解析</strong>：当一件 NFT 易手，有四个账本要同步更新：卖家余额-1，买家余额+1，物品主人更改，<strong>并且必须清扫掉卖家以前对这个物品所做的旧 <code>approve</code> 授权（防止卖家一鱼多吃）</strong>。</li>
 <li><strong>核心源码骨架</strong>：<pre><code class="language-solidity">function transferFrom(address from, address to, uint256 id) public {
@@ -88,8 +80,7 @@ mapping(address =&gt; mapping(address =&gt; bool)) private _isApprovedForAll;
 </code></pre>
 </li>
 </ul>
-<h4>3. <code>setApprovalForAll</code> (全权委托 / 批量挂售)</h4>
-<p>为 Web3 商业而生的批量操作逻辑。</p>
+<h4>3. <code>setApprovalForAll</code> (全权委托 / 批量挂售)</h4><p>为 Web3 商业而生的批量操作逻辑。</p>
 <ul>
 <li><strong>白话逻辑解析</strong>：你不用对 100 只猴子点 100 次 <code>approve</code> 签发 100 笔 Gas。只要点一次这个函数，你的钱包就向平台完全敞开了仓库。</li>
 <li><strong>核心源码骨架</strong>：<pre><code class="language-solidity">function setApprovalForAll(address operator, bool approved) public {
@@ -99,13 +90,11 @@ mapping(address =&gt; mapping(address =&gt; bool)) private _isApprovedForAll;
 </code></pre>
 </li>
 </ul>
-<h3>C. 关键事件 (Events)</h3>
-<ul>
+<h3 id="section-6">C. 关键事件 (Events)</h3><ul>
 <li><code>Transfer(address indexed from, address indexed to, uint256 indexed tokenId)</code>：所有权发生转移时的广播。注意与 ERC-20 不同，这里记录的最后一项数据不再是同质化的转账金额，而是那个唯一的 <code>tokenId</code> 编号。这是以太坊区块浏览器渲染 NFT 图像变动的基石。</li>
 </ul>
 <hr>
-<h2>3. 标准业务工作流 (Standard Workflow)</h2>
-<p><strong>你在 OpenSea 上挂售并被买家买走一个无聊猿 NFT 的底层数据流转：</strong></p>
+<h2 id="section-7">3. 标准业务工作流 (Standard Workflow)</h2><p><strong>你在 OpenSea 上挂售并被买家买走一个无聊猿 NFT 的底层数据流转：</strong></p>
 <ol>
 <li><strong>铸造降生 (Mint)</strong>：项目方调用内部 <code>_mint(你的地址, 8888)</code>，全网第 8888 号猴子诞生在你账上，<code>_ownerOf[8888]</code> 被写上了你的名字。</li>
 <li><strong>批量挂售授权 (Approve All)</strong>：你在 OpenSea 上点击挂售。底层调用 <code>setApprovalForAll(OpenSea 合约地址, true)</code>。你将名下所有该系列猴子的处置权交给了交易所。</li>
@@ -114,12 +103,10 @@ mapping(address =&gt; mapping(address =&gt; bool)) private _isApprovedForAll;
 <li><strong>账本刷新 (Accounting)</strong>：合约内部清空你的 <code>_balanceOf</code> 和 8888 的 <code>_ownerOf</code>，将 8888 号的主人重写为买家的地址，并在全网大喇叭广播 <code>Transfer</code> 事件。一笔 NFT 交易闭环完成。</li>
 </ol>
 <hr>
-<h2>4. 关键机制与难点解析 (Key Mechanics)</h2>
-<blockquote>
+<h2 id="section-8">4. 关键机制与难点解析 (Key Mechanics)</h2><blockquote>
 <p>对于协议中那些绕人的数学计算、状态机流转或者是舍入取整规则，<strong>必须配以核心公式推导或精简版代码辅助理解</strong>。</p>
 </blockquote>
-<h3>A. 核心难点一：能“敲门”的安全转账防呆机制</h3>
-<ul>
+<h3 id="section-9">A. 核心难点一：能“敲门”的安全转账防呆机制</h3><ul>
 <li><strong>原理讲解</strong>：在以前，如果你拿 ERC-20 的 <code>transfer</code> 随便向一个没写提现代码的智能合约转账，由于合约是个低智商机器，它收了钱也取不出来，钱就永久卡死了。ERC-721 发明了 <code>safeTransferFrom</code>。这个机制规定：如果你要把 NFT 转给一个“合约”（而非普通人），转账最后一步，必须强制触发那个接收方合约身上的回调函数 <code>onERC721Received</code>。接收方合约必须清醒地答复一串极其特定的“魔数（Magic Number）”，才算过户成功。如果哑巴了，或者答错了，整笔过户直接回滚！</li>
 <li><strong>数学推导/公式</strong>：$\text{魔数} = \text{IERC721Receiver.onERC721Received.selector} = \text{0x150b7a02}$</li>
 <li><strong>核心逻辑代码 (Solidity)</strong>：<pre><code class="language-solidity">// 在安全过户的最后一步，触发防呆守卫
@@ -139,14 +126,12 @@ function _checkOnERC721Received(address from, address to, uint256 tokenId, bytes
 </code></pre>
 <em>代码拆解</em>：注意 <code>to.isContract()</code> 这个判断，区分了 EOA（普通用户账户）和合约账户。对于合约账户的强制 <code>try-catch</code> 回调验证，是业界防止用户手滑造成巨大财产损失的神级设定。</li>
 </ul>
-<h3>B. 核心难点二：双刃剑 —— 安全转账引发的毁灭性“重入攻击”</h3>
-<ul>
+<h3 id="section-10">B. 核心难点二：双刃剑 —— 安全转账引发的毁灭性“重入攻击”</h3><ul>
 <li><strong>原理讲解</strong>：承接上文，既然 <code>safeTransferFrom</code> 在过户的最后必须去调用那个不受信任的接收方合约的 <code>onERC721Received</code>，那么这里就给黑客打开了一个著名的**重入攻击（Reentrancy）**后门！当控制权顺着防呆验证移交给黑客准备好的接收方合约时，黑客可以在这个 <code>onERC721Received</code> 回调函数里写死循环代码，反向再次入侵你的 NFT 合约，在你的旧状态还没来得及改变时疯狂提领其它资产！</li>
 <li><strong>防御与最佳实践</strong>：所有涉及到 <code>safeTransferFrom</code> 的铸造或转移上层函数，必须死死遵守 <strong>Checks-Effects-Interactions（检查-生效-交互）</strong> 模式。也就是说，一定要先把 <code>_ownerOf</code> 的名字改了（生效），最后再去触发那个极其危险的外部调用 <code>_checkOnERC721Received</code>（交互）！或者直接引入无脑好用的防重入锁 <code>nonReentrant</code>。</li>
 </ul>
 <hr>
-<h2>5. 周边生态与后续演进 (Ecosystem)</h2>
-<ul>
+<h2 id="section-11">5. 周边生态与后续演进 (Ecosystem)</h2><ul>
 <li><strong>主流采用方</strong>：Bored Ape Yacht Club, CryptoPunks, ENS 域名等全网所有的主流 NFT。</li>
 <li><strong>标准的局限性</strong>：<ol>
 <li><strong>批量处理极差</strong>：如果你想在游戏中同时给玩家发 1 把宝剑、3 面盾牌、10 瓶红药水（涵盖同质化和非同质化），用 ERC-721 你得部署无数个合约并极其痛苦地循环铸造，还要交天价 Gas 费。</li>
@@ -158,7 +143,7 @@ function _checkOnERC721Received(address from, address to, uint256 tokenId, bytes
 </ul>
 </li>
 </ul>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/ERC标准/ERC-6093/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-6093</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/ERC标准/ERC-827/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-827</h4> </a> </div> </nav> </article>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/ERC标准/ERC-827/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-827</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/solidity语法/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">solidity语法</h4> </a> </div> </nav> </article>  </main> <script>
       (() => {
         const root = document.documentElement;
         const bindToggle = () => {

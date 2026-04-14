@@ -10,12 +10,10 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">合约审计</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>审计思路与常见合约设计</h1> <p class="lead"># 审计思路 这是每一位 Web3 安全工程师新手的必经之路。面对几百行代码感到不知所措是非常正常的。 别担心，专业的审计并不是从第一行读到最后一行。我们有一套**标准化的审计“战术流程”**。 --- ### 第一步：鸟瞰全貌 **目的**：搞清楚“这合约是干嘛的”、“它使用了</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/合约审计/审计思路与常见合约设计.md</p> </header> <div class="article-content"><h1>审计思路</h1>
-<p>这是每一位 Web3 安全工程师新手的必经之路。面对几百行代码感到不知所措是非常正常的。</p>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">合约审计</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>审计思路与常见合约设计</h1> <p class="lead"># 审计思路 这是每一位 Web3 安全工程师新手的必经之路。面对几百行代码感到不知所措是非常正常的。 别担心，专业的审计并不是从第一行读到最后一行。我们有一套**标准化的审计“战术流程”**。 --- ### 第一步：鸟瞰全貌 **目的**：搞清楚“这合约是干嘛的”、“它使用了</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/合约审计/审计思路与常见合约设计.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-3"> <a href="#section-1">第一步：鸟瞰全貌</a> </li><li class="article-outline__item depth-3"> <a href="#section-2">第二步：资金锚定</a> </li><li class="article-outline__item depth-3"> <a href="#section-3">第三步：核心逻辑精读</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">第四步：威胁建模</a> </li><li class="article-outline__item depth-3"> <a href="#section-5">总结：新手审计的“四板斧”</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">第一阶段：全貌扫描 (Bird&#39;s Eye View)</a> </li><li class="article-outline__item depth-3"> <a href="#section-7">第二阶段：资金锚定 (Funds Anchoring)</a> </li><li class="article-outline__item depth-3"> <a href="#section-8">第三阶段：核心逻辑精读 (Core Logic Deep Dive)</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">第四阶段：威胁建模 (Threat Modeling)</a> </li><li class="article-outline__item depth-3"> <a href="#section-10">总结：SOP 执行速查表 (Checklist)</a> </li><li class="article-outline__item depth-2"> <a href="#section-11">Multicall</a> </li><li class="article-outline__item depth-3"> <a href="#section-12">1. 为什么我们需要 Multicall？(业务价值)</a> </li><li class="article-outline__item depth-3"> <a href="#section-13">2. 底层原理 (代码审计视角)</a> </li><li class="article-outline__item depth-3"> <a href="#section-14">3. 常见的 Multicall 类型</a> </li> </ol> </nav> <div class="article-content"><h1>审计思路</h1><p>这是每一位 Web3 安全工程师新手的必经之路。面对几百行代码感到不知所措是非常正常的。</p>
 <p>别担心，专业的审计并不是从第一行读到最后一行。我们有一套<strong>标准化的审计“战术流程”</strong>。</p>
 <hr>
-<h3>第一步：鸟瞰全貌</h3>
-<p><strong>目的</strong>：搞清楚“这合约是干嘛的”、“它使用了什么工具”。</p>
+<h3 id="section-1">第一步：鸟瞰全貌</h3><p><strong>目的</strong>：搞清楚“这合约是干嘛的”、“它使用了什么工具”。</p>
 <ul>
 <li><p><strong>看名字</strong>：通常暗示了业务逻辑（如 <code>Pool</code>, <code>Vault</code>, <code>Lender</code>）。</p>
 </li>
@@ -34,8 +32,7 @@
 <li><p><strong>看引入 (Imports)</strong>：使用了 OpenZeppelin 还是 Solmate？（Solmate 通常更激进，少检查）。</p>
 </li>
 </ul>
-<h3>第二步：资金锚定</h3>
-<p><strong>目的</strong>：找到“金库”在哪里。合约最危险的地方就是存钱的地方。</p>
+<h3 id="section-2">第二步：资金锚定</h3><p><strong>目的</strong>：找到“金库”在哪里。合约最危险的地方就是存钱的地方。</p>
 <ul>
 <li><p><strong>找状态变量</strong>：</p>
 <ul>
@@ -56,8 +53,7 @@
 </ul>
 </li>
 </ul>
-<h3>第三步：核心逻辑精读</h3>
-<p><strong>目的</strong>：逐行翻译最复杂的那个函数（通常是 <code>flashLoan</code>, <code>swap</code>, <code>deposit</code>）。</p>
+<h3 id="section-3">第三步：核心逻辑精读</h3><p><strong>目的</strong>：逐行翻译最复杂的那个函数（通常是 <code>flashLoan</code>, <code>swap</code>, <code>deposit</code>）。</p>
 <ul>
 <li><p><strong>扮演攻击者 (Attacker Mindset)</strong>：在读每一行时，自问自答：</p>
 <ul>
@@ -72,8 +68,7 @@
 </ul>
 </li>
 </ul>
-<h3>第四步：威胁建模</h3>
-<p><strong>目的</strong>：扫描高危操作和组合漏洞。</p>
+<h3 id="section-4">第四步：威胁建模</h3><p><strong>目的</strong>：扫描高危操作和组合漏洞。</p>
 <ul>
 <li><p>外部调用 ：</p>
 <ul>
@@ -98,8 +93,7 @@
 </li>
 </ul>
 <hr>
-<h3>总结：新手审计的“四板斧”</h3>
-<p>下次看到大段代码，按这个顺序切入：</p>
+<h3 id="section-5">总结：新手审计的“四板斧”</h3><p>下次看到大段代码，按这个顺序切入：</p>
 <ol>
 <li><p><strong>看门面 (Interface)</strong>：看继承了什么，引入了什么库。（确定是 DeFi、NFT 还是 DAO？）</p>
 </li>
@@ -121,15 +115,13 @@
 </ol>
 <p><strong>现在，你再回头看那段代码，是不是感觉清晰多了？</strong> 不要在意 <code>_deposit</code> 那种辅助函数，盯着 <code>flashLoan</code> 这种核心业务逻辑猛攻。</p>
 <hr>
-<h1>智能合约安全审计 SOP (v1.0)</h1>
-<p>基于你提供的 <strong>“合约分析四步法”</strong>，我已将其标准化为一份 <strong>Web3 安全审计 SOP (Standard Operating Procedure)</strong>。</p>
+<h1>智能合约安全审计 SOP (v1.0)</h1><p>基于你提供的 <strong>“合约分析四步法”</strong>，我已将其标准化为一份 <strong>Web3 安全审计 SOP (Standard Operating Procedure)</strong>。</p>
 <p>这份文档将你的个人经验（鸟瞰、资金、逻辑、威胁）转化为可执行、可复查的工程标准，适用于审计报告生成或漏洞挖掘实战。</p>
 <p><strong>目标 (Objective):</strong> 系统化拆解智能合约逻辑，确保从宏观架构到微观代码行的全覆盖，最小化安全死角。</p>
 <p><strong>适用范围 (Scope):</strong> Solidity 智能合约（DeFi, NFT, DAO 等）。</p>
 <p><strong>工具链 (Tools):</strong> Foundry (Forge), VS Code (Solidity Metrics), Slither.</p>
 <hr>
-<h3>第一阶段：全貌扫描 (Bird&#39;s Eye View)</h3>
-<p><strong>核心目标：</strong> 确定“这是什么”，识别系统边界与静态风险。</p>
+<h3 id="section-6">第一阶段：全貌扫描 (Bird&#39;s Eye View)</h3><p><strong>核心目标：</strong> 确定“这是什么”，识别系统边界与静态风险。</p>
 <p><strong>1.1 协议指纹识别 (Protocol Fingerprinting)</strong></p>
 <ul>
 <li><p><strong>动作：</strong> 检查 <code>interface</code> 和继承树（Inheritance Tree）。</p>
@@ -170,8 +162,7 @@
 <p><strong>SOP 输出物：</strong> 系统架构图，包含合约继承关系及外部依赖库列表。</p>
 </blockquote>
 <hr>
-<h3>第二阶段：资金锚定 (Funds Anchoring)</h3>
-<p><strong>核心目标：</strong> 追踪“钱去哪了”，锁定控制权移交点（The Sink）。</p>
+<h3 id="section-7">第二阶段：资金锚定 (Funds Anchoring)</h3><p><strong>核心目标：</strong> 追踪“钱去哪了”，锁定控制权移交点（The Sink）。</p>
 <p><strong>2.1 外部调用审计 (External Calls Analysis)</strong></p>
 <ul>
 <li><p><strong>动作：</strong> 正则搜索高危关键字：<code>call</code>, <code>delegatecall</code>, <code>transfer</code>, <code>transferFrom</code>, <code>safeTransfer</code>, <code>onFlashLoan</code>。</p>
@@ -201,8 +192,7 @@
 </li>
 </ul>
 <hr>
-<h3>第三阶段：核心逻辑精读 (Core Logic Deep Dive)</h3>
-<p><strong>核心目标：</strong> 理解“怎么运行”，验证状态机转换的正确性。</p>
+<h3 id="section-8">第三阶段：核心逻辑精读 (Core Logic Deep Dive)</h3><p><strong>核心目标：</strong> 理解“怎么运行”，验证状态机转换的正确性。</p>
 <p><em>(注：此阶段连接资金流与威胁模型)</em></p>
 <p><strong>3.1 状态变化审计 (State Transition Check)</strong></p>
 <ul>
@@ -231,8 +221,7 @@
 </li>
 </ul>
 <hr>
-<h3>第四阶段：威胁建模 (Threat Modeling)</h3>
-<p><strong>核心目标：</strong> 尝试“坏人视角”，通过身份伪造与权限绕过进行攻击模拟。</p>
+<h3 id="section-9">第四阶段：威胁建模 (Threat Modeling)</h3><p><strong>核心目标：</strong> 尝试“坏人视角”，通过身份伪造与权限绕过进行攻击模拟。</p>
 <p><strong>4.1 身份分离检查 (Auth &amp; Spoofing Check)</strong></p>
 <ul>
 <li><p><strong>核心原则：</strong> 永远不要信任 <code>msg.sender</code>。</p>
@@ -266,8 +255,7 @@
 </li>
 </ul>
 <hr>
-<h3>总结：SOP 执行速查表 (Checklist)</h3>
-<table>
+<h3 id="section-10">总结：SOP 执行速查表 (Checklist)</h3><table>
 <thead>
 <tr>
 <th><strong>阶段</strong></th>
@@ -301,14 +289,11 @@
 <td>确认我不能动别人的钱？</td>
 </tr>
 </tbody></table>
-<h1>常见合约设计</h1>
-<h2>Multicall</h2>
-<p><strong>Multicall (多重调用)</strong> 是 Web3 开发和审计中非常核心的一个设计模式。</p>
+<h1>常见合约设计</h1><h2 id="section-11">Multicall</h2><p><strong>Multicall (多重调用)</strong> 是 Web3 开发和审计中非常核心的一个设计模式。</p>
 <p>简单来说，它的作用是：<strong>把多个独立的函数调用，打包进唯一的一笔交易 (Transaction) 中执行。</strong></p>
 <p>作为安全工程师，你需要从 <strong>“业务价值”</strong> 和 <strong>“底层原理”</strong> 两个维度来理解它，因为这通常是产生高阶漏洞（如Context Confusion）的根源。</p>
 <hr>
-<h3>1. 为什么我们需要 Multicall？(业务价值)</h3>
-<p>如果没有 Multicall，你要执行 10 次操作（比如给 10 个人发工资，或者像第DVD第二关那样借 10 次钱），你需要：</p>
+<h3 id="section-12">1. 为什么我们需要 Multicall？(业务价值)</h3><p>如果没有 Multicall，你要执行 10 次操作（比如给 10 个人发工资，或者像第DVD第二关那样借 10 次钱），你需要：</p>
 <ol>
 <li><p>发起 10 笔交易。</p>
 </li>
@@ -329,8 +314,7 @@
 </li>
 </ol>
 <hr>
-<h3>2. 底层原理 (代码审计视角)</h3>
-<p>在 Solidity 中，<code>Multicall</code> 通常是一个抽象合约（Abstract Contract），你的 DVD<code>NaiveReceiverPool</code> 继承了它。</p>
+<h3 id="section-13">2. 底层原理 (代码审计视角)</h3><p>在 Solidity 中，<code>Multicall</code> 通常是一个抽象合约（Abstract Contract），你的 DVD<code>NaiveReceiverPool</code> 继承了它。</p>
 <p>核心代码逻辑通常长这样（OpenZeppelin 实现版）：</p>
 <pre><code class="language-solidity">abstract contract Multicall {
     function multicall(bytes[] calldata data) external virtual returns (bytes[] memory results) {
@@ -346,8 +330,7 @@
     }
 }
 </code></pre>
-<h4>审计重点：<code>delegatecall</code> 与上下文 (Context)</h4>
-<p>这是你刚刚通关第二关的核心知识点。</p>
+<h4>审计重点：<code>delegatecall</code> 与上下文 (Context)</h4><p>这是你刚刚通关第二关的核心知识点。</p>
 <ol>
 <li><p>自调用 (Self-Interaction)：
  当通过 pool.multicall(...) 调用时，合约是在自己调用自己。</p>
@@ -382,8 +365,7 @@
 </ul>
 </li>
 </ol>
-<h3>3. 常见的 Multicall 类型</h3>
-<ol>
+<h3 id="section-14">3. 常见的 Multicall 类型</h3><ol>
 <li><p><strong>Read-Only Multicall (链下查询用)</strong>：</p>
 <ul>
 <li><p>例如 <code>MakerDAO Multicall</code> 合约。</p>

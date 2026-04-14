@@ -10,12 +10,10 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">EIP标准</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>EIP-1559</h1> <p class="lead"># EIP-1559: 费用市场改革 (Fee market change for ETH 1.0 chain) &gt; **一句话总结**：EIP-1559 彻底重构了以太坊的交易费用定价机制——从原来的&quot;盲目竞价拍卖&quot;（First-Price Auction）改为由**协议自动计</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/EIP标准/EIP-1559.md</p> </header> <div class="article-content"><h1>EIP-1559: 费用市场改革 (Fee market change for ETH 1.0 chain)</h1>
-<blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">EIP标准</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>EIP-1559</h1> <p class="lead"># EIP-1559: 费用市场改革 (Fee market change for ETH 1.0 chain) &gt; **一句话总结**：EIP-1559 彻底重构了以太坊的交易费用定价机制——从原来的&quot;盲目竞价拍卖&quot;（First-Price Auction）改为由**协议自动计</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/EIP标准/EIP-1559.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">📜 核心元数据 (Metadata)</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">1. 核心理念与全网级痛点 (Core Concept &amp; Motivation)</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">2. 核心架构与底层修改细节 (Core Specification)</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">A. 全局参数 / 常量变动 (Parameters)</a> </li><li class="article-outline__item depth-3"> <a href="#section-5">B. EVM 指令集与 Gas 计价改动 (Opcodes &amp; Gas Changes)</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">C. 交易类型与区块结构 (Transaction &amp; Block Header Changes)</a> </li><li class="article-outline__item depth-2"> <a href="#section-7">3. 从宏观到微观的生命周期 (Lifecycle Workflow)</a> </li><li class="article-outline__item depth-2"> <a href="#section-8">4. 关键机制深度解析与数学公式 (Deep Dive)</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">A. 核心难点：Base Fee 弹簧调节算法</a> </li><li class="article-outline__item depth-3"> <a href="#section-10">B. 核心难点：为什么要销毁 Base Fee 而不是给区块生产者？</a> </li><li class="article-outline__item depth-3"> <a href="#section-11">C. 实战算账：连续拥堵下 Base Fee 的指数增长</a> </li><li class="article-outline__item depth-2"> <a href="#section-12">5. 对生态与智能合约的系统级冲击 (Impact Analysis)</a> </li> </ol> </nav> <div class="article-content"><h1>EIP-1559: 费用市场改革 (Fee market change for ETH 1.0 chain)</h1><blockquote>
 <p><strong>一句话总结</strong>：EIP-1559 彻底重构了以太坊的交易费用定价机制——从原来的&quot;盲目竞价拍卖&quot;（First-Price Auction）改为由<strong>协议自动计算基础费 (Base Fee) + 用户自选小费 (Priority Fee / Tip)</strong> 的双层模型。Base Fee 会根据上一个区块的拥堵程度像弹簧一样自动调节，并且被<strong>永久销毁 (Burn)</strong>，使得 ETH 从纯通胀资产变为可能通缩的&quot;超声波货币 (Ultrasound Money)&quot;。</p>
 </blockquote>
-<h2>📜 核心元数据 (Metadata)</h2>
-<blockquote>
+<h2 id="section-1">📜 核心元数据 (Metadata)</h2><blockquote>
 <p><strong>信息源原则</strong>：底层网络协议必须以 <strong>Ethereum EIP 官方文档 (eips.ethereum.org)</strong> 和以太坊黄皮书 (Yellow Paper) 以及核心客户端（Geth）源码为准。</p>
 </blockquote>
 <ul>
@@ -26,8 +24,7 @@
 <li><strong>前置依赖 EIP</strong>：EIP-2718 (Typed Transaction Envelope) — 1559 引入的新交易类型 <code>0x02</code> 依赖 2718 定义的类型化交易封装框架。</li>
 </ul>
 <hr>
-<h2>1. 核心理念与全网级痛点 (Core Concept &amp; Motivation)</h2>
-<ul>
+<h2 id="section-2">1. 核心理念与全网级痛点 (Core Concept &amp; Motivation)</h2><ul>
 <li><p><strong>传统 Gas 拍卖模式的痛点</strong>：EIP-1559 之前，以太坊使用&quot;第一价格密封拍卖 (First-Price Sealed Auction)&quot;——用户在发送交易时盲猜一个 <code>gasPrice</code>（我愿意为每单位 Gas 支付多少 Gwei），区块生产者（当时为矿工，现为验证者）优先打包出价最高的交易。这导致了三大灾难：</p>
 <ol>
 <li><strong>Gas 价格剧烈震荡</strong>：DeFi 热潮或 NFT Mint 时，用户恐慌性出价，Gas 从 20 Gwei 瞬间飙到 500+ Gwei。</li>
@@ -47,9 +44,7 @@
 </li>
 </ul>
 <hr>
-<h2>2. 核心架构与底层修改细节 (Core Specification)</h2>
-<h3>A. 全局参数 / 常量变动 (Parameters)</h3>
-<pre><code class="language-python"># EIP-1559 核心常量
+<h2 id="section-3">2. 核心架构与底层修改细节 (Core Specification)</h2><h3 id="section-4">A. 全局参数 / 常量变动 (Parameters)</h3><pre><code class="language-python"># EIP-1559 核心常量
 INITIAL_BASE_FEE = 1_000_000_000   # 创世 Base Fee = 1 Gwei
 BASE_FEE_MAX_CHANGE_DENOMINATOR = 8  # 每个区块 Base Fee 最大变化率 = 12.5%
 ELASTICITY_MULTIPLIER = 2            # 弹性系数：区块最大容量 = 2 × 目标容量
@@ -62,13 +57,11 @@ ELASTICITY_MULTIPLIER = 2            # 弹性系数：区块最大容量 = 2 × 
 </ul>
 </li>
 </ul>
-<h3>B. EVM 指令集与 Gas 计价改动 (Opcodes &amp; Gas Changes)</h3>
-<p><strong>新增操作码</strong>：</p>
+<h3 id="section-5">B. EVM 指令集与 Gas 计价改动 (Opcodes &amp; Gas Changes)</h3><p><strong>新增操作码</strong>：</p>
 <ul>
 <li><code>BASEFEE</code> (0x48)：允许智能合约在运行时读取当前区块的 Base Fee 值。这使得合约可以根据网络拥堵程度动态调整行为（如 MEV 机器人的盈利计算）。</li>
 </ul>
-<h3>C. 交易类型与区块结构 (Transaction &amp; Block Header Changes)</h3>
-<p><strong>新交易类型 (Type 2 / EIP-1559 Transaction)</strong>：</p>
+<h3 id="section-6">C. 交易类型与区块结构 (Transaction &amp; Block Header Changes)</h3><p><strong>新交易类型 (Type 2 / EIP-1559 Transaction)</strong>：</p>
 <p>基于 EIP-2718 类型化封装，引入了全新的交易承载格式：</p>
 <pre><code>TransactionPayload = 0x02 || rlp([
     chain_id,
@@ -91,8 +84,7 @@ ELASTICITY_MULTIPLIER = 2            # 弹性系数：区块最大容量 = 2 × 
 <li><code>baseFeePerGas</code>：当前区块的 Base Fee 值，紧跟在原有区块头字段之后。由协议根据父区块信息自动计算填入。</li>
 </ul>
 <hr>
-<h2>3. 从宏观到微观的生命周期 (Lifecycle Workflow)</h2>
-<p><strong>一笔 EIP-1559 交易从发送到上链的完整生命周期：</strong></p>
+<h2 id="section-7">3. 从宏观到微观的生命周期 (Lifecycle Workflow)</h2><p><strong>一笔 EIP-1559 交易从发送到上链的完整生命周期：</strong></p>
 <ol>
 <li><strong>用户构造交易</strong>：钱包自动查询当前 Base Fee（如 30 Gwei），用户设置：<ul>
 <li><code>max_fee_per_gas</code> = 50 Gwei（&quot;我最多愿意付这么多&quot;）</li>
@@ -111,9 +103,7 @@ ELASTICITY_MULTIPLIER = 2            # 弹性系数：区块最大容量 = 2 × 
 <li><strong>协议计算下一个区块的 Base Fee</strong>：如果本区块实际 Gas 用量超过 15M 目标，下个区块 Base Fee 上涨；低于目标则下降。</li>
 </ol>
 <hr>
-<h2>4. 关键机制深度解析与数学公式 (Deep Dive)</h2>
-<h3>A. 核心难点：Base Fee 弹簧调节算法</h3>
-<p>Base Fee 的调节机制极其精妙——它像一根弹簧，区块越满，&quot;回弹力&quot;（涨价压力）越大；区块越空，&quot;拉伸力&quot;（降价压力）越大。</p>
+<h2 id="section-8">4. 关键机制深度解析与数学公式 (Deep Dive)</h2><h3 id="section-9">A. 核心难点：Base Fee 弹簧调节算法</h3><p>Base Fee 的调节机制极其精妙——它像一根弹簧，区块越满，&quot;回弹力&quot;（涨价压力）越大；区块越空，&quot;拉伸力&quot;（降价压力）越大。</p>
 <ul>
 <li><strong>数学公式</strong>：
 $$\text{BaseFee}_{n+1} = \text{BaseFee}_n \times \left(1 + \frac{1}{d} \times \frac{\text{GasUsed}_n - \text{TargetGas}}{\text{TargetGas}} \right)$$</li>
@@ -148,10 +138,8 @@ $$\text{BaseFee}_{n+1} = \text{BaseFee}_n \times \left(1 + \frac{1}{d} \times \f
         return parent_base_fee - fee_delta
 </code></pre>
 <p><em>代码拆解</em>：<code>// 8</code> 就是除以 <code>BASE_FEE_MAX_CHANGE_DENOMINATOR</code>，确保每个区块的 Base Fee 变化不超过 12.5%。注意在涨价路径中有个 <code>max(..., 1)</code> 的保底措施，防止 Base Fee 因为整数除法归零后永远卡死。</p>
-<h3>B. 核心难点：为什么要销毁 Base Fee 而不是给区块生产者？</h3>
-<p>如果 Base Fee 也给区块生产者，他们就会有更强的经济动机去<strong>人为制造或维持拥堵</strong>，例如通过选择性打包交易、延缓低费交易进入区块，甚至在极端分析里用自发交易填充区块，来推动后续区块的 Base Fee 上升并从中获利。销毁机制的关键作用，就是把这部分“基础费上涨带来的额外收入”从区块生产者手里拿走。这样一来，验证者仍然可以从 Tip 和 MEV 中获利，但至少不会因为 Base Fee 升高而直接受益，因此其操纵基础费的经济动机被显著削弱，而不是被绝对意义上彻底消灭。</p>
-<h3>C. 实战算账：连续拥堵下 Base Fee 的指数增长</h3>
-<p>假设初始 Base Fee = 10 Gwei，连续每个区块都完全填满（最坏情况）：</p>
+<h3 id="section-10">B. 核心难点：为什么要销毁 Base Fee 而不是给区块生产者？</h3><p>如果 Base Fee 也给区块生产者，他们就会有更强的经济动机去<strong>人为制造或维持拥堵</strong>，例如通过选择性打包交易、延缓低费交易进入区块，甚至在极端分析里用自发交易填充区块，来推动后续区块的 Base Fee 上升并从中获利。销毁机制的关键作用，就是把这部分“基础费上涨带来的额外收入”从区块生产者手里拿走。这样一来，验证者仍然可以从 Tip 和 MEV 中获利，但至少不会因为 Base Fee 升高而直接受益，因此其操纵基础费的经济动机被显著削弱，而不是被绝对意义上彻底消灭。</p>
+<h3 id="section-11">C. 实战算账：连续拥堵下 Base Fee 的指数增长</h3><p>假设初始 Base Fee = 10 Gwei，连续每个区块都完全填满（最坏情况）：</p>
 <table>
 <thead>
 <tr>
@@ -198,8 +186,7 @@ $$\text{BaseFee}_{n+1} = \text{BaseFee}_n \times \left(1 + \frac{1}{d} \times \f
 </tbody></table>
 <p><strong>仅仅 50 个区块（约 10 分钟）的连续拥堵，Base Fee 就从 10 Gwei 飙升到近 12,000 Gwei！</strong> 这种指数级涨价使得 DDoS 攻击在经济上绝对不可行——任何试图持续堵塞网络的攻击者，每过几分钟成本就翻数百倍。</p>
 <hr>
-<h2>5. 对生态与智能合约的系统级冲击 (Impact Analysis)</h2>
-<ul>
+<h2 id="section-12">5. 对生态与智能合约的系统级冲击 (Impact Analysis)</h2><ul>
 <li><p><strong>对 DApp 开发者的影响</strong>：</p>
 <ul>
 <li>钱包开发者需要支持新的 Type 2 交易格式（双字段 <code>maxFeePerGas</code> + <code>maxPriorityFeePerGas</code>），但旧的 <code>gasPrice</code> 交易（Legacy / Type 0）在协议层面依然兼容。</li>
@@ -220,7 +207,7 @@ $$\text{BaseFee}_{n+1} = \text{BaseFee}_n \times \left(1 + \frac{1}{d} \times \f
 </ul>
 </li>
 </ul>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/EIP标准/EIP-150/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-150</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/EIP标准/EIP-1967/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-1967</h4> </a> </div> </nav> </article>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/EIP标准/EIP-1967/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-1967</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/EIP标准/EIP-2612/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-2612</h4> </a> </div> </nav> </article>  </main> <script>
       (() => {
         const root = document.documentElement;
         const bindToggle = () => {

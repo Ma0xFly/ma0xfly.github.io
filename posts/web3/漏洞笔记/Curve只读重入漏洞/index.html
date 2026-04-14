@@ -10,27 +10,22 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">漏洞笔记</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>Curve只读重入漏洞</h1> <p class="lead"># Curve只读重入漏洞 (Read-Only Reentrancy) &gt; **标签:** #漏洞类型/只读重入 | #协议类型/DeFi/DEX/借贷 | #严重程度/High ## 📌 1. TL;DR (一句话快速回顾) * **本质成因**：早期包含原生 ETH 的 </p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/漏洞笔记/Curve只读重入漏洞.md</p> </header> <div class="article-content"><h1>Curve只读重入漏洞 (Read-Only Reentrancy)</h1>
-<blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">漏洞笔记</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>Curve只读重入漏洞</h1> <p class="lead"># Curve只读重入漏洞 (Read-Only Reentrancy) &gt; **标签:** #漏洞类型/只读重入 | #协议类型/DeFi/DEX/借贷 | #严重程度/High ## 📌 1. TL;DR (一句话快速回顾) * **本质成因**：早期包含原生 ETH 的 </p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/漏洞笔记/Curve只读重入漏洞.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">📌 1. TL;DR (一句话快速回顾)</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">🔍 2. 漏洞底层原理 (Root Cause)</a> </li><li class="article-outline__item depth-3"> <a href="#section-3">正常业务逻辑</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">缺陷剖析</a> </li><li class="article-outline__item depth-2"> <a href="#section-5">🤔 为什么叫“只读重入”？</a> </li><li class="article-outline__item depth-2"> <a href="#section-6">⚔️ 3. 攻击执行路径 (Exploit Steps)</a> </li><li class="article-outline__item depth-2"> <a href="#section-7">💻 4. 关键代码示例 (Snippets)</a> </li><li class="article-outline__item depth-3"> <a href="#section-8">漏洞代码 (Vulnerable Code)</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">攻击核心逻辑 (Attack Logic)</a> </li><li class="article-outline__item depth-2"> <a href="#section-10">🛡️ 5. 修复与防范方案 (Mitigations)</a> </li><li class="article-outline__item depth-2"> <a href="#section-11">📖 6. 真实案例与靶场 (References)</a> </li> </ol> </nav> <div class="article-content"><h1>Curve只读重入漏洞 (Read-Only Reentrancy)</h1><blockquote>
 <p><strong>标签:</strong> #漏洞类型/只读重入 | #协议类型/DeFi/DEX/借贷 | #严重程度/High</p>
 </blockquote>
-<h2>📌 1. TL;DR (一句话快速回顾)</h2>
-<ul>
+<h2 id="section-1">📌 1. TL;DR (一句话快速回顾)</h2><ul>
 <li><strong>本质成因</strong>：早期包含原生 ETH 的 Curve 池在移除流动性执行流中，存在先销毁代币更新部分账本、发还 ETH 打断执行流，随后才发送 ERC20 更新余下账本的顺序缺陷。在这个被打断的“安全真空期”内池子因状态未完全更新而陷入严重的计价极值。</li>
 <li><strong>攻击路径</strong>：通过闪电贷巨资注水并抽干池子，触发回调时劫持执行流。趁着池子正处于畸形的中间状态，恶意调用把该池子当做预言机的倒霉第三方受害协议，让其读取出离谱的价格并执行错误判定。</li>
 </ul>
 <hr>
-<h2>🔍 2. 漏洞底层原理 (Root Cause)</h2>
-<h3>正常业务逻辑</h3>
-<p>Curve 虚拟价格 <code>get_virtual_price()</code> 是评估 1 单位 LP 代币价值的关键函数，它的底层逻辑近似为：</p>
+<h2 id="section-2">🔍 2. 漏洞底层原理 (Root Cause)</h2><h3 id="section-3">正常业务逻辑</h3><p>Curve 虚拟价格 <code>get_virtual_price()</code> 是评估 1 单位 LP 代币价值的关键函数，它的底层逻辑近似为：</p>
 <p>$$\text{Virtual Price} = \frac{\text{Invariant } (D)}{\text{Total Supply}}$$</p>
 <ul>
 <li><strong>Invariant (D)</strong>：池子中所有资产的总价值评估（依赖于池子当前持有的 两种币的余额）。</li>
 <li><strong>Total Supply</strong>：LP 代币的总发行量。
 正常的移除流动性操作应当同步成比例减少 Total Supply 和资产账户里的余额（D），从而保证 Virtual Price 的稳定。</li>
 </ul>
-<h3>缺陷剖析</h3>
-<ul>
+<h3 id="section-4">缺陷剖析</h3><ul>
 <li><strong>致命代码/机制</strong>：Curve 早期 Vyper 合约中的 <code>remove_liquidity</code> 执行顺序缺陷。<ol>
 <li><strong>销毁 LP 代币</strong>：首先销毁用户的流动性代币会导致池子的 <code>totalSupply</code> 锐减。</li>
 <li><strong>退还原生 ETH</strong>：通过底层的 <code>.call.value()</code> 退还 ETH，这就将触发接收者（攻击智能合约）的 <code>fallback()</code> 或 <code>receive()</code> 函数，交出了控制权限。<strong>（致命点！）</strong></li>
@@ -45,8 +40,7 @@
 </li>
 </ul>
 <hr>
-<h2>🤔 为什么叫“只读重入”？</h2>
-<p>理解这个漏洞的前提是理清<strong>控制流</strong>：</p>
+<h2 id="section-5">🤔 为什么叫“只读重入”？</h2><p>理解这个漏洞的前提是理清<strong>控制流</strong>：</p>
 <ul>
 <li><strong>经典重入</strong>：攻击者在合约A的状态更新完成前，<strong>再次进入</strong>合约A的其他修改状态函数（如继续withdraw），目的是<strong>破坏并薅走原合约资产</strong>。</li>
 <li><strong>只读重入</strong>：攻击者在合约A（如Curve池）状态异常的真空期，跑去调用第三方合约B（如借贷协议），而合约B为了计算价值，又<strong>再次进入</strong>了合约A的只读函数（<code>get_virtual_price()</code>）。<blockquote>
@@ -55,8 +49,7 @@
 </li>
 </ul>
 <hr>
-<h2>⚔️ 3. 攻击执行路径 (Exploit Steps)</h2>
-<blockquote>
+<h2 id="section-6">⚔️ 3. 攻击执行路径 (Exploit Steps)</h2><blockquote>
 <p>以受害者为借贷协议A（允许抵押 DVT 借出 LP，使用 Curve 判价）为例：</p>
 </blockquote>
 <ol>
@@ -66,9 +59,7 @@
 <li><strong>[获利退场]</strong>: 攻击者的回调执行结束，Curve 继续将 stETH 退给攻击者状态回归正常。攻击者归还闪电贷并携夺来的抵押物获利离场。</li>
 </ol>
 <hr>
-<h2>💻 4. 关键代码示例 (Snippets)</h2>
-<h3>漏洞代码 (Vulnerable Code)</h3>
-<pre><code class="language-vyper"># Curve 池中移除流动性 (Vyper 示意简例)
+<h2 id="section-7">💻 4. 关键代码示例 (Snippets)</h2><h3 id="section-8">漏洞代码 (Vulnerable Code)</h3><pre><code class="language-vyper"># Curve 池中移除流动性 (Vyper 示意简例)
 @external
 @nonreentrant(&#39;lock&#39;)
 def remove_liquidity(amounts: uint256[N_COINS]):
@@ -81,8 +72,7 @@ def remove_liquidity(amounts: uint256[N_COINS]):
     # 3. 此时外部正依靠重入胡作非为，等执行流回来后继续发送其应当被取走的 ERC20。太晚了！
     ERC20(coins[1]).transfer(msg.sender, amounts[1]) 
 </code></pre>
-<h3>攻击核心逻辑 (Attack Logic)</h3>
-<pre><code class="language-solidity">// 展示攻击者如何利用上述弱点进行攻击
+<h3 id="section-9">攻击核心逻辑 (Attack Logic)</h3><pre><code class="language-solidity">// 展示攻击者如何利用上述弱点进行攻击
 receive() external payable {
     // 趁着状态没更新完 (Curve 中的 Total Supply和 D 失去比例对应) 导致获取价格极高
     // 赶紧去让第三方借贷协议进行读取并据此做出重大业务决策
@@ -90,8 +80,7 @@ receive() external payable {
 }
 </code></pre>
 <hr>
-<h2>🛡️ 5. 修复与防范方案 (Mitigations)</h2>
-<ul>
+<h2 id="section-10">🛡️ 5. 修复与防范方案 (Mitigations)</h2><ul>
 <li><strong>协议自身的修复</strong>：<ul>
 <li>DeFi 协议涉及到资产转移时应该严格遵循 CEI（Checks-Effects-Interactions）原则防范。</li>
 <li>将 <code>view</code> 等只读数据涉及关键状态的函数同样列入重入锁 <code>@nonreentrant(&quot;lock&quot;)</code> 保护机制之中，阻止其在系统状态扭曲时对外胡乱输出离谱的数据。</li>
@@ -104,14 +93,13 @@ receive() external payable {
 </li>
 </ul>
 <hr>
-<h2>📖 6. 真实案例与靶场 (References)</h2>
-<ul>
+<h2 id="section-11">📖 6. 真实案例与靶场 (References)</h2><ul>
 <li><p><strong>经典黑客事件</strong>：2023年围绕此漏洞的大规模安全事件（如 <strong>Euler Finance</strong>, <strong>Sentiment</strong>, <strong>dForce</strong>, <strong>Midas Capital</strong>, <strong>Omni</strong> 等）。因为机枪池或借贷业务线在获取预言定参时将带有该缺陷且未经针对性防护处理的历史老池直接引入，引发总损失数千万美元被卷走的系列黑客连环攻击。</p>
 </li>
 <li><p><strong>靶场/练习</strong>：Damn Vulnerable DeFi - <code>[Curvy Puppet]</code>关卡</p>
 </li>
 </ul>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/漏洞笔记/预言机操纵漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">预言机操纵漏洞</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/漏洞笔记/Delegatecall调用陷阱漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">Delegatecall调用陷阱漏洞</h4> </a> </div> </nav> </article>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/漏洞笔记/Delegatecall调用陷阱漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">Delegatecall调用陷阱漏洞</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/漏洞笔记/TWAP操纵漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">TWAP操纵漏洞</h4> </a> </div> </nav> </article>  </main> <script>
       (() => {
         const root = document.documentElement;
         const bindToggle = () => {

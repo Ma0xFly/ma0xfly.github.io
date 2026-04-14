@@ -10,10 +10,8 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">区块链技术原理</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>钱包</h1> <p class="lead"># 钱包地址生成逻辑 # 钱包作用 一句话概括 **MetaMask 是一个以太坊钱包 + 浏览器插件，用来管理你的私钥、存放资产、发交易，并让你在网页上直接使用区块链应用（DApp）。** 就像： **它是你在区块链世界的“钥匙串 + 浏览器驱动 + 交易签名器”。** | *</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/区块链技术原理/钱包.md</p> </header> <div class="article-content"><h1>钱包地址生成逻辑</h1>
-<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/373b630523e1b0e0307e10d54271945d_MD5.jpg" alt=""></p>
-<h1>钱包作用</h1>
-<p>一句话概括
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">区块链技术原理</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>钱包</h1> <p class="lead"># 钱包地址生成逻辑 # 钱包作用 一句话概括 **MetaMask 是一个以太坊钱包 + 浏览器插件，用来管理你的私钥、存放资产、发交易，并让你在网页上直接使用区块链应用（DApp）。** 就像： **它是你在区块链世界的“钥匙串 + 浏览器驱动 + 交易签名器”。** | *</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/区块链技术原理/钱包.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">MetaMask 的核心功能</a> </li><li class="article-outline__item depth-3"> <a href="#section-2">1️⃣ 管理你的私钥（最重要）</a> </li><li class="article-outline__item depth-3"> <a href="#section-3">2️⃣ 发送和接收加密资产</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">3️⃣ 连接去中心化应用（DApp）</a> </li><li class="article-outline__item depth-3"> <a href="#section-5">4️⃣ 作为浏览器插件注入 web3 对象</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">5️⃣ 网络切换（主网 &amp; 测试网 &amp; EVM 链）</a> </li> </ol> </nav> <div class="article-content"><h1>钱包地址生成逻辑</h1><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/373b630523e1b0e0307e10d54271945d_MD5.jpg" alt=""></p>
+<h1>钱包作用</h1><p>一句话概括
 <strong>MetaMask 是一个以太坊钱包 + 浏览器插件，用来管理你的私钥、存放资产、发交易，并让你在网页上直接使用区块链应用（DApp）。</strong></p>
 <p>就像：</p>
 <p><strong>它是你在区块链世界的“钥匙串 + 浏览器驱动 + 交易签名器”。</strong></p>
@@ -45,22 +43,18 @@
 <td><strong>以太坊 + Polygon + BSC 等</strong></td>
 </tr>
 </tbody></table>
-<h2>MetaMask 的核心功能</h2>
-<h3>1️⃣ 管理你的私钥（最重要）</h3>
-<ul>
+<h2 id="section-1">MetaMask 的核心功能</h2><h3 id="section-2">1️⃣ 管理你的私钥（最重要）</h3><ul>
 <li>MetaMask 本质是一个“私钥管理器”，帮你安全存储私钥/助记词。</li>
 <li>私钥永远不会上传网络，只在本地加密保存。</li>
 </ul>
 <p>🔐 <strong>你签的每笔链上交易，都是 MetaMask 帮你用私钥签出来的。</strong></p>
 <hr>
-<h3>2️⃣ 发送和接收加密资产</h3>
-<ul>
+<h3 id="section-3">2️⃣ 发送和接收加密资产</h3><ul>
 <li>你可以在钱包里收发 ETH、USDT、NFT 等 ERC-20/ERC-721 资产。</li>
 <li>MetaMask 会显示你的余额、gas 费、交易记录等。</li>
 </ul>
 <hr>
-<h3>3️⃣ 连接去中心化应用（DApp）</h3>
-<p>这是最关键的用途。</p>
+<h3 id="section-4">3️⃣ 连接去中心化应用（DApp）</h3><p>这是最关键的用途。</p>
 <p>当你访问 DApp（如 Uniswap、OpenSea、Lens、GameFi 项目）时，网站会弹出：</p>
 <p>“Connect to MetaMask”</p>
 <p>然后你就可以：</p>
@@ -72,13 +66,11 @@
 </ul>
 <p><strong>MetaMask 就是 DApp 的“钱包驱动”。</strong></p>
 <hr>
-<h3>4️⃣ 作为浏览器插件注入 web3 对象</h3>
-<p>对前端开发来说，MetaMask 会向网页注入 <code>window.ethereum</code>，<br>让网页可以调用链上 RPC，例如：</p>
+<h3 id="section-5">4️⃣ 作为浏览器插件注入 web3 对象</h3><p>对前端开发来说，MetaMask 会向网页注入 <code>window.ethereum</code>，<br>让网页可以调用链上 RPC，例如：</p>
 <pre><code class="language-plain">ethereum.request({ method: &#39;eth_requestAccounts&#39; })
 </code></pre>
 <p>没有 MetaMask，网页根本没办法签交易或访问你的链上账户。</p>
-<h3>5️⃣ 网络切换（主网 &amp; 测试网 &amp; EVM 链）</h3>
-<p>MetaMask 支持：</p>
+<h3 id="section-6">5️⃣ 网络切换（主网 &amp; 测试网 &amp; EVM 链）</h3><p>MetaMask 支持：</p>
 <ul>
 <li>Ethereum 主网</li>
 <li>Polygon、BSC、Arbitrum、Optimism 等 EVM 链</li>

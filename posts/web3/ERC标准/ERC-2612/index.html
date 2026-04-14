@@ -10,12 +10,10 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>ERC-2612</h1> <p class="lead"># ERC-2612: Permit 扩展标准 &gt; **一句话总结**：通过 EIP-712 签名机制替代传统 `approve` 交易，实现链下授权链上执行，节省一笔交易并提升用户体验。 ## 📜 核心元数据与参阅资料 (Metadata &amp; References) &gt; **</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/ERC标准/ERC-2612.md</p> </header> <div class="article-content"><h1>ERC-2612: Permit 扩展标准</h1>
-<blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>ERC-2612</h1> <p class="lead"># ERC-2612: Permit 扩展标准 &gt; **一句话总结**：通过 EIP-712 签名机制替代传统 `approve` 交易，实现链下授权链上执行，节省一笔交易并提升用户体验。 ## 📜 核心元数据与参阅资料 (Metadata &amp; References) &gt; **</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/ERC标准/ERC-2612.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">1. 核心理念与痛点解决 (Core Concept)</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">2. 核心接口与数据结构 (Core Interfaces)</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">A. 核心状态结构 (State Variables)</a> </li><li class="article-outline__item depth-3"> <a href="#section-5">B. 关键机制与底层逻辑 (Core Functions)</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">C. 关键事件 (Events)</a> </li><li class="article-outline__item depth-2"> <a href="#section-7">3. 标准业务工作流 (Standard Workflow)</a> </li><li class="article-outline__item depth-2"> <a href="#section-8">4. 关键机制与难点解析 (Key Mechanics)</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">A. 核心难点一：EIP-712 类型化数据签名</a> </li> </ol> </nav> <div class="article-content"><h1>ERC-2612: Permit 扩展标准</h1><blockquote>
 <p><strong>一句话总结</strong>：通过 EIP-712 签名机制替代传统 <code>approve</code> 交易，实现链下授权链上执行，节省一笔交易并提升用户体验。</p>
 </blockquote>
-<h2>📜 核心元数据与参阅资料 (Metadata &amp; References)</h2>
-<blockquote>
+<h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><blockquote>
 <p><strong>信息源原则</strong>：底层的通信/代币标准必须以 <strong>Ethereum EIP 官方文档 (ethereum.org/EIPS)</strong> 和最主流的防呆实现库（如 <strong>OpenZeppelin</strong> 或 <strong>Solmate</strong>）的源码作为<strong>唯一第一手真理源</strong>。切忌大量摘抄二手的科普文章。</p>
 </blockquote>
 <ul>
@@ -25,8 +23,7 @@
 <li><strong>依赖基座标准</strong>：基于 ERC-20 扩展，依赖 EIP-712 类型化数据签名标准</li>
 </ul>
 <hr>
-<h2>1. 核心理念与痛点解决 (Core Concept)</h2>
-<ul>
+<h2 id="section-2">1. 核心理念与痛点解决 (Core Concept)</h2><ul>
 <li><strong>传统痛点/背景</strong>：在没有 ERC-2612 之前，用户想要将 ERC-20 代币转账给第三方合约（如 Uniswap），必须先调用 <code>approve(spender, amount)</code> 授权，然后再调用合约执行交易。这不仅消耗两笔 Gas，还容易发生授权金额过大导致的安全风险。</li>
 <li><strong>破局思路</strong>：引入 <code>permit</code> 函数，允许用户在链下对授权消息进行 EIP-712 类型化签名，第三方合约直接调用 <code>permit</code> + <code>transferFrom</code> 或合二为一，用户无需发起单独的 approve 交易。</li>
 <li><strong>专属名词解释</strong>：<ul>
@@ -37,12 +34,10 @@
 </li>
 </ul>
 <hr>
-<h2>2. 核心接口与数据结构 (Core Interfaces)</h2>
-<blockquote>
+<h2 id="section-3">2. 核心接口与数据结构 (Core Interfaces)</h2><blockquote>
 <p><strong>极度重要</strong>：必须在这里贴出协议最本质的<strong>状态变量（State Variables）</strong>，因为任何智能合约的本质都是对底层哈希账本（<code>mapping</code>）的读写。核心函数的解释也必须发掘到源码，附带<strong>最核心的 Solidity 代码骨架</strong>（剥离安全防呆校验后的纯净业务逻辑）。</p>
 </blockquote>
-<h3>A. 核心状态结构 (State Variables)</h3>
-<pre><code class="language-solidity">mapping(address =&gt; uint256) private _nonces;
+<h3 id="section-4">A. 核心状态结构 (State Variables)</h3><pre><code class="language-solidity">mapping(address =&gt; uint256) private _nonces;
 
 bytes32 private constant _PERMIT_TYPEHASH = keccak256(
     &quot;Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)&quot;
@@ -55,12 +50,10 @@ bytes32 private _DOMAIN_SEPARATOR;
 <li><strong>_PERMIT_TYPEHASH</strong>：EIP-712 类型的哈希值，用于验证签名</li>
 <li><strong>_DOMAIN_SEPARATOR</strong>：EIP-712 域分隔符，隔离不同合约/链的签名</li>
 </ul>
-<h3>B. 关键机制与底层逻辑 (Core Functions)</h3>
-<blockquote>
+<h3 id="section-5">B. 关键机制与底层逻辑 (Core Functions)</h3><blockquote>
 <p>这里不要用简单的表格。必须展示核心函数实际改变底层账本的简版源码代码片段。</p>
 </blockquote>
-<h4><code>permit(owner, spender, value, deadline, v, r, s)</code> (通过签名授权)</h4>
-<ul>
+<h4><code>permit(owner, spender, value, deadline, v, r, s)</code> (通过签名授权)</h4><ul>
 <li><strong>白话逻辑解析</strong>：验证签名合法性后，直接修改 <code>_allowances</code> 账本，相当于链下签名链上生效。推模式（用户主动授权）。</li>
 <li><strong>核心源码骨架 (Solidity)</strong>：<pre><code class="language-solidity">function permit(
     address owner,
@@ -98,8 +91,7 @@ bytes32 private _DOMAIN_SEPARATOR;
 </code></pre>
 </li>
 </ul>
-<h4><code>nonces(owner)</code> (查询当前 nonce 值)</h4>
-<ul>
+<h4><code>nonces(owner)</code> (查询当前 nonce 值)</h4><ul>
 <li><strong>白话逻辑解析</strong>：返回地址当前的 nonce，用于链下构建正确的签名。</li>
 <li><strong>核心源码骨架 (Solidity)</strong>：<pre><code class="language-solidity">function nonces(address owner) public view returns (uint256) {
     return _nonces[owner];
@@ -107,14 +99,12 @@ bytes32 private _DOMAIN_SEPARATOR;
 </code></pre>
 </li>
 </ul>
-<h3>C. 关键事件 (Events)</h3>
-<ul>
+<h3 id="section-6">C. 关键事件 (Events)</h3><ul>
 <li><code>Approval(owner, spender, value)</code>：permit 成功时触发，与 ERC-20 标准一致，方便链下索引授权状态变化</li>
 <li>事件对于 The Graph 索引器追踪授权历史、钱包 UI 显示授权状态至关重要</li>
 </ul>
 <hr>
-<h2>3. 标准业务工作流 (Standard Workflow)</h2>
-<p>将上面零散的函数串联起来，还原一个真实的交互业务闭环。</p>
+<h2 id="section-7">3. 标准业务工作流 (Standard Workflow)</h2><p>将上面零散的函数串联起来，还原一个真实的交互业务闭环。</p>
 <p><strong>一个完整的 Permit 授权 + 转账流程：</strong></p>
 <ol>
 <li><strong>链下签名</strong>：用户在钱包或前端构建 EIP-712 签名消息，包含 owner、spender、value、nonce、deadline，生成 (v, r, s) 签名。</li>
@@ -123,12 +113,10 @@ bytes32 private _DOMAIN_SEPARATOR;
 <li><strong>Nonce 自增</strong>：permit 函数内部执行 <code>_nonces[owner]++</code>，该签名使用后失效。</li>
 </ol>
 <hr>
-<h2>4. 关键机制与难点解析 (Key Mechanics)</h2>
-<blockquote>
+<h2 id="section-8">4. 关键机制与难点解析 (Key Mechanics)</h2><blockquote>
 <p><strong>这是 ERC 标准笔记中最具价值的部分</strong>。对于协议中那些绕人的数学计算、状态机流转或者是舍入取整规则，<strong>必须配以核心公式推导或精简版代码辅助理解</strong>。</p>
 </blockquote>
-<h3>A. 核心难点一：EIP-712 类型化数据签名</h3>
-<ul>
+<h3 id="section-9">A. 核心难点一：EIP-712 类型化数据签名</h3><ul>
 <li><p><strong>原理讲解</strong>：传统的 <code>eth_sign</code> 方式容易被钓鱼攻击，EIP-712 引入结构化数据签名，用户看到的是可读的 JSON 对象而非乱码，大幅提升安全性。</p>
 </li>
 <li><p><strong>数学推导/公式</strong>：

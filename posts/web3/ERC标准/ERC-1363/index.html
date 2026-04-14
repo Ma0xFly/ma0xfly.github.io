@@ -10,12 +10,10 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>ERC-1363</h1> <p class="lead"># ERC-1363: 可支付型代币扩展 (Payable Token) &gt; **一句话总结**：ERC-1363 是对 ERC-20 标准最安全、最成功的演进补丁。它吸取了前辈们的教训，用标准化的 `TransferAndCall` 解决了双重审批（Approve + Exec</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/ERC标准/ERC-1363.md</p> </header> <div class="article-content"><h1>ERC-1363: 可支付型代币扩展 (Payable Token)</h1>
-<blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>ERC-1363</h1> <p class="lead"># ERC-1363: 可支付型代币扩展 (Payable Token) &gt; **一句话总结**：ERC-1363 是对 ERC-20 标准最安全、最成功的演进补丁。它吸取了前辈们的教训，用标准化的 `TransferAndCall` 解决了双重审批（Approve + Exec</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/ERC标准/ERC-1363.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">1. 核心理念与痛点解决 (Core Concept)</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">2. 核心接口与数据结构 (Core Interfaces)</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">A. 核心状态结构 (State Variables)</a> </li><li class="article-outline__item depth-3"> <a href="#section-5">B. 关键机制与底层逻辑 (Core Functions)</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">C. 关键事件 (Events)</a> </li><li class="article-outline__item depth-2"> <a href="#section-7">3. 标准业务工作流 (Standard Workflow)</a> </li><li class="article-outline__item depth-2"> <a href="#section-8">4. 关键机制与难点解析 (Key Mechanics)</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">A. 核心难点一：如何避免重走 827 借刀杀人的老路？</a> </li><li class="article-outline__item depth-2"> <a href="#section-10">5. 周边生态与后续演进 (Ecosystem)</a> </li> </ol> </nav> <div class="article-content"><h1>ERC-1363: 可支付型代币扩展 (Payable Token)</h1><blockquote>
 <p><strong>一句话总结</strong>：ERC-1363 是对 ERC-20 标准最安全、最成功的演进补丁。它吸取了前辈们的教训，用标准化的 <code>TransferAndCall</code> 解决了双重审批（Approve + Execute）的痛点，允许用户在一笔交易中完成代币转移和调用外部合约逻辑。</p>
 </blockquote>
-<h2>📜 核心元数据与参阅资料 (Metadata &amp; References)</h2>
-<blockquote>
+<h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><blockquote>
 <p><strong>信息源原则</strong>：底层的通信/代币标准必须以 <strong>Ethereum EIP 官方文档 (ethereum.org/EIPS)</strong> 和最主流的防呆实现库（如 <strong>OpenZeppelin</strong> 或 <strong>Solmate</strong>）的源码作为<strong>唯一第一手真理源</strong>。切忌大量摘抄二手的科普文章。</p>
 </blockquote>
 <ul>
@@ -25,24 +23,19 @@
 <li><strong>依赖基座标准</strong>：完全继承自 ERC-20。且大量借鉴了 ERC-721 的 <code>onReceived</code> 安全回调设计。</li>
 </ul>
 <hr>
-<h2>1. 核心理念与痛点解决 (Core Concept)</h2>
-<ul>
+<h2 id="section-2">1. 核心理念与痛点解决 (Core Concept)</h2><ul>
 <li><strong>传统痛点/背景</strong>：ERC-20 的 <code>approve</code> + <code>transferFrom</code> 的两步付账极其繁琐，耗时且消耗双倍 Gas。虽然历史上出现过试图一步解决转账加执行的 ERC-827（因安全漏洞退市）和 ERC-223（因兼容性太差未普及），但市场对“一键式可支付代币”的需求从未停止。</li>
 <li><strong>破局思路</strong>：ERC-1363 完美平衡了安全和易用性。它并没有盲从 ERC-827 那样允许携带炸弹包裹（任意 <code>calldata</code> 代签），而是强制规定：外部的目标合约必须实现两个固定的、像门铃一样的专用钩子函数（<code>onTransferReceived</code> 和 <code>onApprovalReceived</code>）。这样代币合约转账后，只会去按这两个专用的门铃，绝不会发生越权的任意函数调用。</li>
 </ul>
 <hr>
-<h2>2. 核心接口与数据结构 (Core Interfaces)</h2>
-<blockquote>
+<h2 id="section-3">2. 核心接口与数据结构 (Core Interfaces)</h2><blockquote>
 <p>该标准完全复用了 ERC-20 的 <code>_balances</code> 余额体系，它并未创造新的账本类型，而是从执行流入手，开辟了附带回调提醒的高铁直达专线。</p>
 </blockquote>
-<h3>A. 核心状态结构 (State Variables)</h3>
-<pre><code class="language-solidity">// 无任何新增映射，完全共享原生 ERC-20 的底层防篡改记账池：
+<h3 id="section-4">A. 核心状态结构 (State Variables)</h3><pre><code class="language-solidity">// 无任何新增映射，完全共享原生 ERC-20 的底层防篡改记账池：
 mapping(address =&gt; uint256) private _balances;
 mapping(address =&gt; mapping(address =&gt; uint256)) private _allowances;
 </code></pre>
-<h3>B. 关键机制与底层逻辑 (Core Functions)</h3>
-<h4>1. <code>transferAndCall(to, value, data)</code> (转账并强制敲门)</h4>
-<p>一站式划转资金并触发业务的灵魂函数。</p>
+<h3 id="section-5">B. 关键机制与底层逻辑 (Core Functions)</h3><h4>1. <code>transferAndCall(to, value, data)</code> (转账并强制敲门)</h4><p>一站式划转资金并触发业务的灵魂函数。</p>
 <ul>
 <li><strong>白话逻辑解析</strong>：底层依旧走 <code>_balances</code> 的减发加收，钱结清后的一瞬间，该代币合约化身顺丰快递员，拿着 <code>data</code>（附言包裹）去猛按目标 <code>to</code> 地址门上固定的 <code>onTransferReceived</code> 门铃。如果对方不开门（没实现该收款函数或执行报错），那么钱将原路全额退还，交易连坐取消。</li>
 <li><strong>核心源码骨架</strong>：<pre><code class="language-solidity">function transferAndCall(address to, uint256 value, bytes calldata data) public returns (bool) {
@@ -66,15 +59,12 @@ function _checkAndCallTransfer(address from, address to, uint256 value, bytes me
 </code></pre>
 </li>
 </ul>
-<h4>2. <code>approveAndCall(spender, value, data)</code> (授权并主动唤醒)</h4>
-<ul>
+<h4>2. <code>approveAndCall(spender, value, data)</code> (授权并主动唤醒)</h4><ul>
 <li><strong>白话逻辑解析</strong>：与上面的转账敲门异曲同工。你签发了天量授权批文后，代币合约主动去敲那个业务金库的 <code>onApprovalReceived</code> 专用门铃并大喊：“喂！有位散户刚批给你 100 U 的刷卡额度，这是他托我带来的执行参数 <code>data</code>，你想干啥现在赶紧去划卡执行吧！”。这就彻底终结了古典 DeFi 时代用户先点 Approve 确认，等慢吞吞出块后再去单独点一次 Swap 执行的剧痛交互。</li>
 </ul>
-<h3>C. 关键事件 (Events)</h3>
-<p>该标准并未额外规定花哨的高级事件，仍旧依靠并重度复用底层 ERC-20 强制下发的 <code>Transfer</code> 和 <code>Approval</code> 经典事件播报。</p>
+<h3 id="section-6">C. 关键事件 (Events)</h3><p>该标准并未额外规定花哨的高级事件，仍旧依靠并重度复用底层 ERC-20 强制下发的 <code>Transfer</code> 和 <code>Approval</code> 经典事件播报。</p>
 <hr>
-<h2>3. 标准业务工作流 (Standard Workflow)</h2>
-<p><strong>你在支持 1363 标准的去中心化域名注册局里购买一个域名的极速流程：</strong></p>
+<h2 id="section-7">3. 标准业务工作流 (Standard Workflow)</h2><p><strong>你在支持 1363 标准的去中心化域名注册局里购买一个域名的极速流程：</strong></p>
 <ol>
 <li><strong>一笔带过 (Execute)</strong>：你在前端点击“支付 100 币注册域名”。系统直接调用代币的 <code>transferAndCall(注册局合约地址, 100, &quot;域名数据&quot;)</code>。</li>
 <li><strong>结算资金 (Accounting)</strong>：代币合约扣除你的 100 个币，加给注册局。</li>
@@ -82,12 +72,10 @@ function _checkAndCallTransfer(address from, address to, uint256 value, bytes me
 <li><strong>自动化发货 (Completion)</strong>：注册局在此函数中看到钱已到账，立刻用传进来的 <code>data</code> 给你分配了域名。一切操作在短短几毫秒的一个区块交易中水到渠成。</li>
 </ol>
 <hr>
-<h2>4. 关键机制与难点解析 (Key Mechanics)</h2>
-<blockquote>
+<h2 id="section-8">4. 关键机制与难点解析 (Key Mechanics)</h2><blockquote>
 <p>对于协议中那些绕人的数学计算、状态机流转或者是舍入取整规则，<strong>必须配以核心公式推导或精简版代码辅助理解</strong>。</p>
 </blockquote>
-<h3>A. 核心难点一：如何避免重走 827 借刀杀人的老路？</h3>
-<ul>
+<h3 id="section-9">A. 核心难点一：如何避免重走 827 借刀杀人的老路？</h3><ul>
 <li><strong>原理讲解</strong>：为了防止黑客利用代币合约的无上权限去执行恶意提款命令。ERC-1363 在底层代码里<strong>彻底封死了 <code>call</code> 任意函数的自由度</strong>。它强制使用接口调用。</li>
 <li><strong>核心逻辑代码 (Solidity)</strong>：<pre><code class="language-solidity">// 在 transferAndCall 的最后一步，有一段极其严格的回调验证
 function _checkOnTransferReceived(address from, address to, uint256 value, bytes memory data) private returns (bool) {
@@ -106,8 +94,7 @@ function _checkOnTransferReceived(address from, address to, uint256 value, bytes
 <em>代码拆解</em>：你看，由于代币合约在这里调用的是明明白白、死死写定名字的 <code>.onTransferReceived</code> 函数，所以对方就算收到了调用，也由于被局限在这个专门用来记账收钱的特定黑盒子里，无法让代币合约去帮它越权提款。这就叫真正的“戴着镣铐起舞”。</li>
 </ul>
 <hr>
-<h2>5. 周边生态与后续演进 (Ecosystem)</h2>
-<ul>
+<h2 id="section-10">5. 周边生态与后续演进 (Ecosystem)</h2><ul>
 <li><strong>主流采用方</strong>：作为 OpenZeppelin 的标配扩展库，越来越多新发行的复杂全链游戏代币、DAO 门票资产选择附加这一协议以优化前端体验。</li>
 <li><strong>标准的局限性</strong>：<ol>
 <li>需要目标接收方（比如老牌的 DEX 池子）同样配合升级去实现 <code>IERC1363Receiver</code> 接口。如果对方是个老当益壮的古董合约，这套高级的敲门系统依然用不上。</li>
@@ -118,7 +105,7 @@ function _checkOnTransferReceived(address from, address to, uint256 value, bytes
 </ul>
 </li>
 </ul>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/ERC标准/ERC-1046/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-1046</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/ERC标准/ERC-20/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-20</h4> </a> </div> </nav> </article>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/ERC标准/ERC-1046/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-1046</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/ERC标准/ERC-165/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-165</h4> </a> </div> </nav> </article>  </main> <script>
       (() => {
         const root = document.documentElement;
         const bindToggle = () => {

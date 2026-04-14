@@ -10,27 +10,21 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">漏洞笔记</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>经典重入漏洞</h1> <p class="lead"># 经典重入漏洞 (Classic Reentrancy) &gt; **标签:** #漏洞类型/重入 | #协议类型/DeFi/智能合约底层逻辑 | #严重程度/High ## 📌 1. TL;DR (一句话快速回顾) * **本质成因**：在修改关键状态（如扣减余额）**之前**</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/漏洞笔记/经典重入漏洞.md</p> </header> <div class="article-content"><h1>经典重入漏洞 (Classic Reentrancy)</h1>
-<blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">漏洞笔记</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>经典重入漏洞</h1> <p class="lead"># 经典重入漏洞 (Classic Reentrancy) &gt; **标签:** #漏洞类型/重入 | #协议类型/DeFi/智能合约底层逻辑 | #严重程度/High ## 📌 1. TL;DR (一句话快速回顾) * **本质成因**：在修改关键状态（如扣减余额）**之前**</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/漏洞笔记/经典重入漏洞.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">📌 1. TL;DR (一句话快速回顾)</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">🔍 2. 漏洞底层原理 (Root Cause)</a> </li><li class="article-outline__item depth-3"> <a href="#section-3">正常业务逻辑</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">缺陷剖析</a> </li><li class="article-outline__item depth-3"> <a href="#section-5">🛡️ 核心防御：CEI 模式详解</a> </li><li class="article-outline__item depth-2"> <a href="#section-6">⚔️ 3. 攻击执行路径 (Exploit Steps)</a> </li><li class="article-outline__item depth-2"> <a href="#section-7">💻 4. 关键代码示例 (Snippets)</a> </li><li class="article-outline__item depth-3"> <a href="#section-8">漏洞代码 (Vulnerable Code)</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">攻击核心逻辑 (Attack Logic)</a> </li><li class="article-outline__item depth-2"> <a href="#section-10">🛡️ 5. 修复与防范方案 (Mitigations)</a> </li><li class="article-outline__item depth-2"> <a href="#section-11">📖 6. 真实案例与靶场 (References)</a> </li> </ol> </nav> <div class="article-content"><h1>经典重入漏洞 (Classic Reentrancy)</h1><blockquote>
 <p><strong>标签:</strong> #漏洞类型/重入 | #协议类型/DeFi/智能合约底层逻辑 | #严重程度/High</p>
 </blockquote>
-<h2>📌 1. TL;DR (一句话快速回顾)</h2>
-<ul>
+<h2 id="section-1">📌 1. TL;DR (一句话快速回顾)</h2><ul>
 <li><strong>本质成因</strong>：在修改关键状态（如扣减余额）<strong>之前</strong>，就将控制流或以太坊原生转账交由外部地址处理，导致防御机制形同虚设。</li>
 <li><strong>攻击路径</strong>：攻击者在合约打款触发的 <code>fallback/receive</code> 回调中，趁着余额还没被清零，反手再次调用该提款函数，通过嵌套循环把池子掏空。</li>
 </ul>
 <hr>
-<h2>🔍 2. 漏洞底层原理 (Root Cause)</h2>
-<h3>正常业务逻辑</h3>
-<ul>
+<h2 id="section-2">🔍 2. 漏洞底层原理 (Root Cause)</h2><h3 id="section-3">正常业务逻辑</h3><ul>
 <li>用户调用提款功能（如 <code>withdraw()</code>），合约核对其内部账本，发送资金，然后将账本中的该用户余额减掉。</li>
 </ul>
-<h3>缺陷剖析</h3>
-<ul>
+<h3 id="section-4">缺陷剖析</h3><ul>
 <li><strong>致命代码/机制</strong>：开发者<strong>未能遵守 CEI 模式</strong>。在 &quot;Effects（修改状态）&quot; 发生前，就去执行了 &quot;Interactions（外部交互/转账）&quot;。</li>
 </ul>
-<h3>🛡️ 核心防御：CEI 模式详解</h3>
-<blockquote>
+<h3 id="section-5">🛡️ 核心防御：CEI 模式详解</h3><blockquote>
 <p><strong>CEI (Checks-Effects-Interactions)</strong> 是智能合约开发的“黄金法则”。它的本质是：<strong>在把控制权交给别人之前，先把自己家里的账结清。</strong></p>
 </blockquote>
 <ol>
@@ -50,15 +44,13 @@
 </ul>
 </li>
 </ol>
-<h4>为什么顺序不能乱？</h4>
-<ul>
+<h4>为什么顺序不能乱？</h4><ul>
 <li><strong>错误顺序 (C-I-E)</strong>：就像在餐厅买单，服务生先把钱退给你，然后才去后台改账本。你拿到钱的那一秒就可以由于各种原因（比如瞬移）再次出现在前台领钱，因为账单结清状态还没更新。</li>
 <li><strong>正确顺序 (C-E-I)</strong>：先在账本上划掉这一笔，然后再把钱递给你。即使你拿到钱瞬间反悔重入，前台查账也会发现：“对不起，您刚才已经结清了，余额为 0”。</li>
 </ul>
 <hr>
 <hr>
-<h2>⚔️ 3. 攻击执行路径 (Exploit Steps)</h2>
-<blockquote>
+<h2 id="section-6">⚔️ 3. 攻击执行路径 (Exploit Steps)</h2><blockquote>
 <p>这里是经典的“反复套娃”抽干池子：</p>
 </blockquote>
 <ol>
@@ -72,9 +64,7 @@
 <li><strong>[获利退场]</strong>: 掏空漏洞合约内的所有 ETH 后，循环终止。攻击者带着卷走的脏款全身而退。</li>
 </ol>
 <hr>
-<h2>💻 4. 关键代码示例 (Snippets)</h2>
-<h3>漏洞代码 (Vulnerable Code)</h3>
-<pre><code class="language-solidity">// 最典型的反面教材！一定要肌肉记忆记住这种错误写法
+<h2 id="section-7">💻 4. 关键代码示例 (Snippets)</h2><h3 id="section-8">漏洞代码 (Vulnerable Code)</h3><pre><code class="language-solidity">// 最典型的反面教材！一定要肌肉记忆记住这种错误写法
 function withdraw(uint256 amount) public {
     // 1. Checks: 检查余额
     require(balances[msg.sender] &gt;= amount, &quot;Insufficient balance&quot;);
@@ -87,8 +77,7 @@ function withdraw(uint256 amount) public {
     balances[msg.sender] -= amount;
 }
 </code></pre>
-<h3>攻击核心逻辑 (Attack Logic)</h3>
-<pre><code class="language-solidity">contract Attack {
+<h3 id="section-9">攻击核心逻辑 (Attack Logic)</h3><pre><code class="language-solidity">contract Attack {
     Victim public victim;
     
     // 启动攻击！
@@ -107,8 +96,7 @@ function withdraw(uint256 amount) public {
 }
 </code></pre>
 <hr>
-<h2>🛡️ 5. 修复与防范方案 (Mitigations)</h2>
-<ul>
+<h2 id="section-10">🛡️ 5. 修复与防范方案 (Mitigations)</h2><ul>
 <li><strong>协议自身的修复</strong>：<ul>
 <li><strong>必须严格遵循 CEI 模式 (Checks-Effects-Interactions)</strong>：一定是先查账，再把余额扣了，最后再对外发钱。（即使别人重入进来，因为余额已经是 0，就会被 Checks 拦在门外）。</li>
 </ul>
@@ -123,8 +111,7 @@ balances[msg.sender] -= amount;          // Effects (先扣钱！)
 <li><strong>引入防重入锁 (ReentrancyGuard)</strong>：继承 OpenZeppelin 的 <code>ReentrancyGuard</code> 合约，对敏感函数加上 <code>nonReentrant</code> 修饰符。底层原理是设置一个进入标记。</li>
 </ul>
 <hr>
-<h2>📖 6. 真实案例与靶场 (References)</h2>
-<ul>
+<h2 id="section-11">📖 6. 真实案例与靶场 (References)</h2><ul>
 <li><strong>经典黑客事件</strong>：<strong>The DAO 黑客事件 (2016)</strong>，这一事件直接导致以太坊硬分叉为 ETH 和 ETC。造成了数千万美元的损失，也是人类历史上最具影响力的智能合约安全事件。</li>
 <li><strong>靶场/练习</strong>：Damn Vulnerable DeFi - <code>[Truster]</code>, <code>[Side Entrance]</code>, Ethernaut - <code>[Re-entrance]</code>, <code>[Puzzle Wallet]</code>。</li>
 <li><strong>拓展阅读</strong>：重入攻击经过这么多年的发展，衍生出了<strong>跨函数重入</strong>（在一个函数套另一个函数）和<strong>跨合约只读重入</strong>（见另外一篇笔记）。核心思想都是“在状态未完全一致的真空期做小动作”。</li>

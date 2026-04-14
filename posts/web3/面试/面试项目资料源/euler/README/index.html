@@ -10,11 +10,9 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  <span class="directory-sep">/</span> <span class="directory-text">面试项目资料源</span>  <span class="directory-sep">/</span> <span class="directory-text">euler</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>README</h1> <p class="lead"># Euler Finance 漏洞复现工作区 这个仓库是面向审计与复现的 Euler Finance 漏洞脚手架，优先服务“先读后写”的分析流程。现在只维护一套源码树：协议源码全部放在 `src/euler/`，保持接近上游的可编译布局；审计直观性则通过根 README 和协议</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/面试/面试项目资料源/euler/README.md</p> </header> <div class="article-content"><h1>Euler Finance 漏洞复现工作区</h1>
-<p>这个仓库是面向审计与复现的 Euler Finance 漏洞脚手架，优先服务“先读后写”的分析流程。现在只维护一套源码树：协议源码全部放在 <code>src/euler/</code>，保持接近上游的可编译布局；审计直观性则通过根 README 和协议 README 来补。</p>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  <span class="directory-sep">/</span> <span class="directory-text">面试项目资料源</span>  <span class="directory-sep">/</span> <span class="directory-text">euler</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>README</h1> <p class="lead"># Euler Finance 漏洞复现工作区 这个仓库是面向审计与复现的 Euler Finance 漏洞脚手架，优先服务“先读后写”的分析流程。现在只维护一套源码树：协议源码全部放在 `src/euler/`，保持接近上游的可编译布局；审计直观性则通过根 README 和协议</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/面试/面试项目资料源/euler/README.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">事故概览</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">范围说明</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">快速开始</a> </li><li class="article-outline__item depth-2"> <a href="#section-4">攻击路径摘要</a> </li><li class="article-outline__item depth-2"> <a href="#section-5">时间线</a> </li><li class="article-outline__item depth-2"> <a href="#section-6">地址簿</a> </li><li class="article-outline__item depth-2"> <a href="#section-7">推荐阅读顺序</a> </li><li class="article-outline__item depth-2"> <a href="#section-8">仓库结构</a> </li><li class="article-outline__item depth-2"> <a href="#section-9">说明</a> </li><li class="article-outline__item depth-2"> <a href="#section-10">参考资料</a> </li> </ol> </nav> <div class="article-content"><h1>Euler Finance 漏洞复现工作区</h1><p>这个仓库是面向审计与复现的 Euler Finance 漏洞脚手架，优先服务“先读后写”的分析流程。现在只维护一套源码树：协议源码全部放在 <code>src/euler/</code>，保持接近上游的可编译布局；审计直观性则通过根 README 和协议 README 来补。</p>
 <p>根 README 现在兼任事故主页和地址簿，避免在分析初期来回跳转多个上下文文件。</p>
-<h2>事故概览</h2>
-<table>
+<h2 id="section-1">事故概览</h2><table>
 <thead>
 <tr>
 <th>字段</th>
@@ -50,11 +48,9 @@
 <td><a href="https://etherscan.io/address/0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9"><code>Aave V2 Lending Pool</code></a></td>
 </tr>
 </tbody></table>
-<h2>范围说明</h2>
-<p>这个仓库当前只聚焦 Euler Finance 在以太坊主网上的 DAI 攻击链。
+<h2 id="section-2">范围说明</h2><p>这个仓库当前只聚焦 Euler Finance 在以太坊主网上的 DAI 攻击链。
 2023 年 3 月 13 日当天存在多笔攻击交易；这里以 Euler Labs 复盘时间线中公开的第一笔攻击交易为锚点，并使用它前一个区块 <code>16817995</code> 作为推荐 fork 点。</p>
-<h2>快速开始</h2>
-<ol>
+<h2 id="section-3">快速开始</h2><ol>
 <li>参考 <code>.env.example</code> 填写 <code>.env</code>。</li>
 <li>执行 <code>forge build</code> 做一次仅编译的冒烟检查。</li>
 <li>执行 <code>forge test --match-test testExploit -vvv</code>，确认骨架在不 fork 的情况下也能通过。</li>
@@ -62,8 +58,7 @@
 <li>执行 <code>slither . --exclude-dependencies</code>，对当前唯一源码树做静态扫描。</li>
 </ol>
 <p>如果没有配置 <code>TENDERLY_RPC_URL</code>，测试会主动跳过依赖 fork 的步骤，只承担编译和结构校验的职责。</p>
-<h2>攻击路径摘要</h2>
-<ol>
+<h2 id="section-4">攻击路径摘要</h2><ol>
 <li>从 Aave V2 借出 <code>30,000,000 DAI</code> 闪电贷。</li>
 <li>存入 Euler，并通过自借把头寸杠杆拉高。</li>
 <li>调用 <code>donateToReserves()</code> 销毁抵押物，但不减少债务。</li>
@@ -71,14 +66,12 @@
 <li>通过自清算吃到清算折价。</li>
 <li>归还闪电贷，保留价差利润。</li>
 </ol>
-<h2>时间线</h2>
-<ol>
+<h2 id="section-5">时间线</h2><ol>
 <li><code>2023-03-13 08:50:23 UTC</code>：<code>Euler Finance Exploiter 1</code> 部署 <code>Euler Exploit Contract 2</code>。</li>
 <li><code>2023-03-13 08:50:35 UTC</code>：<code>Euler Finance Exploiter 3</code> 部署 <code>Euler Exploit Contract 1</code>。</li>
 <li><code>2023-03-13 08:50:59 UTC</code>：第一笔参考攻击交易执行，从 Aave V2 借出 <code>30,000,000 DAI</code>，并从 Euler 的 DAI 市场抽走约 <code>$8.8M</code> 价值。</li>
 </ol>
-<h2>地址簿</h2>
-<table>
+<h2 id="section-6">地址簿</h2><table>
 <thead>
 <tr>
 <th>角色</th>
@@ -166,8 +159,7 @@
 <td><code>test/helpers/EulerAddresses.sol</code> + <code>test/poc.t.sol</code></td>
 </tr>
 </tbody></table>
-<h2>推荐阅读顺序</h2>
-<ol>
+<h2 id="section-7">推荐阅读顺序</h2><ol>
 <li>根 README 当前页</li>
 <li><a href="src/euler/README.md"><code>src/euler/README.md</code></a></li>
 <li><a href="src/euler/Storage.sol"><code>src/euler/Storage.sol</code></a></li>
@@ -176,8 +168,7 @@
 <li><a href="src/euler/audit_notes.md"><code>src/euler/audit_notes.md</code></a></li>
 <li><a href="test/poc.t.sol"><code>test/poc.t.sol</code></a></li>
 </ol>
-<h2>仓库结构</h2>
-<pre><code class="language-text">.
+<h2 id="section-8">仓库结构</h2><pre><code class="language-text">.
 ├── src/
 │   └── euler/
 ├── test/
@@ -188,19 +179,17 @@
 ├── foundry.toml
 └── README.md
 </code></pre>
-<h2>说明</h2>
-<ul>
+<h2 id="section-9">说明</h2><ul>
 <li>根 README 同时承担事故上下文、地址簿、启动入口三种职责。</li>
 <li><code>src/euler/</code> 是当前项目唯一维护的协议源码树，布局尽量贴近上游，方便 <code>forge build</code>、<code>slither</code>、diff 和全文搜索直接工作。</li>
 <li>协议级审计笔记和源码放在一起，位置是 <a href="src/euler/audit_notes.md"><code>src/euler/audit_notes.md</code></a>。</li>
 <li>外部协议默认不再单独维护整棵阅读树；当前只在根 README 和 <code>test/interfaces/</code> 里保留 Aave V2 所需的最小上下文。</li>
 </ul>
-<h2>参考资料</h2>
-<ul>
+<h2 id="section-10">参考资料</h2><ul>
 <li>Euler Labs: <a href="https://medium.com/eulerfinance/war-peace-ab2670711175">War &amp; Peace: Behind the Scenes of Euler&#39;s $240M Exploit Recovery</a></li>
 <li>Etherscan: <a href="https://etherscan.io/tx/0xc310a0affe2169d1f6feec1c63dbc7f7c62a887fa48795d327d4d2da2d6b111d">参考攻击交易</a></li>
 </ul>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/面试/面试项目资料源/blocksec面经/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">blocksec面经</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/面试/面试项目资料源/euler/audit_notes/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">audit_notes</h4> </a> </div> </nav> </article>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/面试/面试项目资料源/euler/audit_notes/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">audit_notes</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/面试/面试项目资料源/euler/REPRO_SUMMARY/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">REPRO_SUMMARY</h4> </a> </div> </nav> </article>  </main> <script>
       (() => {
         const root = document.documentElement;
         const bindToggle = () => {

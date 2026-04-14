@@ -10,13 +10,11 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  <span class="directory-sep">/</span> <span class="directory-text">面试项目资料源</span>  <span class="directory-sep">/</span> <span class="directory-text">euler</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>audit_notes</h1> <p class="lead"># Euler Finance 审计笔记 &gt; 审计范围: `src/euler/` 的核心架构与模块，重点关注 `Storage.sol`、`BaseLogic.sol`、`modules/EToken.sol`、`modules/DToken.sol`、`modules/Liq</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/面试/面试项目资料源/euler/audit_notes.md</p> </header> <div class="article-content"><h1>Euler Finance 审计笔记</h1>
-<blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  <span class="directory-sep">/</span> <span class="directory-text">面试项目资料源</span>  <span class="directory-sep">/</span> <span class="directory-text">euler</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>audit_notes</h1> <p class="lead"># Euler Finance 审计笔记 &gt; 审计范围: `src/euler/` 的核心架构与模块，重点关注 `Storage.sol`、`BaseLogic.sol`、`modules/EToken.sol`、`modules/DToken.sol`、`modules/Liq</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/面试/面试项目资料源/euler/audit_notes.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">合约概览</a> </li><li class="article-outline__item depth-3"> <a href="#section-2">Slither 说明</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">资金在哪</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">补充：underlying 是什么</a> </li><li class="article-outline__item depth-2"> <a href="#section-5">逐函数分析</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">EToken.deposit()</a> </li><li class="article-outline__item depth-3"> <a href="#section-7">EToken.withdraw()</a> </li><li class="article-outline__item depth-3"> <a href="#section-8">EToken.mint()自借杠杆函数。</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">EToken.transferFrom()</a> </li><li class="article-outline__item depth-3"> <a href="#section-10">EToken.donateToReserves()</a> </li><li class="article-outline__item depth-3"> <a href="#section-11">Liquidation.computeLiqOpp() / executeLiquidation()</a> </li><li class="article-outline__item depth-2"> <a href="#section-12">🔍 发现的问题</a> </li><li class="article-outline__item depth-3"> <a href="#section-13">问题1: donateToReserves() 销毁抵押物后遗漏流动性检查</a> </li><li class="article-outline__item depth-2"> <a href="#section-14">结论</a> </li><li class="article-outline__item depth-2"> <a href="#section-15">💡 收获与心得</a> </li> </ol> </nav> <div class="article-content"><h1>Euler Finance 审计笔记</h1><blockquote>
 <p>审计范围: <code>src/euler/</code> 的核心架构与模块，重点关注 <code>Storage.sol</code>、<code>BaseLogic.sol</code>、<code>modules/EToken.sol</code>、<code>modules/DToken.sol</code>、<code>modules/Liquidation.sol</code>、<code>modules/RiskManager.sol</code>
 Solidity 版本: <code>^0.8.0</code>（<code>vendor/</code> 下存在混合 pragma）</p>
 </blockquote>
-<h2>合约概览</h2>
-<p>这套代码是典型的“单存储 + 多模块逻辑”架构。真正持有状态的是 <a href="./Euler.sol"><code>Euler.sol</code></a> 和 <a href="./Storage.sol"><code>Storage.sol</code></a>，真正执行业务的是各个模块合约。</p>
+<h2 id="section-1">合约概览</h2><p>这套代码是典型的“单存储 + 多模块逻辑”架构。真正持有状态的是 <a href="./Euler.sol"><code>Euler.sol</code></a> 和 <a href="./Storage.sol"><code>Storage.sol</code></a>，真正执行业务的是各个模块合约。</p>
 <p>我先从 <a href="./Euler.sol"><code>Euler.sol</code></a> 看入口，马上能确认这是一个强模块化系统：</p>
 <ul>
 <li><a href="./Euler.sol"><code>dispatch()</code></a> 会把来自受信任 proxy 的调用转成 <code>delegatecall</code>，把执行路由到对应模块。</li>
@@ -30,8 +28,7 @@ Solidity 版本: <code>^0.8.0</code>（<code>vendor/</code> 下存在混合 prag
 </ul>
 </li>
 </ul>
-<h3>Slither 说明</h3>
-<ul>
+<h3 id="section-2">Slither 说明</h3><ul>
 <li>这次我实际跑了 <code>slither . --exclude-dependencies</code>，已经能直接扫当前项目。</li>
 <li>这轮输出里有几类命中我会这样看：<ul>
 <li><strong><code>controlled-delegatecall</code> @ <code>Base.callInternalModule()</code></strong><ul>
@@ -50,8 +47,7 @@ Solidity 版本: <code>^0.8.0</code>（<code>vendor/</code> 下存在混合 prag
 </li>
 <li>更关键的是：<strong>Slither 这次没有替我直接指出 <code>donateToReserves()</code> 的问题，真正把漏洞钉死的还是人工对同类函数的差异审计。</strong></li>
 </ul>
-<h2>资金在哪</h2>
-<p>钱和债都锚定在 <a href="./Storage.sol"><code>Storage.sol</code></a> 的 <code>AssetStorage</code> / <code>UserAsset</code> 上：</p>
+<h2 id="section-3">资金在哪</h2><p>钱和债都锚定在 <a href="./Storage.sol"><code>Storage.sol</code></a> 的 <code>AssetStorage</code> / <code>UserAsset</code> 上：</p>
 <p>Storage.sol 是 Euler 的“全局状态定义文件”。它不做业务逻辑，核心功能是定义整个协议要存哪些状态，以及这些状态的结构和映射关系确定各变量内存槽位置</p>
 <pre><code class="language-solidity">struct UserAsset {
     uint112 balance;              // 用户持有的 eToken 内部记账余额，本质上代表这名用户在该资产池中的抵押份额
@@ -80,8 +76,7 @@ struct AssetStorage {
 </ol>
 <p>这条保护链很清楚：</p>
 <p>“凡是会让用户更危险的状态变化，做完以后必须调 <code>checkLiquidity(account)</code>。”</p>
-<h3>补充：<code>underlying</code> 是什么</h3>
-<p>这里专门补一句，避免把变量语义看混：</p>
+<h3 id="section-4">补充：<code>underlying</code> 是什么</h3><p>这里专门补一句，避免把变量语义看混：</p>
 <ul>
 <li><code>EToken</code> 里的 <code>underlying</code> 是<strong>底层 ERC20 的地址</strong>（比如 DAI 地址），不是金额变量。</li>
 <li>它来自 <code>CALLER()</code> 解包后的 <code>assetStorage.underlying</code>，而不是临时计算出来的数值。</li>
@@ -148,9 +143,7 @@ struct AssetStorage {
 <li>也没有把账户标成需要延迟结算</li>
 </ul>
 <p>等于直接绕过了账本变更后的统一风控闸门。</p>
-<h2>逐函数分析</h2>
-<h3><code>EToken.deposit()</code></h3>
-<ul>
+<h2 id="section-5">逐函数分析</h2><h3 id="section-6"><code>EToken.deposit()</code></h3><ul>
 <li>代码位置：<code>src/euler/modules/EToken.sol:139</code></li>
 <li>干了什么：<ul>
 <li>拉入 underlying</li>
@@ -164,8 +157,7 @@ struct AssetStorage {
 </ul>
 </li>
 </ul>
-<h3><code>EToken.withdraw()</code></h3>
-<ul>
+<h3 id="section-7"><code>EToken.withdraw()</code></h3><ul>
 <li>代码位置：<code>src/euler/modules/EToken.sol:193</code></li>
 <li>干了什么：<ul>
 <li>计算用户想提多少</li>
@@ -179,8 +171,7 @@ struct AssetStorage {
 </ul>
 </li>
 </ul>
-<h3><code>EToken.mint()</code>自借杠杆函数。</h3>
-<ul>
+<h3 id="section-8"><code>EToken.mint()</code>自借杠杆函数。</h3><ul>
 <li>代码位置：<code>src/euler/modules/EToken.sol:221</code></li>
 <li>干了什么：<ul>
 <li>先把输入金额从 external units 解码到内部精度：<code>decodeExternalAmount(...)</code></li>
@@ -200,8 +191,7 @@ struct AssetStorage {
 </ul>
 </li>
 </ul>
-<h3><code>EToken.transferFrom()</code></h3>
-<ul>
+<h3 id="section-9"><code>EToken.transferFrom()</code></h3><ul>
 <li>代码位置：<code>src/euler/modules/EToken.sol:352</code></li>
 <li>干了什么：<ul>
 <li>把 eToken 从 <code>from</code> 挪到 <code>to</code></li>
@@ -213,8 +203,7 @@ struct AssetStorage {
 </ul>
 </li>
 </ul>
-<h3><code>EToken.donateToReserves()</code></h3>
-<ul>
+<h3 id="section-10"><code>EToken.donateToReserves()</code></h3><ul>
 <li>代码位置：<code>src/euler/modules/EToken.sol:390</code></li>
 <li>干了什么：<ul>
 <li>从用户 <code>balance</code> 里扣除 eToken</li>
@@ -239,8 +228,7 @@ struct AssetStorage {
 </ul>
 </li>
 </ul>
-<h3><code>Liquidation.computeLiqOpp()</code> / <code>executeLiquidation()</code></h3>
-<p>compute Liquidation Opportunity，<strong>计算一笔清算机会的参数”</strong>，比如能还多少（repay）、能拿多少抵押物（yield）、健康度（healthScore）、折价（discount）等</p>
+<h3 id="section-11"><code>Liquidation.computeLiqOpp()</code> / <code>executeLiquidation()</code></h3><p>compute Liquidation Opportunity，<strong>计算一笔清算机会的参数”</strong>，比如能还多少（repay）、能拿多少抵押物（yield）、健康度（healthScore）、折价（discount）等</p>
 <ul>
 <li>代码位置：<ul>
 <li><code>src/euler/modules/Liquidation.sol:55</code></li>
@@ -261,9 +249,7 @@ struct AssetStorage {
 </ul>
 </li>
 </ul>
-<h2>🔍 发现的问题</h2>
-<h3>问题1: <code>donateToReserves()</code> 销毁抵押物后遗漏流动性检查</h3>
-<ul>
+<h2 id="section-12">🔍 发现的问题</h2><h3 id="section-13">问题1: <code>donateToReserves()</code> 销毁抵押物后遗漏流动性检查</h3><ul>
 <li><strong>严重程度</strong>: Critical</li>
 <li><strong>怎么发现的</strong>:<ul>
 <li>我不是先盯 exploit 交易，而是先盯“所有会让用户更危险的函数”。</li>
@@ -340,8 +326,7 @@ struct AssetStorage {
 </ul>
 </li>
 </ul>
-<h2>结论</h2>
-<p>这轮 scoped 审计里，最核心、最确定、也最贴合真实攻击路径的问题，仍然是：</p>
+<h2 id="section-14">结论</h2><p>这轮 scoped 审计里，最核心、最确定、也最贴合真实攻击路径的问题，仍然是：</p>
 <p><strong><code>donateToReserves()</code> 在减少用户抵押后没有做 post-state liquidity check。</strong></p>
 <p>我没有在这轮人工审计里再看到第二个同级别的关键漏洞；真正让这次事故爆炸的，不是复杂的价格操纵，而是一个非常朴素的“不一致性”：</p>
 <ul>
@@ -349,8 +334,7 @@ struct AssetStorage {
 <li>唯独 <code>donateToReserves()</code> 没有</li>
 </ul>
 <p>这就是典型的“边缘功能绕开核心不变量”。</p>
-<h2>💡 收获与心得</h2>
-<ol>
+<h2 id="section-15">💡 收获与心得</h2><ol>
 <li><p><strong>审计借贷协议时，先盯账本，不要先盯交易。</strong>
 真正关键的是谁在改 <code>balance</code>、谁在改 <code>owed</code>、谁在改 <code>reserveBalance</code>。</p>
 </li>
@@ -364,7 +348,7 @@ struct AssetStorage {
 目录直观性可以靠 README 和笔记补，工具链稳定性只能靠源码布局本身保证。</p>
 </li>
 </ol>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/面试/面试项目资料源/euler/README/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">README</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/面试/面试项目资料源/euler/REPRO_SUMMARY/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">REPRO_SUMMARY</h4> </a> </div> </nav> </article>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/面试/面试项目资料源/blocksec面经/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">blocksec面经</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/面试/面试项目资料源/euler/README/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">README</h4> </a> </div> </nav> </article>  </main> <script>
       (() => {
         const root = document.documentElement;
         const bindToggle = () => {

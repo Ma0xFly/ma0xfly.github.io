@@ -10,13 +10,11 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">DeFi协议</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>uniswap_v4</h1> <p class="lead"># Uniswap V4: 可编程流动性平台 &gt; **一句话总结**：Uniswap V4 打破了前代单纯做市引擎的身份，通过引入革命性的 Hooks（钩子系统）和万剑归宗的 Singleton（单例架构），彻底转型为一个允许开发者在其核心流动性之上搭建无数特色金融玩法的底层平台</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/DeFi协议/uniswap_v4.md</p> </header> <div class="article-content"><h1>Uniswap V4: 可编程流动性平台</h1>
-<blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">DeFi协议</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>uniswap_v4</h1> <p class="lead"># Uniswap V4: 可编程流动性平台 &gt; **一句话总结**：Uniswap V4 打破了前代单纯做市引擎的身份，通过引入革命性的 Hooks（钩子系统）和万剑归宗的 Singleton（单例架构），彻底转型为一个允许开发者在其核心流动性之上搭建无数特色金融玩法的底层平台</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/DeFi协议/uniswap_v4.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">1. 核心痛点与破局思路 (Problem &amp; Solution)</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">2. 致命杀器：Hooks（钩子系统）🪝 (Core Mechanics)</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">3. 核心底座革命：Singleton 架构 (Architecture)</a> </li><li class="article-outline__item depth-2"> <a href="#section-4">4. 三代机制演进极简总结 (Evolution &amp; Conclusion)</a> </li> </ol> </nav> <div class="article-content"><h1>Uniswap V4: 可编程流动性平台</h1><blockquote>
 <p><strong>一句话总结</strong>：Uniswap V4 打破了前代单纯做市引擎的身份，通过引入革命性的 Hooks（钩子系统）和万剑归宗的 Singleton（单例架构），彻底转型为一个允许开发者在其核心流动性之上搭建无数特色金融玩法的底层平台基建。</p>
 </blockquote>
 <hr>
-<h2>1. 核心痛点与破局思路 (Problem &amp; Solution)</h2>
-<p><strong>核心痛点：V3 的“僵化”与极度费 Gas 的散装店铺</strong>
+<h2 id="section-1">1. 核心痛点与破局思路 (Problem &amp; Solution)</h2><p><strong>核心痛点：V3 的“僵化”与极度费 Gas 的散装店铺</strong>
 虽然 V3 的集中流动性将资金效率提升了极境，但它有着非常刻板的枷锁：</p>
 <ul>
 <li><strong>规则太死板</strong>：费率档位被写死（0.05%, 0.3%, 1%），无法随大盘恐慌程度自动调节。想要挂限价单、想要按预言机动态调整？通通不行。就像一个极权商场，所有店铺必须踩点开关门，不准搞任何特色营销。</li>
@@ -24,8 +22,7 @@
 </ul>
 <p><strong>破局思路</strong>：V4 直接推翻了这堵墙，把“定价权与规则库”全部下放给第三方开发者，并且把散落全网的成千上万家店铺全部吸进同一栋无边界的巨型写字楼中。</p>
 <hr>
-<h2>2. 致命杀器：Hooks（钩子系统）🪝 (Core Mechanics)</h2>
-<p>V4 最大的革命性改变在于暴露了 <strong>Hooks（事件切面）</strong> 接口。
+<h2 id="section-2">2. 致命杀器：Hooks（钩子系统）🪝 (Core Mechanics)</h2><p>V4 最大的革命性改变在于暴露了 <strong>Hooks（事件切面）</strong> 接口。
 大白话翻译：Hooks 允许外部开发者在这台无情的金融换算机器运转的几个“关键施法读条时间”，硬行将自带的第三方代码逻辑插队塞入。</p>
 <p>**触发爆裂的“关键时刻”**包含：</p>
 <ul>
@@ -40,8 +37,7 @@
 <li><strong>自建池锚定预言机</strong>：甚至可以直接废了协议的数学公式，强制这笔交易结算要按照某个指定的外部数据源计费。</li>
 </ul>
 <hr>
-<h2>3. 核心底座革命：Singleton 架构 (Architecture)</h2>
-<p><strong>从“千城万店”变身“超级单体写字楼” (Singleton)</strong>。
+<h2 id="section-3">3. 核心底座革命：Singleton 架构 (Architecture)</h2><p><strong>从“千城万店”变身“超级单体写字楼” (Singleton)</strong>。
 不再像 V2/V3 那样为 PEPE/ETH，LINK/USDC 去不停地部署成千上万个孤儿合约了。V4 中，<strong>天上地下，全宇宙只有唯一的这一个大智能合约 (PoolManager)</strong>。在它庞大身躯的肚子里，用代码的哈希库（Mapping）隔开了数以千万计的账本房。</p>
 <p>极度的合并带来了前所未有的 <strong>闪电算盘结账 (Flash Accounting)</strong>：</p>
 <ul>
@@ -50,8 +46,7 @@
 <li><strong>只有在所有人全部倒腾完、操作关门前的那一刹那刻</strong>，协议才会大声喊出一句：“算总账！”根据每个端点最后的<strong>净余额</strong>进行唯一一次极其克制的硬核转账划拨。这种虚假算账只转移终点差额的作法，极大程度地节省了整个大以太坊网络的 Gas 转账磨损费。</li>
 </ul>
 <hr>
-<h2>4. 三代机制演进极简总结 (Evolution &amp; Conclusion)</h2>
-<p>Uniswap 帝国的千年演进史，本质上就是一场把算力极大压榨，把金融裁判权力极尽下放的史诗：</p>
+<h2 id="section-4">4. 三代机制演进极简总结 (Evolution &amp; Conclusion)</h2><p>Uniswap 帝国的千年演进史，本质上就是一场把算力极大压榨，把金融裁判权力极尽下放的史诗：</p>
 <table>
 <thead>
 <tr>

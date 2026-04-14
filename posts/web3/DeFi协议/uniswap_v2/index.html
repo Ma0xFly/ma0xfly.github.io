@@ -10,17 +10,15 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">DeFi协议</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>uniswap_v2</h1> <p class="lead">Uniswap V2 是以太坊上最经典的**去中心化交易所 (DEX)** 协议之一。它的核心在于彻底抛弃了传统金融的“订单薄” (Order Book) 模式，转而使用了 **自动做市商 (AMM)** 机制。 简单来说，Uniswap V2 就像一个始终在线的**自动机器人*</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/DeFi协议/uniswap_v2.md</p> </header> <div class="article-content"><p>Uniswap V2 是以太坊上最经典的<strong>去中心化交易所 (DEX)</strong> 协议之一。它的核心在于彻底抛弃了传统金融的“订单薄” (Order Book) 模式，转而使用了 <strong>自动做市商 (AMM)</strong> 机制。</p>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">DeFi协议</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>uniswap_v2</h1> <p class="lead">Uniswap V2 是以太坊上最经典的**去中心化交易所 (DEX)** 协议之一。它的核心在于彻底抛弃了传统金融的“订单薄” (Order Book) 模式，转而使用了 **自动做市商 (AMM)** 机制。 简单来说，Uniswap V2 就像一个始终在线的**自动机器人*</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/DeFi协议/uniswap_v2.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">AMM (自动做市商) 基础模型</a> </li><li class="article-outline__item depth-3"> <a href="#section-2">1. 核心公式：恒定乘积 (The Constant Product)</a> </li><li class="article-outline__item depth-3"> <a href="#section-3">2. 代码锚点：swap() 的数学推演</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">3.实战模拟</a> </li><li class="article-outline__item depth-2"> <a href="#section-5">流动性与 LP Token</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">LP Token 是怎么给的？</a> </li><li class="article-outline__item depth-2"> <a href="#section-7">无偿损失(Impermanent Loss, IL)</a> </li><li class="article-outline__item depth-3"> <a href="#section-8">1. 核心类比：消息闭塞的店主</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">1.2 重要辨析：这是 V2 的“无解问题”吗？预言机能解决吗？</a> </li><li class="article-outline__item depth-3"> <a href="#section-10">2. 实战算账：HODL vs. LP</a> </li><li class="article-outline__item depth-2"> <a href="#section-11">滑点与价格冲击</a> </li><li class="article-outline__item depth-3"> <a href="#section-12">实战算账：深池 vs. 浅池的数值推演</a> </li><li class="article-outline__item depth-3"> <a href="#section-13">安全工程师的“黑暗森林”视角</a> </li><li class="article-outline__item depth-3"> <a href="#section-14">Code Anchor: getAmountsOut</a> </li><li class="article-outline__item depth-2"> <a href="#section-15">核心架构：大航海时代的“贸易港口”</a> </li><li class="article-outline__item depth-3"> <a href="#section-16">1. Factory 合约（“造物主” / 招商局）</a> </li><li class="article-outline__item depth-3"> <a href="#section-17">2. Pair 合约（“算盘金库” / 无情底层）</a> </li><li class="article-outline__item depth-3"> <a href="#section-18">3. Router 合约（“贴心大管家” / 交易客服）</a> </li><li class="article-outline__item depth-3"> <a href="#section-19">🌟 核心协作工作流（一笔 Swap 是如何完成的？）</a> </li><li class="article-outline__item depth-2"> <a href="#section-20">V2 的痛点：90% 的货用不上</a> </li> </ol> </nav> <div class="article-content"><p>Uniswap V2 是以太坊上最经典的<strong>去中心化交易所 (DEX)</strong> 协议之一。它的核心在于彻底抛弃了传统金融的“订单薄” (Order Book) 模式，转而使用了 <strong>自动做市商 (AMM)</strong> 机制。</p>
 <p>简单来说，Uniswap V2 就像一个始终在线的<strong>自动机器人</strong>或<strong>自动售货机</strong>：     </p>
 <ul>
 <li><strong>没有买家和卖家</strong>：你不是在和另一个人交易。</li>
 <li><strong>只有资金池</strong>：你是在和一个装满代币的智能合约（资金池）进行交换。</li>
 <li><strong>数学定价</strong>：价格不是由人喊出来的，而是由一个简洁的数学公式 $x \cdot y = k$ 自动计算出来的。</li>
 </ul>
-<h2>AMM (自动做市商) 基础模型</h2>
-<p>Uniswap V2 的核心就是一个简单的数学公式，它强制规定了合约内两种资产余额的关系。</p>
-<h3>1. 核心公式：恒定乘积 (The Constant Product)</h3>
-<p>在传统金融（TradFi）中，价格是由人（买单和卖单）决定的。在 Uniswap V2 中，价格是由状态余额决定的。
+<h2 id="section-1">AMM (自动做市商) 基础模型</h2><p>Uniswap V2 的核心就是一个简单的数学公式，它强制规定了合约内两种资产余额的关系。</p>
+<h3 id="section-2">1. 核心公式：恒定乘积 (The Constant Product)</h3><p>在传统金融（TradFi）中，价格是由人（买单和卖单）决定的。在 Uniswap V2 中，价格是由状态余额决定的。
 公式：
 $$x \cdot y = k$$</p>
 <ul>
@@ -39,8 +37,7 @@ $$
 把 Uniswap 想象成一个**“死脑筋的自动售货机”。它不管外面世界 ETH 卖多少钱，它只死守一条规矩：“有人拿走 Token A，就必须放入足够多的 Token B，保证我肚子里的 $A \times B$ 总量不变。”**</p>
 </blockquote>
 <hr>
-<h3>2. 代码锚点：<code>swap()</code> 的数学推演</h3>
-<p>这是你作为审计员必须烂熟于心的逻辑。我们来看当用户进行一笔交易时，数值是如何流动的。
+<h3 id="section-3">2. 代码锚点：<code>swap()</code> 的数学推演</h3><p>这是你作为审计员必须烂熟于心的逻辑。我们来看当用户进行一笔交易时，数值是如何流动的。
 假设：</p>
 <ul>
 <li>用户<strong>输入</strong> $\Delta x$ 个 Token A。</li>
@@ -65,8 +62,7 @@ $$
 在 Solidity 中没有小数。上述除法如果除不尽，会向下取整。</p>
 <p>Uniswap 的铁律： 所有的取整误差都必须有利于协议（LPs），而不利于交易者。这意味着用户总是少拿哪怕 1 wei 的 Token。如果代码逻辑导致向上取整，可能被攻击者利用“舍入攻击”逐渐掏空池子。</p>
 </blockquote>
-<h3>3.实战模拟</h3>
-<p><strong>场景设定：</strong></p>
+<h3 id="section-4">3.实战模拟</h3><p><strong>场景设定：</strong></p>
 <ul>
 <li><p><strong>池底 (Reserves)：</strong> 10 ETH ($x$) + 20,000 USDT ($y$)</p>
 </li>
@@ -109,15 +105,12 @@ $$
 </ul>
 </li>
 </ul>
-<h2>流动性与 LP Token</h2>
-<p>在传统世界里，你们会签合同确认股份。但在区块链这个“代码世界”里，没有纸质合同。为了公平地证明每个人在资金池里拥有的“份额”，它会发给你<strong>LP Token</strong> ，LP Token 就是你在资金池里的“股份证明” (Share)。</p>
-<h3>LP Token 是怎么给的？</h3>
-<p>先记住一句最核心的话：</p>
+<h2 id="section-5">流动性与 LP Token</h2><p>在传统世界里，你们会签合同确认股份。但在区块链这个“代码世界”里，没有纸质合同。为了公平地证明每个人在资金池里拥有的“份额”，它会发给你<strong>LP Token</strong> ，LP Token 就是你在资金池里的“股份证明” (Share)。</p>
+<h3 id="section-6">LP Token 是怎么给的？</h3><p>先记住一句最核心的话：</p>
 <ul>
 <li><strong>LP Token 不是奖励积分，而是你对池子资产和手续费收入的份额凭证。</strong></li>
 </ul>
-<h4>1. 第一次注资：第一批 LP 怎么拿到 LP Token？</h4>
-<p>第一个往池子里放钱的人，不只是“存钱的人”，还是这个池子的<strong>创始股东</strong>。因为此时池子还是空的，所以：</p>
+<h4>1. 第一次注资：第一批 LP 怎么拿到 LP Token？</h4><p>第一个往池子里放钱的人，不只是“存钱的人”，还是这个池子的<strong>创始股东</strong>。因为此时池子还是空的，所以：</p>
 <ul>
 <li>你存进去的两种资产，决定了这个池子的<strong>初始价格</strong></li>
 <li>你拿到的 LP Token，决定了你的<strong>初始份额</strong></li>
@@ -132,8 +125,7 @@ $$</p>
 <li>不是只看某一边资产</li>
 <li>两边一起决定初始流动性份额</li>
 </ul>
-<h4>2. 后续注资：后来的人怎么拿 LP Token？</h4>
-<p>池子一旦建立起来，后面的人再来加流动性，就不能随便乱塞两种币了，而是要<strong>按当前池子的比例</strong>来加。</p>
+<h4>2. 后续注资：后来的人怎么拿 LP Token？</h4><p>池子一旦建立起来，后面的人再来加流动性，就不能随便乱塞两种币了，而是要<strong>按当前池子的比例</strong>来加。</p>
 <p>高层记法可以写成：</p>
 <p>$$
 liquidity \propto \min\left(\frac{amount0}{reserve0}, \frac{amount1}{reserve1}\right)
@@ -148,8 +140,7 @@ $$</p>
 <li>你不是“给多少币就印多少票”</li>
 <li>而是“你给池子补上了多少比例的流动性，就拿多少比例的股份”</li>
 </ul>
-<h4>3. 为什么必须按比例加池子？</h4>
-<p>因为 LP Token 代表的是<strong>池子的份额</strong>，不是“充值多少原币就记多少账”。</p>
+<h4>3. 为什么必须按比例加池子？</h4><p>因为 LP Token 代表的是<strong>池子的份额</strong>，不是“充值多少原币就记多少账”。</p>
 <p>如果当前池子里是：</p>
 <ul>
 <li><code>100 ETH</code></li>
@@ -203,8 +194,7 @@ $$</p>
 <li><strong>不是多塞一边资产，就能多拿 LP</strong></li>
 <li><strong>要按池子当前价格比例注资，才能高效换到份额</strong></li>
 </ul>
-<h4>4. 移除流动性：LP Token 怎么兑回资产？</h4>
-<p>当你退出时，不是“协议记得你当初存了多少 ETH 和多少 USDT，然后原样退回给你”。</p>
+<h4>4. 移除流动性：LP Token 怎么兑回资产？</h4><p>当你退出时，不是“协议记得你当初存了多少 ETH 和多少 USDT，然后原样退回给你”。</p>
 <p>它做的事情是：</p>
 <ul>
 <li>你把 LP Token 交回去并销毁（burn）</li>
@@ -219,8 +209,7 @@ $$</p>
 <li>你在<strong>当前整个池子</strong>里的那一份资产</li>
 <li>同时也包含你应得的<strong>手续费沉淀收益</strong></li>
 </ul>
-<h4>5. 一个简单例子</h4>
-<p>假设池子里当前有：</p>
+<h4>5. 一个简单例子</h4><p>假设池子里当前有：</p>
 <ul>
 <li><code>100 ETH</code></li>
 <li><code>200,000 USDT</code></li>
@@ -244,9 +233,7 @@ $$</p>
 <li>手续费会沉淀进池子</li>
 <li>价格变化还会改变你最终持仓结构</li>
 </ul>
-<h2>无偿损失(Impermanent Loss, IL)</h2>
-<h3>1. 核心类比：消息闭塞的店主</h3>
-<p>为了理解 IL，我们再次请出我们的 <strong>Uniswap 自动售货机</strong>。</p>
+<h2 id="section-7">无偿损失(Impermanent Loss, IL)</h2><h3 id="section-8">1. 核心类比：消息闭塞的店主</h3><p>为了理解 IL，我们再次请出我们的 <strong>Uniswap 自动售货机</strong>。</p>
 <ul>
 <li><p><strong>场景：</strong> 你是自动售货机的老板（LP）。你在机器里放了 <strong>Apple (ETH)</strong> 和 <strong>Cash (USDT)</strong>。</p>
 </li>
@@ -280,8 +267,7 @@ $$</p>
 <p>无常损失的本质，就是你被迫**“低卖高买”**。</p>
 <p>当币价上涨时，你自动卖出了表现好的资产（ETH）；当币价下跌时，你自动买入了表现差的资产（ETH）。你总是在做反向操作。</p>
 </blockquote>
-<h3>1.2 重要辨析：这是 V2 的“无解问题”吗？预言机能解决吗？</h3>
-<p>先说结论：</p>
+<h3 id="section-9">1.2 重要辨析：这是 V2 的“无解问题”吗？预言机能解决吗？</h3><p>先说结论：</p>
 <ul>
 <li><strong>对 LP 的无常损失来说，这不是 Uniswap V2 的实现漏洞，而是恒定乘积 AMM 的结构性 tradeoff。</strong></li>
 <li><strong>V2 确实有“预言机机制”，但它解决的是“下游协议如何更稳健地读取价格”，不是“从根本上消除 LP 的 IL”。</strong></li>
@@ -335,8 +321,7 @@ $$</p>
 <li><strong>不是给 Pair 自己拿来给每次 swap 定价的</strong></li>
 </ul>
 <hr>
-<h3>2. 实战算账：HODL vs. LP</h3>
-<p>我们用数字来证明这一点。这是所有 DeFi 玩家必须算的一笔账。</p>
+<h3 id="section-10">2. 实战算账：HODL vs. LP</h3><p>我们用数字来证明这一点。这是所有 DeFi 玩家必须算的一笔账。</p>
 <p><strong>初始状态 (Initial)：</strong></p>
 <ul>
 <li><p><strong>你持有：</strong> 10 ETH + 20,000 USDT</p>
@@ -348,8 +333,7 @@ $$</p>
 </ul>
 <p>突发事件：</p>
 <p>ETH 暴涨至 $4,000 (翻倍)。</p>
-<h4>策略 A：拿住不动 (HODL)</h4>
-<p>如果你没有把钱存进 Uniswap，而是放在钱包里不动：</p>
+<h4>策略 A：拿住不动 (HODL)</h4><p>如果你没有把钱存进 Uniswap，而是放在钱包里不动：</p>
 <ul>
 <li><p>10 ETH × $4,000 = $40,000</p>
 </li>
@@ -358,8 +342,7 @@ $$</p>
 <li><p><strong>总价值：</strong> <strong>$60,000</strong></p>
 </li>
 </ul>
-<h4>策略 B：提供流动性 (LP)</h4>
-<p>你把钱存进了 Uniswap。</p>
+<h4>策略 B：提供流动性 (LP)</h4><p>你把钱存进了 Uniswap。</p>
 <ul>
 <li><p>由于套利者的介入，你的池子比例会变（根据 $x \cdot y = k$ 自动调整）。</p>
 </li>
@@ -380,8 +363,7 @@ $$</p>
 </ul>
 </li>
 </ul>
-<h4>惨痛对比</h4>
-<ul>
+<h4>惨痛对比</h4><ul>
 <li><p><strong>HODL 躺平：</strong> $60,000</p>
 </li>
 <li><p><strong>辛辛苦苦当 LP：</strong> $56,564</p>
@@ -391,8 +373,7 @@ $$</p>
 </ul>
 <p>结论：</p>
 <p>ETH 涨了，你虽然赚了（从 4万 变成了 5.6万），但你跑输了大盘。如果算上你在做 LP 期间赚的手续费，如果不超过 $3,436，那你其实是亏本的。</p>
-<h2>滑点与价格冲击</h2>
-<p><strong>滑点</strong>就是：<strong>“你预期的价格”</strong> 和 <strong>“实际成交的更差价格”</strong> 之间的差额。
+<h2 id="section-11">滑点与价格冲击</h2><p><strong>滑点</strong>就是：<strong>“你预期的价格”</strong> 和 <strong>“实际成交的更差价格”</strong> 之间的差额。
 <strong>“价格冲击” (Price Impact)</strong>：因为你交易量太大、导致价格向你不利方向移动的现象 。</p>
 <p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/48ba090c547fa957826d56cf1be95028_MD5.jpg" alt="">
 这就是传说中的 <strong>Uniswap V2 联合曲线 (Bonding Curve)</strong>。这张图不仅仅是一条数学曲线，它是 DeFi 世界的“物理定律”。</p>
@@ -416,8 +397,7 @@ $$</p>
 </li>
 </ul>
 <hr>
-<h3>实战算账：深池 vs. 浅池的数值推演</h3>
-<p>根据你的 Checklist，我们要计算在不同 TVL (Total Value Locked) 下，购买等量资产的惨烈对比。</p>
+<h3 id="section-12">实战算账：深池 vs. 浅池的数值推演</h3><p>根据你的 Checklist，我们要计算在不同 TVL (Total Value Locked) 下，购买等量资产的惨烈对比。</p>
 <p><strong>场景设定：</strong></p>
 <ul>
 <li><p><strong>你的任务：</strong> 购买 <strong>10,000 USDT</strong> 等值的 ETH。</p>
@@ -425,8 +405,7 @@ $$</p>
 <li><p><strong>当前价格：</strong> 1 ETH = 2,000 USDT。</p>
 </li>
 </ul>
-<h4>🦈 场景 A：浅池子 (Shallow Pool)</h4>
-<ul>
+<h4>🦈 场景 A：浅池子 (Shallow Pool)</h4><ul>
 <li><p><strong>池子状态：</strong> 10 ETH + 20,000 USDT ($k = 200,000$)。</p>
 </li>
 <li><p><strong>池子总价值：</strong> $40,000 (Very Low)</p>
@@ -452,8 +431,7 @@ $$</p>
 </ul>
 </li>
 </ol>
-<h4>🐋 场景 B：深池子 (Deep Pool)</h4>
-<ul>
+<h4>🐋 场景 B：深池子 (Deep Pool)</h4><ul>
 <li><p><strong>池子状态：</strong> 10,000 ETH + 20,000,000 USDT ($k = 2 \times 10^{11}$)。</p>
 </li>
 <li><p><strong>池子总价值：</strong> $40,000,000 (High)</p>
@@ -480,8 +458,7 @@ $$</p>
 </li>
 </ol>
 <hr>
-<h3>安全工程师的“黑暗森林”视角</h3>
-<p>为什么要特意算这个？因为 <strong>Flash Loan (闪电贷)</strong>。</p>
+<h3 id="section-13">安全工程师的“黑暗森林”视角</h3><p>为什么要特意算这个？因为 <strong>Flash Loan (闪电贷)</strong>。</p>
 <p>黑客没有几千万美金的本金，但他可以借。</p>
 <p>如果黑客借来 1 亿美金，对着一个中等深度的池子（比如某个山寨币池子）砸进去：</p>
 <ol>
@@ -498,8 +475,7 @@ $$</p>
 </ol>
 <p>这就是 <strong>Oracle Manipulation Attack</strong> 的核心原理：<strong>利用资金量制造 Price Impact，扭曲现实。</strong></p>
 <hr>
-<h3>Code Anchor: <code>getAmountsOut</code></h3>
-<p>在代码里，Router 合约会帮你计算这笔账。作为开发者，你必须知道这个函数。</p>
+<h3 id="section-14">Code Anchor: <code>getAmountsOut</code></h3><p>在代码里，Router 合约会帮你计算这笔账。作为开发者，你必须知道这个函数。</p>
 <pre><code class="language-solidity">// UniswapV2Router02.sol
 
 function getAmountsOut(uint amountIn, address[] memory path) 
@@ -518,33 +494,28 @@ function getAmountsOut(uint amountIn, address[] memory path)
 </code></pre>
 <p>安全审计点：
 如果一个 DeFi 协议直接依赖 getAmountsOut 的返回值作为“价格预言机”，那么它100% 会被黑掉。因为 getAmountsOut 反映的是当前瞬间的价格，极易被闪电贷操纵。更合理的思路是：至少使用 Uniswap V2 的累计价格构造 TWAP，或者在高安全要求场景下接入更稳健的外部预言机，而不是直接信任瞬时 spot price。</p>
-<h2>核心架构：大航海时代的“贸易港口”</h2>
-<p>在 Uniswap V2 的世界里，你可以把整个系统想象成一个由<strong>三个互不相识的机器人</strong>分工管理的去中心化外贸大港口。</p>
+<h2 id="section-15">核心架构：大航海时代的“贸易港口”</h2><p>在 Uniswap V2 的世界里，你可以把整个系统想象成一个由<strong>三个互不相识的机器人</strong>分工管理的去中心化外贸大港口。</p>
 <p>它们分工极其明确，各司其职，被拆分成了三个核心智能合约：<strong>Factory（造物主/工厂）</strong>、<strong>Pair（金库引擎）</strong> 和 <strong>Router（贴心客服）</strong>。</p>
-<h3>1. Factory 合约（“造物主” / 招商局）</h3>
-<p>Factory 是整个协议的<strong>发源地</strong>和<strong>注册中心</strong>。</p>
+<h3 id="section-16">1. Factory 合约（“造物主” / 招商局）</h3><p>Factory 是整个协议的<strong>发源地</strong>和<strong>注册中心</strong>。</p>
 <ul>
 <li><strong>核心执念：</strong> 它脑子里只有一件事——<strong>“开新店”</strong>。</li>
 <li><strong>凭空造物：</strong> 如果你想在 Uniswap 上交易一种全新的土狗币（比如 PEPE/ETH），你不是自己去盖楼，而是去告诉 Factory。Factory 会施展魔法（基于底层 <code>create2</code> 操作码），凭空为你“克隆”出一个全新的专用小黑屋（Pair 合约地址）。</li>
 <li><strong>绝对唯一性：</strong> 开完店后，Factory 会在一个巨大的“官方名录”里划重点登记：“PEPE/ETH 的店面地址是这儿”。这保证了<strong>天下只有一家正版的 PEPE/ETH 官方店</strong>，任何人都不会走错门。</li>
 </ul>
-<h3>2. Pair 合约（“算盘金库” / 无情底层）</h3>
-<p>Pair 是 V2 最核心、也是最危险的组件（属于 <code>v2-core</code> 代码库），你可以把它当成一个<strong>深埋在地下的钛合金保险箱兼无情算盘</strong>。</p>
+<h3 id="section-17">2. Pair 合约（“算盘金库” / 无情底层）</h3><p>Pair 是 V2 最核心、也是最危险的组件（属于 <code>v2-core</code> 代码库），你可以把它当成一个<strong>深埋在地下的钛合金保险箱兼无情算盘</strong>。</p>
 <ul>
 <li><strong>吸纳巨资：</strong> 全世界所有的资金（比如 ETH 和 USDT）都真真实实地锁在它的肚子里。</li>
 <li><strong>无情机器：</strong> 它是 $x \cdot y = k$ 公式的终极守护者。它不知变通，不懂行情，哪怕外面天塌了，只要钱丢进了它的账口，它就会按照公式无情地吐出另一种币。</li>
 <li><strong>⚠️ 极度危险（请勿直接靠近）：</strong> <strong>永远不要</strong>用你自己的钱包直接给 Pair 转账！它没有任何用户保护机制（防呆机制）。如果你直接把钱甩给它却忘记调用特定功能，你的钱会被这台机器直接吞噬，变成全池所有人的“共同红利”。</li>
 <li><strong>印票机器：</strong> 当你来注入资金（充当 LP 提供流动性）时，Pair 这台机器会当场咔咔为你印发特制的 <strong>LP Token（股权凭证）</strong> 作为收据，证明你在这个独立金库里的占股比例。</li>
 </ul>
-<h3>3. Router 合约（“贴心大管家” / 交易客服）</h3>
-<p>既然 Pair 这么底层且危险，普通用户该怎么玩？答案就是交由 Router（属于 <code>v2-periphery</code>），也就是港口宽敞明亮的<strong>服务大厅</strong>。</p>
+<h3 id="section-18">3. Router 合约（“贴心大管家” / 交易客服）</h3><p>既然 Pair 这么底层且危险，普通用户该怎么玩？答案就是交由 Router（属于 <code>v2-periphery</code>），也就是港口宽敞明亮的<strong>服务大厅</strong>。</p>
 <ul>
 <li><strong>一站式护路人：</strong> 因为 Pair 危险，所以你要通过 Router 这个代理人。你所有的买卖提存，都是把指令和资金丢给 Router。Router 拿着你的钱，下到地下 Pair 金库完成严谨操作，然后再把置换出的代币安全交回你手上。</li>
 <li><strong>智能导航（多跳交易）：</strong> 如果你想用 DAI 买 PEPE，但刚好没有 DAI/PEPE 直达金库怎么办？Router 大管家会自动帮你规划连续转车路线（A $\to$ B $\to$ C），一瞬间里连续向多个底层 Pair 串门互换，把最终成果给你。</li>
 <li><strong>爆仓救生衣（滑点保护）：</strong> Router 能听懂“安全限价指令”。你可以定规矩：“如果现在价格波动太大，换回来的钱低于 999 块，这笔买卖就作废！” Router 就会在前场死死盯着，一旦发现底层兑出数量不足，立马触发整体交易回滚（Revert），绝不让你被黑客趁乱割肉。</li>
 </ul>
-<h3>🌟 核心协作工作流（一笔 Swap 是如何完成的？）</h3>
-<p>当你用 1 个 ETH 去买 USDT 时，背后实际上是：</p>
+<h3 id="section-19">🌟 核心协作工作流（一笔 Swap 是如何完成的？）</h3><p>当你用 1 个 ETH 去买 USDT 时，背后实际上是：</p>
 <ol>
 <li>你把 1 ETH 和“保护下限要求”递交给了<strong>客服大厅（Router）</strong>。</li>
 <li><strong>Router</strong> 跑去问<strong>招商局（Factory）</strong>：“请问 ETH/USDT 金库的门牌号是多少？”</li>
@@ -555,8 +526,7 @@ function getAmountsOut(uint amountIn, address[] memory path)
 <blockquote>
 <p><strong>架构启示：</strong> Factory 是创造者，Pair 是暴力的数学金融引擎，而 Router 是人性化的保护伞。</p>
 </blockquote>
-<h2>V2 的痛点：90% 的货用不上</h2>
-<p>V2 有个大问题：<strong>资金效率太低</strong>。</p>
+<h2 id="section-20">V2 的痛点：90% 的货用不上</h2><p>V2 有个大问题：<strong>资金效率太低</strong>。</p>
 <p>为什么？因为流动性是&quot;平铺&quot;在整个价格范围的（从 0 到无穷大）。</p>
 <p>打个比方：</p>
 <ul>

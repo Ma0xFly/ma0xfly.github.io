@@ -10,16 +10,13 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  <span class="directory-sep">/</span> <span class="directory-text">面试项目资料源</span>  <span class="directory-sep">/</span> <span class="directory-text">euler</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>REPRO_SUMMARY</h1> <p class="lead"># Euler Finance 漏洞复现说明 ## 1. 项目目标 本项目复现的是 Euler Finance 在 2023-03-13 的经典攻击路径，核心目标不是“把交易跑出来”这么简单，而是把下面三件事都讲清楚： 1. 漏洞为什么会发生 2. 攻击者如何把漏洞变成可兑现利润</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/面试/面试项目资料源/euler/REPRO_SUMMARY.md</p> </header> <div class="article-content"><h1>Euler Finance 漏洞复现说明</h1>
-<h2>1. 项目目标</h2>
-<p>本项目复现的是 Euler Finance 在 2023-03-13 的经典攻击路径，核心目标不是“把交易跑出来”这么简单，而是把下面三件事都讲清楚：</p>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  <span class="directory-sep">/</span> <span class="directory-text">面试项目资料源</span>  <span class="directory-sep">/</span> <span class="directory-text">euler</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>REPRO_SUMMARY</h1> <p class="lead"># Euler Finance 漏洞复现说明 ## 1. 项目目标 本项目复现的是 Euler Finance 在 2023-03-13 的经典攻击路径，核心目标不是“把交易跑出来”这么简单，而是把下面三件事都讲清楚： 1. 漏洞为什么会发生 2. 攻击者如何把漏洞变成可兑现利润</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/面试/面试项目资料源/euler/REPRO_SUMMARY.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">1. 项目目标</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">2. 漏洞根因</a> </li><li class="article-outline__item depth-3"> <a href="#section-3">为什么用户抵押了钱还能 donateToReserves()</a> </li><li class="article-outline__item depth-2"> <a href="#section-4">3. 攻击路径</a> </li><li class="article-outline__item depth-2"> <a href="#section-5">4. 为什么要拆成两个角色</a> </li><li class="article-outline__item depth-2"> <a href="#section-6">5. 复现环境</a> </li><li class="article-outline__item depth-3"> <a href="#section-7">A. Foundry fork test</a> </li><li class="article-outline__item depth-3"> <a href="#section-8">B. Tenderly Virtual TestNet 广播</a> </li><li class="article-outline__item depth-2"> <a href="#section-9">6. 复现结果</a> </li><li class="article-outline__item depth-2"> <a href="#section-10">7. 代码结构</a> </li><li class="article-outline__item depth-2"> <a href="#section-11">8. 这个项目体现的能力</a> </li><li class="article-outline__item depth-2"> <a href="#section-12">9. 面试时可以怎么一句话介绍</a> </li> </ol> </nav> <div class="article-content"><h1>Euler Finance 漏洞复现说明</h1><h2 id="section-1">1. 项目目标</h2><p>本项目复现的是 Euler Finance 在 2023-03-13 的经典攻击路径，核心目标不是“把交易跑出来”这么简单，而是把下面三件事都讲清楚：</p>
 <ol>
 <li>漏洞为什么会发生</li>
 <li>攻击者如何把漏洞变成可兑现利润</li>
 <li>如何用 Foundry + Tenderly 在指定历史区块稳定复现</li>
 </ol>
-<h2>2. 漏洞根因</h2>
-<p>本次漏洞的根因在 <code>EToken.donateToReserves()</code>。</p>
+<h2 id="section-2">2. 漏洞根因</h2><p>本次漏洞的根因在 <code>EToken.donateToReserves()</code>。</p>
 <p>问题本质是：</p>
 <ul>
 <li>用户调用 <code>donateToReserves()</code> 后，自己的抵押物会减少</li>
@@ -29,8 +26,7 @@
 <p>这意味着攻击者可以主动把自己从“健康仓位”推成“可清算仓位”，然后再通过清算模块吃到折价。</p>
 <p>一句话总结：</p>
 <p><strong>Euler 允许攻击者在不触发风控校验的情况下，销毁自己的抵押，从而制造一个可以被折价清算的坏账仓位。</strong></p>
-<h3>为什么用户抵押了钱还能 <code>donateToReserves()</code></h3>
-<p>这里容易误解成“用户又额外拿钱捐给协议”，但实际不是。</p>
+<h3 id="section-3">为什么用户抵押了钱还能 <code>donateToReserves()</code></h3><p>这里容易误解成“用户又额外拿钱捐给协议”，但实际不是。</p>
 <p>更准确地说：</p>
 <ul>
 <li>用户先把 DAI 存进 Euler</li>
@@ -42,8 +38,7 @@
 <p>正常情况下，用户减少自己的抵押权益之后，协议应该立即检查这笔账户是否还健康。</p>
 <p>本次漏洞的关键不是“用户为什么能捐”，而是：</p>
 <p><strong>用户捐掉自己的抵押份额之后，Euler 没有立即执行流动性检查。</strong></p>
-<h2>3. 攻击路径</h2>
-<p>复现出来的攻击链如下：</p>
+<h2 id="section-4">3. 攻击路径</h2><p>复现出来的攻击链如下：</p>
 <ol>
 <li>从 Aave V2 闪电贷借入 <code>30,000,000 DAI</code></li>
 <li>向 Euler 存入一部分 DAI 作为初始抵押</li>
@@ -56,18 +51,15 @@
 <li>从 Euler 池中提取剩余真实 DAI</li>
 <li>归还 Aave 闪电贷本息，保留净利润</li>
 </ol>
-<h2>4. 为什么要拆成两个角色</h2>
-<p>项目里把攻击者拆成：</p>
+<h2 id="section-5">4. 为什么要拆成两个角色</h2><p>项目里把攻击者拆成：</p>
 <ul>
 <li><code>violator</code>：持有不健康仓位</li>
 <li><code>liquidator</code>：发起清算的一方</li>
 </ul>
 <p>这样做的原因是 Euler 的清算逻辑明确禁止 self-liquidation。</p>
 <p>所以在 PoC 里，必须把“被清算账户”和“清算执行账户”分开。</p>
-<h2>5. 复现环境</h2>
-<p>本项目使用两套方式验证：</p>
-<h3>A. Foundry fork test</h3>
-<p>使用 Tenderly RPC 作为 fork 状态源，在历史区块复现：</p>
+<h2 id="section-6">5. 复现环境</h2><p>本项目使用两套方式验证：</p>
+<h3 id="section-7">A. Foundry fork test</h3><p>使用 Tenderly RPC 作为 fork 状态源，在历史区块复现：</p>
 <pre><code class="language-bash">source .env &amp;&amp; forge test --match-test testExploit -vvv --rpc-url $TENDERLY_RPC_URL --fork-block-number 16817995
 </code></pre>
 <p>特点：</p>
@@ -76,8 +68,7 @@
 <li>状态来自 Tenderly fork</li>
 <li>适合快速验证 PoC 是否成立</li>
 </ul>
-<h3>B. Tenderly Virtual TestNet 广播</h3>
-<p>通过脚本把真实 exploit 交易发到 Tenderly，方便在 Debugger 中逐层查看：</p>
+<h3 id="section-8">B. Tenderly Virtual TestNet 广播</h3><p>通过脚本把真实 exploit 交易发到 Tenderly，方便在 Debugger 中逐层查看：</p>
 <pre><code class="language-bash">source .env &amp;&amp; forge script script/EulerTenderly.s.sol:EulerTenderlyScript --rpc-url $TENDERLY_RPC_URL --broadcast --slow -vvvv
 </code></pre>
 <p>这里使用 <code>--slow</code> 的原因是：</p>
@@ -86,8 +77,7 @@
 <li>再调用 exploit 合约</li>
 <li>如果不加 <code>--slow</code>，第二笔调用可能在第一笔部署确认前发出，导致打到“当时还没代码的地址”</li>
 </ul>
-<h2>6. 复现结果</h2>
-<p>当前 PoC 已经稳定跑通，关键输出如下：</p>
+<h2 id="section-9">6. 复现结果</h2><p>当前 PoC 已经稳定跑通，关键输出如下：</p>
 <ul>
 <li><code>liquidator DAI after withdraw: 38904507</code></li>
 <li><code>Aave amount owing: 30027000</code></li>
@@ -99,8 +89,7 @@
 <li>闪电贷本息已经成功归还</li>
 <li>剩余约 <code>8.88M DAI</code> 为本次 PoC 中复现出来的净利润</li>
 </ol>
-<h2>7. 代码结构</h2>
-<p>本项目里与复现最相关的文件：</p>
+<h2 id="section-10">7. 代码结构</h2><p>本项目里与复现最相关的文件：</p>
 <ul>
 <li><code>test/poc.t.sol</code><ul>
 <li>主 PoC 测试文件</li>
@@ -124,8 +113,7 @@
 </ul>
 </li>
 </ul>
-<h2>8. 这个项目体现的能力</h2>
-<p>如果从面试角度总结，这个复现体现的不是“会跑工具”，而是以下能力：</p>
+<h2 id="section-11">8. 这个项目体现的能力</h2><p>如果从面试角度总结，这个复现体现的不是“会跑工具”，而是以下能力：</p>
 <ol>
 <li>能从源码层定位漏洞根因，而不是只抄攻击脚本</li>
 <li>能把协议业务逻辑翻译成最小可验证的 PoC</li>
@@ -133,12 +121,11 @@
 <li>能使用 Foundry、Tenderly、Aave、Euler 模块接口完成跨协议复现</li>
 <li>能把复杂 exploit 拆成可解释的阶段，并输出可验证结果</li>
 </ol>
-<h2>9. 面试时可以怎么一句话介绍</h2>
-<p>可以直接这样说：</p>
+<h2 id="section-12">9. 面试时可以怎么一句话介绍</h2><p>可以直接这样说：</p>
 <blockquote>
 <p>我复现了 Euler Finance 的 donateToReserves 漏洞，核心是利用 donate 漏掉流动性检查，把健康仓位主动打成可清算坏账，再通过折价清算和池子剩余流动性提取实现获利。整个过程我分别用 Foundry fork test 和 Tenderly 广播交易验证过。</p>
 </blockquote>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/面试/面试项目资料源/euler/audit_notes/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">audit_notes</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/面试/面试项目资料源/jd_bitslab/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">jd_bitslab</h4> </a> </div> </nav> </article>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/面试/面试项目资料源/euler/README/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">README</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/面试/面试项目资料源/jd_bitslab/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">jd_bitslab</h4> </a> </div> </nav> </article>  </main> <script>
       (() => {
         const root = document.documentElement;
         const bindToggle = () => {

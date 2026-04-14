@@ -10,24 +10,19 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">漏洞笔记</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>Delegatecall调用陷阱漏洞</h1> <p class="lead"># Delegatecall 调用陷阱 (Delegatecall Context Trap) &gt; **标签:** #漏洞类型/底层机制与状态混乱 | #协议类型/代理合约/多签/模块化架构 | #严重程度/Critical ## 📌 1. TL;DR (一句话快速回顾) * </p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/漏洞笔记/Delegatecall调用陷阱漏洞.md</p> </header> <div class="article-content"><h1>Delegatecall 调用陷阱 (Delegatecall Context Trap)</h1>
-<blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">漏洞笔记</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>Delegatecall调用陷阱漏洞</h1> <p class="lead"># Delegatecall 调用陷阱 (Delegatecall Context Trap) &gt; **标签:** #漏洞类型/底层机制与状态混乱 | #协议类型/代理合约/多签/模块化架构 | #严重程度/Critical ## 📌 1. TL;DR (一句话快速回顾) * </p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/漏洞笔记/Delegatecall调用陷阱漏洞.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">📌 1. TL;DR (一句话快速回顾)</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">🔍 2. 漏洞底层原理 (Root Cause)</a> </li><li class="article-outline__item depth-3"> <a href="#section-3">正常业务逻辑</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">缺陷剖析</a> </li><li class="article-outline__item depth-2"> <a href="#section-5">⚔️ 3. 攻击执行路径 (Exploit Steps)</a> </li><li class="article-outline__item depth-2"> <a href="#section-6">💻 4. 关键代码示例 (Snippets)</a> </li><li class="article-outline__item depth-3"> <a href="#section-7">漏洞代码 (Vulnerable Code)</a> </li><li class="article-outline__item depth-3"> <a href="#section-8">攻击核心逻辑 (Attack Logic)</a> </li><li class="article-outline__item depth-2"> <a href="#section-9">🛡️ 5. 修复与防范方案 (Mitigations)</a> </li><li class="article-outline__item depth-2"> <a href="#section-10">📖 6. 真实案例与靶场 (References)</a> </li> </ol> </nav> <div class="article-content"><h1>Delegatecall 调用陷阱 (Delegatecall Context Trap)</h1><blockquote>
 <p><strong>标签:</strong> #漏洞类型/底层机制与状态混乱 | #协议类型/代理合约/多签/模块化架构 | #严重程度/Critical</p>
 </blockquote>
-<h2>📌 1. TL;DR (一句话快速回顾)</h2>
-<ul>
+<h2 id="section-1">📌 1. TL;DR (一句话快速回顾)</h2><ul>
 <li><strong>本质成因</strong>：<code>delegatecall</code> 是 Solidity 中一种特殊的调用方式，<strong>它执行的是别人的代码，但修改的却是自己的状态（储蓄槽/Storage）</strong>。如果你让它去调用了一个恶意合约，或者去调用了一个状态变量布局和你不一致的正常合约，你的合约数据就会被彻底破坏或篡改。</li>
 <li><strong>攻击路径</strong>：攻击者利用存在任意 <code>delegatecall</code> 漏洞的合约，让它去 <code>delegatecall</code> 攻击者部署的黑客合约。黑客合约里写着修改 <code>owner</code> 或直接 <code>selfdestruct</code> (自毁) 的代码，结果就是漏洞合约自己的 <code>owner</code> 变量被改成了黑客，或者干脆把自己给炸毁了。</li>
 </ul>
 <hr>
-<h2>🔍 2. 漏洞底层原理 (Root Cause)</h2>
-<h3>正常业务逻辑</h3>
-<ul>
+<h2 id="section-2">🔍 2. 漏洞底层原理 (Root Cause)</h2><h3 id="section-3">正常业务逻辑</h3><ul>
 <li><code>delegatecall</code> 的设计初衷是为了实现<strong>代码复用</strong>和<strong>可升级合约（Proxy 模式）</strong>。</li>
 <li>例如：主合约（代理）比较轻微，只有存储数据。业务逻辑（库合约/逻辑合约）太大了。于是代理合约收到用户请求后，使用 <code>delegatecall</code> 把用户的请求转达给逻辑合约处理。<strong>处理完后，变更的状态依然存在代理合约里</strong>。</li>
 </ul>
-<h3>缺陷剖析</h3>
-<ul>
+<h3 id="section-4">缺陷剖析</h3><ul>
 <li><strong>致命代码/机制</strong>：<ol>
 <li><strong>允许用户指定调用目标</strong>：如果你有一个函数 <code>execute(address target, bytes data)</code> 并且底层是 <code>target.delegatecall(data)</code>，那你完了，这相当于把自己的心脏交给了别人。</li>
 <li><strong>存储槽位冲撞 (Storage Collision)</strong>：哪怕 <code>target</code> 是安全的，但如果代理合约和逻辑合约对变量声明的顺序不一样（例如代理合约第0个槽是 <code>address owner</code>，逻辑合约第0个槽是 <code>uint256 value</code>），在 <code>delegatecall</code> 之后，原本想改 <code>value</code> 的动作，会直接覆盖掉你的 <code>owner</code>！</li>
@@ -40,8 +35,7 @@
 </li>
 </ul>
 <hr>
-<h2>⚔️ 3. 攻击执行路径 (Exploit Steps)</h2>
-<blockquote>
+<h2 id="section-5">⚔️ 3. 攻击执行路径 (Exploit Steps)</h2><blockquote>
 <p>以最灾难的“任意 Delegatecall 导致修改管理员”为例：</p>
 </blockquote>
 <ol>
@@ -51,9 +45,7 @@
 <li><strong>[获利退场]</strong>: 漏洞合约傻乎乎地去“借用”了攻击者合约的代码。结果在自己的内存（Storage）里，自己的 <code>owner</code> 变量被改成了攻击者。攻击者随后以主人的名义卷走所有资金。</li>
 </ol>
 <hr>
-<h2>💻 4. 关键代码示例 (Snippets)</h2>
-<h3>漏洞代码 (Vulnerable Code)</h3>
-<pre><code class="language-solidity">contract ProxyVault {
+<h2 id="section-6">💻 4. 关键代码示例 (Snippets)</h2><h3 id="section-7">漏洞代码 (Vulnerable Code)</h3><pre><code class="language-solidity">contract ProxyVault {
     address public owner; // 躺在 0 号插槽
     
     constructor() {
@@ -68,8 +60,7 @@
     }
 }
 </code></pre>
-<h3>攻击核心逻辑 (Attack Logic)</h3>
-<pre><code class="language-solidity">contract AttackContract {
+<h3 id="section-8">攻击核心逻辑 (Attack Logic)</h3><pre><code class="language-solidity">contract AttackContract {
     address public owner; // 为了槽位对齐，必须在 0 号插槽也放一个同类型的变量
 
     // 攻击核心：这行代码如果被别人 delegatecall，就会修改别人的 0 号插槽！
@@ -84,8 +75,7 @@
 // Vault 换了主人。
 </code></pre>
 <hr>
-<h2>🛡️ 5. 修复与防范方案 (Mitigations)</h2>
-<ul>
+<h2 id="section-9">🛡️ 5. 修复与防范方案 (Mitigations)</h2><ul>
 <li><strong>协议自身的修复</strong>：<ul>
 <li><strong>绝不允许目标地址 (target) 可控</strong>：如果要用 <code>delegatecall</code> 转发请求，目标地址必须在合约部署时写死（<code>immutable</code> 或常量），或者只能由严格的管理员设置（Proxy升级模式）。</li>
 <li><strong>严格对齐变量槽位 (Storage Layout)</strong>：在代理-逻辑合约分离模式中，逻辑合约的变量声明顺序<strong>必须</strong>和代理合约保持绝对一致。或者使用 EIP-1967 标准，将关键的逻辑合约地址、管理员地址存放到计算出的不可猜测极远槽位（如通过 Keccak256 hash 取出一个极其冷门的整数槽作为特定变量仓库），从而杜绝业务操作覆盖核心权限。</li>
@@ -94,13 +84,12 @@
 </li>
 </ul>
 <hr>
-<h2>📖 6. 真实案例与靶场 (References)</h2>
-<ul>
+<h2 id="section-10">📖 6. 真实案例与靶场 (References)</h2><ul>
 <li><strong>经典黑客事件</strong>：<strong>Parity 多签钱包第二次被黑事件 (2017)</strong>。最著名的也是最绝望的一场惨剧：因为 Parity 多签库使用了 <code>delegatecall</code> 作为统一基础库给成千上万个建立的多签钱包提供执行能力。小白无意间抢占了基础库的 Owner 权限，并对基础库发起了 <code>selfdestruct</code>（自杀指令）。导致所有依赖这个基础库的（几十万个通过 delegatecall 连过来的）多签钱包里的以太坊全变成了永久冻结的废铁。</li>
 <li><strong>靶场/练习</strong>：Damn Vulnerable DeFi - <code>[Climber]</code> (将 Delegatecall 劫持时间锁后实施逻辑越权篡改升级底层代码)，Ethernaut - <code>[Delegation]</code>, <code>[Preservation]</code>, <code>[Puzzle Wallet]</code>（最后这个极度经典，深入演示了如何利用数组长度和槽位0的冲突覆写拥有者）。</li>
 <li><strong>拓展阅读</strong>：这不仅只发生在简单的余额和权限变量上，在更深层的多线复合型（例如钻石代理模型 Diamond Proxy EIP-2535）下，对于槽位 <code>AppStorage</code> 的防重叠规划是全栈架构师最大的必修课。</li>
 </ul>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/漏洞笔记/Curve只读重入漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">Curve只读重入漏洞</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/漏洞笔记/TWAP操纵漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">TWAP操纵漏洞</h4> </a> </div> </nav> </article>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/漏洞笔记/整型溢出与精度计算漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">整型溢出与精度计算漏洞</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/漏洞笔记/Curve只读重入漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">Curve只读重入漏洞</h4> </a> </div> </nav> </article>  </main> <script>
       (() => {
         const root = document.documentElement;
         const bindToggle = () => {

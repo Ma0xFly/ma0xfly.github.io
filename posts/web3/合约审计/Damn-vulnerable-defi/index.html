@@ -10,14 +10,11 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">合约审计</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>Damn-vulnerable-defi</h1> <p class="lead"># Unstoppable 有一个代币化金库，里面存有100万枚DVT代币。在宽限期结束前，它提供免费闪电贷服务。 为了在完全无需许可的情况下发现任何漏洞，开发人员决定在测试网上进行实时测试。他们还设置了监控合约来检查闪电贷功能的运行状况。 player账户余额为 10 个 DV</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/合约审计/Damn-vulnerable-defi.md</p> </header> <div class="article-content"><h1>Unstoppable</h1>
-<p>有一个代币化金库，里面存有100万枚DVT代币。在宽限期结束前，它提供免费闪电贷服务。</p>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">合约审计</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>Damn-vulnerable-defi</h1> <p class="lead"># Unstoppable 有一个代币化金库，里面存有100万枚DVT代币。在宽限期结束前，它提供免费闪电贷服务。 为了在完全无需许可的情况下发现任何漏洞，开发人员决定在测试网上进行实时测试。他们还设置了监控合约来检查闪电贷功能的运行状况。 player账户余额为 10 个 DV</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/合约审计/Damn-vulnerable-defi.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">漏洞点</a> </li><li class="article-outline__item depth-3"> <a href="#section-2">UnstoppableVault</a> </li><li class="article-outline__item depth-3"> <a href="#section-3">UnstoppableMonitor（监控 + 暂停）</a> </li><li class="article-outline__item depth-2"> <a href="#section-4">wp</a> </li><li class="article-outline__item depth-2"> <a href="#section-5">审计漏洞</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">第一步：鸟瞰全貌 (Reconnaissance)</a> </li><li class="article-outline__item depth-3"> <a href="#section-7">第二步：找“钱”在哪 (Follow the Money)</a> </li><li class="article-outline__item depth-3"> <a href="#section-8">第三步：核心逻辑审计 (Core Business Logic)</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">第四步：组合攻击 (Check for Combinations)</a> </li><li class="article-outline__item depth-3"> <a href="#section-10">第五步：利用上下文混淆withdraw提取所有余额</a> </li><li class="article-outline__item depth-2"> <a href="#section-11">wp</a> </li><li class="article-outline__item depth-3"> <a href="#section-12">第一步：鸟瞰全貌 (Reconnaissance)</a> </li><li class="article-outline__item depth-3"> <a href="#section-13">第二步：资金锚定 (Follow the Money)</a> </li><li class="article-outline__item depth-3"> <a href="#section-14">第三步：核心逻辑精读 (Core Business Logic)</a> </li><li class="article-outline__item depth-3"> <a href="#section-15">第四步：威胁建模 (Threat Modeling)</a> </li><li class="article-outline__item depth-2"> <a href="#section-16">wp</a> </li><li class="article-outline__item depth-3"> <a href="#section-17">第一步：鸟瞰全貌 (Bird&#39;s Eye View)</a> </li><li class="article-outline__item depth-3"> <a href="#section-18">第二步：资金锚定 (Follow the Money)</a> </li><li class="article-outline__item depth-3"> <a href="#section-19">第三步：核心逻辑精读 (Core Business Logic)</a> </li><li class="article-outline__item depth-3"> <a href="#section-20">第四步：威胁建模 (Threat Modeling)</a> </li><li class="article-outline__item depth-2"> <a href="#section-21">wp</a> </li><li class="article-outline__item depth-3"> <a href="#section-22">第一步：鸟瞰全貌 (Bird&#39;s Eye View)</a> </li><li class="article-outline__item depth-3"> <a href="#section-23">第二步：资金锚定 (Asset Anchoring)</a> </li><li class="article-outline__item depth-3"> <a href="#section-24">第三步：核心逻辑精读 (Core Logic Deep Dive)</a> </li><li class="article-outline__item depth-3"> <a href="#section-25">第四步：威胁建模 (Threat Modeling)</a> </li><li class="article-outline__item depth-2"> <a href="#section-26">wp</a> </li> </ol> </nav> <div class="article-content"><h1>Unstoppable</h1><p>有一个代币化金库，里面存有100万枚DVT代币。在宽限期结束前，它提供免费闪电贷服务。</p>
 <p>为了在完全无需许可的情况下发现任何漏洞，开发人员决定在测试网上进行实时测试。他们还设置了监控合约来检查闪电贷功能的运行状况。</p>
 <p>player账户余额为 10 个 DVT 代币，证明可以关闭金库。金库必须停止提供闪电贷服务</p>
 <p>你起始有 10 DVT，目标是让 Vault 停止提供闪电贷服务（<code>flashLoan</code> 调用失败，Monitor 触发暂停）。</p>
-<h2>漏洞点</h2>
-<h3>UnstoppableVault</h3>
-<p><code>UnstoppableVault</code> 是一个 ERC4626 vault + ERC3156 闪电贷出借方 + Pausable</p>
+<h2 id="section-1">漏洞点</h2><h3 id="section-2">UnstoppableVault</h3><p><code>UnstoppableVault</code> 是一个 ERC4626 vault + ERC3156 闪电贷出借方 + Pausable</p>
 <p>关键点：</p>
 <ul>
 <li><code>totalAssets()</code> 返回 <code>asset.balanceOf(address(this))</code>（直接读 Token 余额），如果你不通过 <code>deposit</code>，而是直接通过 <code>transfer</code> 把代币转给合约（“强制喂食”），<code>totalAssets()</code> 会增加，但 <code>totalSupply()</code> 不会变。</li>
@@ -64,8 +61,7 @@ revert InvalidBalance();
 <p>含义是：</p>
 <p>Vault 认为：用当前总 share 数量 <code>totalSupply</code> 换算出的 asset 数量，应该等于 Vault 实际持有的 asset 余额 <code>totalAssets()</code>。</p>
 <p>这在“所有资产都通过 <code>deposit</code>/<code>mint</code> 流入 Vault”时是成立的。</p>
-<h3>UnstoppableMonitor（监控 + 暂停）</h3>
-<p><code>UnstoppableMonitor</code> 实现了 <code>IERC3156FlashBorrower</code>，用来检测 Vault 是否还能正常闪电贷</p>
+<h3 id="section-3">UnstoppableMonitor（监控 + 暂停）</h3><p><code>UnstoppableMonitor</code> 实现了 <code>IERC3156FlashBorrower</code>，用来检测 Vault 是否还能正常闪电贷</p>
 <p>伪代码逻辑：</p>
 <pre><code class="language-solidity">function checkFlashLoan(uint256 amount) external {
   try vault.flashLoan(
@@ -89,8 +85,7 @@ revert InvalidBalance();
 <li><code>_isSolved()</code> 再由 <code>deployer</code> 调用一次 <code>checkFlashLoan(100e18)</code>，此时必须失败才算过关</li>
 </ul>
 <p>因此，本关的本质目标是：找到一种方式，让后续任何 <code>flashLoan</code> 都因为 <code>revert</code> 而失败。</p>
-<h2>wp</h2>
-<pre><code class="language-solidity">    function test_unstoppable() public checkSolvedByPlayer {
+<h2 id="section-4">wp</h2><pre><code class="language-solidity">    function test_unstoppable() public checkSolvedByPlayer {
         // 转账一定数量的 DVT 到 vault，改变 totalAssets，但不改变 totalSupply
         // 打印转账后的状态，查看 vault 的 totalAssets 和 totalSupply
         console.log(&quot;before attack!!!!!!!!!!!!!&quot;);
@@ -106,8 +101,7 @@ revert InvalidBalance();
         vault.convertToShares(vault.totalSupply()));
     }
 </code></pre>
-<h1>Naive Receiver (Context Confusion 上下文混淆)</h1>
-<p>There’s a pool with 1000 WETH in balance offering flash loans. It has a fixed fee of 1 WETH. The pool supports meta-transactions by integrating with a permissionless forwarder contract.</p>
+<h1>Naive Receiver (Context Confusion 上下文混淆)</h1><p>There’s a pool with 1000 WETH in balance offering flash loans. It has a fixed fee of 1 WETH. The pool supports meta-transactions by integrating with a permissionless forwarder contract.</p>
 <p>A user deployed a sample contract with 10 WETH in balance. Looks like it can execute flash loans of WETH.</p>
 <p>All funds are at risk! Rescue all WETH from the user and the pool, and deposit it into the designated recovery account.
 关卡情报</p>
@@ -117,9 +111,7 @@ revert InvalidBalance();
 <li><strong>目标：</strong> 榨干受害者合约里的所有 10 ETH，直到它余额归零。最后提款到指定账户</li>
 <li><strong>你的资源：</strong> 你几乎身无分文（或者说不需要花自己的钱）。</li>
 </ul>
-<h2>审计漏洞</h2>
-<h3>第一步：鸟瞰全貌 (Reconnaissance)</h3>
-<p><strong>目的</strong>：不看具体逻辑，先弄清楚“这合约是干嘛的？”、“它依赖谁？”。</p>
+<h2 id="section-5">审计漏洞</h2><h3 id="section-6">第一步：鸟瞰全貌 (Reconnaissance)</h3><p><strong>目的</strong>：不看具体逻辑，先弄清楚“这合约是干嘛的？”、“它依赖谁？”。</p>
 <ol>
 <li><p><strong>看名字</strong>：<code>NaiveReceiverPool</code> -&gt; 一个池子，可能和“天真（Naive）”的接收者有关。</p>
 </li>
@@ -144,8 +136,7 @@ revert InvalidBalance();
 </ol>
 <p><strong>第一步结论</strong>：这是一个只借出 WETH 的闪电贷池子，支持批量调用。</p>
 <hr>
-<h3>第二步：找“钱”在哪 (Follow the Money)</h3>
-<p><strong>目的</strong>：合约最危险的地方就是资金进出的地方。找到存储资金的变量。</p>
+<h3 id="section-7">第二步：找“钱”在哪 (Follow the Money)</h3><p><strong>目的</strong>：合约最危险的地方就是资金进出的地方。找到存储资金的变量。</p>
 <ol>
 <li><p><strong>状态变量 (State Variables)</strong>：</p>
 <pre><code class="language-Solidity">uint256 private constant FIXED_FEE = 1e18; // 1 ETH
@@ -162,8 +153,7 @@ uint256 public totalDeposits;
 </li>
 </ol>
 <hr>
-<h3>第三步：核心逻辑审计 (Core Business Logic)</h3>
-<p><strong>目的</strong>：盯着最复杂的那个函数看。在闪电贷合约里，就是 <code>flashLoan</code>。</p>
+<h3 id="section-8">第三步：核心逻辑审计 (Core Business Logic)</h3><p><strong>目的</strong>：盯着最复杂的那个函数看。在闪电贷合约里，就是 <code>flashLoan</code>。</p>
 <p>我们要逐行“翻译”它的行为，并扮演<strong>恶意用户</strong>的角色。</p>
 <pre><code class="language-solidity">function flashLoan(IERC3156FlashBorrower receiver, address token, uint256 amount, bytes calldata data)
     external
@@ -214,8 +204,7 @@ uint256 public totalDeposits;
 </ul>
 <p><strong>第三步结论</strong>：发现逻辑漏洞！我可以发起交易，指定别人当冤大头付手续费。</p>
 <hr>
-<h3>第四步：组合攻击 (Check for Combinations)</h3>
-<p><strong>目的</strong>：回到第一步看到的 <code>Multicall</code>。</p>
+<h3 id="section-9">第四步：组合攻击 (Check for Combinations)</h3><p><strong>目的</strong>：回到第一步看到的 <code>Multicall</code>。</p>
 <ul>
 <li><p>单次攻击：我调用一次 <code>flashLoan</code>，受害者亏 1 ETH。</p>
 </li>
@@ -225,15 +214,13 @@ uint256 public totalDeposits;
 </ul>
 </li>
 </ul>
-<h3>第五步：利用上下文混淆withdraw提取所有余额</h3>
-<p>wp中当执行 <code>calls[10] = abi.encodePacked(withdrawOp, deployer);</code> 时，构造的数据流（Payload）在内存中长这样：</p>
+<h3 id="section-10">第五步：利用上下文混淆withdraw提取所有余额</h3><p>wp中当执行 <code>calls[10] = abi.encodePacked(withdrawOp, deployer);</code> 时，构造的数据流（Payload）在内存中长这样：</p>
 <pre><code>|------------ 标准 withdraw 调用数据 (withdrawOp) --------|--- 附加数据 ---|
 |  Selector|    Amount (32字节)      |   Receiver (32字节)  |   Deployer   |
 |  4字节   | 000...0003f2 (1010 ETH) | 000...recovery_addr |  20字节地址   |
 </code></pre>
 <p>当这段数据被传入 <code>pool.withdraw</code> 执行时，发生了以下两件事：</p>
-<h4><code>withdraw</code> 函数的视角 (正常的参数解析)</h4>
-<p>Solidity 的 ABI 解码规则有一个特性：<strong>忽略尾部多余数据 (Ignore Trailing Garbage)</strong></p>
+<h4><code>withdraw</code> 函数的视角 (正常的参数解析)</h4><p>Solidity 的 ABI 解码规则有一个特性：<strong>忽略尾部多余数据 (Ignore Trailing Garbage)</strong></p>
 <p><code>withdraw(uint256 amount, address receiver)</code> 函数只需要读取前 4+32+32 个字节。它读完 <code>receiver</code> 后，认为任务完成了，<strong>根本不关心后面是不是还粘着一个 deployer 地址</strong>。</p>
 <ul>
 <li><p><code>amount</code>: 解析成功 </p>
@@ -243,8 +230,7 @@ uint256 public totalDeposits;
 <li><p>后面多余的 20 字节：直接无视</p>
 </li>
 </ul>
-<h4><code>_msgSender()</code> 函数的视角 (特殊的身份解析)</h4>
-<p>在 <code>withdraw</code> 内部，执行到了 <code>deposits[_msgSender()] -= amount;</code>。 这时，<code>_msgSender()</code> 被调用了。</p>
+<h4><code>_msgSender()</code> 函数的视角 (特殊的身份解析)</h4><p>在 <code>withdraw</code> 内部，执行到了 <code>deposits[_msgSender()] -= amount;</code>。 这时，<code>_msgSender()</code> 被调用了。</p>
 <pre><code class="language-solidity">function _msgSender() internal view override returns (address) {
     // 条件1: 调用者是 trustedForwarder (我们通过 Forwarder 发起的，满足)
     if (msg.sender == trustedForwarder &amp;&amp; msg.data.length &gt;= 20) {
@@ -263,8 +249,7 @@ uint256 public totalDeposits;
 <code>setUp</code> 函数揭示<code>deployer</code> 是金主：Pool 里的初始 1000 WETH 和赚到的 10 WETH 手续费，在账本上都归 <code>deployer</code> 所有。</p>
 </li>
 </ul>
-<h2>wp</h2>
-<pre><code class="language-solidity">    function test_naiveReceiver() public checkSolvedByPlayer {
+<h2 id="section-11">wp</h2><pre><code class="language-solidity">    function test_naiveReceiver() public checkSolvedByPlayer {
 
         // --- 1. 准备攻击数据 ---
         // 构造 Multicall 需要的 11 个调用：前 10 次是刷空受害者，第 11 次是提干池子
@@ -315,14 +300,12 @@ uint256 public totalDeposits;
         forwarder.execute(req, abi.encodePacked(r, s, v));
     }
 </code></pre>
-<h1>Truster</h1>
-<p>越来越多的贷款池开始提供闪贷。在这种情况下，一个新的池已经启动，免费提供DVT代币闪贷。</p>
+<h1>Truster</h1><p>越来越多的贷款池开始提供闪贷。在这种情况下，一个新的池已经启动，免费提供DVT代币闪贷。</p>
 <p>该池持有100万个DVT代币。你什么都没有。</p>
 <p>为了通过这个挑战，拯救池中的所有资金，执行单个交易。将资金存入指定的回收账户。</p>
 <p>收到，让我们按照**“五步法”**审计标准，立即对 <code>TrusterLenderPool</code> 进行安全分析。</p>
 <hr>
-<h3>第一步：鸟瞰全貌 (Reconnaissance)</h3>
-<ul>
+<h3 id="section-12">第一步：鸟瞰全貌 (Reconnaissance)</h3><ul>
 <li><p><strong>合约名</strong>: <code>TrusterLenderPool</code> 1。暗示了某种“信任”关系，通常在安全领域，“Trust”往往意味着“过度信任”或“权限过大”。</p>
 </li>
 <li><p><strong>继承</strong>: <code>ReentrancyGuard</code> 2。这说明开发者意识到了重入攻击的风险，并使用了 OpenZeppelin 的标准库来防御。</p>
@@ -334,8 +317,7 @@ uint256 public totalDeposits;
 </ul>
 <p><strong>初步结论</strong>：这是一个标准的闪电贷池，防了重入，但名字里的 &quot;Truster&quot; 让人不安。</p>
 <hr>
-<h3>第二步：资金锚定 (Follow the Money)</h3>
-<ul>
+<h3 id="section-13">第二步：资金锚定 (Follow the Money)</h3><ul>
 <li><p><strong>核心资产</strong>: <code>DamnValuableToken public immutable token;</code> 4。</p>
 </li>
 <li><p><strong>余额检查</strong>: 合约没有使用 <code>mapping</code> 记账，而是直接在 <code>flashLoan</code> 中通过 <code>token.balanceOf(address(this))</code> 检查余额变化 5。</p>
@@ -344,8 +326,7 @@ uint256 public totalDeposits;
 </li>
 </ul>
 <hr>
-<h3>第三步：核心逻辑精读 (Core Business Logic)</h3>
-<p>我们聚焦于唯一的业务函数 <code>flashLoan</code>。让我们扮演攻击者进行拷问：</p>
+<h3 id="section-14">第三步：核心逻辑精读 (Core Business Logic)</h3><p>我们聚焦于唯一的业务函数 <code>flashLoan</code>。让我们扮演攻击者进行拷问：</p>
 <pre><code class="language-solidity">function flashLoan(uint256 amount, address borrower, address target, bytes calldata data)
     external
     nonReentrant
@@ -380,8 +361,7 @@ uint256 public totalDeposits;
 </li>
 </ul>
 <hr>
-<h3>第四步：威胁建模 (Threat Modeling)</h3>
-<p>我们发现了绝对的高危操作：<strong>任意外部调用 (Arbitrary External Call)</strong>。</p>
+<h3 id="section-15">第四步：威胁建模 (Threat Modeling)</h3><p>我们发现了绝对的高危操作：<strong>任意外部调用 (Arbitrary External Call)</strong>。</p>
 <p>漏洞点分析：</p>
 <p>代码行：target.functionCall(data); </p>
 <ol>
@@ -437,8 +417,7 @@ uint256 public totalDeposits;
 </li>
 </ol>
 <hr>
-<h2>wp</h2>
-<pre><code class="language-solidity">    function test_truster() public checkSolvedByPlayer {
+<h2 id="section-16">wp</h2><pre><code class="language-solidity">    function test_truster() public checkSolvedByPlayer {
 
         // 攻击合约在最底部，部署攻击合约，所有攻击逻辑都在 constructor 中自动执行
         // 这只算作1笔交易可以通过验证
@@ -466,13 +445,11 @@ contract TrusterExploit {
     }
 }
 </code></pre>
-<h1>side-entrance</h1>
-<p>一个令人惊讶的简单池允许任何人存入ETH，并在任何时间点提取它。</p>
+<h1>side-entrance</h1><p>一个令人惊讶的简单池允许任何人存入ETH，并在任何时间点提取它。</p>
 <p>它已经有1000个ETH余额，并且正在使用存入的ETH提供免费闪贷来推广他们的系统。</p>
 <p>一开始你有1个ETH的余额。通过从池中拯救所有ETH并将其存入指定的回收账户来通过挑战。</p>
 <hr>
-<h3>第一步：鸟瞰全貌 (Bird&#39;s Eye View)</h3>
-<p><strong>目的</strong>：快速定位合约角色与工具。</p>
+<h3 id="section-17">第一步：鸟瞰全貌 (Bird&#39;s Eye View)</h3><p><strong>目的</strong>：快速定位合约角色与工具。</p>
 <ul>
 <li><p><strong>看名字</strong>：<code>SideEntranceLenderPool</code>（侧门借贷池）。</p>
 <ul>
@@ -496,8 +473,7 @@ contract TrusterExploit {
 </li>
 </ul>
 <hr>
-<h3>第二步：资金锚定 (Follow the Money)</h3>
-<p><strong>目的</strong>：锁定金库位置，区分“物理资金”和“账本资金”。</p>
+<h3 id="section-18">第二步：资金锚定 (Follow the Money)</h3><p><strong>目的</strong>：锁定金库位置，区分“物理资金”和“账本资金”。</p>
 <p>这是这一关最核心的地方，请务必仔细区分：</p>
 <ol>
 <li><p><strong>物理资金 (Reality)</strong>：</p>
@@ -521,11 +497,9 @@ contract TrusterExploit {
 </li>
 </ul>
 <hr>
-<h3>第三步：核心逻辑精读 (Core Business Logic)</h3>
-<p><strong>目的</strong>：死磕 <code>flashLoan</code> 和 <code>deposit</code>。</p>
+<h3 id="section-19">第三步：核心逻辑精读 (Core Business Logic)</h3><p><strong>目的</strong>：死磕 <code>flashLoan</code> 和 <code>deposit</code>。</p>
 <p><strong>扮演攻击者 (Attacker Mindset) 自问自答</strong>：</p>
-<h4>1. 分析 <code>flashLoan</code></h4>
-<pre><code class="language-solidity">function flashLoan(uint256 amount) external {
+<h4>1. 分析 <code>flashLoan</code></h4><pre><code class="language-solidity">function flashLoan(uint256 amount) external {
     uint256 balanceBefore = address(this).balance; // 1. 记下现在的物理余额
 
     // 2. 把钱借给借款人 (msg.sender)
@@ -539,15 +513,13 @@ contract TrusterExploit {
     }
 }
 </code></pre>
-<h4>2. 分析 <code>deposit</code></h4>
-<pre><code class="language-solidity">
+<h4>2. 分析 <code>deposit</code></h4><pre><code class="language-solidity">
 function deposit() external payable {
     // 收钱，并记在发送者名下
     balances[msg.sender] += msg.value;
 }
 </code></pre>
-<h4>3. 连线思考</h4>
-<ul>
+<h4>3. 连线思考</h4><ul>
 <li><p><strong>Q1: 谁能调？</strong> 所有人。</p>
 </li>
 <li><p><strong>Q2: 参数受控吗？</strong> <code>amount</code> 受控。</p>
@@ -564,8 +536,7 @@ function deposit() external payable {
 </li>
 </ul>
 <hr>
-<h3>第四步：威胁建模 (Threat Modeling)</h3>
-<p><strong>目的</strong>：构建攻击路径。</p>
+<h3 id="section-20">第四步：威胁建模 (Threat Modeling)</h3><p><strong>目的</strong>：构建攻击路径。</p>
 <ul>
 <li><p><strong>逻辑漏洞 (Business Logic Flaw)</strong>：</p>
 <ul>
@@ -605,8 +576,7 @@ function deposit() external payable {
 </ul>
 <p>这就是所谓的 <strong>“侧门 (Side Entrance)”</strong>：我不走正门（还款），而是走侧门（存款）把钱还回去，同时骗取了存款凭证。</p>
 <hr>
-<h2>wp</h2>
-<pre><code class="language-solidity">    /**
+<h2 id="section-21">wp</h2><pre><code class="language-solidity">    /**
      * CODE YOUR SOLUTION HERE
      */
     function test_sideEntrance() public checkSolvedByPlayer {
@@ -646,8 +616,7 @@ contract SideEntranceExploit{
 
 }
 </code></pre>
-<h1>the rewarder（默克尔证明 ，位图）</h1>
-<p>合约是分配该死的有价值的代币和WETH的奖励。
+<h1>the rewarder（默克尔证明 ，位图）</h1><p>合约是分配该死的有价值的代币和WETH的奖励。
 为了获得奖励，用户必须证明他们被包括在选定的受益人集合中。不过不用担心汽油。该合约已经过优化，允许在同一笔交易中申请多个令牌。
 爱丽丝已经得到了她的奖赏。你也可以索要你的！但你已经意识到合同中有一个致命的漏洞。
 尽可能多地从经销商那里省钱。将所有回收的资产转入指定的回收账户。</p>
@@ -655,8 +624,7 @@ contract SideEntranceExploit{
 <p>收到。作为 Web3 安全工程师，我将严格按照你的<strong>四步分析法</strong>（鸟瞰全貌 -&gt; 资金锚定 -&gt; 核心逻辑精读 -&gt; 威胁建模）重新对 <code>TheRewarderDistributor</code> 合约进行深度审计。</p>
 <p>这是一个经典的<strong>由“过度 Gas 优化”引发的严重逻辑漏洞</strong>案例。</p>
 <hr>
-<h3>第一步：鸟瞰全貌 (Bird&#39;s Eye View)</h3>
-<p><strong>1. 门面与定位 (Interface &amp; Role)</strong></p>
+<h3 id="section-22">第一步：鸟瞰全貌 (Bird&#39;s Eye View)</h3><p><strong>1. 门面与定位 (Interface &amp; Role)</strong></p>
 <ul>
 <li><p><strong>角色</strong>：Merkle Distributor（默克尔分发器）。</p>
 </li>
@@ -683,8 +651,7 @@ contract SideEntranceExploit{
 <li>无明显离谱的硬编码费率或时间锁。</li>
 </ul>
 <hr>
-<h3>第二步：资金锚定 (Asset Anchoring)</h3>
-<p><strong>1. 资金流入 (Inflow)</strong></p>
+<h3 id="section-23">第二步：资金锚定 (Asset Anchoring)</h3><p><strong>1. 资金流入 (Inflow)</strong></p>
 <ul>
 <li><code>createDistribution</code>: 调用 <code>SafeTransferLib.safeTransferFrom</code> 将代币从 <code>msg.sender</code> 拉入合约。此时更新 <code>remaining</code> 余额。这是资金的<strong>信任源头</strong>。</li>
 </ul>
@@ -711,8 +678,7 @@ contract SideEntranceExploit{
 </li>
 </ul>
 <hr>
-<h3>第三步：核心逻辑精读 (Core Logic Deep Dive)</h3>
-<p>我们将显微镜对准 <code>claimRewards</code> 函数。开发者为了省 Gas，采用了一种 <strong>“延迟写入 + 累加器”</strong> 的模式。</p>
+<h3 id="section-24">第三步：核心逻辑精读 (Core Logic Deep Dive)</h3><p>我们将显微镜对准 <code>claimRewards</code> 函数。开发者为了省 Gas，采用了一种 <strong>“延迟写入 + 累加器”</strong> 的模式。</p>
 <p><strong>代码逻辑拆解：</strong></p>
 <ol>
 <li><p><strong>循环遍历</strong>：合约遍历用户提供的 <code>inputClaims</code> 数组。</p>
@@ -771,8 +737,7 @@ contract SideEntranceExploit{
 </code></pre>
 <p>所以我们只需要重复领取即可获得所有资金</p>
 <hr>
-<h3>第四步：威胁建模 (Threat Modeling)</h3>
-<p><strong>1. 身份分离检查 (Auth Check)</strong></p>
+<h3 id="section-25">第四步：威胁建模 (Threat Modeling)</h3><p><strong>1. 身份分离检查 (Auth Check)</strong></p>
 <ul>
 <li><p><code>msg.sender</code> 是领取者。</p>
 </li>
@@ -839,8 +804,7 @@ contract SideEntranceExploit{
 </ul>
 </li>
 </ul>
-<h2>wp</h2>
-<pre><code class="language-solidity">
+<h2 id="section-26">wp</h2><pre><code class="language-solidity">
 </code></pre>
 </div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/合约审计/以太航员挑战/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">以太航员挑战</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/开发框架/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">开发框架</h4> </a> </div> </nav> </article>  </main> <script>
       (() => {

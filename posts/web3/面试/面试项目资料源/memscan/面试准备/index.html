@@ -10,23 +10,18 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  <span class="directory-sep">/</span> <span class="directory-text">面试项目资料源</span>  <span class="directory-sep">/</span> <span class="directory-text">memscan</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>面试准备</h1> <p class="lead"># MemeScan 面试辅导资料（贴当前代码版） ## 先记住这句话 这不是一个“纯 LLM 审计工具”，而是一个**以链上仿真为主、轻量规则系统评分为骨架、LLM 做补充解释和追加分析**的 Web3 风险扫描系统。 面试时最重要的是两点： 1. 不要把设计稿里的能力当成全部</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/面试/面试项目资料源/memscan/面试准备.md</p> </header> <div class="article-content"><h1>MemeScan 面试辅导资料（贴当前代码版）</h1>
-<h2>先记住这句话</h2>
-<p>这不是一个“纯 LLM 审计工具”，而是一个<strong>以链上仿真为主、轻量规则系统评分为骨架、LLM 做补充解释和追加分析</strong>的 Web3 风险扫描系统。</p>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  <span class="directory-sep">/</span> <span class="directory-text">面试项目资料源</span>  <span class="directory-sep">/</span> <span class="directory-text">memscan</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>面试准备</h1> <p class="lead"># MemeScan 面试辅导资料（贴当前代码版） ## 先记住这句话 这不是一个“纯 LLM 审计工具”，而是一个**以链上仿真为主、轻量规则系统评分为骨架、LLM 做补充解释和追加分析**的 Web3 风险扫描系统。 面试时最重要的是两点： 1. 不要把设计稿里的能力当成全部</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/面试/面试项目资料源/memscan/面试准备.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">先记住这句话</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">一句话定位</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">30 秒自我介绍</a> </li><li class="article-outline__item depth-2"> <a href="#section-4">2 分钟项目介绍</a> </li><li class="article-outline__item depth-2"> <a href="#section-5">当前项目的真实架构</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">Agent / Service 分层怎么讲</a> </li><li class="article-outline__item depth-3"> <a href="#section-7">为什么这里不用消息队列</a> </li><li class="article-outline__item depth-3"> <a href="#section-8">这种通信方式的优点</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">这种通信方式的边界</a> </li><li class="article-outline__item depth-3"> <a href="#section-10">真实审计链路</a> </li><li class="article-outline__item depth-3"> <a href="#section-11">前端怎么讲</a> </li><li class="article-outline__item depth-2"> <a href="#section-12">你可以重点强调的亮点</a> </li><li class="article-outline__item depth-3"> <a href="#section-13">1. 动态仿真而不是只看源码</a> </li><li class="article-outline__item depth-3"> <a href="#section-14">2. Rug-Pull Replay</a> </li><li class="article-outline__item depth-3"> <a href="#section-15">3. 轻量规则系统和 LLM 不是替代关系</a> </li><li class="article-outline__item depth-3"> <a href="#section-16">4. Streamlit 场景下的异步工程化处理</a> </li><li class="article-outline__item depth-3"> <a href="#section-17">5. 安全岗一定要讲“状态、断言、失败条件”</a> </li><li class="article-outline__item depth-3"> <a href="#section-18">6. 现象和根因一定要分开讲</a> </li><li class="article-outline__item depth-2"> <a href="#section-19">高频面试题</a> </li><li class="article-outline__item depth-3"> <a href="#section-20">Q1：为什么做这个项目？</a> </li><li class="article-outline__item depth-3"> <a href="#section-21">Q2：为什么要做成 Multi-Agent，而不是一个大函数？</a> </li><li class="article-outline__item depth-3"> <a href="#section-22">Q3：Coordinator 真正做了什么？</a> </li><li class="article-outline__item depth-3"> <a href="#section-23">Q4：沙盒仿真为什么用 Anvil 分叉？</a> </li><li class="article-outline__item depth-3"> <a href="#section-24">Q5：你的蜜罐检测怎么做？</a> </li><li class="article-outline__item depth-3"> <a href="#section-25">Q6：为什么要做 Rug-Pull Replay？</a> </li><li class="article-outline__item depth-3"> <a href="#section-26">Q7：LLM 在这里到底起什么作用？</a> </li><li class="article-outline__item depth-3"> <a href="#section-27">Q7.5：Auditor 怎么判断？有没有断言？</a> </li><li class="article-outline__item depth-3"> <a href="#section-28">Q7.6：这算规则引擎吗？</a> </li><li class="article-outline__item depth-3"> <a href="#section-29">Q9：异步部分是怎么处理的？</a> </li><li class="article-outline__item depth-3"> <a href="#section-30">Q10：数据是怎么持久化的？</a> </li><li class="article-outline__item depth-3"> <a href="#section-31">Q11：这个项目里最难的工程问题是什么？</a> </li><li class="article-outline__item depth-2"> <a href="#section-32">面试时不要说错的点</a> </li><li class="article-outline__item depth-3"> <a href="#section-33">1. 不要说“Coordinator 决定是否触发深度分析”</a> </li><li class="article-outline__item depth-3"> <a href="#section-34">5. 不要说“数据库已经完整承接了审计结果”</a> </li><li class="article-outline__item depth-3"> <a href="#section-35">7. 不要把它说成“完全自治的智能体系统”</a> </li><li class="article-outline__item depth-2"> <a href="#section-36">面试时可以主动承认的局限</a> </li><li class="article-outline__item depth-3"> <a href="#section-37">局限 2：规则系统比较轻量</a> </li><li class="article-outline__item depth-3"> <a href="#section-38">局限 3：数据库没完全接入主链路</a> </li><li class="article-outline__item depth-2"> <a href="#section-39">如果面试官追问“你最满意的技术决策是什么”</a> </li><li class="article-outline__item depth-2"> <a href="#section-40">如果面试官追问“你最想优化哪一块”</a> </li><li class="article-outline__item depth-2"> <a href="#section-41">快速自测题</a> </li><li class="article-outline__item depth-2"> <a href="#section-42">最后提醒</a> </li> </ol> </nav> <div class="article-content"><h1>MemeScan 面试辅导资料（贴当前代码版）</h1><h2 id="section-1">先记住这句话</h2><p>这不是一个“纯 LLM 审计工具”，而是一个<strong>以链上仿真为主、轻量规则系统评分为骨架、LLM 做补充解释和追加分析</strong>的 Web3 风险扫描系统。</p>
 <p>面试时最重要的是两点：</p>
 <ol>
 <li>不要把设计稿里的能力当成全部都已经落地。</li>
 <li>要把“为什么这样设计”讲出来，而不只是背功能列表。</li>
 </ol>
 <hr>
-<h2>一句话定位</h2>
-<p>MemeScan 是一个面向新发 Meme 代币的安全扫描系统。它会监听新交易对，拉起本地 Anvil 分叉环境，真实模拟买入和卖出，再结合轻量规则系统和源码分析生成风险报告。</p>
+<h2 id="section-2">一句话定位</h2><p>MemeScan 是一个面向新发 Meme 代币的安全扫描系统。它会监听新交易对，拉起本地 Anvil 分叉环境，真实模拟买入和卖出，再结合轻量规则系统和源码分析生成风险报告。</p>
 <hr>
-<h2>30 秒自我介绍</h2>
-<p>我做了一个叫 MemeScan 的 Web3 安全项目，主要解决新发 Meme 币的蜜罐和高风险权限问题。它不是只看源码，而是会在本地分叉链里真实模拟买卖交易，验证能不能卖出、税率是多少；如果需要，再结合源码和 LLM 做进一步解释，最后生成结构化审计报告。</p>
+<h2 id="section-3">30 秒自我介绍</h2><p>我做了一个叫 MemeScan 的 Web3 安全项目，主要解决新发 Meme 币的蜜罐和高风险权限问题。它不是只看源码，而是会在本地分叉链里真实模拟买卖交易，验证能不能卖出、税率是多少；如果需要，再结合源码和 LLM 做进一步解释，最后生成结构化审计报告。</p>
 <hr>
-<h2>2 分钟项目介绍</h2>
-<p>MemeScan 的目标是解决一个很实际的问题：新发 Meme 币上线快、风险高，普通用户很难在短时间判断是不是蜜罐，或者合约里有没有项目方随时作恶的权限。</p>
+<h2 id="section-4">2 分钟项目介绍</h2><p>MemeScan 的目标是解决一个很实际的问题：新发 Meme 币上线快、风险高，普通用户很难在短时间判断是不是蜜罐，或者合约里有没有项目方随时作恶的权限。</p>
 <p>我这个项目的核心思路不是只做静态分析，而是做“<strong>动态验证 + 规则判断 + AI 辅助解释</strong>”。</p>
 <p>具体流程是这样的：</p>
 <ol>
@@ -39,9 +34,7 @@
 </ol>
 <p>我觉得这个项目最有价值的地方，是把“能不能卖”这种用户最关心的问题，从静态猜测变成了动态验证。</p>
 <hr>
-<h2>当前项目的真实架构</h2>
-<h3>Agent / Service 分层怎么讲</h3>
-<p>我会把这个项目描述成“<strong>Agent 编排 + Service 落地执行</strong>”。</p>
+<h2 id="section-5">当前项目的真实架构</h2><h3 id="section-6">Agent / Service 分层怎么讲</h3><p>我会把这个项目描述成“<strong>Agent 编排 + Service 落地执行</strong>”。</p>
 <ul>
 <li><code>ScannerAgent</code> 封装 <code>MonitorService</code>，负责监听PairCreated(...)事件，发现新交易对</li>
 <li><code>CoordinatorAgent</code> 负责编排流程</li>
@@ -76,8 +69,7 @@
 </ul>
 <p>这套通信的核心不是“聊天”，而是<strong>数据契约</strong>。<br>每个 Agent 关心自己的输入和输出字段，上游 Agent 负责组装上下文，下游 Agent 负责返回结构化结果。</p>
 <p>你还可以继续往下讲：</p>
-<h3>为什么这里不用消息队列</h3>
-<p>因为当前系统的主流程是强顺序依赖的：</p>
+<h3 id="section-7">为什么这里不用消息队列</h3><p>因为当前系统的主流程是强顺序依赖的：</p>
 <ol>
 <li>先仿真</li>
 <li>再审计</li>
@@ -91,15 +83,13 @@
 <li>调试链路变长</li>
 </ul>
 <p>对于当前这个单机工具型系统，同进程异步调用已经足够。</p>
-<h3>这种通信方式的优点</h3>
-<ul>
+<h3 id="section-8">这种通信方式的优点</h3><ul>
 <li><strong>简单直接</strong>：调用链清晰，调试方便</li>
 <li><strong>类型边界明确</strong>：虽然用的是 dict，但里面承载的是 <code>Token</code>、<code>SimulationResult</code>、<code>AuditReport</code> 这类结构化对象</li>
 <li><strong>上下文组装灵活</strong>：Coordinator 可以决定给下游 Agent 传哪些字段</li>
 <li><strong>适合当前规模</strong>：不需要额外基础设施就能跑通完整审计链路</li>
 </ul>
-<h3>这种通信方式的边界</h3>
-<ul>
+<h3 id="section-9">这种通信方式的边界</h3><ul>
 <li>Agent 之间是紧耦合调用，不适合跨进程横向扩展</li>
 <li>没有天然的持久化消息队列，所以失败恢复能力有限</li>
 <li>当前并不是“分布式多 Agent 系统”，而是“单进程编排式多 Agent”</li>
@@ -108,8 +98,7 @@
 <p>“我这里的 Agent 通信不是 MQ，也不是 LLM 对话式消息传递，而是 Coordinator 主导的异步函数调用加结构化上下文传参。它更像一条可追踪的编排流水线，而不是分布式自治系统。”  </p>
 <p><strong>如果面试官再追问“那为什么还叫 Agent”，你可以这样答：</strong></p>
 <p>“因为每个模块不只是 service 封装，它还有自己的任务边界和局部决策能力，比如 Sandbox 会决定是否值得继续做攻击重放，Auditor 会决定是否追加深度分析。只是当前这套系统的通信机制仍然是工程上更轻量的函数编排，而不是复杂的消息总线。”  </p>
-<h3>真实审计链路</h3>
-<p>当前最核心的一条链路是：</p>
+<h3 id="section-10">真实审计链路</h3><p>当前最核心的一条链路是：</p>
 <p><code>Coordinator -&gt; Sandbox -&gt; Auditor -&gt; Reporter</code></p>
 <p>其中：</p>
 <ul>
@@ -117,13 +106,10 @@
 <li>手动扫描时，用户输入地址后会直接进入 <code>CoordinatorAgent</code></li>
 <li><code>CoordinatorAgent</code> 自己的 <code>decide()</code> 目前只是占位，真正的“是否追加深度分析”决策在 <code>AuditorAgent.decide()</code></li>
 </ul>
-<h3>前端怎么讲</h3>
-<p>前端是 Streamlit，不是前后端完全分离架构。因为 Streamlit 本身是同步渲染，所以我用了一个后台线程跑独立的 asyncio event loop，把监控、仿真、LLM 调用这些异步任务提交到后台执行，再把结果同步回 <code>session_state</code>。</p>
+<h3 id="section-11">前端怎么讲</h3><p>前端是 Streamlit，不是前后端完全分离架构。因为 Streamlit 本身是同步渲染，所以我用了一个后台线程跑独立的 asyncio event loop，把监控、仿真、LLM 调用这些异步任务提交到后台执行，再把结果同步回 <code>session_state</code>。</p>
 <p>这套设计的重点不是“高并发”，而是<strong>在 Streamlit 约束下保持 UI 可用，同时能跑异步链上任务</strong>。</p>
 <hr>
-<h2>你可以重点强调的亮点</h2>
-<h3>1. 动态仿真而不是只看源码</h3>
-<p>很多安全工具只是扫 ABI 或源码特征，但 MemeScan 会在 Anvil 分叉里真实走一遍：</p>
+<h2 id="section-12">你可以重点强调的亮点</h2><h3 id="section-13">1. 动态仿真而不是只看源码</h3><p>很多安全工具只是扫 ABI 或源码特征，但 MemeScan 会在 Anvil 分叉里真实走一遍：</p>
 <ul>
 <li>买入</li>
 <li>查询实际收到的 token 数量</li>
@@ -132,8 +118,7 @@
 <li>对比预期和实际结果，算税率</li>
 </ul>
 <p>这个能力能直接回答用户最关心的问题：<strong>这个币到底能不能卖</strong>。</p>
-<h3>2. Rug-Pull Replay</h3>
-<p>如果基础仿真没发现问题，系统还会尝试模拟项目方权限：</p>
+<h3 id="section-14">2. Rug-Pull Replay</h3><p>如果基础仿真没发现问题，系统还会尝试模拟项目方权限：</p>
 <ul>
 <li>读取 <code>owner()</code></li>
 <li>在本地分叉链中 impersonate 该账户</li>
@@ -141,8 +126,7 @@
 <li>攻击后再次仿真买卖</li>
 </ul>
 <p>如果攻击后卖不出去，说明这个合约不是“现在安全”，而是“项目方还没动手”。这个视角比单纯看当前状态更有说服力。</p>
-<h3>3. 轻量规则系统和 LLM 不是替代关系</h3>
-<p>我的设计不是让 LLM 决定一切，而是分层：</p>
+<h3 id="section-15">3. 轻量规则系统和 LLM 不是替代关系</h3><p>我的设计不是让 LLM 决定一切，而是分层：</p>
 <ul>
 <li>轻量规则系统负责稳定、便宜、可解释的基础判断</li>
 <li>LLM 负责看源码、做语义解释、降低误报</li>
@@ -166,8 +150,7 @@
 <p>“我实现了一个完整规则引擎。”</p>
 <p>而要说：</p>
 <p>“当前版本实现的是一个轻量的 rule-based scoring system。它已经有独立规则、标签汇总、权重评分和不确定场景的 LLM fallback，但还没抽象成完整的规则引擎框架。”</p>
-<h3>4. Streamlit 场景下的异步工程化处理</h3>
-<p>项目不是学术 demo，而是一个能跑的工具。为了让 Streamlit 这种同步框架承载异步链上扫描，我做了：</p>
+<h3 id="section-16">4. Streamlit 场景下的异步工程化处理</h3><p>项目不是学术 demo，而是一个能跑的工具。为了让 Streamlit 这种同步框架承载异步链上扫描，我做了：</p>
 <ul>
 <li>后台线程 + 独立事件循环</li>
 <li>模块级共享列表传递结果和日志</li>
@@ -175,8 +158,7 @@
 <li>自动刷新实时报告</li>
 </ul>
 <p>这部分很适合体现工程意识。</p>
-<h3>5. 安全岗一定要讲“状态、断言、失败条件”</h3>
-<p>这一点非常关键。面试官如果问你“auditor怎么判断风险”，你不能回答“AI 觉得危险”或者“规则打分出来的”。<br>安全分析的表达必须落到三个层面：</p>
+<h3 id="section-17">5. 安全岗一定要讲“状态、断言、失败条件”</h3><p>这一点非常关键。面试官如果问你“auditor怎么判断风险”，你不能回答“AI 觉得危险”或者“规则打分出来的”。<br>安全分析的表达必须落到三个层面：</p>
 <ul>
 <li><strong>状态是什么</strong></li>
 <li><strong>断言是什么</strong></li>
@@ -240,8 +222,7 @@
 <p>这套表达比“规则系统判断”更专业，因为它告诉面试官：<br>你知道自己在验证什么，不是在堆关键词。</p>
 <p>你可以直接背这一句：</p>
 <p>“我的审计核心不是主观判断，而是状态驱动的断言。先采集交易执行状态、余额变化、owner 状态和字节码特征，再用确定性规则断言哪些安全性质被破坏，比如‘可买不可卖’、‘税率显著偏高’、‘owner 未放弃且具备 mint 能力’。评分只是这些断言的汇总，不是判断依据本身。”</p>
-<h3>6. 现象和根因一定要分开讲</h3>
-<p>这是安全面试里另一个高频坑。<br>“卖不出去”只是<strong>现象</strong>，不是<strong>根因</strong>。<br>真正成熟的回答应该分两层：</p>
+<h3 id="section-18">6. 现象和根因一定要分开讲</h3><p>这是安全面试里另一个高频坑。<br>“卖不出去”只是<strong>现象</strong>，不是<strong>根因</strong>。<br>真正成熟的回答应该分两层：</p>
 <ol>
 <li><strong>先证明现象成立</strong></li>
 <li><strong>再说明根因定位到什么粒度</strong></li>
@@ -305,16 +286,12 @@
 <li>哪些目前还需要更强的程序分析能力</li>
 </ul>
 <hr>
-<h2>高频面试题</h2>
-<h3>Q1：为什么做这个项目？</h3>
-<p>建议回答：</p>
+<h2 id="section-19">高频面试题</h2><h3 id="section-20">Q1：为什么做这个项目？</h3><p>建议回答：</p>
 <p>Meme 币市场上线快、生命周期短，很多风险发生在用户还没来得及查资料之前。传统审计报告覆盖不到这些新币，而纯静态规则又很容易漏掉运行时行为。所以我想做一个更贴近真实交易场景的系统，用本地分叉仿真去验证“用户买了之后到底能不能卖”，再补充源码和权限层面的分析。</p>
-<h3>Q2：为什么要做成 Multi-Agent，而不是一个大函数？</h3>
-<p>建议回答：</p>
+<h3 id="section-21">Q2：为什么要做成 Multi-Agent，而不是一个大函数？</h3><p>建议回答：</p>
 <p>我这里的 Multi-Agent 不是为了追求概念，而是为了把职责拆开。监控、仿真、审计、报告这几块变化频率和复杂度不同，拆成 Agent 以后更容易替换和扩展。比如审计层可以换规则、换 LLM，报告层可以换展示方式，而不会动到仿真逻辑。</p>
 <p>但我也会坦诚，当前实现还是偏“编排式 Agent”，不是完全自治系统。主要收益是模块边界清晰，而不是 Agent 自己相互谈判。</p>
-<h3>Q3：Coordinator 真正做了什么？</h3>
-<p>建议回答：</p>
+<h3 id="section-22">Q3：Coordinator 真正做了什么？</h3><p>建议回答：</p>
 <p>Coordinator 现在主要做三件事：</p>
 <ol>
 <li>收到 token 后补齐元数据</li>
@@ -322,11 +299,9 @@
 <li>记录决策链，最终交给前端展示</li>
 </ol>
 <p>它目前不是最强的决策中心。真正“要不要追加深度分析”的规则，写在 <code>AuditorAgent.decide()</code> 里。这个我会在面试里主动讲清楚，因为这体现了我对自己代码边界是清楚的。</p>
-<h3>Q4：沙盒仿真为什么用 Anvil 分叉？</h3>
-<p>建议回答：</p>
+<h3 id="section-23">Q4：沙盒仿真为什么用 Anvil 分叉？</h3><p>建议回答：</p>
 <p>因为我要的是“接近真实主网状态，但又绝对不上链”。Anvil 用 <code>--fork-url</code> 启动后，会把主网状态映射到本地 EVM 环境里。这样我既能读取真实流动性池和合约状态，又可以在本地随便试买卖、试攻击，不会动真实资产。</p>
-<h3>Q5：你的蜜罐检测怎么做？</h3>
-<p>建议回答：</p>
+<h3 id="section-24">Q5：你的蜜罐检测怎么做？</h3><p>建议回答：</p>
 <p>不是只看某个函数签名，而是完整模拟一次买卖链路：</p>
 <ol>
 <li>先用 Router 的 <code>getAmountsOut</code> 估算预期输出</li>
@@ -383,11 +358,9 @@
 <p>“不能卖，所以就是黑名单。”</p>
 <p>而是：</p>
 <p>“不能卖是现象；黑名单、暂停交易、高税、授权限制等是候选根因。当前系统通过 revert reason、税率差值和攻击重放，对其中一部分根因做进一步归因。”</p>
-<h3>Q6：为什么要做 Rug-Pull Replay？</h3>
-<p>建议回答：</p>
+<h3 id="section-25">Q6：为什么要做 Rug-Pull Replay？</h3><p>建议回答：</p>
 <p>因为有些币上线初期是“能买能卖”的，但项目方保留了关键权限，等用户进场后再拉黑、改税、暂停交易。只检测当前状态会漏掉这类风险。所以我会在本地分叉链里 impersonate owner，主动尝试几种典型攻击，再重新模拟卖出。这相当于把“静态权限存在”进一步验证成“能不能真的作恶”。</p>
-<h3>Q7：LLM 在这里到底起什么作用？</h3>
-<p>建议回答：</p>
+<h3 id="section-26">Q7：LLM 在这里到底起什么作用？</h3><p>建议回答：</p>
 <p>LLM 在这个项目里主要做两类事：</p>
 <ol>
 <li>给报告生成更易读的解释摘要</li>
@@ -409,8 +382,7 @@
 </ul>
 <p>所以面试时更严谨的说法不是“这个合约没开源”，而是：</p>
 <p>“这个合约没有完成源码验证，所以我拿不到已验证的可读源码，只能更多依赖链上行为和规则判断。”</p>
-<h3>Q7.5：Auditor 怎么判断？有没有断言？</h3>
-<p>建议回答：</p>
+<h3 id="section-27">Q7.5：Auditor 怎么判断？有没有断言？</h3><p>建议回答：</p>
 <p>有，而且我会把 Auditor 讲成一个<strong>状态到断言的映射器</strong>，而不是一个“AI 给分器”。</p>
 <p>Auditor 的输入主要有两类状态：</p>
 <ol>
@@ -450,8 +422,7 @@
 <p>“Auditor 不是凭感觉判断，也不是让 AI 直接下结论。它先吃进一组可观测状态，再做确定性断言，比如‘买得进但卖不出’、‘税率高于阈值’、‘owner 未放弃且存在 mint 能力’。风险标签是断言结果，风险分只是对这些断言做加权汇总。”</p>
 <p>如果面试官再问“失败条件是什么”，你可以继续答：</p>
 <p>“失败条件就是断言被破坏时的具体表现，比如买入 revert、卖出 revert、到账为 0、税率异常高、owner 未放弃、攻击重放后无法卖出。这些都是可复现实验结果，不是主观印象。”</p>
-<h3>Q7.6：这算规则引擎吗？</h3>
-<p>建议回答：</p>
+<h3 id="section-28">Q7.6：这算规则引擎吗？</h3><p>建议回答：</p>
 <p>严格说，当前版本还不算成熟的规则引擎，更准确地说是一个<strong>轻量规则系统 / rule set</strong>。</p>
 <p>它现在已经有的能力是：</p>
 <ul>
@@ -480,8 +451,7 @@
 <li>哪些是推断</li>
 <li>哪些还需要额外证据</li>
 </ul>
-<h3>Q9：异步部分是怎么处理的？</h3>
-<p>建议回答：</p>
+<h3 id="section-29">Q9：异步部分是怎么处理的？</h3><p>建议回答：</p>
 <p>监控、RPC 调用、LLM 请求这些都适合异步；但 Streamlit 自身不是 async-first 框架，所以我做了一个后台线程，在线程里跑独立 event loop。前端通过 <code>asyncio.run_coroutine_threadsafe()</code> 把任务提交进去，后台跑完后再把报告和日志同步回前端。</p>
 <p>如果面试官继续追问“异步到底是什么”，你可以再展开成这一版：</p>
 <p>异步的核心思想是，遇到 RPC、HTTP、子进程这种要等待外部响应的操作时，不要阻塞整个程序，而是先把执行权让出去，等结果回来再继续。<br>在 Python 里，我主要是用 <code>async def</code> 定义协程，用 <code>await</code> 等待这些 I/O 操作，再由 event loop 统一调度。</p>
@@ -519,44 +489,33 @@
 <li><code>agents/coordinator.py</code> 里的 <code>run()</code>：异步串联整个审计流水线</li>
 <li><code>app.py</code> 里的 <code>_sync_shared_to_session()</code>：把后台结果同步回前端</li>
 </ul>
-<h3>Q10：数据是怎么持久化的？</h3>
-<p>建议回答：</p>
+<h3 id="section-30">Q10：数据是怎么持久化的？</h3><p>建议回答：</p>
 <p>当前真正稳定使用的持久化是 Markdown 报告落盘到 <code>reports/</code>。数据库层已经建了 SQLAlchemy 模型和 Repository，也会在启动时建表，但业务结果还没有完整接到数据库写入链路里。所以这一块我会实话实说，已经把基础设施搭好了，但当前主要还是文件级持久化。</p>
 <p>这题不要说成“已经全量落库”。</p>
-<h3>Q11：这个项目里最难的工程问题是什么？</h3>
-<p>建议回答：</p>
+<h3 id="section-31">Q11：这个项目里最难的工程问题是什么？</h3><p>建议回答：</p>
 <p>我觉得最难的是把链上仿真、后台异步任务和 Streamlit 这种同步 UI 拼到一起，还要保证用户看到的是连续、可理解的执行过程。链上调用不稳定、Anvil 启动有成本、UI 又会频繁 rerun，这几个约束叠在一起，最难的是把执行链路做稳。</p>
 <hr>
-<h2>面试时不要说错的点</h2>
-<h3>1. 不要说“Coordinator 决定是否触发深度分析”</h3>
-<p>更准确的说法：</p>
+<h2 id="section-32">面试时不要说错的点</h2><h3 id="section-33">1. 不要说“Coordinator 决定是否触发深度分析”</h3><p>更准确的说法：</p>
 <p>Coordinator 负责编排，真正的规则决策现在写在 <code>AuditorAgent.decide()</code>。</p>
-<h3>5. 不要说“数据库已经完整承接了审计结果”</h3>
-<p>真实情况是：</p>
+<h3 id="section-34">5. 不要说“数据库已经完整承接了审计结果”</h3><p>真实情况是：</p>
 <ul>
 <li>DB 模型和 Repository 已经有</li>
 <li>应用启动时会建表</li>
 <li>但主业务链路当前主要还是把报告写到 <code>reports/</code></li>
 </ul>
-<h3>7. 不要把它说成“完全自治的智能体系统”</h3>
-<p>更准确的说法：</p>
+<h3 id="section-35">7. 不要把它说成“完全自治的智能体系统”</h3><p>更准确的说法：</p>
 <p>这是一个带有限决策能力的多 Agent 编排系统。它的价值在于职责拆分和局部决策，而不是完全自主规划。</p>
 <hr>
-<h2>面试时可以主动承认的局限</h2>
-<p>这部分非常重要。面试官通常不怕你项目有边界，怕的是你自己都不知道边界在哪。</p>
-<h3>局限 2：规则系统比较轻量</h3>
-<p>可以这样说：</p>
+<h2 id="section-36">面试时可以主动承认的局限</h2><p>这部分非常重要。面试官通常不怕你项目有边界，怕的是你自己都不知道边界在哪。</p>
+<h3 id="section-37">局限 2：规则系统比较轻量</h3><p>可以这样说：</p>
 <p>现在的规则主要覆盖蜜罐、税率、ownership、mint 和部分未知风险，还没有做更系统的黑名单函数扫描、代理合约识别、权限图分析。它现在更像一个 MVP 级的 rule-based scorer，而不是成熟规则引擎，但框架已经留好了扩展点。</p>
-<h3>局限 3：数据库没完全接入主链路</h3>
-<p>可以这样说：</p>
+<h3 id="section-38">局限 3：数据库没完全接入主链路</h3><p>可以这样说：</p>
 <p>数据库基础设施已经有了，但为了先跑通端到端体验，我优先做了 Markdown 报告落盘。后续如果做查询分析、报表聚合、历史回溯，DB 一定要接上。</p>
 <hr>
-<h2>如果面试官追问“你最满意的技术决策是什么”</h2>
-<p>建议回答：</p>
+<h2 id="section-39">如果面试官追问“你最满意的技术决策是什么”</h2><p>建议回答：</p>
 <p>我最满意的是把“静态风险猜测”升级成“动态执行验证”。在 Web3 里，很多风险不是源码里有没有某个关键词，而是交易真正执行时会不会被拦、税率是不是异常、项目方能不能临时改状态。用分叉链去跑真实买卖和攻击重放，让系统输出更接近用户真实体验，这个方向我觉得是对的。</p>
 <hr>
-<h2>如果面试官追问“你最想优化哪一块”</h2>
-<p>建议回答：</p>
+<h2 id="section-40">如果面试官追问“你最想优化哪一块”</h2><p>建议回答：</p>
 <p>我会优先做三件事：</p>
 <ol>
 <li>把仿真层完全做成链配置驱动，真正打通 ETH/BSC</li>
@@ -565,8 +524,7 @@
 </ol>
 <p>这样项目就会从一个“能跑的风险扫描器”升级成一个“可持续演进的审计平台”。</p>
 <hr>
-<h2>快速自测题</h2>
-<p>如果你下面这些题能顺着答出来，面试基本就稳了。</p>
+<h2 id="section-41">快速自测题</h2><p>如果你下面这些题能顺着答出来，面试基本就稳了。</p>
 <ol>
 <li>为什么不用纯静态分析？</li>
 <li>Anvil 分叉相比直接连测试网有什么优势？</li>
@@ -580,8 +538,7 @@
 <li>如果让你继续做一周，你会优先补哪三块？</li>
 </ol>
 <hr>
-<h2>最后提醒</h2>
-<p>面试时最好的状态不是“像背文档”，而是“像你真的维护过这套系统”。</p>
+<h2 id="section-42">最后提醒</h2><p>面试时最好的状态不是“像背文档”，而是“像你真的维护过这套系统”。</p>
 <p>所以你的表达顺序尽量遵循：</p>
 <ol>
 <li>先讲目标和问题场景</li>

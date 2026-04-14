@@ -10,12 +10,10 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">EIP标准</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>EIP-150</h1> <p class="lead"># EIP-150: IO 密集型操作的 Gas 成本调整 (Gas cost changes for IO-heavy operations) &gt; **一句话总结**：EIP-150 大幅提高了 `EXTCODESIZE`、`EXTCODECOPY`、`BALANCE`、`SL</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/EIP标准/EIP-150.md</p> </header> <div class="article-content"><h1>EIP-150: IO 密集型操作的 Gas 成本调整 (Gas cost changes for IO-heavy operations)</h1>
-<blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">EIP标准</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>EIP-150</h1> <p class="lead"># EIP-150: IO 密集型操作的 Gas 成本调整 (Gas cost changes for IO-heavy operations) &gt; **一句话总结**：EIP-150 大幅提高了 `EXTCODESIZE`、`EXTCODECOPY`、`BALANCE`、`SL</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/EIP标准/EIP-150.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">📜 核心元数据 (Metadata)</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">1. 核心理念与全网级痛点 (Core Concept &amp; Motivation)</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">2. 核心架构与底层修改细节 (Core Specification)</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">A. 全局参数 / 常量变动 (Parameters)</a> </li><li class="article-outline__item depth-3"> <a href="#section-5">B. EVM 指令集与 Gas 计价改动 (Opcodes &amp; Gas Changes)</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">C. 交易类型与区块结构 (Transaction &amp; Block Header Changes)</a> </li><li class="article-outline__item depth-2"> <a href="#section-7">3. 从宏观到微观的生命周期 (Lifecycle Workflow)</a> </li><li class="article-outline__item depth-2"> <a href="#section-8">4. 关键机制深度解析 (Deep Dive)</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">A. 核心难点：为什么这些操作码之前那么便宜？</a> </li><li class="article-outline__item depth-3"> <a href="#section-10">B. 核心难点：63/64 规则为什么能防止调用栈深度攻击？</a> </li><li class="article-outline__item depth-2"> <a href="#section-11">5. 对生态与智能合约的系统级冲击 (Impact Analysis)</a> </li> </ol> </nav> <div class="article-content"><h1>EIP-150: IO 密集型操作的 Gas 成本调整 (Gas cost changes for IO-heavy operations)</h1><blockquote>
 <p><strong>一句话总结</strong>：EIP-150 大幅提高了 <code>EXTCODESIZE</code>、<code>EXTCODECOPY</code>、<code>BALANCE</code>、<code>SLOAD</code>、<code>CALL</code> 系列等涉及跨账户访问（I/O 密集型）操作码的 Gas 价格，并引入了 <strong>&quot;63/64 规则&quot;</strong> 限制子调用可用 Gas，从根源上扼杀了 2016 年上海 DevCon 2 期间令以太坊网络近乎瘫痪的 DoS 攻击向量。</p>
 </blockquote>
-<h2>📜 核心元数据 (Metadata)</h2>
-<blockquote>
+<h2 id="section-1">📜 核心元数据 (Metadata)</h2><blockquote>
 <p><strong>信息源原则</strong>：底层网络协议必须以 <strong>Ethereum EIP 官方文档 (eips.ethereum.org)</strong> 和以太坊黄皮书 (Yellow Paper) 为准。</p>
 </blockquote>
 <ul>
@@ -26,8 +24,7 @@
 <li><strong>前置依赖 EIP</strong>：无。但本 EIP 导致了 EIP-2929/2930 (Berlin 硬分叉) 进一步细化冷热访问模型。</li>
 </ul>
 <hr>
-<h2>1. 核心理念与全网级痛点 (Core Concept &amp; Motivation)</h2>
-<ul>
+<h2 id="section-2">1. 核心理念与全网级痛点 (Core Concept &amp; Motivation)</h2><ul>
 <li><p><strong>传统状态机痛点</strong>：在 EIP-150 之前，许多涉及<strong>读取其他账户状态</strong>的操作码（如 <code>EXTCODESIZE</code>, <code>BALANCE</code>, <code>SLOAD</code>, <code>CALL</code>）的 Gas 定价<strong>极度低廉</strong>（有些低至 20 Gas）。然而这些操作在底层需要节点去磁盘或状态树（Merkle Patricia Trie）中做 I/O 查询，实际计算资源消耗远大于定价。
 攻击者利用这一定价失衡，构造了大量嵌套调用垃圾交易（仅花极少 Gas 却迫使节点进行海量磁盘读取），导致 2016 年 9-10 月以太坊主网出块时间从 ~15 秒飙升到 30 秒以上，节点频繁宕机，网络近乎瘫痪。这就是臭名昭著的 <strong>上海 DoS 攻击 (Shanghai Attacks)</strong>。</p>
 </li>
@@ -41,9 +38,7 @@
 </li>
 </ul>
 <hr>
-<h2>2. 核心架构与底层修改细节 (Core Specification)</h2>
-<h3>A. 全局参数 / 常量变动 (Parameters)</h3>
-<p><strong>核心 Gas 计价变更表（变化前后对比）</strong>：</p>
+<h2 id="section-3">2. 核心架构与底层修改细节 (Core Specification)</h2><h3 id="section-4">A. 全局参数 / 常量变动 (Parameters)</h3><p><strong>核心 Gas 计价变更表（变化前后对比）</strong>：</p>
 <table>
 <thead>
 <tr>
@@ -104,8 +99,7 @@
 <td align="left">自毁当前合约（涉及状态删除和 ETH 转移）</td>
 </tr>
 </tbody></table>
-<h3>B. EVM 指令集与 Gas 计价改动 (Opcodes &amp; Gas Changes)</h3>
-<p><strong>63/64 规则 (Gas Stipend Rule)</strong>：</p>
+<h3 id="section-5">B. EVM 指令集与 Gas 计价改动 (Opcodes &amp; Gas Changes)</h3><p><strong>63/64 规则 (Gas Stipend Rule)</strong>：</p>
 <p>在 EIP-150 之前，<code>CALL</code> 系列操作码可以把当前<strong>全部剩余 Gas</strong> 转交给子调用。这意味着攻击者可以构造成千上万层的嵌套调用，每一层都把所有 Gas 传下去，直到达到调用栈深度限制（1024），制造&quot;调用栈深度攻击 (Call Depth Attack)&quot;。</p>
 <p>EIP-150 引入了一条简洁而致命的规则：
 $$\text{子调用可用 Gas} = \text{剩余 Gas} - \lfloor \frac{\text{剩余 Gas}}{64} \rfloor = \text{剩余 Gas} \times \frac{63}{64}$$</p>
@@ -124,11 +118,9 @@ for depth in range(1, 1025):
         break
 # 输出: 约在第 480 层左右就无 Gas 可用了
 </code></pre>
-<h3>C. 交易类型与区块结构 (Transaction &amp; Block Header Changes)</h3>
-<p>无。EIP-150 仅修改 EVM 执行引擎的 Gas 计价表，不改变交易格式或区块头结构。</p>
+<h3 id="section-6">C. 交易类型与区块结构 (Transaction &amp; Block Header Changes)</h3><p>无。EIP-150 仅修改 EVM 执行引擎的 Gas 计价表，不改变交易格式或区块头结构。</p>
 <hr>
-<h2>3. 从宏观到微观的生命周期 (Lifecycle Workflow)</h2>
-<p><strong>一笔普通的跨合约调用在 EIP-150 后的 Gas 消耗变化：</strong></p>
+<h2 id="section-7">3. 从宏观到微观的生命周期 (Lifecycle Workflow)</h2><p><strong>一笔普通的跨合约调用在 EIP-150 后的 Gas 消耗变化：</strong></p>
 <ol>
 <li><strong>用户发起交易</strong>：调用合约 A 的 <code>foo()</code> 函数，附带 100,000 Gas。</li>
 <li><strong>A 内部调用 B</strong>：<code>B.bar{gas: ...}()</code>。EIP-150 之前可以传递全部剩余 Gas；<strong>之后最多只能传递剩余的 63/64</strong>。</li>
@@ -137,18 +129,14 @@ for depth in range(1, 1025):
 <li><strong>总效果</strong>：同样的调用链路，Gas 消耗从之前的微不足道，变为显著的成本开支，攻击者再也无法用低廉的 Gas 制造海量 I/O 负载。</li>
 </ol>
 <hr>
-<h2>4. 关键机制深度解析 (Deep Dive)</h2>
-<h3>A. 核心难点：为什么这些操作码之前那么便宜？</h3>
-<p>以太坊黄皮书最初的 Gas 定价基于一个简化模型：<strong>所有操作的计算成本大致相等</strong>。但现实中，<code>ADD</code>（纯栈运算，纳秒级）和 <code>SLOAD</code>（需要查磁盘上的 MPT 状态树，毫秒级）的实际硬件成本相差<strong>数个数量级</strong>。最初的定价者严重低估了 I/O 操作的真实系统负载。</p>
-<h3>B. 核心难点：63/64 规则为什么能防止调用栈深度攻击？</h3>
-<p>在 EIP-150 之前，攻击者可以利用<strong>恰好消耗完 Gas 使得子调用失败但父调用继续</strong>的技巧来操纵执行流程。在 63/64 规则下：</p>
+<h2 id="section-8">4. 关键机制深度解析 (Deep Dive)</h2><h3 id="section-9">A. 核心难点：为什么这些操作码之前那么便宜？</h3><p>以太坊黄皮书最初的 Gas 定价基于一个简化模型：<strong>所有操作的计算成本大致相等</strong>。但现实中，<code>ADD</code>（纯栈运算，纳秒级）和 <code>SLOAD</code>（需要查磁盘上的 MPT 状态树，毫秒级）的实际硬件成本相差<strong>数个数量级</strong>。最初的定价者严重低估了 I/O 操作的真实系统负载。</p>
+<h3 id="section-10">B. 核心难点：63/64 规则为什么能防止调用栈深度攻击？</h3><p>在 EIP-150 之前，攻击者可以利用<strong>恰好消耗完 Gas 使得子调用失败但父调用继续</strong>的技巧来操纵执行流程。在 63/64 规则下：</p>
 <ul>
 <li>父调用<strong>始终保留</strong> 1/64 的 Gas → 无论子调用是否失败，父调用都有足够的 Gas 检测失败并正确 revert。</li>
 <li>嵌套深度被 Gas 指数衰减<strong>自然淘汰</strong> → 不需要额外的&quot;最大调用深度&quot;硬编码限制。</li>
 </ul>
 <hr>
-<h2>5. 对生态与智能合约的系统级冲击 (Impact Analysis)</h2>
-<ul>
+<h2 id="section-11">5. 对生态与智能合约的系统级冲击 (Impact Analysis)</h2><ul>
 <li><p><strong>对 DApp 开发者的影响</strong>：</p>
 <ul>
 <li>大量依赖 <code>address.send()</code> 和 <code>address.transfer()</code> 的旧合约（这两者固定 2300 Gas Stipend），在 EIP-150 后可能出现接收方合约因 Gas 不足而接收失败的问题。这也是为什么后来行业推荐使用 <code>address.call{value: x}(&quot;&quot;)</code> 的原因之一。</li>
@@ -167,7 +155,7 @@ for depth in range(1, 1025):
 </ul>
 </li>
 </ul>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/DeFi协议/uniswap_v4/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">uniswap_v4</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/EIP标准/EIP-1559/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-1559</h4> </a> </div> </nav> </article>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/DeFi协议/uniswap_v4/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">uniswap_v4</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/EIP标准/EIP-1967/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-1967</h4> </a> </div> </nav> </article>  </main> <script>
       (() => {
         const root = document.documentElement;
         const bindToggle = () => {

@@ -10,9 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  <span class="directory-sep">/</span> <span class="directory-text">ai模拟面试</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>1</h1> <p class="lead"># 面试 Q&amp;A 总结报告 ## 一、 面试基本信息 - **目标岗位**：Solidity 智能合约安全审计实习生（参考：智谷星图） - **面试轮次**：专业技术一面（模拟） - **评估时长**：约 15 分钟 - **整体评价**： - **优势**：基础概念清晰，对 E</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/面试/ai模拟面试/1.md</p> </header> <div class="article-content"><h1>面试 Q&amp;A 总结报告</h1>
-<h2>一、 面试基本信息</h2>
-<ul>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  <span class="directory-sep">/</span> <span class="directory-text">ai模拟面试</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>1</h1> <p class="lead"># 面试 Q&amp;A 总结报告 ## 一、 面试基本信息 - **目标岗位**：Solidity 智能合约安全审计实习生（参考：智谷星图） - **面试轮次**：专业技术一面（模拟） - **评估时长**：约 15 分钟 - **整体评价**： - **优势**：基础概念清晰，对 E</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/面试/ai模拟面试/1.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">一、 面试基本信息</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">二、 Q&amp;A 详细复盘</a> </li><li class="article-outline__item depth-3"> <a href="#section-3">Q1：MemeScan 的 Coordinator 编排流与模块通信机制</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">Q2：Sandbox 仿真中的 Rug-Pull 重放与状态断言</a> </li><li class="article-outline__item depth-3"> <a href="#section-5">Q3：call 携 带 msg.value 的潜在风险与防御</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">Q4：Proxy 模式下的逻辑合约 selfdestruct 风险</a> </li><li class="article-outline__item depth-3"> <a href="#section-7">Q5：permit 签名的底层校验机制（nonce 与 deadline）</a> </li><li class="article-outline__item depth-3"> <a href="#section-8">Q6：Lending 协议中健康账户的突发清算原因</a> </li><li class="article-outline__item depth-2"> <a href="#section-9">三、 本轮总的待补知识点 (Action Items)</a> </li> </ol> </nav> <div class="article-content"><h1>面试 Q&amp;A 总结报告</h1><h2 id="section-1">一、 面试基本信息</h2><ul>
 <li><p><strong>目标岗位</strong>：Solidity 智能合约安全审计实习生（参考：智谷星图）</p>
 </li>
 <li><p><strong>面试轮次</strong>：专业技术一面（模拟）</p>
@@ -29,9 +27,7 @@
 </li>
 </ul>
 <hr>
-<h2>二、 Q&amp;A 详细复盘</h2>
-<h3>Q1：MemeScan 的 Coordinator 编排流与模块通信机制</h3>
-<ul>
+<h2 id="section-2">二、 Q&amp;A 详细复盘</h2><h3 id="section-3">Q1：MemeScan 的 Coordinator 编排流与模块通信机制</h3><ul>
 <li><p><strong>你的回答摘要</strong>：Coordinator 不负责发现代币，而是接收 Scanner Agent（监听 <code>PairCreated</code> 日志）传来的地址。Coordinator 补齐元数据（symbol, decimals 等）后编排 Sandbox 运行，各模块间通过“字典（规范化结构体）”传递数据，最后 Reporter 根据字典生成报告。</p>
 </li>
 <li><p><strong>评价</strong>：</p>
@@ -45,8 +41,7 @@
 <li><p><strong>改进建议</strong>：不要说“传一个字典”，可以直接说明具体技术栈的实现机制，例如：“模块间通过 Python 的 <code>Pydantic</code> 模型或标准化 JSON 格式进行数据流转，确保上游 Sandbox 输出的 <code>StateDiff</code> 或风险指标能被下游 Reporter 强类型解析。”</p>
 </li>
 </ul>
-<h3>Q2：Sandbox 仿真中的 Rug-Pull 重放与状态断言</h3>
-<ul>
+<h3 id="section-4">Q2：Sandbox 仿真中的 Rug-Pull 重放与状态断言</h3><ul>
 <li><p><strong>你的回答摘要</strong>：利用 RPC 节点 fork 最新区块状态到本地 Anvil 网络。判断貔貅盘主要通过检查是否收高税率、能否正常买入卖出、mint 权限是否隐藏、owner 是否为零地址。未实现对移除流动性的动态检测。</p>
 </li>
 <li><p><strong>评价</strong>：</p>
@@ -60,8 +55,7 @@
 <li><p><strong>改进建议</strong>：明确区分两者的技术特征。如果你要完善 MemeScan，你应该补充：“真正的 Rug-Pull 重放不仅要模拟买卖，还要在 impersonate 合约 owner 后，监听 <code>sync</code> 或 <code>Swap</code> 事件，断言池子中的基础资产（如 WETH）余额是否在单笔交易内发生断崖式下跌（例如提取超 90% 储备金）。”</p>
 </li>
 </ul>
-<h3>Q3：<code>call</code> 携 带 <code>msg.value</code> 的潜在风险与防御</h3>
-<ul>
+<h3 id="section-5">Q3：<code>call</code> 携 带 <code>msg.value</code> 的潜在风险与防御</h3><ul>
 <li><p><strong>你的回答摘要</strong>：除了常规重入，还可能触发目标合约 <code>fallback</code>/<code>receive</code> 里的危险调用，导致“只读重入”改变账本中间状态。防御方案是采用 CEI（Check-Effects-Interactions）模式，先检查并修改账本，最后转账。</p>
 </li>
 <li><p><strong>评价</strong>：</p>
@@ -75,8 +69,7 @@
 <li><p><strong>改进建议</strong>：补充对 <code>call</code> 返回值的处理原则：“低级调用必须检查返回值 <code>(bool success, ) = target.call(...)</code>，如果不检查并 revert，会导致静默失败，账本已改但转账未生效。”</p>
 </li>
 </ul>
-<h3>Q4：Proxy 模式下的逻辑合约 <code>selfdestruct</code> 风险</h3>
-<ul>
+<h3 id="section-6">Q4：Proxy 模式下的逻辑合约 <code>selfdestruct</code> 风险</h3><ul>
 <li><p><strong>你的回答摘要</strong>：代理合约会被锁死。因为 <code>selfdestruct</code> 是在 Proxy 的上下文中执行的，虽然借用的是逻辑合约的代码，但销毁的是 Proxy 合约本身的状态和代码（归零）。</p>
 </li>
 <li><p><strong>评价</strong>：</p>
@@ -87,8 +80,7 @@
 <li><p><strong>改进建议</strong>：保持这种底层机制的解释方式。如果能顺带提一句 UUPS 与 Transparent Proxy 在防范此类攻击上的不同设计（如 <code>onlyProxy</code> 修饰器），会更加加分。</p>
 </li>
 </ul>
-<h3>Q5：<code>permit</code> 签名的底层校验机制（nonce 与 deadline）</h3>
-<ul>
+<h3 id="section-7">Q5：<code>permit</code> 签名的底层校验机制（nonce 与 deadline）</h3><ul>
 <li><p><strong>你的回答摘要</strong>：<code>deadline</code> 防止签名过期被恶意重放；<code>nonce</code> 确保每笔交易递增，防止矿工或其他用户在同一状态下二次广播套利。机制的作用是允许第三方（如商家/交易所）代付 Gas，压低普通用户的手续费支出。</p>
 </li>
 <li><p><strong>评价</strong>：</p>
@@ -102,8 +94,7 @@
 <li><p><strong>改进建议</strong>：可简要提及底层的 EIP-712 结构化签名标准，以此证明你不仅知道怎么用，还知道签名是如何在 EVM 中防伪的（如 <code>DOMAIN_SEPARATOR</code> 防跨链重放）。</p>
 </li>
 </ul>
-<h3>Q6：Lending 协议中健康账户的突发清算原因</h3>
-<ul>
+<h3 id="section-8">Q6：Lending 协议中健康账户的突发清算原因</h3><ul>
 <li><p><strong>你的回答摘要</strong>：主要是由于预言机（Oracle）价格被恶意操纵剧烈波动（例如利用闪电贷制造大规模的流动性移除）。此外，攻击者可以通过只读重入修改预言机的报价，从而实施套利攻击。</p>
 </li>
 <li><p><strong>评价</strong>：</p>
@@ -118,8 +109,7 @@
 </li>
 </ul>
 <hr>
-<h2>三、 本轮总的待补知识点 (Action Items)</h2>
-<ol>
+<h2 id="section-9">三、 本轮总的待补知识点 (Action Items)</h2><ol>
 <li><p><strong>深入 AMM 状态机断言机制</strong>：复习 Uniswap V2 的核心事件（<code>Mint</code>, <code>Burn</code>, <code>Swap</code>, <code>Sync</code>）。你必须能够用确切的状态变量名（如 <code>reserve0</code>, <code>reserve1</code>, <code>totalSupply</code>）来描述一次攻击的始末，而不是仅仅用“买卖操作”或“抽干”等口语化词汇。</p>
 </li>
 <li><p><strong>完善项目的技术级话术</strong>：重新组织 MemeScan 的表述。把所有的“字典”、“传数据”替换成准确的计算机科学术语（进程间通信、序列化、RPC 响应、状态差分分析）。</p>

