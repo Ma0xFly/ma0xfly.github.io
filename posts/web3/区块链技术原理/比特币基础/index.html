@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">区块链技术原理</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>比特币基础</h1> <p class="lead">## 区块结构 区块头 | 字段 | 含义（简洁） | pwn 类比 | | ----------------------- | --------------- | ----------------------- | | **Version** | 节点使用哪代规则 | “str</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/区块链技术原理/比特币基础.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">区块结构</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">数据结构Merkle hash（保证区块不可篡改）</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">UTXO 模型 (Unspent Transaction Output)</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">🪙 一、核心机制</a> </li><li class="article-outline__item depth-3"> <a href="#section-5">⚖️ 二、账户模型 vs UTXO 模型</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">🛡️ 三、防双花机制 (Double-Spending)</a> </li><li class="article-outline__item depth-2"> <a href="#section-7">网络</a> </li><li class="article-outline__item depth-3"> <a href="#section-8">网络是怎么连接的？</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">数据传播（Gossip 协议）</a> </li><li class="article-outline__item depth-3"> <a href="#section-10">如何防垃圾/攻击？</a> </li><li class="article-outline__item depth-3"> <a href="#section-11">节点主要交换哪些数据？</a> </li><li class="article-outline__item depth-2"> <a href="#section-12">比特币节点</a> </li><li class="article-outline__item depth-3"> <a href="#section-13">🧱 全节点（Full Node）</a> </li><li class="article-outline__item depth-3"> <a href="#section-14">🪶 轻节点（Light Node / SPV Node）</a> </li><li class="article-outline__item depth-3"> <a href="#section-15">📌为什么比特币需要轻节点？</a> </li><li class="article-outline__item depth-2"> <a href="#section-16">脚本</a> </li><li class="article-outline__item depth-3"> <a href="#section-17">一、本质</a> </li><li class="article-outline__item depth-3"> <a href="#section-18">二、核心设计限制（为什么这么残）</a> </li><li class="article-outline__item depth-3"> <a href="#section-19">三、上锁 vs 解锁完整流程（P2PKH 现场打靶）</a> </li> </ol> </nav> <div class="article-content"><h2 id="section-1">区块结构</h2><p>区块头</p>
+    </script><link rel="stylesheet" href="/_astro/_folder_.CeBna_Gz.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">区块链技术原理</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>比特币基础</h1> <p class="lead">## 区块结构 区块头 | 字段 | 含义（简洁） | pwn 类比 | | ----------------------- | --------------- | ----------------------- | | **Version** | 节点使用哪代规则 | “str</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/区块链技术原理/比特币基础.md</p> </header> <div class="article-layout"> <div class="article-main"> <div class="article-content"><h2 id="section-1">区块结构</h2><p>区块头</p>
 <p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/45f941bff426ac8f15fa644d236c5101_MD5.jpg" alt=""></p>
 <table>
 <thead>
@@ -277,9 +277,45 @@
 </tr>
 </tbody></table>
 <p>最后栈顶剩下非零值（TRUE）→ 矿工放行，钱归你花。</p>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/面试/ai模拟面试/jd_bitslab/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">jd_bitslab</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/区块链技术原理/钱包/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">钱包</h4> </a> </div> </nav> </article>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/面试/ai模拟面试/jd_bitslab/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">jd_bitslab</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/区块链技术原理/钱包/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">钱包</h4> </a> </div> </nav> </div> <aside class="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">区块结构</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">数据结构Merkle hash（保证区块不可篡改）</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">UTXO 模型 (Unspent Transaction Output)</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">🪙 一、核心机制</a> </li><li class="article-outline__item depth-3"> <a href="#section-5">⚖️ 二、账户模型 vs UTXO 模型</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">🛡️ 三、防双花机制 (Double-Spending)</a> </li><li class="article-outline__item depth-2"> <a href="#section-7">网络</a> </li><li class="article-outline__item depth-3"> <a href="#section-8">网络是怎么连接的？</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">数据传播（Gossip 协议）</a> </li><li class="article-outline__item depth-3"> <a href="#section-10">如何防垃圾/攻击？</a> </li><li class="article-outline__item depth-3"> <a href="#section-11">节点主要交换哪些数据？</a> </li><li class="article-outline__item depth-2"> <a href="#section-12">比特币节点</a> </li><li class="article-outline__item depth-3"> <a href="#section-13">🧱 全节点（Full Node）</a> </li><li class="article-outline__item depth-3"> <a href="#section-14">🪶 轻节点（Light Node / SPV Node）</a> </li><li class="article-outline__item depth-3"> <a href="#section-15">📌为什么比特币需要轻节点？</a> </li><li class="article-outline__item depth-2"> <a href="#section-16">脚本</a> </li><li class="article-outline__item depth-3"> <a href="#section-17">一、本质</a> </li><li class="article-outline__item depth-3"> <a href="#section-18">二、核心设计限制（为什么这么残）</a> </li><li class="article-outline__item depth-3"> <a href="#section-19">三、上锁 vs 解锁完整流程（P2PKH 现场打靶）</a> </li> </ol> </nav> </aside> </div> </article>  </main> <script>
       (() => {
         const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
         const bindToggle = () => {
           const btn = document.getElementById("theme-toggle");
           if (!btn) return;
@@ -292,6 +328,8 @@
             try { localStorage.setItem("theme", value); } catch {}
           });
         };
+
+        bindScrollReset();
         bindToggle();
       })();
     </script> </body> </html> 

@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>ERC-1155</h1> <p class="lead"># ERC-1155: 多代币标准 (Multi-Token Standard) &gt; **一句话总结**：ERC-1155 是链游和复杂衍生品体系的超级大本营。它打破了“发一个币就得建一个新合约”的铁律，允许在一个独立的智能合约中同时管理无数种真金白银（ERC-20）和独一无二的</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/ERC标准/ERC-1155.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">1. 核心理念与痛点解决 (Core Concept)</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">2. 核心接口与数据结构 (Core Interfaces)</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">A. 核心状态结构 (State Variables)</a> </li><li class="article-outline__item depth-3"> <a href="#section-5">B. 关键机制与底层逻辑 (Core Functions)</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">C. 关键事件 (Events)</a> </li><li class="article-outline__item depth-2"> <a href="#section-7">3. 标准业务工作流 (Standard Workflow)</a> </li><li class="article-outline__item depth-2"> <a href="#section-8">4. 关键机制与难点解析 (Key Mechanics)</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">A. 核心难点一：FT 和 NFT 在同一个账本里的坍缩表达</a> </li><li class="article-outline__item depth-3"> <a href="#section-10">B. 核心难点二：成倍暴击的“批量接收”重入攻击</a> </li><li class="article-outline__item depth-2"> <a href="#section-11">5. 周边生态与后续演进 (Ecosystem)</a> </li> </ol> </nav> <div class="article-content"><h1>ERC-1155: 多代币标准 (Multi-Token Standard)</h1><blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.CeBna_Gz.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>ERC-1155</h1> <p class="lead"># ERC-1155: 多代币标准 (Multi-Token Standard) &gt; **一句话总结**：ERC-1155 是链游和复杂衍生品体系的超级大本营。它打破了“发一个币就得建一个新合约”的铁律，允许在一个独立的智能合约中同时管理无数种真金白银（ERC-20）和独一无二的</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/ERC标准/ERC-1155.md</p> </header> <div class="article-layout"> <div class="article-main"> <div class="article-content"><h1>ERC-1155: 多代币标准 (Multi-Token Standard)</h1><blockquote>
 <p><strong>一句话总结</strong>：ERC-1155 是链游和复杂衍生品体系的超级大本营。它打破了“发一个币就得建一个新合约”的铁律，允许在一个独立的智能合约中同时管理无数种真金白银（ERC-20）和独一无二的稀有装备（ERC-721），并引入了史诗级的<strong>批量转账 (Batch Transfer)</strong> 功能。</p>
 </blockquote>
 <h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><blockquote>
@@ -136,9 +136,45 @@ function safeBatchTransferFrom(address from, address to, uint256[] memory ids, u
 </ol>
 </li>
 </ul>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/ERC标准/目录/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">目录</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/ERC标准/ERC-1046/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-1046</h4> </a> </div> </nav> </article>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/ERC标准/ERC-1046/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-1046</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/ERC标准/ERC-1363/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-1363</h4> </a> </div> </nav> </div> <aside class="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">1. 核心理念与痛点解决 (Core Concept)</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">2. 核心接口与数据结构 (Core Interfaces)</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">A. 核心状态结构 (State Variables)</a> </li><li class="article-outline__item depth-3"> <a href="#section-5">B. 关键机制与底层逻辑 (Core Functions)</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">C. 关键事件 (Events)</a> </li><li class="article-outline__item depth-2"> <a href="#section-7">3. 标准业务工作流 (Standard Workflow)</a> </li><li class="article-outline__item depth-2"> <a href="#section-8">4. 关键机制与难点解析 (Key Mechanics)</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">A. 核心难点一：FT 和 NFT 在同一个账本里的坍缩表达</a> </li><li class="article-outline__item depth-3"> <a href="#section-10">B. 核心难点二：成倍暴击的“批量接收”重入攻击</a> </li><li class="article-outline__item depth-2"> <a href="#section-11">5. 周边生态与后续演进 (Ecosystem)</a> </li> </ol> </nav> </aside> </div> </article>  </main> <script>
       (() => {
         const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
         const bindToggle = () => {
           const btn = document.getElementById("theme-toggle");
           if (!btn) return;
@@ -151,6 +187,8 @@ function safeBatchTransferFrom(address from, address to, uint256[] memory ids, u
             try { localStorage.setItem("theme", value); } catch {}
           });
         };
+
+        bindScrollReset();
         bindToggle();
       })();
     </script> </body> </html> 

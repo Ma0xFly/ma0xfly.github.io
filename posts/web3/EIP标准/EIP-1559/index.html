@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">EIP标准</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>EIP-1559</h1> <p class="lead"># EIP-1559: 费用市场改革 (Fee market change for ETH 1.0 chain) &gt; **一句话总结**：EIP-1559 彻底重构了以太坊的交易费用定价机制——从原来的&quot;盲目竞价拍卖&quot;（First-Price Auction）改为由**协议自动计</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/EIP标准/EIP-1559.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">📜 核心元数据 (Metadata)</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">1. 核心理念与全网级痛点 (Core Concept &amp; Motivation)</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">2. 核心架构与底层修改细节 (Core Specification)</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">A. 全局参数 / 常量变动 (Parameters)</a> </li><li class="article-outline__item depth-3"> <a href="#section-5">B. EVM 指令集与 Gas 计价改动 (Opcodes &amp; Gas Changes)</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">C. 交易类型与区块结构 (Transaction &amp; Block Header Changes)</a> </li><li class="article-outline__item depth-2"> <a href="#section-7">3. 从宏观到微观的生命周期 (Lifecycle Workflow)</a> </li><li class="article-outline__item depth-2"> <a href="#section-8">4. 关键机制深度解析与数学公式 (Deep Dive)</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">A. 核心难点：Base Fee 弹簧调节算法</a> </li><li class="article-outline__item depth-3"> <a href="#section-10">B. 核心难点：为什么要销毁 Base Fee 而不是给区块生产者？</a> </li><li class="article-outline__item depth-3"> <a href="#section-11">C. 实战算账：连续拥堵下 Base Fee 的指数增长</a> </li><li class="article-outline__item depth-2"> <a href="#section-12">5. 对生态与智能合约的系统级冲击 (Impact Analysis)</a> </li> </ol> </nav> <div class="article-content"><h1>EIP-1559: 费用市场改革 (Fee market change for ETH 1.0 chain)</h1><blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.CeBna_Gz.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">EIP标准</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>EIP-1559</h1> <p class="lead"># EIP-1559: 费用市场改革 (Fee market change for ETH 1.0 chain) &gt; **一句话总结**：EIP-1559 彻底重构了以太坊的交易费用定价机制——从原来的&quot;盲目竞价拍卖&quot;（First-Price Auction）改为由**协议自动计</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/EIP标准/EIP-1559.md</p> </header> <div class="article-layout"> <div class="article-main"> <div class="article-content"><h1>EIP-1559: 费用市场改革 (Fee market change for ETH 1.0 chain)</h1><blockquote>
 <p><strong>一句话总结</strong>：EIP-1559 彻底重构了以太坊的交易费用定价机制——从原来的&quot;盲目竞价拍卖&quot;（First-Price Auction）改为由<strong>协议自动计算基础费 (Base Fee) + 用户自选小费 (Priority Fee / Tip)</strong> 的双层模型。Base Fee 会根据上一个区块的拥堵程度像弹簧一样自动调节，并且被<strong>永久销毁 (Burn)</strong>，使得 ETH 从纯通胀资产变为可能通缩的&quot;超声波货币 (Ultrasound Money)&quot;。</p>
 </blockquote>
 <h2 id="section-1">📜 核心元数据 (Metadata)</h2><blockquote>
@@ -207,9 +207,45 @@ $$\text{BaseFee}_{n+1} = \text{BaseFee}_n \times \left(1 + \frac{1}{d} \times \f
 </ul>
 </li>
 </ul>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/EIP标准/EIP-1967/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-1967</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/EIP标准/EIP-2612/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-2612</h4> </a> </div> </nav> </article>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/EIP标准/EIP-150/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-150</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/EIP标准/EIP-1967/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-1967</h4> </a> </div> </nav> </div> <aside class="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">📜 核心元数据 (Metadata)</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">1. 核心理念与全网级痛点 (Core Concept &amp; Motivation)</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">2. 核心架构与底层修改细节 (Core Specification)</a> </li><li class="article-outline__item depth-3"> <a href="#section-4">A. 全局参数 / 常量变动 (Parameters)</a> </li><li class="article-outline__item depth-3"> <a href="#section-5">B. EVM 指令集与 Gas 计价改动 (Opcodes &amp; Gas Changes)</a> </li><li class="article-outline__item depth-3"> <a href="#section-6">C. 交易类型与区块结构 (Transaction &amp; Block Header Changes)</a> </li><li class="article-outline__item depth-2"> <a href="#section-7">3. 从宏观到微观的生命周期 (Lifecycle Workflow)</a> </li><li class="article-outline__item depth-2"> <a href="#section-8">4. 关键机制深度解析与数学公式 (Deep Dive)</a> </li><li class="article-outline__item depth-3"> <a href="#section-9">A. 核心难点：Base Fee 弹簧调节算法</a> </li><li class="article-outline__item depth-3"> <a href="#section-10">B. 核心难点：为什么要销毁 Base Fee 而不是给区块生产者？</a> </li><li class="article-outline__item depth-3"> <a href="#section-11">C. 实战算账：连续拥堵下 Base Fee 的指数增长</a> </li><li class="article-outline__item depth-2"> <a href="#section-12">5. 对生态与智能合约的系统级冲击 (Impact Analysis)</a> </li> </ol> </nav> </aside> </div> </article>  </main> <script>
       (() => {
         const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
         const bindToggle = () => {
           const btn = document.getElementById("theme-toggle");
           if (!btn) return;
@@ -222,6 +258,8 @@ $$\text{BaseFee}_{n+1} = \text{BaseFee}_n \times \left(1 + \frac{1}{d} \times \f
             try { localStorage.setItem("theme", value); } catch {}
           });
         };
+
+        bindScrollReset();
         bindToggle();
       })();
     </script> </body> </html> 

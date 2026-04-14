@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.BG7-o3nY.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  <span class="directory-sep">/</span> <span class="directory-text">面试项目资料源</span>  <span class="directory-sep">/</span> <span class="directory-text">euler</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>README</h1> <p class="lead"># Euler Finance 漏洞复现工作区 这个仓库是面向审计与复现的 Euler Finance 漏洞脚手架，优先服务“先读后写”的分析流程。现在只维护一套源码树：协议源码全部放在 `src/euler/`，保持接近上游的可编译布局；审计直观性则通过根 README 和协议</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/面试/面试项目资料源/euler/README.md</p> </header> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">事故概览</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">范围说明</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">快速开始</a> </li><li class="article-outline__item depth-2"> <a href="#section-4">攻击路径摘要</a> </li><li class="article-outline__item depth-2"> <a href="#section-5">时间线</a> </li><li class="article-outline__item depth-2"> <a href="#section-6">地址簿</a> </li><li class="article-outline__item depth-2"> <a href="#section-7">推荐阅读顺序</a> </li><li class="article-outline__item depth-2"> <a href="#section-8">仓库结构</a> </li><li class="article-outline__item depth-2"> <a href="#section-9">说明</a> </li><li class="article-outline__item depth-2"> <a href="#section-10">参考资料</a> </li> </ol> </nav> <div class="article-content"><h1>Euler Finance 漏洞复现工作区</h1><p>这个仓库是面向审计与复现的 Euler Finance 漏洞脚手架，优先服务“先读后写”的分析流程。现在只维护一套源码树：协议源码全部放在 <code>src/euler/</code>，保持接近上游的可编译布局；审计直观性则通过根 README 和协议 README 来补。</p>
+    </script><link rel="stylesheet" href="/_astro/_folder_.CeBna_Gz.css"></head> <body class> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  <span class="directory-sep">/</span> <span class="directory-text">面试项目资料源</span>  <span class="directory-sep">/</span> <span class="directory-text">euler</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>README</h1> <p class="lead"># Euler Finance 漏洞复现工作区 这个仓库是面向审计与复现的 Euler Finance 漏洞脚手架，优先服务“先读后写”的分析流程。现在只维护一套源码树：协议源码全部放在 `src/euler/`，保持接近上游的可编译布局；审计直观性则通过根 README 和协议</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/面试/面试项目资料源/euler/README.md</p> </header> <div class="article-layout"> <div class="article-main"> <div class="article-content"><h1>Euler Finance 漏洞复现工作区</h1><p>这个仓库是面向审计与复现的 Euler Finance 漏洞脚手架，优先服务“先读后写”的分析流程。现在只维护一套源码树：协议源码全部放在 <code>src/euler/</code>，保持接近上游的可编译布局；审计直观性则通过根 README 和协议 README 来补。</p>
 <p>根 README 现在兼任事故主页和地址簿，避免在分析初期来回跳转多个上下文文件。</p>
 <h2 id="section-1">事故概览</h2><table>
 <thead>
@@ -189,9 +189,45 @@
 <li>Euler Labs: <a href="https://medium.com/eulerfinance/war-peace-ab2670711175">War &amp; Peace: Behind the Scenes of Euler&#39;s $240M Exploit Recovery</a></li>
 <li>Etherscan: <a href="https://etherscan.io/tx/0xc310a0affe2169d1f6feec1c63dbc7f7c62a887fa48795d327d4d2da2d6b111d">参考攻击交易</a></li>
 </ul>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/面试/面试项目资料源/euler/audit_notes/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">audit_notes</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/面试/面试项目资料源/euler/REPRO_SUMMARY/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">REPRO_SUMMARY</h4> </a> </div> </nav> </article>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/面试/面试项目资料源/euler/REPRO_SUMMARY/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">REPRO_SUMMARY</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/面试/面试项目资料源/memscan/面试准备/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">面试准备</h4> </a> </div> </nav> </div> <aside class="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2"> <a href="#section-1">事故概览</a> </li><li class="article-outline__item depth-2"> <a href="#section-2">范围说明</a> </li><li class="article-outline__item depth-2"> <a href="#section-3">快速开始</a> </li><li class="article-outline__item depth-2"> <a href="#section-4">攻击路径摘要</a> </li><li class="article-outline__item depth-2"> <a href="#section-5">时间线</a> </li><li class="article-outline__item depth-2"> <a href="#section-6">地址簿</a> </li><li class="article-outline__item depth-2"> <a href="#section-7">推荐阅读顺序</a> </li><li class="article-outline__item depth-2"> <a href="#section-8">仓库结构</a> </li><li class="article-outline__item depth-2"> <a href="#section-9">说明</a> </li><li class="article-outline__item depth-2"> <a href="#section-10">参考资料</a> </li> </ol> </nav> </aside> </div> </article>  </main> <script>
       (() => {
         const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
         const bindToggle = () => {
           const btn = document.getElementById("theme-toggle");
           if (!btn) return;
@@ -204,6 +240,8 @@
             try { localStorage.setItem("theme", value); } catch {}
           });
         };
+
+        bindScrollReset();
         bindToggle();
       })();
     </script> </body> </html> 
