@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.DyRfo8ex.css"></head> <body class="is-post-page"> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main is-post-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">合约审计</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>以太航员挑战</h1> <p class="lead"># 控制台用法 await contract：显示当前关卡所有可用方法 看slot内容 ```solidity await web3.eth.getStorageAt(&quot;0x3b5520d524eEB80ad38BdC961cDFfAB7fa62bBcE&quot;, 0) ``` DEX</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/合约审计/以太航员挑战.md</p> </header> <div class="article-layout"> <div class="article-main"> <div class="article-content"><h1>控制台用法</h1><p>await contract：显示当前关卡所有可用方法</p>
+    </script><link rel="stylesheet" href="/_astro/_folder_.J_n6q0Es.css"></head> <body class="is-post-page"> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main is-post-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">合约审计</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>以太航员挑战</h1> <p class="lead"># 控制台用法 await contract：显示当前关卡所有可用方法 看slot内容 ```solidity await web3.eth.getStorageAt(&quot;0x3b5520d524eEB80ad38BdC961cDFfAB7fa62bBcE&quot;, 0) ``` DEX</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/合约审计/以太航员挑战.md</p> </header> <div class="article-layout"> <div class="article-main"> <div class="article-content"><h1>控制台用法</h1><p>await contract：显示当前关卡所有可用方法</p>
 <p>看slot内容</p>
 <pre><code class="language-solidity">await web3.eth.getStorageAt(&quot;0x3b5520d524eEB80ad38BdC961cDFfAB7fa62bBcE&quot;, 0)
 </code></pre>
@@ -1824,12 +1824,13 @@ contract PuzzleWallet {
     </script> </body> </html>  <script>
       (() => {
         const articleContent = document.querySelector(".article-content");
+        const outlineNav = document.querySelector(".article-outline");
         const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
         const links = Array.from(document.querySelectorAll(".article-outline a[href^='#']"));
         const progressBar = document.getElementById("article-progress-bar");
         const progressValue = document.getElementById("article-progress-value");
 
-        if (!articleContent || !headings.length || !links.length) return;
+        if (!articleContent || !outlineNav || !headings.length || !links.length) return;
 
         const itemMap = new Map(
           links.map((link) => {
@@ -1880,7 +1881,22 @@ contract PuzzleWallet {
           });
 
           const activeLink = links.find((link) => decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, "")) === id);
-          activeLink?.scrollIntoView({ block: "nearest", inline: "nearest" });
+          if (activeLink) {
+            const linkTop = activeLink.offsetTop;
+            const linkBottom = linkTop + activeLink.offsetHeight;
+            const viewTop = outlineNav.scrollTop;
+            const viewBottom = viewTop + outlineNav.clientHeight;
+            const padding = 24;
+
+            if (linkTop - padding < viewTop) {
+              outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+            } else if (linkBottom + padding > viewBottom) {
+              outlineNav.scrollTo({
+                top: linkBottom - outlineNav.clientHeight + padding,
+                behavior: "smooth",
+              });
+            }
+          }
         };
 
         const updateProgress = () => {

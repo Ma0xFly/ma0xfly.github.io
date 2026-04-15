@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.DyRfo8ex.css"></head> <body class="is-post-page"> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main is-post-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">DeFi协议</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>uniswap_v2</h1> <p class="lead">Uniswap V2 是以太坊上最经典的**去中心化交易所 (DEX)** 协议之一。它的核心在于彻底抛弃了传统金融的“订单薄” (Order Book) 模式，转而使用了 **自动做市商 (AMM)** 机制。 简单来说，Uniswap V2 就像一个始终在线的**自动机器人*</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/DeFi协议/uniswap_v2.md</p> </header> <div class="article-layout"> <div class="article-main"> <div class="article-content"><p>Uniswap V2 是以太坊上最经典的<strong>去中心化交易所 (DEX)</strong> 协议之一。它的核心在于彻底抛弃了传统金融的“订单薄” (Order Book) 模式，转而使用了 <strong>自动做市商 (AMM)</strong> 机制。</p>
+    </script><link rel="stylesheet" href="/_astro/_folder_.J_n6q0Es.css"></head> <body class="is-post-page"> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main is-post-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">DeFi协议</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>uniswap_v2</h1> <p class="lead">Uniswap V2 是以太坊上最经典的**去中心化交易所 (DEX)** 协议之一。它的核心在于彻底抛弃了传统金融的“订单薄” (Order Book) 模式，转而使用了 **自动做市商 (AMM)** 机制。 简单来说，Uniswap V2 就像一个始终在线的**自动机器人*</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/DeFi协议/uniswap_v2.md</p> </header> <div class="article-layout"> <div class="article-main"> <div class="article-content"><p>Uniswap V2 是以太坊上最经典的<strong>去中心化交易所 (DEX)</strong> 协议之一。它的核心在于彻底抛弃了传统金融的“订单薄” (Order Book) 模式，转而使用了 <strong>自动做市商 (AMM)</strong> 机制。</p>
 <p>简单来说，Uniswap V2 就像一个始终在线的<strong>自动机器人</strong>或<strong>自动售货机</strong>：     </p>
 <ul>
 <li><strong>没有买家和卖家</strong>：你不是在和另一个人交易。</li>
@@ -602,12 +602,13 @@ function getAmountsOut(uint amountIn, address[] memory path)
     </script> </body> </html>  <script>
       (() => {
         const articleContent = document.querySelector(".article-content");
+        const outlineNav = document.querySelector(".article-outline");
         const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
         const links = Array.from(document.querySelectorAll(".article-outline a[href^='#']"));
         const progressBar = document.getElementById("article-progress-bar");
         const progressValue = document.getElementById("article-progress-value");
 
-        if (!articleContent || !headings.length || !links.length) return;
+        if (!articleContent || !outlineNav || !headings.length || !links.length) return;
 
         const itemMap = new Map(
           links.map((link) => {
@@ -658,7 +659,22 @@ function getAmountsOut(uint amountIn, address[] memory path)
           });
 
           const activeLink = links.find((link) => decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, "")) === id);
-          activeLink?.scrollIntoView({ block: "nearest", inline: "nearest" });
+          if (activeLink) {
+            const linkTop = activeLink.offsetTop;
+            const linkBottom = linkTop + activeLink.offsetHeight;
+            const viewTop = outlineNav.scrollTop;
+            const viewBottom = viewTop + outlineNav.clientHeight;
+            const padding = 24;
+
+            if (linkTop - padding < viewTop) {
+              outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+            } else if (linkBottom + padding > viewBottom) {
+              outlineNav.scrollTo({
+                top: linkBottom - outlineNav.clientHeight + padding,
+                behavior: "smooth",
+              });
+            }
+          }
         };
 
         const updateProgress = () => {

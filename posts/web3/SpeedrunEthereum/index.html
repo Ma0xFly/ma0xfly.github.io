@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.DyRfo8ex.css"></head> <body class="is-post-page"> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main is-post-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   </div> <p class="eyebrow">2026/4/15</p> <h1>SpeedrunEthereum</h1> <p class="lead"># 通关ai使用指南 `SpeedrunEthereum`（基于 Scaffold-ETH 2）是练习“高分交互模式”的绝佳靶场。因为它不仅涉及 **Solidity 合约逻辑**（你的专业核心），还强制要求你理解 **前端交互（React/Wagmi）**——这往往是安全审计员</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/SpeedrunEthereum.md</p> </header> <div class="article-layout"> <div class="article-main"> <div class="article-content"><h1>通关ai使用指南</h1><p><code>SpeedrunEthereum</code>（基于 Scaffold-ETH 2）是练习“高分交互模式”的绝佳靶场。因为它不仅涉及 <strong>Solidity 合约逻辑</strong>（你的专业核心），还强制要求你理解 <strong>前端交互（React/Wagmi）</strong>——这往往是安全审计员的盲区，却是理解“业务逻辑漏洞”的关键。</p>
+    </script><link rel="stylesheet" href="/_astro/_folder_.J_n6q0Es.css"></head> <body class="is-post-page"> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main is-post-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   </div> <p class="eyebrow">2026/4/15</p> <h1>SpeedrunEthereum</h1> <p class="lead"># 通关ai使用指南 `SpeedrunEthereum`（基于 Scaffold-ETH 2）是练习“高分交互模式”的绝佳靶场。因为它不仅涉及 **Solidity 合约逻辑**（你的专业核心），还强制要求你理解 **前端交互（React/Wagmi）**——这往往是安全审计员</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/SpeedrunEthereum.md</p> </header> <div class="article-layout"> <div class="article-main"> <div class="article-content"><h1>通关ai使用指南</h1><p><code>SpeedrunEthereum</code>（基于 Scaffold-ETH 2）是练习“高分交互模式”的绝佳靶场。因为它不仅涉及 <strong>Solidity 合约逻辑</strong>（你的专业核心），还强制要求你理解 <strong>前端交互（React/Wagmi）</strong>——这往往是安全审计员的盲区，却是理解“业务逻辑漏洞”的关键。</p>
 <p>结合你的 <strong>Web3 安全背景</strong> 和 <strong>Foundry 偏好</strong>，这里有一套专门针对 SpeedrunEthereum 的**“三层通关法”**，旨在把每个挑战吃透，而不是飘过。</p>
 <hr>
 <h3 id="section-1">第一层：核心合约逻辑（采用 Mode C - 概念引导 + 自己手写）</h3><p>你是安全方向的学生，<strong>绝对不要</strong>让 AI 直接写合约代码（特别是 <code>Staker.sol</code> 或 <code>Vendor.sol</code>）。这些逻辑是你未来的饭碗。</p>
@@ -1480,12 +1480,13 @@ $$</p>
     </script> </body> </html>  <script>
       (() => {
         const articleContent = document.querySelector(".article-content");
+        const outlineNav = document.querySelector(".article-outline");
         const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
         const links = Array.from(document.querySelectorAll(".article-outline a[href^='#']"));
         const progressBar = document.getElementById("article-progress-bar");
         const progressValue = document.getElementById("article-progress-value");
 
-        if (!articleContent || !headings.length || !links.length) return;
+        if (!articleContent || !outlineNav || !headings.length || !links.length) return;
 
         const itemMap = new Map(
           links.map((link) => {
@@ -1536,7 +1537,22 @@ $$</p>
           });
 
           const activeLink = links.find((link) => decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, "")) === id);
-          activeLink?.scrollIntoView({ block: "nearest", inline: "nearest" });
+          if (activeLink) {
+            const linkTop = activeLink.offsetTop;
+            const linkBottom = linkTop + activeLink.offsetHeight;
+            const viewTop = outlineNav.scrollTop;
+            const viewBottom = viewTop + outlineNav.clientHeight;
+            const padding = 24;
+
+            if (linkTop - padding < viewTop) {
+              outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+            } else if (linkBottom + padding > viewBottom) {
+              outlineNav.scrollTo({
+                top: linkBottom - outlineNav.clientHeight + padding,
+                behavior: "smooth",
+              });
+            }
+          }
         };
 
         const updateProgress = () => {
