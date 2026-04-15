@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.cPFIf37B.css"></head> <body class="is-post-page"> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main is-post-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  <span class="directory-sep">/</span> <span class="directory-text">面试项目资料源</span>  <span class="directory-sep">/</span> <span class="directory-text">euler</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>audit_notes</h1> <p class="lead"># Euler Finance 审计笔记 &gt; 审计范围: `src/euler/` 的核心架构与模块，重点关注 `Storage.sol`、`BaseLogic.sol`、`modules/EToken.sol`、`modules/DToken.sol`、`modules/Liq</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/面试/面试项目资料源/euler/audit_notes.md</p> </header> <div class="article-layout"> <div class="article-main"> <div class="article-content"><h1>Euler Finance 审计笔记</h1><blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.DDRb27p8.css"></head> <body class="is-post-page"> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main is-post-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  <span class="directory-sep">/</span> <span class="directory-text">面试项目资料源</span>  <span class="directory-sep">/</span> <span class="directory-text">euler</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>audit_notes</h1> <p class="lead"># Euler Finance 审计笔记 &gt; 审计范围: `src/euler/` 的核心架构与模块，重点关注 `Storage.sol`、`BaseLogic.sol`、`modules/EToken.sol`、`modules/DToken.sol`、`modules/Liq</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/面试/面试项目资料源/euler/audit_notes.md</p> </header> <div class="article-layout"> <div class="article-main"> <div class="article-content"><h1>Euler Finance 审计笔记</h1><blockquote>
 <p>审计范围: <code>src/euler/</code> 的核心架构与模块，重点关注 <code>Storage.sol</code>、<code>BaseLogic.sol</code>、<code>modules/EToken.sol</code>、<code>modules/DToken.sol</code>、<code>modules/Liquidation.sol</code>、<code>modules/RiskManager.sol</code>
 Solidity 版本: <code>^0.8.0</code>（<code>vendor/</code> 下存在混合 pragma）</p>
 </blockquote>
@@ -403,4 +403,68 @@ struct AssetStorage {
         bindScrollReset();
         bindToggle();
       })();
-    </script> </body> </html> 
+    </script> </body> </html>  <script>
+      (() => {
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const links = Array.from(document.querySelectorAll(".article-outline a[href^='#']"));
+
+        if (!headings.length || !links.length) return;
+
+        const itemMap = new Map(
+          links.map((link) => {
+            const id = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            return [id, link.closest(".article-outline__item")];
+          }),
+        );
+
+        let activeId = "";
+        let ticking = false;
+
+        const setActive = (id) => {
+          if (!id || id === activeId) return;
+
+          activeId = id;
+
+          links.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isActive = targetId === id;
+            link.toggleAttribute("aria-current", isActive);
+            link.classList.toggle("is-active", isActive);
+          });
+
+          itemMap.forEach((item, itemId) => {
+            if (!item) return;
+            item.classList.toggle("is-active", itemId === id);
+          });
+
+          const activeLink = links.find((link) => decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, "")) === id);
+          activeLink?.scrollIntoView({ block: "nearest", inline: "nearest" });
+        };
+
+        const updateActive = () => {
+          ticking = false;
+
+          let current = headings[0]?.id || "";
+          for (const heading of headings) {
+            if (heading.getBoundingClientRect().top <= 160) {
+              current = heading.id;
+            } else {
+              break;
+            }
+          }
+
+          setActive(current);
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateActive);
+        };
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

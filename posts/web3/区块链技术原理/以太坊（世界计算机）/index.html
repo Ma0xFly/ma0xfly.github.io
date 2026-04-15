@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.cPFIf37B.css"></head> <body class="is-post-page"> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main is-post-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">区块链技术原理</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>以太坊（世界计算机）</h1> <p class="lead">以太坊被称为 “世界计算机”，核心是它突破了比特币仅能处理简单价值转移的局限，靠去中心化架构、图灵完备的智能合约等技术，构建了一个全球可访问、能承载复杂计算与多样化应用的分布式计算平台。下面以计算机五层结构拆解分析 “图灵完备（Turing Complete）”这个概念源自“计算</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/区块链技术原理/以太坊（世界计算机）.md</p> </header> <div class="article-layout"> <div class="article-main"> <div class="article-content"><p>以太坊被称为 “世界计算机”，核心是它突破了比特币仅能处理简单价值转移的局限，靠去中心化架构、图灵完备的智能合约等技术，构建了一个全球可访问、能承载复杂计算与多样化应用的分布式计算平台。下面以计算机五层结构拆解分析</p>
+    </script><link rel="stylesheet" href="/_astro/_folder_.DDRb27p8.css"></head> <body class="is-post-page"> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main is-post-main">  <article class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">区块链技术原理</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>以太坊（世界计算机）</h1> <p class="lead">以太坊被称为 “世界计算机”，核心是它突破了比特币仅能处理简单价值转移的局限，靠去中心化架构、图灵完备的智能合约等技术，构建了一个全球可访问、能承载复杂计算与多样化应用的分布式计算平台。下面以计算机五层结构拆解分析 “图灵完备（Turing Complete）”这个概念源自“计算</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/区块链技术原理/以太坊（世界计算机）.md</p> </header> <div class="article-layout"> <div class="article-main"> <div class="article-content"><p>以太坊被称为 “世界计算机”，核心是它突破了比特币仅能处理简单价值转移的局限，靠去中心化架构、图灵完备的智能合约等技术，构建了一个全球可访问、能承载复杂计算与多样化应用的分布式计算平台。下面以计算机五层结构拆解分析</p>
 <p>“图灵完备（Turing Complete）”这个概念源自“计算机科学之父”艾伦·图灵。简单来说，如果一个系统（比如虚拟机或编程语言）能够模拟任何图灵机、计算任何可解的算法，它就是图灵完备的</p>
 <h1>五层结构概述</h1><h3 id="section-1">硬件层</h3><p>核心作用：为整个以太坊网络提供物理硬件支持，是 “世界计算机” 的 “硬件主机”<br>组成部分：全球范围内参与以太坊网络的节点设备，包括个人电脑、服务器、专业矿机（合并后以验证节点设备为主）等
 关键特点：去中心化分布，无单一控制中心，节点越多，网络安全性、稳定性越强，确保 “世界计算机” 持续运行不宕机</p>
@@ -436,4 +436,68 @@ contract ETHPrice {
         bindScrollReset();
         bindToggle();
       })();
-    </script> </body> </html> 
+    </script> </body> </html>  <script>
+      (() => {
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const links = Array.from(document.querySelectorAll(".article-outline a[href^='#']"));
+
+        if (!headings.length || !links.length) return;
+
+        const itemMap = new Map(
+          links.map((link) => {
+            const id = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            return [id, link.closest(".article-outline__item")];
+          }),
+        );
+
+        let activeId = "";
+        let ticking = false;
+
+        const setActive = (id) => {
+          if (!id || id === activeId) return;
+
+          activeId = id;
+
+          links.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isActive = targetId === id;
+            link.toggleAttribute("aria-current", isActive);
+            link.classList.toggle("is-active", isActive);
+          });
+
+          itemMap.forEach((item, itemId) => {
+            if (!item) return;
+            item.classList.toggle("is-active", itemId === id);
+          });
+
+          const activeLink = links.find((link) => decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, "")) === id);
+          activeLink?.scrollIntoView({ block: "nearest", inline: "nearest" });
+        };
+
+        const updateActive = () => {
+          ticking = false;
+
+          let current = headings[0]?.id || "";
+          for (const heading of headings) {
+            if (heading.getBoundingClientRect().top <= 160) {
+              current = heading.id;
+            } else {
+              break;
+            }
+          }
+
+          setActive(current);
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateActive);
+        };
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>
