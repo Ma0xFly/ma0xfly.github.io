@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.CnuYo7FY.css"></head> <body class="is-post-page"> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main is-post-main">  <div class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  <span class="directory-sep">/</span> <span class="directory-text">ai模拟面试</span>  </div> <p class="eyebrow">2026/4/15</p> <h1>GPT-Voice模拟面试提示词</h1> <p class="lead">这份文件用于直接复制到 GPT Voice。 使用顺序： 1. 先发“资料卡” 2. 等它确认理解后，再发“开场词” 3. 模拟结束后，发“复盘词” 建议： - 不要一次塞整份题卡 - 资料尽量控制在 1 到 2 屏 - 一次只练一个岗位方向 - 如果你希望它“知道该问什么”，优</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/面试/ai模拟面试/GPT Voice模拟面试提示词.md</p> </header> <div class="article-main"> <div class="article-content"><p>这份文件用于直接复制到 GPT Voice。</p>
+    </script><link rel="stylesheet" href="/_astro/_folder_.DP3h7uaU.css"></head> <body class="is-post-page"> <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☽</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main is-post-main">  <div class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  <span class="directory-sep">/</span> <span class="directory-text">ai模拟面试</span>  </div> <p class="eyebrow">2026/4/16</p> <h1>GPT-Voice模拟面试提示词</h1> <p class="lead">这份文件用于直接复制到 GPT Voice。 使用顺序： 1. 先发“资料卡” 2. 等它确认理解后，再发“开场词” 3. 模拟结束后，发“复盘词” 建议： - 不要一次塞整份题卡 - 资料尽量控制在 1 到 2 屏 - 一次只练一个岗位方向 - 如果你希望它“知道该问什么”，优</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/面试/ai模拟面试/GPT Voice模拟面试提示词.md</p> </header> <div class="article-main"> <div class="article-content"><p>这份文件用于直接复制到 GPT Voice。</p>
 <p>使用顺序：</p>
 <ol>
 <li>先发“资料卡”</li>
@@ -42,17 +42,104 @@
 <h2 id="section-2">可追加的题库指令</h2><p>如果你同时发送了 <a href="D:/md/web3/%E9%9D%A2%E8%AF%95/%E9%9D%A2%E8%AF%95%E9%A2%98%E5%8D%A1-Voice%E9%A2%98%E7%9B%AE%E7%89%88.md">面试题卡-Voice题目版.md</a>，再额外补下面这段：</p>
 <pre><code class="language-text">下面我还会给你一份题库目录，请把它当成你可提问的范围。
 
+题库范围包括（共 6-9 个题目成组）：
+
+【1】EVM / Proxy / 调用语义
+- Storage layout / 紧凑打包 / mapping &amp; array slot 计算
+- Storage collision / delegatecall / Transparent Proxy / UUPS / Diamond Proxy
+- EIP-1967 / call / delegatecall / staticcall 的语义差异与影响
+- EIP-150 的 63/64 规则 / permit 的完整链路 / nonce &amp; deadline
+
+【2】重入 / UTXO / 静态分析 / 漏扫
+- 重入的重新定义 / 跨函数重入 / 只读重入的危害
+- UTXO vs Account 模型 / Account 模型与 MEV 和竞态
+- Slither 原理与误报 / 0.8+ 后的整数溢出
+- 大批量自动化漏扫方案设计
+
+【3】AMM / Oracle / Flash Loan
+- Uniswap V2 做市逻辑 / Uniswap V3 Tick 和区间流动性
+- V3 资本效率 vs 风险复杂度
+- TWAP 原理与局限 / 价格操纵的多种攻击链
+- Flash Loan 定义与callback角色 / 闪电贷攻击链拆解
+
+【4】Lending / Liquidation
+- 借贷基本结构 / cToken / aToken 存款凭证机制
+- LTV / liquidation threshold / close factor / liquidation bonus
+- 健康因子与可清算条件 / 清算的协议自救本质
+- 预言机依赖与风险 / Aave vs Compound 面试级差异
+
+【5】Euler 复现
+- 攻击全貌 3 分钟讲清
+- 为什么攻击者主动进入可清算状态
+- PoC 拆解、验证与断言书写
+- checkLiquidity / deferLiquidityStatus 风控闸门分析
+- violator / liquidator 角色分离的必要性
+- fork test vs Tenderly 调试的差异
+
+【6】Sentiment 复现
+- 高层现象与本质
+- 只读重入 vs 普通重入的区别
+- Balancer 脏读根因 / Sentiment borrow 先放后检
+- 攻击链拆解与 PoC 分段
+- 状态断言最值得写的部分
+- 工程修复思路（上游 &amp; 下游）
+- nonReentrant 为什么没挡住
+
+【7】项目表达 / 简历 / 投递
+- 安全岗简历项目 bullet 怎么写
+- Euler / Sentiment 复现写入简历的表达
+- MemeScan 60 秒 / 3 分钟 / 不要说错的点 / 局限承认
+- Uniswap V2 DEX 60秒到3分钟讲法与 bullet 写法
+- 3 分钟自我介绍组织
+- 投递策略与反馈记录
+
+【8】真实面经补位
+- 大批量自动化漏扫方案
+- Front-running 原理与分类
+- Solidity 0.8+ 整数溢出答法
+- MEV / Front-running / Back-running / Sandwich 区分
+- Flashbots &amp; Private RPC 的解决与未解决方案
+
+【9】本轮模拟面试补强专题
+- Searcher 发现可清算 &amp; 套利无需 Event
+- MEV 定义与分类
+- Uniswap V2 Factory / Router / Pair 职责与 PairCreated
+- mint / burn / swap 储备量底层更新
+- MemeScan 下一步需要的更强断言
+- Storage Collision 黑客利用 (无 EIP-1967) 
+- 如果不使用 EIP-1967，黑客会怎么利用 Storage Collision 接管 Proxy？
+
 要求：
 - 不要照着顺序念题目
 - 不要把题目原封不动地读出来
 - 要像真实面试一样自然发问
 - 可以基于这些题目自由变换问法
 - 优先挑与目标岗位最相关的问题
+- 每部分内部可灵活重组，但确保覆盖所有高优先级维度
 - 如果我回答空泛，请继续追问到函数、状态、断言、替代方案和风险边界
 - 不要主动给我答案
 </code></pre>
 <hr>
-<h2 id="section-3">版本一：Web3 安全 / 智能合约审计岗</h2><h3 id="section-4">1. 资料卡</h3><pre><code class="language-text">请先阅读下面资料，暂时不要开始提问。
+<h2 id="section-3">可追加的 JD 对齐增强指令（可选补充）</h2><p>如果你当次面试特别希望它严格按 JD 做覆盖检查，再把下面这段放在“资料卡”后、“开场词”前。
+如果你不想多发一段，也可以不发：下面的核心规则已经内置到两套资料卡中。</p>
+<pre><code class="language-text">在开始提问前，你需要先做一轮“JD-简历对齐建模”，但不要长篇讲解。
+
+执行规则：
+1) 先从 JD 提炼 6-8 个核心能力维度，并按岗位相关度给出优先级（高/中/低）。
+2) 再从我的简历与项目中提取对应证据点，标记为：已证明 / 待验证 / 高风险空白。
+3) 按“高优先级优先”出题，确保本轮问题覆盖所有高优先级维度。
+4) 提问采用漏斗式：基础定义 -&gt; 函数与状态 -&gt; 攻击链或工程权衡 -&gt; 修复与替代方案。
+5) 如果某个高优先级维度在前半程未覆盖，后半程必须补问。
+6) 对每道题在内部打分（0-5），记录我最薄弱的三个能力点，最后汇总输出。
+
+提问约束：
+- 一次只问一个问题。
+- 只要我回答空泛，就追问到函数、状态变量、断言、边界与代价。
+- 不要主动给答案。
+- 不要照题库顺序念题。
+</code></pre>
+<hr>
+<h2 id="section-4">版本一：Web3 安全 / 智能合约审计岗</h2><h3 id="section-5">1. 资料卡</h3><pre><code class="language-text">请先阅读下面资料，暂时不要开始提问。
 
 【目标岗位】
 - 目标：Web3 安全 / 智能合约审计 一面
@@ -88,13 +175,7 @@
 - 如果继续追问，我可以展开 `Factory / Router / Pair` 的职责边界、`mint / burn / swap` 的储备更新逻辑，以及这个项目和真实 Uniswap V2 之间的简化取舍
 
 【想重点练的主题】
-- call / delegatecall / staticcall
-- storage layout / proxy / EIP-1967 / EIP-150 / permit
-- 重入本质、只读重入、UTXO vs Account、Slither、自动化漏扫方案
-- TWAP、flash loan、front-running
-- lending、liquidation、oracle 风险
-- 项目介绍与深挖追问
-- Uniswap V2 DEX 项目表达与 AMM 实现细节
+- 见题卡(或者自己选择重点)
 
 【面试规则】
 - 全程中文
@@ -102,8 +183,13 @@
 - 如果我回答空泛，立刻追问函数、状态、断言、替代方案、风险边界
 - 不要主动给我答案
 - 如果我明显答错，最后指出
+- 先做一轮 JD-简历对齐建模：提炼 6-8 个能力维度并按高/中/低优先级排序
+- 将我的简历证据标记为：已证明 / 待验证 / 高风险空白
+- 按高优先级优先出题，确保本轮覆盖所有高优先级能力项
+- 若前半程未覆盖某个高优先级能力，后半程必须补问
+- 每道题在内部打分（0-5）
 </code></pre>
-<h3 id="section-5">2. 开场词</h3><pre><code class="language-text">现在开始模拟面试。
+<h3 id="section-6">2. 开场词</h3><pre><code class="language-text">现在开始模拟面试。
 
 你扮演一名严格的 Web3 安全面试官。你的目标不是给我上课，而是判断：
 1. 我是否真的理解底层机制
@@ -115,15 +201,16 @@
 - 全程中文
 - 一次只问一个问题
 - 每个问题先像真实面试那样自然发问
+- 在内部维护“JD 能力覆盖表”，优先覆盖高优先级能力，不足项必须在后续补问
 - 如果我回答模糊，连续追问 2 到 4 层
-- 特别检查我有没有把根因和放大器混淆
 - 特别检查我有没有把项目边界说错
+- 每道题都至少落到一个具体锚点：函数名、状态变量、不变量、攻击路径或修复取舍
 - 不要变成讲课模式
-- 时长按 30 分钟控制
-- 优先覆盖：项目介绍、EVM、重入、AMM/Oracle、Lending
+- 时长按 50 分钟控制
 - 结束后必须额外输出一份 **Markdown 格式** 的“本次面试 Q&amp;A 总结”
 - 这份 Markdown 总结至少包含：
   - 面试基本信息（岗位方向、轮次、时长、整体评价）
+  - JD 能力覆盖矩阵（能力项、是否覆盖、证据题号、当前风险级别）
   - 本轮问到的每一道题
   - 我对每道题的回答摘要
   - 你对每道题的评价（答得好的点 / 不足点）
@@ -132,7 +219,7 @@
 
 现在开始第一题。
 </code></pre>
-<h3 id="section-6">3. 高压二面版</h3><pre><code class="language-text">这次请你更严格一点，按 Web3 安全团队二面标准来模拟。
+<h3 id="section-7">3. 高压二面版</h3><pre><code class="language-text">这次请你更严格一点，按 Web3 安全团队二面标准来模拟。
 
 要求：
 - 我一旦回答空泛，你就打断并追问
@@ -147,7 +234,7 @@
 现在开始第一题。
 </code></pre>
 <hr>
-<h2 id="section-7">版本二：区块链工程师岗</h2><h3 id="section-8">1. 资料卡</h3><pre><code class="language-text">请先阅读下面资料，暂时不要开始提问。
+<h2 id="section-8">版本二：区块链工程师岗</h2><h3 id="section-9">1. 资料卡</h3><pre><code class="language-text">请先阅读下面资料，暂时不要开始提问。
 
 【目标岗位】
 - 目标：见简历附件 一面
@@ -195,8 +282,13 @@
 - 如果我回答空泛，追问到具体合约结构、状态变量、测试用例、异常路径
 - 不要主动给我答案
 - 如果我明显答错，最后指出
+- 先做一轮 JD-简历对齐建模：提炼 6-8 个能力维度并按高/中/低优先级排序
+- 将我的简历证据标记为：已证明 / 待验证 / 高风险空白
+- 按高优先级优先出题，确保本轮覆盖所有高优先级能力项
+- 若前半程未覆盖某个高优先级能力，后半程必须补问
+- 每道题在内部打分（0-5），结束时输出最薄弱的三个能力点
 </code></pre>
-<h3 id="section-9">2. 开场词</h3><pre><code class="language-text">现在开始模拟面试。
+<h3 id="section-10">2. 开场词</h3><pre><code class="language-text">现在开始模拟面试。
 
 你扮演一名严格的 Web3 区块链工程师面试官。你重点考察：
 1. 我能不能设计和实现合约
@@ -208,15 +300,18 @@
 - 全程中文
 - 一次只问一个问题
 - 问题优先像真实面试那样自然发问
+- 在内部维护“JD 能力覆盖表”，优先覆盖高优先级能力，不足项必须在后续补问
 - 如果我回答模糊，继续追问 2 到 4 层
 - 重点多问：合约设计、状态变量、权限模型、测试策略、ethers.js、部署和排障
 - 也要抽问基础安全问题，但不要把整轮都变成纯漏洞面
+- 每道题都至少落到一个具体锚点：函数签名、状态结构、测试断言、失败路径或运维取舍
 - 不要变成讲课模式
 - 时长按 20 分钟控制
 - 最后给出：总体评价、最强的 3 点、最弱的 3 点、必须补的 3 个工程问题、下一轮建议补练的 5 个问题
 - 结束后还必须额外输出一份 **Markdown 格式** 的“本次面试 Q&amp;A 总结”
 - 这份 Markdown 总结至少包含：
   - 面试基本信息（岗位方向、轮次、时长、整体评价）
+  - JD 能力覆盖矩阵（能力项、是否覆盖、证据题号、当前风险级别）
   - 本轮问到的每一道题
   - 我对每道题的回答摘要
   - 你对每道题的评价（工程性、准确性、表达清晰度）
@@ -225,7 +320,7 @@
 
 现在开始第一题。
 </code></pre>
-<h3 id="section-10">3. 高压二面版</h3><pre><code class="language-text">这次请你按区块链工程师二面标准更严格一点。
+<h3 id="section-11">3. 高压二面版</h3><pre><code class="language-text">这次请你按区块链工程师二面标准更严格一点。
 
 要求：
 - 如果我回答只停留在概念层，就继续追问到合约结构、函数、状态变量和测试
@@ -237,7 +332,7 @@
 现在开始第一题。
 </code></pre>
 <hr>
-<h2 id="section-11">快速替换项</h2><p>每次使用前，把下面这些内容换掉：</p>
+<h2 id="section-12">快速替换项</h2><p>每次使用前，把下面这些内容换掉：</p>
 <ul>
 <li><code>目标岗位</code></li>
 <li><code>目标 JD</code></li>
@@ -245,14 +340,14 @@
 <li><code>你希望重点练的主题</code></li>
 </ul>
 <hr>
-<h2 id="section-12">你自己的补充位</h2><p>每次面试前，你可以在这里先手工改一下再复制：</p>
+<h2 id="section-13">你自己的补充位</h2><p>每次面试前，你可以在这里先手工改一下再复制：</p>
 <pre><code class="language-text">【本轮特别想练】
 - 例如：项目介绍容易虚
 - 例如：delegatecall 和 proxy 追问
 - 例如：只读重入证据细节
 - 例如：区块链工程师岗位的测试和部署表达
 </code></pre>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/面试/ai模拟面试/面试题卡-Voice题目版/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">面试题卡-Voice题目版</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/面试/ai模拟面试/jd_bitslab/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">jd_bitslab</h4> </a> </div> </nav> </div> </article> <aside class="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2" data-toc-id="section-1"> <a href="#section-1">先说结论</a> </li><li class="article-outline__item depth-2" data-toc-id="section-2"> <a href="#section-2">可追加的题库指令</a> </li><li class="article-outline__item depth-2" data-toc-id="section-3"> <a href="#section-3">版本一：Web3 安全 / 智能合约审计岗</a> </li><li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">1. 资料卡</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">2. 开场词</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">3. 高压二面版</a> </li><li class="article-outline__item depth-2" data-toc-id="section-7"> <a href="#section-7">版本二：区块链工程师岗</a> </li><li class="article-outline__item depth-3" data-toc-id="section-8"> <a href="#section-8">1. 资料卡</a> </li><li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">2. 开场词</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">3. 高压二面版</a> </li><li class="article-outline__item depth-2" data-toc-id="section-11"> <a href="#section-11">快速替换项</a> </li><li class="article-outline__item depth-2" data-toc-id="section-12"> <a href="#section-12">你自己的补充位</a> </li> </ol> </nav> </aside> </div> </div>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/面试/ai模拟面试/面试题卡-Voice题目版/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">面试题卡-Voice题目版</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/面试/ai模拟面试/jd_bitslab/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">jd_bitslab</h4> </a> </div> </nav> </div> </article> <aside class="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2" data-toc-id="section-1"> <a href="#section-1">先说结论</a> </li><li class="article-outline__item depth-2" data-toc-id="section-2"> <a href="#section-2">可追加的题库指令</a> </li><li class="article-outline__item depth-2" data-toc-id="section-3"> <a href="#section-3">可追加的 JD 对齐增强指令（可选补充）</a> </li><li class="article-outline__item depth-2" data-toc-id="section-4"> <a href="#section-4">版本一：Web3 安全 / 智能合约审计岗</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">1. 资料卡</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">2. 开场词</a> </li><li class="article-outline__item depth-3" data-toc-id="section-7"> <a href="#section-7">3. 高压二面版</a> </li><li class="article-outline__item depth-2" data-toc-id="section-8"> <a href="#section-8">版本二：区块链工程师岗</a> </li><li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">1. 资料卡</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">2. 开场词</a> </li><li class="article-outline__item depth-3" data-toc-id="section-11"> <a href="#section-11">3. 高压二面版</a> </li><li class="article-outline__item depth-2" data-toc-id="section-12"> <a href="#section-12">快速替换项</a> </li><li class="article-outline__item depth-2" data-toc-id="section-13"> <a href="#section-13">你自己的补充位</a> </li> </ol> </nav> </aside> </div> </div>  </main> <script>
       (() => {
         const root = document.documentElement;
         const scrollFlagKey = "scroll-to-top-once";
