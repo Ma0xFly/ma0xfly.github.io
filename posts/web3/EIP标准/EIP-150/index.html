@@ -228,6 +228,7 @@ for depth in range(1, 1025):
         let activeGroupId = "";
         let manualOpenGroupId = "";
         let ticking = false;
+        let suppressOutlineScrollUntil = 0;
 
         const syncState = () => {
           shell.classList.toggle("article-shell--toc-expanded", isOpen);
@@ -260,6 +261,10 @@ for depth in range(1, 1025):
           };
         });
 
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
         const setActive = (id, parentId = "") => {
           if (!id || (id === activeId && parentId === activeGroupId)) return;
 
@@ -289,7 +294,7 @@ for depth in range(1, 1025):
             group.classList.toggle("is-current", groupId === id && !parentId);
           });
 
-          if (!isOpen) return;
+          if (!isOpen || Date.now() < suppressOutlineScrollUntil) return;
 
           const activeLink = [...groupLinks, ...childLinks].find((link) => {
             const href = link.getAttribute("href");
@@ -346,7 +351,8 @@ for depth in range(1, 1025):
         syncState();
 
         groupLinks.forEach((button) => {
-          button.addEventListener("click", () => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
             const groupId = button.getAttribute("data-group-target") || "";
             if (!groupId) return;
 
@@ -365,10 +371,36 @@ for depth in range(1, 1025):
           });
         });
 
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
         fab.addEventListener("click", (event) => {
           event.stopPropagation();
           isOpen = !isOpen;
           syncState();
+        });
+
+        sidebar.addEventListener("click", (event) => {
+          event.stopPropagation();
         });
 
         document.addEventListener("click", (event) => {

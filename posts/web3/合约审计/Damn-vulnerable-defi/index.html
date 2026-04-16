@@ -806,7 +806,7 @@ contract SideEntranceExploit{
 </ul>
 <h2 id="section-26">wp</h2><pre><code class="language-solidity">
 </code></pre>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/合约审计/以太航员挑战/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">以太航员挑战</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/漏洞笔记/经典重入漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">经典重入漏洞</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>漏洞点</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-2"> <a href="#section-2">UnstoppableVault</a> </li><li class="article-outline__item depth-3" data-toc-id="section-3"> <a href="#section-3">UnstoppableMonitor（监控 + 暂停）</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-4"> <button class="article-outline__group-link" type="button" data-group-target="section-4"> <span>wp</span>  </button>  </li><li class="article-outline__group" data-group-id="section-5"> <button class="article-outline__group-link" type="button" data-group-target="section-5"> <span>审计漏洞</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">第一步：鸟瞰全貌 (Reconnaissance)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-7"> <a href="#section-7">第二步：找“钱”在哪 (Follow the Money)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-8"> <a href="#section-8">第三步：核心逻辑审计 (Core Business Logic)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">第四步：组合攻击 (Check for Combinations)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">第五步：利用上下文混淆withdraw提取所有余额</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-11"> <button class="article-outline__group-link" type="button" data-group-target="section-11"> <span>wp</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-12"> <a href="#section-12">第一步：鸟瞰全貌 (Reconnaissance)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-13"> <a href="#section-13">第二步：资金锚定 (Follow the Money)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-14"> <a href="#section-14">第三步：核心逻辑精读 (Core Business Logic)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-15"> <a href="#section-15">第四步：威胁建模 (Threat Modeling)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-16"> <button class="article-outline__group-link" type="button" data-group-target="section-16"> <span>wp</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-17"> <a href="#section-17">第一步：鸟瞰全貌 (Bird&#39;s Eye View)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-18"> <a href="#section-18">第二步：资金锚定 (Follow the Money)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-19"> <a href="#section-19">第三步：核心逻辑精读 (Core Business Logic)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-20"> <a href="#section-20">第四步：威胁建模 (Threat Modeling)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-21"> <button class="article-outline__group-link" type="button" data-group-target="section-21"> <span>wp</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-22"> <a href="#section-22">第一步：鸟瞰全貌 (Bird&#39;s Eye View)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-23"> <a href="#section-23">第二步：资金锚定 (Asset Anchoring)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-24"> <a href="#section-24">第三步：核心逻辑精读 (Core Logic Deep Dive)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-25"> <a href="#section-25">第四步：威胁建模 (Threat Modeling)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-26"> <button class="article-outline__group-link" type="button" data-group-target="section-26"> <span>wp</span>  </button>  </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/合约审计/以太航员挑战/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">以太航员挑战</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/开发框架/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">开发框架</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>漏洞点</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-2"> <a href="#section-2">UnstoppableVault</a> </li><li class="article-outline__item depth-3" data-toc-id="section-3"> <a href="#section-3">UnstoppableMonitor（监控 + 暂停）</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-4"> <button class="article-outline__group-link" type="button" data-group-target="section-4"> <span>wp</span>  </button>  </li><li class="article-outline__group" data-group-id="section-5"> <button class="article-outline__group-link" type="button" data-group-target="section-5"> <span>审计漏洞</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">第一步：鸟瞰全貌 (Reconnaissance)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-7"> <a href="#section-7">第二步：找“钱”在哪 (Follow the Money)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-8"> <a href="#section-8">第三步：核心逻辑审计 (Core Business Logic)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">第四步：组合攻击 (Check for Combinations)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">第五步：利用上下文混淆withdraw提取所有余额</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-11"> <button class="article-outline__group-link" type="button" data-group-target="section-11"> <span>wp</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-12"> <a href="#section-12">第一步：鸟瞰全貌 (Reconnaissance)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-13"> <a href="#section-13">第二步：资金锚定 (Follow the Money)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-14"> <a href="#section-14">第三步：核心逻辑精读 (Core Business Logic)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-15"> <a href="#section-15">第四步：威胁建模 (Threat Modeling)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-16"> <button class="article-outline__group-link" type="button" data-group-target="section-16"> <span>wp</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-17"> <a href="#section-17">第一步：鸟瞰全貌 (Bird&#39;s Eye View)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-18"> <a href="#section-18">第二步：资金锚定 (Follow the Money)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-19"> <a href="#section-19">第三步：核心逻辑精读 (Core Business Logic)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-20"> <a href="#section-20">第四步：威胁建模 (Threat Modeling)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-21"> <button class="article-outline__group-link" type="button" data-group-target="section-21"> <span>wp</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-22"> <a href="#section-22">第一步：鸟瞰全貌 (Bird&#39;s Eye View)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-23"> <a href="#section-23">第二步：资金锚定 (Asset Anchoring)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-24"> <a href="#section-24">第三步：核心逻辑精读 (Core Logic Deep Dive)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-25"> <a href="#section-25">第四步：威胁建模 (Threat Modeling)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-26"> <button class="article-outline__group-link" type="button" data-group-target="section-26"> <span>wp</span>  </button>  </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
       (() => {
         const root = document.documentElement;
         const scrollFlagKey = "scroll-to-top-once";
@@ -879,6 +879,7 @@ contract SideEntranceExploit{
         let activeGroupId = "";
         let manualOpenGroupId = "";
         let ticking = false;
+        let suppressOutlineScrollUntil = 0;
 
         const syncState = () => {
           shell.classList.toggle("article-shell--toc-expanded", isOpen);
@@ -911,6 +912,10 @@ contract SideEntranceExploit{
           };
         });
 
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
         const setActive = (id, parentId = "") => {
           if (!id || (id === activeId && parentId === activeGroupId)) return;
 
@@ -940,7 +945,7 @@ contract SideEntranceExploit{
             group.classList.toggle("is-current", groupId === id && !parentId);
           });
 
-          if (!isOpen) return;
+          if (!isOpen || Date.now() < suppressOutlineScrollUntil) return;
 
           const activeLink = [...groupLinks, ...childLinks].find((link) => {
             const href = link.getAttribute("href");
@@ -997,7 +1002,8 @@ contract SideEntranceExploit{
         syncState();
 
         groupLinks.forEach((button) => {
-          button.addEventListener("click", () => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
             const groupId = button.getAttribute("data-group-target") || "";
             if (!groupId) return;
 
@@ -1016,10 +1022,36 @@ contract SideEntranceExploit{
           });
         });
 
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
         fab.addEventListener("click", (event) => {
           event.stopPropagation();
           isOpen = !isOpen;
           syncState();
+        });
+
+        sidebar.addEventListener("click", (event) => {
+          event.stopPropagation();
         });
 
         document.addEventListener("click", (event) => {
