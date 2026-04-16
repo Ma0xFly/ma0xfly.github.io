@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.C__600BF.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☽</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">面试题卡</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  </div> <div class="article-meta-row"> <span>2026/4/16</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/面试/面试题卡.md</p> </header> <div class="article-main"> <div class="article-content"><p>这份文档用于集中存放 Web3 安全面试题卡。格式尽量固定，方便后续持续追加：</p>
+    </script><link rel="stylesheet" href="/_astro/_folder_.DjSF2L9x.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☽</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">面试题卡</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  </div> <div class="article-meta-row"> <span>2026/4/16</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/面试/面试题卡.md</p> </header> <div class="article-main"> <div class="article-content"><p>这份文档用于集中存放 Web3 安全面试题卡。格式尽量固定，方便后续持续追加：</p>
 <ul>
 <li><code>问题</code>：面试官可能的问法</li>
 <li><code>短答</code>：30 秒版本</li>
@@ -157,9 +157,7 @@
 </ul>
 <p><strong>展开</strong></p>
 <ul>
-<li>这题要先抓住代理模式的本质：</li>
-<li>proxy 持有状态</li>
-<li>implementation 提供逻辑</li>
+<li>这题要先抓住代理模式的本质： proxy 持有状态 implementation 提供逻辑</li>
 <li>用户平时交互的不是 implementation，而是 proxy</li>
 <li>关键点在 <code>delegatecall</code>：proxy 调 implementation 代码时，执行环境仍然是 proxy，所以 storage 写入落在 proxy 上</li>
 <li>这也解释了为什么 <code>constructor</code> 不适合做可升级状态初始化：</li>
@@ -175,10 +173,6 @@
 <li>所以工程上通常要同时做两件事：</li>
 <li>通过 proxy 调用初始化函数，确保业务状态落在 proxy</li>
 <li>在 implementation 构造阶段调用 <code>_disableInitializers()</code>，防止实现合约本体被单独初始化</li>
-<li>面试里更好的纠偏说法是：</li>
-<li>storage collision 讨论的是“布局冲突”</li>
-<li>初始化问题讨论的是“状态写入发生在哪个上下文”</li>
-<li>两者有关，但不是一回事</li>
 </ul>
 <hr>
 <h3 id="section-10">题卡 9：EIP-1967 为什么能降低 storage collision 风险？</h3><p><strong>问题</strong></p>
