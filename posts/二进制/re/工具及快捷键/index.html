@@ -1,0 +1,462 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>表 | 沉于思，录以隙</title><meta name="description" content="# 表 ## ascii ## base64 # winhex 复制选区数据，右键-编辑-复制选块 # ADB ## 1.环境&#38;连接 ```plain | 查看ADB版本 | adb version | 确认本地环境正常 | | 列出已连接设备 | adb devices | 结"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.vzbGpqN6.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">表</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">re</span>  </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>二进制</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：二进制/re/工具及快捷键.md</p> </header> <div class="article-main"> <div class="article-content"><h1>表</h1><h2 id="section-1">ascii</h2><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/e8593ffc3ec3be750a7563af33add11d_MD5.png" alt=""></p>
+<h2 id="section-2">base64</h2><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/8fca3806733b491fb12cb9e4a9215428_MD5.png" alt=""></p>
+<h1>winhex</h1><p>复制选区数据，右键-编辑-复制选块</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/1be257dd92f616a4586946ac6a169563_MD5.png" alt=""></p>
+<h1>ADB</h1><h2 id="section-3">1.环境&amp;连接</h2><pre><code class="language-plain">| 查看ADB版本 | adb version | 确认本地环境正常 |
+| 列出已连接设备 | adb devices | 结果含 `device` 表示已授权 |
+| 重启ADB服务 | adb kill-server  adb start-server | 解决端口占用或识别异常 |
+| 连接无线设备 | adb connect IP:PORT | 默认端口 5555 |
+| 断开无线设备 | adb disconnect IP:PORT | 省略 IP 断开全部 |
+</code></pre>
+<h2 id="section-4">2. 文件传输</h2><p>貌似不能在adb shell下传输</p>
+<pre><code class="language-plain">| 推送文件到设备 | adb push 本地路径 设备路径
+| 拉取文件到电脑 | adb pull 设备路径 本地路径
+adb push app-debug.apk /sdcard/
+adb pull /sdcard/log.txt ./log.txt
+</code></pre>
+<h2 id="section-5">3. Shell &amp; 权限</h2><table>
+<thead>
+<tr>
+<th>目的</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>进入交互 Shell</td>
+<td><code>adb shell</code></td>
+</tr>
+<tr>
+<td>执行单条命令</td>
+<td><code>adb shell &lt;command&gt;</code></td>
+</tr>
+<tr>
+<td>获取 root 权限</td>
+<td><code>adb root</code></td>
+</tr>
+<tr>
+<td>重新挂载 /system 可读写</td>
+<td><code>adb remount</code></td>
+</tr>
+<tr>
+<td>退出 Shell</td>
+<td><code>exit</code></td>
+</tr>
+</tbody></table>
+<h2 id="section-6">4. 应用管理</h2><table>
+<thead>
+<tr>
+<th>目的</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>安装 APK</td>
+<td><code>adb install [-r] [-d] &lt;file.apk&gt;</code></td>
+</tr>
+<tr>
+<td>卸载应用</td>
+<td><code>adb uninstall [-k] &lt;package&gt;</code></td>
+</tr>
+<tr>
+<td>列出已装包名</td>
+<td><code>adb shell pm list packages</code></td>
+</tr>
+<tr>
+<td>清除应用数据</td>
+<td><code>adb shell pm clear &lt;package&gt;</code></td>
+</tr>
+</tbody></table>
+<h2 id="section-7">5. 日志与调试</h2><table>
+<thead>
+<tr>
+<th>目的</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>实时查看日志</td>
+<td><code>adb logcat</code></td>
+</tr>
+<tr>
+<td>仅查看崩溃日志</td>
+<td><code>adb logcat -b crash</code></td>
+</tr>
+<tr>
+<td>导出日志到文件</td>
+<td><code>adb logcat -d &gt; log.txt</code></td>
+</tr>
+<tr>
+<td>查看内核日志</td>
+<td><code>adb shell dmesg</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="section-8">6. 系统信息</h2><table>
+<thead>
+<tr>
+<th>目的</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>查看系统版本</td>
+<td><code>adb shell getprop ro.build.version.release</code></td>
+</tr>
+<tr>
+<td>查看厂商型号</td>
+<td><code>adb shell getprop ro.product.model</code></td>
+</tr>
+<tr>
+<td>查看序列号</td>
+<td><code>adb get-serialno</code></td>
+</tr>
+<tr>
+<td>查看CPU架构</td>
+<td><code>adb shell getprop ro.product.cpu.abi</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="section-9">7. 输入事件（自动化测试）</h2><table>
+<thead>
+<tr>
+<th>目的</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>点击屏幕</td>
+<td><code>adb shell input tap x y</code></td>
+</tr>
+<tr>
+<td>滑动屏幕</td>
+<td><code>adb shell input swipe x1 y1 x2 y2 [ms]</code></td>
+</tr>
+<tr>
+<td>输入文本</td>
+<td><code>adb shell input text &quot;hello&quot;</code></td>
+</tr>
+<tr>
+<td>按键事件</td>
+<td><code>adb shell input keyevent KEYCODE_HOME</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="section-10">8. 网络</h2><table>
+<thead>
+<tr>
+<th>目的</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>查看IP</td>
+<td><code>adb shell ifconfig</code> 或 <code>ip addr show wlan0</code></td>
+</tr>
+<tr>
+<td>端口转发</td>
+<td><code>adb forward tcp:本地端口 tcp:设备端口</code></td>
+</tr>
+<tr>
+<td>反向转发</td>
+<td><code>adb reverse tcp:设备端口 tcp:本地端口</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="section-11">9. 备份 &amp; 恢复</h2><table>
+<thead>
+<tr>
+<th>目的</th>
+<th>指令</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>创建完整备份</td>
+<td><code>adb backup -apk -shared -all -f backup.ab</code></td>
+</tr>
+<tr>
+<td>恢复备份</td>
+<td><code>adb restore backup.ab</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="section-12">10. 快捷别名（可选）</h2><p>在 <code>~/.bashrc</code> 或 <code>~/.zshrc</code> 中添加：</p>
+<pre><code class="language-bash">alias adbd=&quot;adb devices&quot;
+alias adblog=&quot;adb logcat -v color&quot;
+alias adbshell=&quot;adb shell&quot;
+</code></pre>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/计算机基础/计算机组成/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">字符编码</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/计算机基础/计算机网络/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">IP地址</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>ascii</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>base64</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>1.环境&amp;连接</span>  </button>  </li><li class="article-outline__group" data-group-id="section-4"> <button class="article-outline__group-link" type="button" data-group-target="section-4"> <span>2. 文件传输</span>  </button>  </li><li class="article-outline__group" data-group-id="section-5"> <button class="article-outline__group-link" type="button" data-group-target="section-5"> <span>3. Shell &amp; 权限</span>  </button>  </li><li class="article-outline__group" data-group-id="section-6"> <button class="article-outline__group-link" type="button" data-group-target="section-6"> <span>4. 应用管理</span>  </button>  </li><li class="article-outline__group" data-group-id="section-7"> <button class="article-outline__group-link" type="button" data-group-target="section-7"> <span>5. 日志与调试</span>  </button>  </li><li class="article-outline__group" data-group-id="section-8"> <button class="article-outline__group-link" type="button" data-group-target="section-8"> <span>6. 系统信息</span>  </button>  </li><li class="article-outline__group" data-group-id="section-9"> <button class="article-outline__group-link" type="button" data-group-target="section-9"> <span>7. 输入事件（自动化测试）</span>  </button>  </li><li class="article-outline__group" data-group-id="section-10"> <button class="article-outline__group-link" type="button" data-group-target="section-10"> <span>8. 网络</span>  </button>  </li><li class="article-outline__group" data-group-id="section-11"> <button class="article-outline__group-link" type="button" data-group-target="section-11"> <span>9. 备份 &amp; 恢复</span>  </button>  </li><li class="article-outline__group" data-group-id="section-12"> <button class="article-outline__group-link" type="button" data-group-target="section-12"> <span>10. 快捷别名（可选）</span>  </button>  </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const fab = document.getElementById("article-toc-fab");
+        const outlineNav = sidebar?.querySelector(".article-outline__body");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+        const storageKey = "article-outline-open";
+
+        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let isOpen = false;
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const syncState = () => {
+          shell.classList.toggle("article-shell--toc-expanded", isOpen);
+          shell.classList.toggle("article-shell--toc-collapsed", !isOpen);
+          sidebar.classList.toggle("is-open", isOpen);
+          fab.classList.toggle("is-open", isOpen);
+          fab.setAttribute("aria-expanded", String(isOpen));
+
+          try {
+            localStorage.setItem(storageKey, isOpen ? "1" : "0");
+          } catch {}
+        };
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (!isOpen || Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        try {
+          isOpen = localStorage.getItem(storageKey) === "1";
+        } catch {
+          isOpen = false;
+        }
+
+        syncState();
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        fab.addEventListener("click", (event) => {
+          event.stopPropagation();
+          isOpen = !isOpen;
+          syncState();
+        });
+
+        sidebar.addEventListener("click", (event) => {
+          event.stopPropagation();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && isOpen) {
+            isOpen = false;
+            syncState();
+            fab.focus();
+          }
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

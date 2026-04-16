@@ -1,0 +1,73 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>WIFI协议 | 沉于思，录以隙</title><meta name="description" content="# WIFI协议 wifi是无线局域网技术的一种，都是通过调制电磁波表达0,1 我们熟知的2.4GHz频段的电磁波 也就是WiFi用到的频段其实指的不仅仅是2.4GHz之一个特定的频率 而是一个范围 2.4到2.4835GHz之间的频段 同理5GHz指的也是5.15GHz到5.8"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.vzbGpqN6.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">WIFI协议</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">iot</span>  </div> <div class="article-meta-row"> <span>2025/5/27</span> <span>二进制</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：二进制/iot/wifi.md</p> </header> <div class="article-main"> <div class="article-content"><h1>WIFI协议</h1><p>wifi是无线局域网技术的一种，都是通过调制电磁波表达0,1</p>
+<p>我们熟知的2.4GHz频段的电磁波 也就是WiFi用到的频段其实指的不仅仅是2.4GHz之一个特定的频率 而是一个范围 2.4到2.4835GHz之间的频段 同理5GHz指的也是5.15GHz到5.85GHz.</p>
+<p>  1GHz实际上指的是10亿赫兹那么2.4到2.4835之间有8000万赫兹的频率的差别 这个范围分成了很多信道 为了多个设备多个网络之间尽可能不产生干扰 虽然都在2.4Ghz这个大的频段 但是却工作在不同的信道上 根据WiFi的标准不同 每个信道的频宽 从1MHz到160MHz不等</p>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;">  </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/二进制/iot/RFID/gps欺骗/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">GPS的工作原理</h4> </a> </div> </nav> </div> </article>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  

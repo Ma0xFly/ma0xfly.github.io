@@ -1,0 +1,1496 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>常见函数 | 沉于思，录以隙</title><meta name="description" content="# 常见函数 ## qmemcpy ```c void *qmemcpy(void *dest, const void *src, size_t n); ``` `qmemcpy` 是一个内存拷贝函数，常见于 Qt 框架的底层实现中。它的作用和标准C库函数 `memcpy` 类似"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.vzbGpqN6.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">常见函数</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">re</span>  </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>二进制</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：二进制/re/re.md</p> </header> <div class="article-main"> <div class="article-content"><h1>常见函数</h1><h2 id="section-1">qmemcpy</h2><pre><code class="language-c">void *qmemcpy(void *dest, const void *src, size_t n);
+</code></pre>
+<p><code>qmemcpy</code> 是一个内存拷贝函数，常见于 Qt 框架的底层实现中。它的作用和标准C库函数 <code>memcpy</code> 类似，用于将一块内存的数据复制到另一块内存区域。</p>
+<p><strong>基本用法：</strong></p>
+<pre><code class="language-cpp">void *qmemcpy(void *dest, const void *src, size_t n);
+</code></pre>
+<ul>
+<li><code>dest</code>：目标内存地址（复制到这里）</li>
+<li><code>src</code>：源内存地址（从这里复制）</li>
+<li><code>n</code>：要复制的字节数</li>
+</ul>
+<p><strong>功能说明：</strong></p>
+<ul>
+<li>从 <code>src</code> 地址开始，复制 <code>n</code> 个字节到 <code>dest</code> 地址。</li>
+<li>复制的区域不能重叠，否则结果未定义。</li>
+<li>返回值通常是 <code>dest</code>。</li>
+</ul>
+<p><strong>与 <code>memcpy</code> 的区别：</strong></p>
+<ul>
+<li><code>qmemcpy</code> 主要用于 Qt 内部，可能有平台相关的优化。</li>
+<li>在大多数情况下，<code>qmemcpy</code> 和 <code>memcpy</code> 的用法和效果是一样的。</li>
+</ul>
+<p><strong>示例：</strong></p>
+<pre><code class="language-cpp">char src[10] = &quot;123456789&quot;;
+char dest[10];
+qmemcpy(dest, src, 10);
+// 现在 dest 和 src 内容一样
+</code></pre>
+<h1>动态调试</h1><h2 id="section-2">elf文件</h2><p>选择如下</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20250604165541389.png" alt="image-20250604165541389"></p>
+<p><img src="C:/Users/86198/AppData/Roaming/Typora/typora-user-images/image-20250604165541389.png" alt="image-20250604165541389"></p>
+<p>跳到ida/dbgsrv目录，打开wsl，运行linux_server /64即开始监听，ida直接调试即可。</p>
+<h2 id="section-3">例题</h2><h3 id="section-4">ctfshow_r3</h3><p>最开始key数组如下,因为妨碍后面strncpy函数理解双击v19，按u取消数组定义，从key数组拉到底最后右键arr合并为一个数组key[112]</p>
+<pre><code class="language-c">  char key[5]; // [rsp+60h] [rbp-E0h] BYREF
+  char v19[107]; // [rsp+65h] [rbp-DBh] BYREF
+</code></pre>
+<pre><code class="language-c">int __fastcall main(int argc, const char **argv, const char **envp)
+{
+  size_t key_len; // rax
+  int v5; // [rsp+Ch] [rbp-134h] BYREF
+  unsigned int i; // [rsp+10h] [rbp-130h]
+  int v7; // [rsp+14h] [rbp-12Ch]
+  int v8; // [rsp+18h] [rbp-128h]
+  int v9; // [rsp+1Ch] [rbp-124h]
+  int v10; // [rsp+20h] [rbp-120h]
+  int v11; // [rsp+24h] [rbp-11Ch]
+  int v12; // [rsp+28h] [rbp-118h]
+  int v13; // [rsp+2Ch] [rbp-114h]
+  int v14; // [rsp+30h] [rbp-110h]
+  int v15; // [rsp+34h] [rbp-10Ch]
+  unsigned __int64 v16; // [rsp+38h] [rbp-108h]
+  int v17[8]; // [rsp+40h] [rbp-100h]
+  char key[112]; // [rsp+60h] [rbp-E0h] BYREF
+  char dest[104]; // [rsp+D0h] [rbp-70h] BYREF
+  unsigned __int64 v20; // [rsp+138h] [rbp-8h]
+
+  v20 = __readfsqword(0x28u);
+  v7 = 80;
+  v8 = 64227;
+  v9 = 226312059;
+  v10 = -1540056586;
+  v11 = 5;
+  v12 = 16;
+  v13 = 3833;
+  v5 = 0;
+  puts(&quot;plz input the key:&quot;);
+  __isoc99_scanf(&quot;%s&quot;, key);
+  key_len = strlen(key);
+  strncpy(dest, &amp;key[5], key_len - 6);          // 实际放入了key给dest,key_len至少为10
+  dest[strlen(key) - 6] = 0;
+  __isoc99_sscanf(dest, &quot;%x&quot;, &amp;v5);             // 将dest内容放入v5,v5其实放的key，%x是16进制
+  v17[0] = v7;
+  v17[1] = v8;
+  v17[2] = v9;
+  v17[3] = v10;
+  v17[4] = (v11 &lt;&lt; 12) + v12;
+  v17[5] = v13;
+  v17[6] = v5;
+  v16 = 0LL;
+  for ( i = 0; i &lt;= 6; ++i )                     //v17前6个数确定了，直接动调到i=6，看到v16为E560，和FFFF差1a9f
+  {
+    for ( v16 += v17[i]; v16 &gt; 0xFFFF; v16 = v15 + v16 )
+    {
+      v14 = v16;
+      v15 = v16 &gt;&gt; 16;
+    }
+  }
+  if ( v16 == 0xFFFF )                          // 满足此条件
+    puts(&quot;OK&quot;);
+  else
+    puts(&quot;Error&quot;);
+  return 0;
+}
+</code></pre>
+<p>输入000001a9f0，即flag</p>
+<h1>base64</h1><h2 id="section-5">原理</h2><h3 id="section-6">为什么叫Base64</h3><p> Base64是一种二进制到文本的编码方式，常用于解决不同系统及传输协议中二进制数据的不兼容问题。它将8bit位一组的数据拆分为6位一组，映射到64个ASCII字符中，编码后数据长度为原来的4/3。它是基于(Base)64个字符的一种编码方式。使用其编码后的文本只包含64个ASCII码字符（偶尔加一个填充字符<code>=</code>）</p>
+<h3 id="section-7">base64表和示例</h3><p><img src="C:/Users/86198/AppData/Roaming/Typora/typora-user-images/image-20250218140317007.png" alt="image-20250218140317007"></p>
+<p>以下图的表格为示例，我们具体分析一下整个过程。</p>
+<p><img src="C:/Users/86198/AppData/Roaming/Typora/typora-user-images/image-20250218125038017.png" alt="image-20250218125038017"></p>
+<p>第一步：“M”、“a”、&quot;n&quot;对应的ASCII码值分别为77，97，110，对应的二进制值是01001101、01100001、01101110。如图第二三行所示，由此组成一个24位的二进制字符串。
+第二步：如图红色框，将24位每6位二进制位一组分成四组。
+第三步：在上面每一组前面补两个0，扩展成32个二进制位，此时变为四个字节：00010011、00010110、00000101、00101110。分别对应的值（Base64编码索引）为：19、22、5、46。
+第四步：用上面的值在Base64编码表中进行查找，分别对应：T、W、F、u。因此“Man”Base64编码之后就变为：TWFu。</p>
+<h2 id="section-8">题目</h2><h3 id="section-9">nss enbase64</h3><p>换表的base64</p>
+<pre><code class="language-c">signed int __cdecl base64(char *Source, char *input, char *str1)
+{
+  signed int result; // eax
+  signed int v4; // [esp+14h] [ebp-14h]
+  signed int i; // [esp+18h] [ebp-10h]
+  int v6; // [esp+1Ch] [ebp-Ch]
+
+  basechange(Source); //换表
+  v4 = strlen(input);
+  v6 = 0;
+  for ( i = 0; ; i += 3 )
+  {
+    result = i;
+    if ( i &gt;= v4 )
+      break;
+    str1[v6] = Source[input[i] &gt;&gt; 2]; //进行标准的base64编码操作，一次编码4个字节
+    str1[v6 + 1] = Source[(16 * input[i]) &amp; 0x30 | (input[i + 1] &gt;&gt; 4)];
+    str1[v6 + 2] = Source[(4 * input[i + 1]) &amp; 0x3C | (input[i + 2] &gt;&gt; 6)];
+    str1[v6 + 3] = Source[input[i + 2] &amp; 0x3F];
+    v6 += 4;
+  }
+  return result;
+}
+
+
+
+
+
+
+char *__cdecl basechange(char *Source) 
+{
+  char *result; // eax
+  char Destination[65]; // [esp+13h] [ebp-155h] BYREF
+  int v3[65]; // [esp+54h] [ebp-114h] BYREF
+  int j; // [esp+158h] [ebp-10h]
+  int i; // [esp+15Ch] [ebp-Ch]
+
+  memset(v3, 0, sizeof(v3));
+  v3[0] = 16;
+  v3[1] = 34;
+  v3[2] = 56;
+  v3[3] = 7;
+  v3[4] = 46;
+  v3[5] = 2;
+  v3[6] = 10;
+  v3[7] = 44;
+  v3[8] = 20;
+  v3[9] = 41;
+  v3[10] = 59;
+  v3[11] = 31;
+  v3[12] = 51;
+  v3[13] = 60;
+  v3[14] = 61;
+  v3[15] = 26;
+  v3[16] = 5;
+  v3[17] = 40;
+  v3[18] = 21;
+  v3[19] = 38;
+  v3[20] = 4;
+  v3[21] = 54;
+  v3[22] = 52;
+  v3[23] = 47;
+  v3[24] = 3;
+  v3[25] = 11;
+  v3[26] = 58;
+  v3[27] = 48;
+  v3[28] = 32;
+  v3[29] = 15;
+  v3[30] = 49;
+  v3[31] = 14;
+  v3[32] = 37;
+  v3[34] = 55;
+  v3[35] = 53;
+  v3[36] = 24;
+  v3[37] = 35;
+  v3[38] = 18;
+  v3[39] = 25;
+  v3[40] = 33;
+  v3[41] = 43;
+  v3[42] = 50;
+  v3[43] = 39;
+  v3[44] = 12;
+  v3[45] = 19;
+  v3[46] = 13;
+  v3[47] = 42;
+  v3[48] = 9;
+  v3[49] = 17;
+  v3[50] = 28;
+  v3[51] = 30;
+  v3[52] = 23;
+  v3[53] = 36;
+  v3[54] = 1;
+  v3[55] = 22;
+  v3[56] = 57;
+  v3[57] = 63;
+  v3[58] = 8;
+  v3[59] = 27;
+  v3[60] = 6;
+  v3[61] = 62;
+  v3[62] = 45;
+  v3[63] = 29;
+  result = strcpy(Destination, Source);
+  for ( i = 0; i &lt;= 47; ++i )
+  {
+    for ( j = 0; j &lt;= 63; ++j )
+      Source[j] = Destination[v3[j]];
+    result = strcpy(Destination, Source);
+  }
+  return result;
+}
+</code></pre>
+<p>已知编码后的密文</p>
+<p>cipher_text=&#39;GQTZlSqQXZ/ghxxwhju3hbuZ4wufWjujWrhYe7Rce7ju&#39;</p>
+<p>现在要求换后的表，直接原样复制上面换表函数，打印出新表</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+int main() {
+    char *result; 
+    char Destination[65]; // [esp+13h] [ebp-155h] BYREF
+    int v3[65]; // [esp+54h] [ebp-114h] BYREF
+    int j; 
+    int i; 
+    char Source[] = &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/&quot;;
+    memset(v3, 0, sizeof(v3));
+    v3[0] = 16;
+    v3[1] = 34;
+    v3[2] = 56;
+    v3[3] = 7;
+    v3[4] = 46;
+    v3[5] = 2;
+    v3[6] = 10;
+    v3[7] = 44;
+    v3[8] = 20;
+    v3[9] = 41;
+    v3[10] = 59;
+    v3[11] = 31;
+    v3[12] = 51;
+    v3[13] = 60;
+    v3[14] = 61;
+    v3[15] = 26;
+    v3[16] = 5;
+    v3[17] = 40;
+    v3[18] = 21;
+    v3[19] = 38;
+    v3[20] = 4;
+    v3[21] = 54;
+    v3[22] = 52;
+    v3[23] = 47;
+    v3[24] = 3;
+    v3[25] = 11;
+    v3[26] = 58;
+    v3[27] = 48;
+    v3[28] = 32;
+    v3[29] = 15;
+    v3[30] = 49;
+    v3[31] = 14;
+    v3[32] = 37;
+    v3[34] = 55;
+    v3[35] = 53;
+    v3[36] = 24;
+    v3[37] = 35;
+    v3[38] = 18;
+    v3[39] = 25;
+    v3[40] = 33;
+    v3[41] = 43;
+    v3[42] = 50;
+    v3[43] = 39;
+    v3[44] = 12;
+    v3[45] = 19;
+    v3[46] = 13;
+    v3[47] = 42;
+    v3[48] = 9;
+    v3[49] = 17;
+    v3[50] = 28;
+    v3[51] = 30;
+    v3[52] = 23;
+    v3[53] = 36;
+    v3[54] = 1;
+    v3[55] = 22;
+    v3[56] = 57;
+    v3[57] = 63;
+    v3[58] = 8;
+    v3[59] = 27;
+    v3[60] = 6;
+    v3[61] = 62;
+    v3[62] = 45;
+    v3[63] = 29;
+    
+    result = strcpy(Destination, Source);
+    for ( i = 0; i &lt;= 47; ++i )
+    {c
+        for ( j = 0; j &lt;= 63; ++j )
+        Source[j] = Destination[v3[j]];
+        result = strcpy(Destination, Source);
+    }
+    printf(&quot;%s\n&quot;, Source);
+    return 0;
+}
+//GxbnL26M4+HXUtcpmVTKaydOP38of5v90ZSwrkYzCAuND
+</code></pre>
+<p>直接赛博厨子解码即可</p>
+<p><img src="C:/Users/86198/AppData/Roaming/Typora/typora-user-images/image-20250613212703553.png" alt="image-20250613212703553"></p>
+<h1>凯撒密码</h1><h2 id="section-10">题目</h2><h3 id="section-11">xy2024 聪明的信使(原始人)</h3><pre><code class="language-c">int __cdecl encrypt(char *a1, int len)
+{
+  int result; // eax
+  char v3; // [esp+Bh] [ebp-5h]
+  int i; // [esp+Ch] [ebp-4h]
+
+  for ( i = 0; ; ++i )
+  {
+    result = a1[i];
+    if ( !result )
+      break;
+    v3 = a1[i];
+    if ( v3 &lt;= 96 || v3 &gt; 122 )
+    {
+      if ( v3 &gt; 64 &amp;&amp; v3 &lt;= 90 )                // A到Z
+        v3 = (v3 + len - 65) % 26 + 65;
+    }
+    else                                        // 96-122也就是a到z
+    {
+      v3 = (v3 + len - 97) % 26 + 97;
+    }
+    a1[i] = v3;
+  }
+  return result;
+}
+</code></pre>
+<p>exp</p>
+<pre><code class="language-py">def decrypt(str,len):
+    plain=&#39;&#39;
+    for char in str:
+        if &#39;a&#39; &lt;= char &lt;= &#39;z&#39;:
+            plain+=chr((ord(char) - len - 97) % 26 + 97)
+        elif &#39;A&#39; &lt;= char &lt;= &#39;Z&#39;:
+            plain+=chr((ord(char) - len - 65) % 26 + 65)
+        else:
+            plain+=char 
+    return plain
+text=&#39;oujp{H0d_TwXf_Lahyc0_14_e3ah_Rvy0ac@wc!}&#39;
+flag=decrypt(text,9)
+
+print(flag)
+#这个 `encrypt` 函数是一个变种的凯撒密码加密，它只对字母（大小写）进行位移，而非字母字符保持不变。
+</code></pre>
+<h3 id="section-12">buu simplerev(爆破)</h3><pre><code class="language-c">unsigned __int64 Decry()
+{
+  char v1; // [rsp+Fh] [rbp-51h]
+  int v2; // [rsp+10h] [rbp-50h]
+  int v3; // [rsp+14h] [rbp-4Ch]
+  int i; // [rsp+18h] [rbp-48h]
+  int key_len; // [rsp+1Ch] [rbp-44h]
+  char src[8]; // [rsp+20h] [rbp-40h] BYREF
+  __int64 v7; // [rsp+28h] [rbp-38h]
+  int v8; // [rsp+30h] [rbp-30h]
+  __int64 v9[2]; // [rsp+40h] [rbp-20h] BYREF
+  int v10; // [rsp+50h] [rbp-10h]
+  unsigned __int64 v11; // [rsp+58h] [rbp-8h]
+
+  v11 = __readfsqword(0x28u);
+  *src = 0x534C43444ELL;                        // SLCDN由于小端序原因，倒着写
+  v7 = 0LL;
+  v8 = 0;
+  v9[0] = 0x776F646168LL;                       // wodah，小端序要到着写
+  v9[1] = 0LL;
+  v10 = 0;
+  text = join(key3, v9);                        // killswodah
+  strcpy(key, key1);
+  strcat(key, src);                             // ADSFKSLCDN
+  v2 = 0;
+  v3 = 0;
+  getchar();
+  key_len = strlen(key);
+  for ( i = 0; i &lt; key_len; ++i )   //把key转化为小写
+  {
+    if ( key[v3 % key_len] &gt; 64 &amp;&amp; key[v3 % key_len] &lt;= 90 )
+      key[i] = key[v3 % key_len] + 32;
+    ++v3;
+  }
+  printf(&quot;Please input your flag:&quot;);
+  while ( 1 )
+  {
+    v1 = getchar();
+    if ( v1 == &#39;\n&#39; )
+      break;
+    if ( v1 == &#39; &#39; )
+    {
+      ++v2;
+    }
+    else
+    {
+      if ( v1 &lt;= 96 || v1 &gt; 122 )
+      {
+        if ( v1 &gt; 64 &amp;&amp; v1 &lt;= &#39;Z&#39; )             // A-Z
+        {
+          str2[v2] = (v1 - 39 - key[v3 % key_len] + 97) % 26 + 97;
+          ++v3;
+        }
+      }
+      else                                      // a-z
+      {
+        str2[v2] = (v1 - 39 - key[v3 % key_len] + 97) % 26 + 97;
+        ++v3;
+      }
+      if ( !(v3 % key_len) )
+        putchar(&#39; &#39;);
+      ++v2;
+    }
+  }
+  if ( !strcmp(text, str2) )
+    puts(&quot;Congratulation!\n&quot;);
+  else
+    puts(&quot;Try again!\n&quot;);
+  return __readfsqword(0x28u) ^ v11;
+}
+</code></pre>
+<p>exp</p>
+<pre><code class="language-py">def decrypt_flag(key, text):
+    flag = &quot;&quot;
+    for i, char in enumerate(text):			
+        for x in range(65, 123):       	#也就是真正取值是65-122，即A-z的ASCII
+            if char == chr((x - 39 - ord(key[i]) + 97) % 26 + 97):
+                flag += chr(x)
+                break
+    return f&quot;flag{{{flag}}}&quot;
+
+key = &quot;adsfkndcls&quot;
+text = &quot;killshadow&quot;
+print(decrypt_flag(key, text))
+</code></pre>
+<h1>流加密算法</h1><h2 id="section-13">原理</h2><p>流加密算法（Stream Cipher），是一种加密方式，它通过将明文与一个随机生成的密钥流进行逐位或逐字节异或操作来产生密文。</p>
+<p>流加密算法的基本流程</p>
+<pre><code>密钥流生成器（Key Stream Generator）：流加密算法的核心是密钥流生成器，它使用一个短的密钥（种子密钥）来生成一个长的密钥流。这个密钥流决定了加密的随机性和强度。
+
+异或操作（XOR Operation）：明文数据与密钥流进行异或操作，生成密文。解密时，密文与同一密钥流再次进行异或操作，恢复出明文。
+</code></pre>
+<h2 id="section-14">成员</h2><h3 id="section-15"><strong>1. RC4 (Rivest Cipher 4)</strong></h3><ul>
+<li><strong>特点</strong>：简单高效，软件实现快，但存在严重安全漏洞。</li>
+<li><strong>密钥长度</strong>：可变（通常40-256位）。</li>
+<li><strong>问题</strong>：密钥重用或弱密钥会导致攻击（如WEP协议中的漏洞）。现已被弃用。</li>
+<li><strong>应用历史</strong>：曾用于SSL/TLS、WEP等。</li>
+</ul>
+<hr>
+<h3 id="section-16"><strong>3. AES-CTR (AES in Counter Mode)</strong></h3><ul>
+<li><strong>原理</strong>：将AES块加密转换为流加密模式，通过加密递增的计数器生成密钥流。</li>
+<li><strong>特点</strong>：<ul>
+<li>结合AES的高安全性和流加密的并行性。</li>
+<li>无填充需求，适合加密任意长度数据。</li>
+</ul>
+</li>
+<li><strong>密钥长度</strong>：128/192/256位（与AES一致）。</li>
+<li><strong>应用</strong>：磁盘加密、网络协议（如IPSec）。</li>
+</ul>
+<hr>
+<h3 id="section-17"><strong>4. Trivium</strong></h3><ul>
+<li><strong>类型</strong>：硬件优化的轻量级流密码。</li>
+<li><strong>特点</strong>：适合资源受限设备（如IoT），设计简单但安全性较高。</li>
+<li><strong>密钥长度</strong>：80位。</li>
+<li><strong>标准化</strong>：eSTREAM项目最终算法之一。</li>
+</ul>
+<hr>
+<h3 id="section-18"><strong>5. Grain</strong></h3><ul>
+<li><strong>类型</strong>：超轻量级流密码（针对硬件优化）。</li>
+<li><strong>特点</strong>：极低功耗，适合RFID标签等设备。</li>
+<li><strong>版本</strong>：Grain-128（密钥长度128位）。</li>
+</ul>
+<hr>
+<h3 id="section-19"><strong>6. ZUC (祖冲之算法)</strong></h3><ul>
+<li><strong>起源</strong>：中国设计的3G/4G加密标准。</li>
+<li><strong>特点</strong>：高安全性，通过国际标准化（3GPP LTE加密）。</li>
+<li><strong>应用</strong>：移动通信（如中国4G/5G网络）。</li>
+</ul>
+<hr>
+<h3 id="section-20"><strong>7. E0 (Bluetooth加密)</strong></h3><ul>
+<li><strong>用途</strong>：蓝牙协议（如蓝牙2.0）的流加密。</li>
+<li><strong>问题</strong>：存在已知攻击，后续蓝牙版本改用更安全的算法</li>
+</ul>
+<h1>rc4加密算法（流加密对称算法）</h1><p>【RC4加密算法| 流密码| 对称密码| 密码学 | 信息安全】 <a href="https://www.bilibili.com/video/BV1G64y1Y7p4/?share_source=copy_web&vd_source=87a11b85578403cdea5acfdfcee7111f%E3%80%81">https://www.bilibili.com/video/BV1G64y1Y7p4/?share_source=copy_web&amp;vd_source=87a11b85578403cdea5acfdfcee7111f、</a></p>
+<p><a href="https://bbdolt.github.io/2024/10/15/%E7%AC%AC%E5%85%AD%E7%AF%87/">https://bbdolt.github.io/2024/10/15/%E7%AC%AC%E5%85%AD%E7%AF%87/</a></p>
+<h2 id="section-21">原理</h2><p>在密码学中，RC4是一种串流加密算法，密钥长度可变。他加密解密使用相同的密钥，因此也被称为“流加密算法”。RC4由伪随机数生成器和异或运算组成。RC4的密钥长度可变，范围是[1,256]。RC4一个字节一个字节地加解密。给定一个密钥，伪随机数生成器接受密钥并产生一个S盒。S盒用来加密数据，而且在加密过程中S盒会变化。由于异或运算的对合性，RC4加密解密使用同一套算法。</p>
+<h3 id="section-22">基本操作</h3><pre><code>1、初始化S-Box
+2、KSA过程（置乱刚刚初始化完成的S表）
+  - 初始化密钥（可无可有）
+  - 置乱过程（KSA）
+3、PRGA过程（生成密钥流，用于与明文进行异或生成密文）
+</code></pre>
+<h3 id="section-23">第一步：初始化 S-Box</h3><p>具体过程如下图所示，其实就是从 0~255 填充满大小为 256 的数组。
+<img src="C:/Users/86198/AppData/Roaming/Typora/typora-user-images/image-20250603181431092.png" alt="image-20250603181431092"></p>
+<h3 id="section-24">第二步：KSA 过程</h3><h4>初始化密钥（生成密钥流重复数组t-box）</h4><p>上面我们有了最初的 S-Box，那么对于 KSA 的核心作用呢，实际上是通过密钥来置乱初始的向量，这个初始向量是一个固定值，从 0~255 来填充满 S-Box。</p>
+<pre><code>这一步呢其实在编码过程当中是可有可无的，如果我们不生成T-Box，可以在编码过程当中模KeyLen来实现，如果使用T-Box，那么我们在编码过程当中需要模256了，这里展示使用T-Box的情况，和文章最开头的流程图保持一致。对于T-Box来说，其实就是密钥循环复制m次，使得循环之后充满256长度的数组，从这里可以直观的看出，对于RC4来说，它的密钥长度大小最大是256。
+</code></pre>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/da49dd5b54520c89019751299c652154_MD5.jpg" alt=""></p>
+<h4>置乱过程(KSA)</h4><p>根据密钥流 <code>K[i]</code> 混淆 S 盒 <code>S[i]</code> </p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/2d4b085561ec8fd49625b4af66ce7ee5_MD5.jpg" alt=""></p>
+<h4>KSA 整体流程图</h4><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/85e41a4796618120fa4cf0d6269d18f5_MD5.png" alt=""></p>
+<h3 id="section-25">第三步：PRGA 过程</h3><p>这个过程是整个 RC4 算法的核心，通过这个过程生成我们需要的 PRNG 序列，具体过程如下图所示。
+<img src="/__published_media/external/%E5%9B%BE%E5%BA%93/4ef95cfdb918e020fc34dfc24a5b7a2e_MD5.jpg" alt=""></p>
+<h4>PRGA 整体流程图</h4><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/4c80b6b69088686a7ee186fe87e22d43_MD5.png" alt=""></p>
+<h3 id="section-26">解决逆向中对称加密算法的技巧</h3><h4>具体思路</h4><pre><code>首先我们知道流加密算法的加密和解密过程是相同的，我们输入的明文会被加密为密文，那么如果我们输入的是密文那么得到是不是就是我们要的明文，所以我们要想办法获得密文。
+</code></pre>
+<h2 id="section-27">模板</h2><pre><code class="language-python">def rc4_crypt(data, key):
+    S = list(range(256))
+    j = 0
+    out = []
+
+    # KSA
+    for i in range(256):
+        j = (j + S[i] + ord(key[i % len(key)])) % 256
+        S[i], S[j] = S[j], S[i]
+
+    # PRGA
+    i = j = 0
+    for char in data:
+        i = (i + 1) % 256
+        j = (j + S[i]) % 256
+        S[i], S[j] = S[j], S[i]
+        K = S[(S[i] + S[j]) % 256]
+        out.append(chr(char ^ K))
+    return &#39;&#39;.join(out)
+
+# 示例用法
+# ciphertext = &quot;81173F9BE8363B5968E08F733F18774EE1960835&quot;  # 需为str类型，若为bytes请先解码
+ciphertext = []  
+key = &quot;&quot;
+plaintext = rc4_crypt(ciphertext, key)
+print(plaintext)
+</code></pre>
+<h2 id="section-28">题目</h2><h3 id="section-29">ctfshow_final(原始人版)</h3><p>先是要求输入一个字符串然后逐位与0x1f异或后检查密钥是否正确，由此可得到key</p>
+<pre><code class="language-c">char __cdecl sub_401A70(char *Str, char *Str1)
+{
+  char v3; // [esp+0h] [ebp-E4h]
+  signed int i; // [esp+D0h] [ebp-14h]
+  signed int v5; // [esp+DCh] [ebp-8h]
+
+  __CheckForDebuggerJustMyCode(&amp;unk_40B027);
+  v5 = strlen(Str);
+  for ( i = 0; i &lt; v5; ++i )
+    Str1[i] += Str[i] ^ 0x1F;
+  if ( !strcmp(Str1, &quot;DH~mqqvqxB^||zll@Jq~jkwpmvez{&quot;) )
+    print(&quot;充值成功.\n&quot;, v3);
+  else
+    print(&quot;Error!\n&quot;, v3);
+  return *Str1;
+}
+</code></pre>
+<p>接着是标准rc4</p>
+<pre><code class="language-c">int __cdecl sub_4014E0(char *key, int a2, int a3, FILE *falg, FILE *enflag)
+{
+  char v6; // [esp+0h] [ebp-D8h]
+  int key_len; // [esp+D0h] [ebp-8h]
+
+  __CheckForDebuggerJustMyCode(&amp;unk_40B027);
+  key_len = strlen(key);
+  sub_4010F0(a2, key, key_len);                 // ksa生成密钥流重复数组，如果密钥长度 ≤ 256：重复利用密钥填满 256 字节；
+                                                // 如果密钥长度 &gt; 256：只拷贝前 256 字节。
+  sub_4010C8(a3);                               // 初始化s_box
+  sub_40116D(a3, a2);                           // 根据密钥流 K[i] 混淆 S 盒 S[i] 
+  sub_4010EB(a3, falg, enflag);                 // prga
+  fclose(falg);
+  fclose(enflag);
+  return print(aE, v6);
+}
+</code></pre>
+<p>exp</p>
+<p>这里注意密文enflag.txt内容是脗?鯨6;Y棠轳?睎5，要先转化为16进制。用winhex打开提取。</p>
+<pre><code class="language-py">def decrypt(ciphertext):
+    decrypted = []
+    for i in range(len(ciphertext)):
+        c =ord(ciphertext[i]) ^ 0x1F
+        decrypted.append(chr(c))
+    return &#39;&#39;.join(decrypted)
+
+def rc4_crypt(data, key):
+    S = list(range(256))
+    j = 0
+    out = []
+
+    # KSA
+    for i in range(256):
+        j = (j + S[i] + ord(key[i % len(key)])) % 256
+        S[i], S[j] = S[j], S[i]
+
+    # PRGA
+    i = j = 0
+    for char in data:
+        i = (i + 1) % 256
+        j = (j + S[i]) % 256
+        S[i], S[j] = S[j], S[i]
+        K = S[(S[i] + S[j]) % 256]
+        out.append(chr(char ^ K))
+    return &#39;&#39;.join(out)
+
+ciphertext = &quot;DH~mqqvqxB^||zll@Jq~jkwpmvez{&quot;
+key = decrypt(ciphertext)
+print(key)
+
+ciphertext = [0xC3,0x82,0xA3,0x25,0xF6,0x4C,
+0x36,0x3B,0x59,0xCC,0xC4,0xE9,0xF1,0xB5,0x32,0x18,0xB1,
+0x96,0xAe,0xBF,0x08,0x35]  
+plaintext = rc4_crypt(ciphertext, key)
+print(plaintext)
+</code></pre>
+<h3 id="section-30">hgame2025 tutle (手动脱壳+rc4)</h3><h4>脱壳</h4><p>用ExeinfoPe查壳，upx没脱成功，魔改过</p>
+<p>参考手动脱壳文章，脱壳成功。</p>
+<pre><code class="language-c">主要逻辑
+  j_printf(&quot;plz input the key: &quot;);
+  j_scanf(&quot;%s&quot;, Source);
+  j__mbscpy(Dest, Source);
+  v12 = 7;
+  sub_401550(v11, v15, v4);// RC4的密钥调度算法（KSA）
+  sub_40163E(Source, v12, v4);// 加密逻辑（PRGA）
+  if ( !j_memcmp(Source, Buf2, v14) )
+  {
+    j_printf(&quot;plz input the flag: &quot;);
+    j_scanf(&quot;%s&quot;, Buf1);
+    *&amp;v11[7] = 40;
+    sub_401550(Dest, v12, v4); 
+    sub_40175A(Buf1, *&amp;v11[7], v4);
+    if ( !j_memcmp(Buf1, v5, v13) )
+      j_puts(Buffer);
+    else
+      j_puts(aWrongPlzTryAga);
+  }
+  else
+  {
+    j_puts(aKeyIsWrong);
+  }
+
+</code></pre>
+<h4>求key</h4><p>此题ksa 和prga代码没魔改过，原汁原味，Buf2=[CD 8F 25 3D E1 51 4A]=Í%=áQJ  rc4的key是‘yekyek’用赛博厨子直接得要求值的key</p>
+<p><img src="C:/Users/86198/AppData/Roaming/Typora/typora-user-images/image-20250225194318498.png" alt="image-20250225194318498"></p>
+<h4>求flag</h4><p>这里的prga算法魔改了最后一步，要写脚本算</p>
+<pre><code class="language-c">__int64 __fastcall sub_40175A(__int64 a1, int a2, __int64 a3)
+{
+  __int64 result; // rax
+  char v4; // [rsp+3h] [rbp-Dh]
+  unsigned int i; // [rsp+4h] [rbp-Ch]
+  int v6; // [rsp+8h] [rbp-8h]
+  int v7; // [rsp+Ch] [rbp-4h]
+
+  v7 = 0;
+  v6 = 0;
+  for ( i = 0; ; ++i )
+  {
+    result = i;
+    if ( i &gt;= a2 )
+      break;
+    v7 = (v7 + 1) % 256;
+    v6 = (*(a3 + v7) + v6) % 256;c
+    v4 = *(a3 + v7);
+    *(a3 + v7) = *(a3 + v6);
+    *(v6 + a3) = v4;
+    *(a1 + i) -= *(a3 + (*(a3 + v7) + *(a3 + v6))); //异或运算变成减法
+  }
+  return result;
+}
+</code></pre>
+<pre><code class="language-py">def decrypt(data, S): #一步步把密文还原为flag
+    i = j = 0 
+    decrypted = []
+    for byte in data:
+        i = (i + 1) % 256 
+        j = (j + S[i]) % 256 
+        S[i], S[j] = S[j], S[i]
+        key_byte = S[(S[i] + S[j]) % 256]
+        decrypted.append((byte  + key_byte) % 256)  # 反向减法即加法 
+    return bytes(decrypted)
+
+def rc4_init(key):
+    S = list(range(256))
+    j = 0 
+    for i in range(256):
+        j = (j + S[i] + key[i % len(key)]) % 256 
+        S[i], S[j] = S[j], S[i]
+    return S 
+ 
+key=b&#39;ecg4ab6&#39;
+
+encrypted_flag = [
+    0xF8, 0xD5, 0x62, 0xCF, 0x43, 0xBA, 0xC2, 0x35,
+    0x15, 0x4A, 0x51, 0x10, 0x27, 0x10, 0xB1, 0xCF,
+    0xC4, 0x09, 0xFE, 0xE3, 0x9F, 0x49, 0x87, 0xEA,
+    0x59, 0xC2, 0x07, 0x3B, 0xA9, 0x11, 0xC1, 0xBC,
+    0xFD, 0x4B, 0x57, 0xC4, 0x7E, 0xD0, 0xAA, 0x0A 
+]
+S = rc4_init(key)
+print(S)
+flag = decrypt(encrypted_flag, S)
+print(flag)
+</code></pre>
+<h3 id="section-31">源鲁 xor_plus</h3><p>先upx脱壳</p>
+<p>ksa和prga都魔改过</p>
+<p> C3 82 A3 25 F6 4C 36 3B  59 CC C4 E9 F1 B5 32 18  B1 96 AE BF 08 35                              </p>
+<h4>ksa</h4><p>有个加1300的变动</p>
+<pre><code class="language-c">rc4_init(s_box, key, key_len); 
+unsigned __int64 __fastcall rc4_init(__int64 a1, __int64 a2, unsigned __int64 a3)
+{
+  int i; // [rsp+28h] [rbp-418h]
+  int j; // [rsp+28h] [rbp-418h]
+  int k; // [rsp+28h] [rbp-418h]
+  unsigned int v8; // [rsp+2Ch] [rbp-414h]
+  int arr[258]; // [rsp+30h] [rbp-410h] BYREF
+  unsigned __int64 v10; // [rsp+438h] [rbp-8h]
+
+  v10 = __readfsqword(0x28u);
+  v8 = 0;
+  memset(arr, 0, 0x400uLL);
+  for ( i = 0; i &lt;= 255; ++i )
+  {
+    *(i + a1) = i;
+    arr[i] = *(i % a3 + a2);
+  }
+  for ( j = 0; j &lt;= 255; j = k + 1 )  //只循环一次，内部for循环把k变为256
+  {
+    *(j + a1) = j;
+    arr[j] = *(j % a3 + a2);
+    for ( k = 0; k &lt;= 255; ++k )
+    {
+      v8 = (v8 + *(k + a1) + arr[k] + 1300) % 256; //魔改处
+      swap(a1, k, v8);
+    }
+  }
+  return v10 - __readfsqword(0x28u);
+}
+</code></pre>
+<p>python代码模拟</p>
+<pre><code class="language-py">def ksa(key):
+    key = [ord(c) for c in key]
+    S = list(range(256))  # Initialize S-box to [0, 1, 2, ..., 255]
+    v8 = 0  
+    arr=[0]*256
+    key_len = len(key)
+    
+    for i in range(256):
+        arr[i]=key[i%key_len]
+    for j in range(256):
+        v8=(S[j]+v8+arr[j] + 1300)%256
+        S[j], S[v8] = S[v8], S[j]
+    return S  
+</code></pre>
+<h4>prga</h4><pre><code class="language-c">rc4_crypt(s_box, s, v7);
+unsigned __int64 __fastcall rc4_crypt(__int64 a1, __int64 a2, unsigned __int64 a3)
+{
+  __int64 v3; // kr00_8
+  unsigned __int64 result; // rax
+  int v6; // [rsp+24h] [rbp-14h]
+  int v7; // [rsp+28h] [rbp-10h]
+  int v8; // [rsp+2Ch] [rbp-Ch]
+  unsigned __int64 i; // [rsp+30h] [rbp-8h]
+
+  v6 = 0;
+  v7 = 0;
+  for ( i = 0LL; ; ++i )
+  {
+    result = i;
+    if ( i &gt;= a3 )
+      break;
+    v6 = (v6 + 1) % 256;                        // v6是i，v7是j，在py脚本
+    v3 = *(v6 + a1) + v7;                       //  计算临时值v3 = S[i] + j 
+    v7 = (HIBYTE(v3) + *(v6 + a1) + v7) - HIBYTE(HIDWORD(v3));// 高位字节运算（HIBYTE 和 HIDWORD）本质是对 v3 值进行位移后取模，最终效果等同于 v7 = (j + s[i]) % 256。
+    v8 = (*(v6 + a1) + *(v7 + a1));             // v8=s[i]+s[j]
+    swap(a1, v6, v7);
+    *(a2 + i) = (*(v8 + a1) ^ *(a2 + i)) + 20;
+  }
+  return result;
+}
+</code></pre>
+<pre><code class="language-py">def decrypt(s_box, cipher):
+    &quot;&quot;&quot;RC4变种解密函数（逆向加密逻辑：先异或后加20）&quot;&quot;&quot;
+    s, i, j = s_box.copy(),  0, 0  # 复制S盒避免修改原数据 
+    plain = bytearray()
+    
+    for byte in cipher:
+        i = (i + 1) % 256         # 更新i索引（循环左移）
+        j = (j + s[i]) % 256      # 更新j索引（基于S盒动态值）
+        s[i], s[j] = s[j], s[i]   # 交换S盒中i和j位置的元素 
+        
+        # 计算密钥流字节（等效于C代码中的v8逻辑）
+        key_byte = s[(s[i] + s[j]) % 256]
+        # 解密：逆向操作（先减20再异或）
+        plain.append(((byte  - 20) &amp; 0xFF) ^ key_byte)
+    
+    return bytes(plain)
+
+######################################
+为何使用 &amp; 0xFF：技术背景与必要性详解
+1. 确保数值在单字节范围内（0-255）
+字节的本质：在计算机中，一个字节（byte）由8位二进制组成，取值范围为 0-255。任何超过或低于此范围的数值都需要通过 模256运算（即 % 256）或 按位掩码（&amp; 0xFF）进行修正。
+示例场景：
+若 byte = 5，则 5 - 20 = -15，直接异或操作会导致负数值参与运算。
+通过 -15 &amp; 0xFF，结果修正为 241（等价于 -15 % 256），确保数值在合法范围内。
+</code></pre>
+<h1>SMC</h1><p>SMC(全称Self Modified Code),也就是“自修改代码”,是一种代码保护技术,这种技术主要用于防静态分析,在CTF中较为常见.程序的一部分代码会在运行时修改,这些代码可以在程序内存中的任何位置(包括数据段),避免IDA直接读取(读取出来是乱码,无法反汇编).</p>
+<h2 id="section-32">例题</h2><h3 id="section-33">moe 2023 smc</h3><p>smc点</p>
+<p><img src="C:/Users/86198/AppData/Roaming/Typora/typora-user-images/image-20250221143457932.png" alt="image-20250221143457932"></p>
+<p>可以看到函数地址往后 122 位逐位都进行了异或操作</p>
+<p>在程序没有运行的时候，显示的函数源码都是乱的，只有当程序运行的F时候，函数才会还原成能被执行的样子</p>
+<p><strong><code>result = VirtualProtect(&amp;loc_4014D0 - &amp;loc_4014D0 % 0x1000, 0x1000u, 0x80u, flOldProtect);</code></strong></p>
+<p>这一行调用了 </p>
+<pre><code>VirtualProtect 函数，它是 Windows API 用于改变内存页面保护属性的函数。
+</code></pre>
+<ul>
+<li>第一个参数 <code>&amp;loc_4014D0 - &amp;loc_4014D0 % 0x1000</code> 是 <code>loc_4014D0</code> 所在内存页面的起始地址，按 0x1000 字节对齐。</li>
+<li>第二个参数 <code>0x1000u</code> 表示要修改的内存区域大小（1KB）。</li>
+<li>第三个参数 <code>0x80u</code> 表示要设置的访问权限，这通常是 <code>PAGE_EXECUTE_READWRITE</code>，即该内存页可执行、可读写。</li>
+<li>第四个参数 <code>flOldProtect</code> 是一个指向旧保护状态的指针，它将保存原来的内存保护属性，以便将来恢复。</li>
+</ul>
+<pre><code>  for ( i = 0; i &lt; 122; ++i )
+  {
+    *(&amp;loc_4014D0 + i) ^= 0x66u;
+    result = i + 1;
+  }
+</code></pre>
+<p>这一步将此代码段数据异或0x66，变成乱码</p>
+<p>根据这异或加密过程，写一个idc脚本进行解密恢复原来代码</p>
+<pre><code>import idc
+
+addr=0x004014D0
+
+for i in range(122):
+    b = get_bytes(addr + i, 1)
+    idc.patch_byte(addr + i, ord(b) ^ 0x66)
+</code></pre>
+<p>保存在本地然后进入 IDA，选择 File-&gt;Script file 然后选择这个脚本文件那么程序的数据就被我们修改了</p>
+<p><img src="C:/Users/86198/AppData/Roaming/Typora/typora-user-images/image-20250221152112378.png" alt="image-20250221152112378"></p>
+<p><img src="C:/Users/86198/AppData/Roaming/Typora/typora-user-images/image-20250221152130914.png" alt="image-20250221152130914"></p>
+<p>直接对左侧text黄色的部分逐个按c恢复成代码就好。之后再用p生成函数，接着F5反编译，</p>
+<h1>DES</h1><p>基于我搜索到的资料，以下是关于DES算法的详细解析：</p>
+<h3 id="section-34">一、算法基础</h3><ol>
+<li><p><strong>性质与用途</strong><br>DES（Data Encryption Standard）是一种<strong>对称分组密码算法</strong>，由IBM于1970年代设计，1977年被美国国家标准局（现NIST）确立为加密标准。主要用于民用敏感信息加密，如金融交易、电子文件保护等。</p>
+</li>
+<li><p><strong>核心参数</strong>  </p>
+<ul>
+<li><strong>分组长度</strong>：64位（8字节）。  </li>
+<li><strong>有效密钥长度</strong>：56位（输入64位密钥，含8位奇偶校验位）。  </li>
+<li><strong>迭代轮数</strong>：16轮。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="section-35">二、加密流程</h3><ol>
+<li><p><strong>初始置换（IP）</strong><br>明文分组通过固定置换表（IP表）重新排列，输出分为左半部分（L₀）和右半部分（R₀），各32位。</p>
+</li>
+<li><p><strong>16轮迭代运算</strong><br>每轮操作（以第i轮为例）：  </p>
+<ul>
+<li><strong>左输入</strong>：Lᵢ = Rᵢ₋₁  </li>
+<li><strong>右输入</strong>：Rᵢ = Lᵢ₋₁ ⊕ F(Rᵢ₋₁, Kᵢ)<br>其中 <strong>F函数</strong> 是关键步骤：</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li><strong>扩展置换（E）</strong> ：将32位Rᵢ₋₁扩展至48位。  </li>
+<li><strong>与子密钥异或</strong>：48位结果与轮密钥Kᵢ按位异或。  </li>
+<li><strong>S盒代换</strong>：48位数据分8组，每组通过6→4位非线性代换（共8个S盒），输出32位。  </li>
+<li><strong>P盒置换</strong>：32位数据按固定表置换。</li>
+</ul>
+<ol start="3">
+<li><strong>末置换（IP⁻¹）</strong><br>16轮后合并L₁₆与R₁₆（需交换顺序为R₁₆L₁₆），再通过IP⁻¹表置换得到64位密文。</li>
+</ol>
+<hr>
+<h3 id="section-36">三、密钥生成</h3><ol>
+<li><p><strong>子密钥派生</strong>  </p>
+<ul>
+<li><strong>初始压缩（PC-1）</strong> ：64位密钥→56位（去除校验位），分为左右28位（C₀/D₀）。  </li>
+<li><strong>循环左移</strong>：C₀/D₀按轮次左移1-2位，生成16组Cᵢ/Dᵢ。  </li>
+<li><strong>压缩置换（PC-2）</strong> ：56位CᵢDᵢ→48位轮密钥Kᵢ。</li>
+</ul>
+</li>
+<li><p><strong>解密特性</strong><br>解密流程与加密相同，但<strong>子密钥使用逆序</strong>（K₁₆→K₁）。</p>
+</li>
+</ol>
+<hr>
+<h3 id="section-37">四、安全性分析</h3><ol>
+<li><p><strong>优势</strong>  </p>
+<ul>
+<li>算法公开透明，依赖密钥保密。  </li>
+<li>混淆（S盒）与扩散（P盒）结合，增强非线性。</li>
+</ul>
+</li>
+<li><p><strong>缺陷</strong>  </p>
+<ul>
+<li><strong>密钥过短（56位）</strong> ：易受暴力破解（1998年被22万美元设备攻破）。</li>
+</ul>
+<p><mt type='videos' data='[3]'></mt></p>
+<ul>
+<li><strong>弱密钥存在</strong>：部分密钥导致加密结果可预测。  </li>
+<li><strong>分组长度限制</strong>：64位分组易受重放攻击。</li>
+</ul>
+</li>
+<li><p><strong>改进方案</strong>  </p>
+<ul>
+<li><strong>3DES</strong>：三重加密（加密-解密-加密），密钥长度提升至112/168位。<br><img src="https://metaso-static.oss-cn-beijing.aliyuncs.com/metaso/pdf2texts_reading_mode/figures/05437135-13cb-4566-9ab0-e36517668c40/5_1.jpg" alt=""></li>
+<li><strong>AES替代</strong>：2001年起NIST推荐更安全的AES算法。</li>
+</ul>
+</li>
+</ol>
+<h1>z3求解约束器</h1><h2 id="section-38">用法</h2><h3 id="section-39">设置变量</h3><p>Int - 整数型</p>
+<pre><code>声明单个变量
+x = Int(&#39;x&#39;)
+
+声明多个变量
+y,z = Ints(&#39;y z&#39;)
+</code></pre>
+<p>Real - 实数型</p>
+<pre><code>声明单个变量
+x = Real(&#39;x&#39;)
+
+声明多个变量
+y,z = Reals(&#39;y z&#39;)
+</code></pre>
+<p>BitVec - 向量（位运算）</p>
+<pre><code>声明单个 16 位的变量
+x = BitVec(&#39;x&#39;,16)
+
+声明多个 16 位的变量
+y,z = BitVecs(&#39;y z&#39;,16)
+</code></pre>
+<h3 id="section-40">Solver 对象</h3><p>实际做题时，约束条件肯定不会想上面例子这么少，所以需要实例化一个 <code>Solver()</code> 对象，方便我们添加更多的约束条件。</p>
+<p>创建约束求解器：</p>
+<pre><code class="language-php">solver = Solver()
+</code></pre>
+<h4>添加约束条件</h4><p>一行一个约束条件，这里的约束条件就是方程等式</p>
+<pre><code>solver.add(x**2+y**2==74)
+solver.add(x**5-y==z)
+</code></pre>
+<h4>判断是否有解</h4><pre><code class="language-php">if solver.check() == sat:
+    print(&quot;solver&quot;)
+else:
+    print(&quot;no solver&quot;)
+</code></pre>
+<h4>求解并输出</h4><pre><code class="language-php">ans = solver.model()
+print(ans)
+</code></pre>
+<h2 id="section-41">题目</h2><h3 id="section-42">moectf2023 EQUATION</h3><h1>花指令</h1><p>花指令（或者叫脏字节）是企图隐藏掉不想被逆向工程的代码块(或其它功能)的一种方法，在真实代码中插入一些垃圾代码的同时还保证原有程序的正确执行，而程序无法很好地反编译, 难以理解程序内容，达到混淆视听的效果。</p>
+<p>如ida会呈现jmupout(xxxxx)，说明在xxxxx地址处ida反编译失败了所以我们要在xxxxx处分析汇编代码，找出花指令并nop掉</p>
+<h2 id="section-43">汇编指令</h2><ol>
+<li>jne：jum if not equal  if(a=b)</li>
+<li>jl:jump if less    if(a&gt;b)</li>
+<li>jg:jum if greater</li>
+<li>jle: jump if less equal   (&lt;=)</li>
+<li>jz: Jump if Zero</li>
+<li>test 操作数1,操作数2  : 对操作数1和操作数2做按位与（AND），结果不保存，只影响标志位。</li>
+</ol>
+<h3 id="section-44">作用</h3><h2 id="section-45">运算</h2><p><code>按位与运算</code>（AND）：对两个二进制数对应的每一位进行操作，如果两个数的对应位都是 1，则结果为 1，否则为 0。</p>
+<h2 id="section-46">例题</h2><h3 id="section-47">moectf2023 junk_code</h3><pre><code>.text:004605F5 33 C0                         xor     eax, eax
+.text:004605F7 89 45 E4                      mov     [ebp-1Ch], eax
+.text:004605FA 89 45 E8                      mov     [ebp-18h], eax
+.text:004605FD 89 45 EC                      mov     [ebp-14h], eax
+.text:00460600 89 45 F0                      mov     [ebp-10h], eax
+.text:00460603 66 89 45 F4                   mov     [ebp-0Ch], ax
+.text:00460607 C7 45 D8 00 00 00 00          mov     dword ptr [ebp-28h], 0
+.text:0046060E 85 C0                         test    eax, eax
+.text:00460610 74 01                         jz      short near ptr loc_460612+1
+.text:00460610
+.text:00460612
+.text:00460612                               loc_460612:                             ; CODE XREF: .text:00460610↑j
+.text:00460612 E8 C7 45 CC 00                call    near ptr 1124BDEh
+.text:00460612
+.text:00460612                               ; ---------------------------------------------------------------------------
+.text:00460617 00                            db 0
+.text:00460618 00 00 EB 09 8B 45 CC 83 C0 01+dd 9EB0000h, 83CC458Bh, 458901C0h, 0CC458BCCh, 7D0C453Bh, 8458B1Dh, 4D88088Ah, 8558BC3h, 8901C283h, 458B0855h
+.text:00460618 89 45 CC 8B 45 CC 3B 45 0C 7D+dd 0C34D8ACCh, 0E4054C88h, 45C7D2EBh, 0CCh, 8B09EB00h, 0C083CC45h, 0CC458901h, 3BCC458Bh, 147D0C45h
+.text:00460618 1D 8B 45 08 8A 08 88 4D C3 8B+dd 0FCC458Bh, 0E4054CB6h, 8B05E983h, 4C88CC55h, 0DBEBE415h, 0CC45C7h, 0EB000000h
+.text:00460680 09                            db 9
+</code></pre>
+<p>test eax eax 的结果会影响jz的跳转，而xor eax eax 已经将eax置零了，test 0 0 会将ZF寄存器(zero flag)置为零，所以JZ（jmp if zero）必跳转</p>
+<p>但是JZ跳到了<code>loc_460612+1</code>这里，没有执行<code>e8</code>这个字节，所以e8是花指令，nop掉即可</p>
+<p>之后在(汇编代码界面)函数开头按p恢复函数，就可以看清楚伪代码逻辑</p>
+<h3 id="section-48">nss e@sy_flower</h3><p>进入ida就发现红色字体的XREF</p>
+<p><img src="C:/Users/86198/AppData/Roaming/Typora/typora-user-images/image-20250612205729035.png" alt="image-20250612205729035"></p>
+<p>发现花指令在 004010D4</p>
+<pre><code class="language-asm">.text:004010D0                 jz      short near ptr loc_4010D4+1 #这里
+.text:004010D2                 jnz     short near ptr loc_4010D4+1
+.text:004010D4
+.text:004010D4 loc_4010D4:                             ; CODE XREF: .text:004010D0↑j
+.text:004010D4                                         ; .text:004010D2↑j
+.text:004010D4                 jmp     near ptr 9A085664h
+.text:004010D9 ; ---------------------------------------------------------------------------
+.text:004010D9                 sub     eax, edx
+.text:004010DB                 xor     edx, edx
+.text:004010DD                 mov     esi, eax
+.text:004010DF                 sar     esi, 1
+.text:004010E1                 test    esi, esi
+.text:004010E3                 jle     short loc_401105
+.text:004010E5                 db      66h, 66h
+.text:004010E5                 nop     word ptr [eax+eax+00000000h]
+</code></pre>
+<p>按u解除定义</p>
+<pre><code class="language-asm">.text:004010D4                 db 0E9h  #这里
+.text:004010D5 unk_4010D5      db  8Bh                 ; CODE XREF: .text:004010D0↑j
+.text:004010D5                                         ; .text:004010D2↑j
+.text:004010D6                 db  45h ; E
+.text:004010D7                 db 0C8h
+.text:004010D8                 db  99h
+</code></pre>
+<p>nop掉004010D4这里的机器码，在按c生成汇编码</p>
+<pre><code class="language-asm">.text:004010D4                 nop
+.text:004010D5
+.text:004010D5 loc_4010D5:                             ; CODE XREF: .text:004010D0↑j
+.text:004010D5                                         ; .text:004010D2↑j
+.text:004010D5                 mov     eax, [ebp-38h]
+.text:004010D8                 cdq
+</code></pre>
+<p>找到main，按p重新定义函数就可以f5了</p>
+<h1>壳</h1><h2 id="section-49">压缩壳</h2><p>压缩的目的是减少程序体积，如 ASPack、UPX、PECompact 等</p>
+<h3 id="section-50">UPX</h3><h4>是什么</h4><p><strong>UPX（Ultimate Packer for eXecutables）</strong> 是一款先进的可执行文件压缩器，常用于对 <code>.exe</code>、<code>.dll</code> 等 PE 文件进行压缩。它广泛用于程序瘦身、代码保护，有时也被恶意软件用于免杀处理。</p>
+<h4>用途</h4><p>减小文件体积，提高分发效率</p>
+<p>防止文件被修改、逆向分析</p>
+<p>保护安全软件的执行文件</p>
+<p>恶意软件使用其隐藏真实代码，增加分析难度</p>
+<h4>技术原理</h4><p>1.<strong>压缩</strong>：UPX将原始可执行文件的代码和数据段压缩，并将其封装在一个自解压引导段中。</p>
+<p>2.<strong>加载时解压</strong>：运行时，封装的自解压模块首先运行，解压原始内容至内存，然后跳转到原始程序入口点执行。</p>
+<p>UPX 加壳其实是利用特殊的算法，对 EXE、DLL文件里的资源进行压缩。类似WINZIP 的效果，只不过这个压缩之后的文件，可以独立运行，<strong>解压过程完全隐蔽，都在内存中完成。</strong></p>
+<p>解压原理，是加壳工具在文件头里加了一段指令，告诉 CPU，怎么才能解压自己。当加壳时，其实就是给可执行的文件加上个外衣。用户执行的只是这个外壳程序。当执行这个程序的时候这个壳就会把原来的程序在内存中解开，解开后，以后的就交给真正的程序。</p>
+<h4>工具</h4><p><a href="https://blog.csdn.net/qq_43633973/article/details/102573376">https://blog.csdn.net/qq_43633973/article/details/102573376</a></p>
+<pre><code># 压缩可执行文件
+upx target.exe
+
+# 查看压缩信息
+upx -l target.exe
+
+# 解压缩（脱壳）
+./upx.exe -d target.exe
+
+# 最大压缩
+upx --ultra-brute target.exe
+</code></pre>
+<h2 id="section-51">加密壳</h2><p>加密是为了防止程序被反编译（反汇编）、跟踪和调试，如 ASProtect、Armadillo、 EXECryptor、Themida、VMProtect。</p>
+<h2 id="section-52">手动脱壳</h2><p><a href="https://blog.csdn.net/Pisces50002/article/details/135169522">https://blog.csdn.net/Pisces50002/article/details/135169522</a></p>
+<h2 id="section-53">题目</h2><h3 id="section-54">hgame2025 tutle (手动脱壳+rc4)</h3><h1>安卓</h1><h2 id="section-55">函数</h2><h3 id="section-56">getBytes()</h3><pre><code>将字符串转换为字节数组。
+&quot;XYCTF&quot;.getBytes()  // → [88, 89, 67, 84, 70]
+</code></pre>
+<h2 id="section-57">apk结构</h2><p>[<a href="https://bbs.kanxue.com/thread-278112.htm">原创]安卓逆向基础知识之apk文件结构-Android安全-看雪-安全社区|安全招聘|kanxue.com</a></p>
+<p>apk 全称 Android Package，它相当于一个压缩文件，只要在电脑上将apk后缀改为zip即可解压。</p>
+<table>
+<thead>
+<tr>
+<th align="left">文件</th>
+<th align="left">注释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">assets目录</td>
+<td align="left">存放APK的静态资源文件，比如视频，音频，图片等</td>
+</tr>
+<tr>
+<td align="left">lib 目录</td>
+<td align="left">armeabi-v7a基本通用所有android设备，arm64-v8a只适用于64位的android设备，x86常见用于android模拟器，其目录下的.so文件是c或c++编译的动态链接库文件</td>
+</tr>
+<tr>
+<td align="left">META-INF目录</td>
+<td align="left">保存应用的签名信息，签名信息可以验证APK文件的完整性，相当于APK的身份证(验证文件是否又被修改)。在编译生成一个api包时，会对所有要打包的文件做一个校验计算，并把计算结果放在META-INF目录下。在安装时，如果校验结果与META-INF下的内容不一致，系统就不会安装这个apk。保证了apk包里的文件不能被随意替换。</td>
+</tr>
+<tr>
+<td align="left">res目录</td>
+<td align="left">res目录存放资源文件，包括图片，字符串等等，APK的脸蛋由他的layout文件设计</td>
+</tr>
+<tr>
+<td align="left">AndroidManifest.xml文件</td>
+<td align="left">APK的应用清单信息，它描述了应用的名字，版本，权限，引用的库文件等等信息</td>
+</tr>
+<tr>
+<td align="left">classes.dex文件</td>
+<td align="left">classes.dex是java源码编译后生成的java字节码文件，APK运行的主要逻辑</td>
+</tr>
+<tr>
+<td align="left">resources.arsc文件</td>
+<td align="left">resources.arsc是编译后的二进制资源文件，它是一个映射表，映射着资源和id，通过R文件中的id就可以找到对应的资源</td>
+</tr>
+</tbody></table>
+<h3 id="section-58">AndroidManifest.xml</h3><p>文件是整个应用程序的信息描述文件，定义了应用程序中包含的Activity,Service,Content provider和BroadcastReceiver组件信息。每个应用程序在根目录下必须包含一个AndroidManifest.xml文件，且文件名不能修改。它描述了package中暴露的组件，他们各自的实现类，各种能被处理的数据和启动位置。</p>
+<table>
+<thead>
+<tr>
+<th align="left">属性</th>
+<th align="left">定义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">versionCode</td>
+<td align="left">版本号，主要用来更新，例如:12</td>
+</tr>
+<tr>
+<td align="left">versionName</td>
+<td align="left">版本名，给用户看的，例如:1.2</td>
+</tr>
+<tr>
+<td align="left">package</td>
+<td align="left">包名，例如：com.zj.52pj.demo</td>
+</tr>
+<tr>
+<td align="left">uses-permission android:name=&quot;&quot;</td>
+<td align="left">应用权限，例如：android.permission.INTERNET 代表网络权限<br />\</td>
+</tr>
+<tr>
+<td align="left">android:label=&quot;@string/app_name&quot;</td>
+<td align="left">应用名称</td>
+</tr>
+<tr>
+<td align="left">android:icon=&quot;@mipmap/ic_launcher&quot;</td>
+<td align="left">应用图标路径</td>
+</tr>
+<tr>
+<td align="left">android:debuggable=&quot;true&quot;</td>
+<td align="left">应用是否开启debug权限</td>
+</tr>
+</tbody></table>
+<h3 id="section-59">程序代码逻辑</h3><p><strong>Java 层 / Kotlin 层</strong>（托管代码，静态链接）这是 Android 应用的主要开发语言部分，位于：classes.dex</p>
+<p><strong>Native 层（C/C++）</strong>：<code>.so</code> 文件（动态链接），APK中的：lib/<abi>/libxxx.so</p>
+<p>Java 层 可以类似理解成静态链接代码（因为它运行在虚拟机，但不是编译成机器码）。Native 层（so）= 动态链接库</p>
+<h2 id="section-60">native逆向</h2><p><a href="https://www.freebuf.com/articles/game/288059.html">https://www.freebuf.com/articles/game/288059.html</a></p>
+<p><a href="https://www.freebuf.com/articles/mobile/288164.html">https://www.freebuf.com/articles/mobile/288164.html</a></p>
+<h2 id="section-61">题目</h2><h3 id="section-62">爆破时间戳</h3><h4>xyctf2024 ez_rand</h4><pre><code class="language-c">int __cdecl main(int argc, const char **argv, const char **envp)
+{
+  unsigned __int64 v3; // rbx
+  unsigned __int16 v4; // ax
+  int v5; // edi
+  __int64 v6; // rsi
+  int v7; // r8d
+  _DWORD v9[7]; // [rsp+20h] [rbp-50h]
+  char v10; // [rsp+3Ch] [rbp-34h]
+  __int16 v11; // [rsp+3Dh] [rbp-33h]
+  __int128 string; // [rsp+40h] [rbp-30h] BYREF
+  __int64 v13; // [rsp+50h] [rbp-20h]
+  int v14; // [rsp+58h] [rbp-18h]
+  __int16 v15; // [rsp+5Ch] [rbp-14h]
+  char v16; // [rsp+5Eh] [rbp-12h]
+
+  v13 = 0i64;
+  string = 0i64;
+  v14 = 0;
+  v15 = 0;
+  v16 = 0;
+  sub_140001020(&amp;Format, argv, envp);           // printf
+  sub_140001080(&quot;%s&quot;, &amp;string);                 // scanf
+  v9[0] = 0xEA6C0C5D;
+  v11 = 0;
+  v3 = &#39;\xFF&#39;;
+  v9[1] = 0x34FC1946;
+  v9[2] = 0x72362B2;
+  v9[3] = -76668318;
+  v9[4] = -1443698508;
+  v9[5] = -2044652911;
+  v9[6] = 1139379931;
+  v10 = 77;
+  do
+    ++v3;
+  while ( *(&amp;string + v3) );
+  v4 = time64(0i64);
+  srand(v4);
+  v5 = &#39;\0&#39;;
+  if ( v3 )
+  {
+    v6 = &#39;\0&#39;;
+    do
+    {
+      v7 = rand();
+      if ( (*(&amp;string + v6) ^ (v7
+                             + ((((2155905153i64 * v7) &gt;&gt; 32) &amp; 0x80000000) != 0i64)
+                             + (((2155905153i64 * v7) &gt;&gt; 32) &gt;&gt; 7))) != *(v9 + v6) )
+      {
+        sub_140001020(&quot;Error???\n&quot;);
+        exit(0);
+      }
+      ++v5;
+      ++v6;
+    }
+    while ( v5 &lt; v3 );
+  }
+  sub_140001020(&quot;Right???\n&quot;);
+  system(&quot;pause&quot;);
+  return 0;
+}
+</code></pre>
+<p>v4是种子，srand函数和rand函数根据种子来生成随机数，input加密逻辑使用v7  那么首先想到的是爆破种子，来推flag，再看v4，unsigned __int16 v4无符号16位整数型，v4范围为0~2**16-1(65535)，结合flag固定格式 XYCTF{}进行明文攻击</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdlib.h&gt;
+int containsXYCTF(const char *str)
+ {
+    if (strstr(str, &quot;XYCTF&quot;) != NULL)
+    {
+        return 1; // 包含&quot;XYCTF&quot;
+    }
+    else
+    {
+        return 0; // 不包含&quot;XYCTF&quot;
+    }
+ }
+ int main()
+ {
+    unsigned char cipher[29] = {0x5D, 0x0C, 0x6C, 0xEA, 0x46, 0x19, 0xFC, 0x34, 
+    0xB2, 0x62, 0x23, 0x07, 0x62, 0x22, 0x6E, 0xFB, 0xB4, 0xE8, 0xF2, 0xA9, 0x91, 
+    0x12, 0x21, 0x86, 0xDB, 0x8E, 0xE9, 0x43, 0x4D}; //即v9
+    unsigned int v7;
+    char flag[29] = {0};
+    for (unsigned int seed = 0; seed &lt; 65536; seed++)
+    {
+        srand(seed);
+        for (int i = 0; i &lt; 29; i++)
+        {
+            v7 = rand();
+            int num = (int)((unsigned __int64)(2155905153 * v7) &gt;&gt; 32);
+            unsigned __int8 data = (unsigned __int8)(v7 + ((num &amp; 0x80000000) != 0) + (num &gt;&gt; 7));
+            flag[i] = cipher[i] ^ data;
+        }
+        if (containsXYCTF(flag))
+        {
+            printf(&quot;success\n&quot;);
+            printf(&quot;seed = %d\n&quot;, seed);
+            puts(flag);
+        }
+    }
+ }
+</code></pre>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/车联网/整车检测/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">obd连接</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/区块链技术原理/web3生态分层/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">web3生态分层</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>qmemcpy</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>elf文件</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>例题</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">ctfshowr3</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-5"> <button class="article-outline__group-link" type="button" data-group-target="section-5"> <span>原理</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">为什么叫Base64</a> </li><li class="article-outline__item depth-3" data-toc-id="section-7"> <a href="#section-7">base64表和示例</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-8"> <button class="article-outline__group-link" type="button" data-group-target="section-8"> <span>题目</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">nss enbase64</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-10"> <button class="article-outline__group-link" type="button" data-group-target="section-10"> <span>题目</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-11"> <a href="#section-11">xy2024 聪明的信使(原始人)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-12"> <a href="#section-12">buu simplerev(爆破)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-13"> <button class="article-outline__group-link" type="button" data-group-target="section-13"> <span>原理</span>  </button>  </li><li class="article-outline__group" data-group-id="section-14"> <button class="article-outline__group-link" type="button" data-group-target="section-14"> <span>成员</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-15"> <a href="#section-15">1. RC4 (Rivest Cipher 4)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-16"> <a href="#section-16">3. AES-CTR (AES in Counter Mode)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-17"> <a href="#section-17">4. Trivium</a> </li><li class="article-outline__item depth-3" data-toc-id="section-18"> <a href="#section-18">5. Grain</a> </li><li class="article-outline__item depth-3" data-toc-id="section-19"> <a href="#section-19">6. ZUC (祖冲之算法)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-20"> <a href="#section-20">7. E0 (Bluetooth加密)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-21"> <button class="article-outline__group-link" type="button" data-group-target="section-21"> <span>原理</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-22"> <a href="#section-22">基本操作</a> </li><li class="article-outline__item depth-3" data-toc-id="section-23"> <a href="#section-23">第一步：初始化 S-Box</a> </li><li class="article-outline__item depth-3" data-toc-id="section-24"> <a href="#section-24">第二步：KSA 过程</a> </li><li class="article-outline__item depth-3" data-toc-id="section-25"> <a href="#section-25">第三步：PRGA 过程</a> </li><li class="article-outline__item depth-3" data-toc-id="section-26"> <a href="#section-26">解决逆向中对称加密算法的技巧</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-27"> <button class="article-outline__group-link" type="button" data-group-target="section-27"> <span>模板</span>  </button>  </li><li class="article-outline__group" data-group-id="section-28"> <button class="article-outline__group-link" type="button" data-group-target="section-28"> <span>题目</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-29"> <a href="#section-29">ctfshowfinal(原始人版)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-30"> <a href="#section-30">hgame2025 tutle (手动脱壳+rc4)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-31"> <a href="#section-31">源鲁 xorplus</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-32"> <button class="article-outline__group-link" type="button" data-group-target="section-32"> <span>例题</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-33"> <a href="#section-33">moe 2023 smc</a> </li><li class="article-outline__item depth-3" data-toc-id="section-34"> <a href="#section-34">一、算法基础</a> </li><li class="article-outline__item depth-3" data-toc-id="section-35"> <a href="#section-35">二、加密流程</a> </li><li class="article-outline__item depth-3" data-toc-id="section-36"> <a href="#section-36">三、密钥生成</a> </li><li class="article-outline__item depth-3" data-toc-id="section-37"> <a href="#section-37">四、安全性分析</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-38"> <button class="article-outline__group-link" type="button" data-group-target="section-38"> <span>用法</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-39"> <a href="#section-39">设置变量</a> </li><li class="article-outline__item depth-3" data-toc-id="section-40"> <a href="#section-40">Solver 对象</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-41"> <button class="article-outline__group-link" type="button" data-group-target="section-41"> <span>题目</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-42"> <a href="#section-42">moectf2023 EQUATION</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-43"> <button class="article-outline__group-link" type="button" data-group-target="section-43"> <span>汇编指令</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-44"> <a href="#section-44">作用</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-45"> <button class="article-outline__group-link" type="button" data-group-target="section-45"> <span>运算</span>  </button>  </li><li class="article-outline__group" data-group-id="section-46"> <button class="article-outline__group-link" type="button" data-group-target="section-46"> <span>例题</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-47"> <a href="#section-47">moectf2023 junkcode</a> </li><li class="article-outline__item depth-3" data-toc-id="section-48"> <a href="#section-48">nss e@syflower</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-49"> <button class="article-outline__group-link" type="button" data-group-target="section-49"> <span>压缩壳</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-50"> <a href="#section-50">UPX</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-51"> <button class="article-outline__group-link" type="button" data-group-target="section-51"> <span>加密壳</span>  </button>  </li><li class="article-outline__group" data-group-id="section-52"> <button class="article-outline__group-link" type="button" data-group-target="section-52"> <span>手动脱壳</span>  </button>  </li><li class="article-outline__group" data-group-id="section-53"> <button class="article-outline__group-link" type="button" data-group-target="section-53"> <span>题目</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-54"> <a href="#section-54">hgame2025 tutle (手动脱壳+rc4)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-55"> <button class="article-outline__group-link" type="button" data-group-target="section-55"> <span>函数</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-56"> <a href="#section-56">getBytes()</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-57"> <button class="article-outline__group-link" type="button" data-group-target="section-57"> <span>apk结构</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-58"> <a href="#section-58">AndroidManifest.xml</a> </li><li class="article-outline__item depth-3" data-toc-id="section-59"> <a href="#section-59">程序代码逻辑</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-60"> <button class="article-outline__group-link" type="button" data-group-target="section-60"> <span>native逆向</span>  </button>  </li><li class="article-outline__group" data-group-id="section-61"> <button class="article-outline__group-link" type="button" data-group-target="section-61"> <span>题目</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-62"> <a href="#section-62">爆破时间戳</a> </li> </ol> </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const fab = document.getElementById("article-toc-fab");
+        const outlineNav = sidebar?.querySelector(".article-outline__body");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+        const storageKey = "article-outline-open";
+
+        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let isOpen = false;
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const syncState = () => {
+          shell.classList.toggle("article-shell--toc-expanded", isOpen);
+          shell.classList.toggle("article-shell--toc-collapsed", !isOpen);
+          sidebar.classList.toggle("is-open", isOpen);
+          fab.classList.toggle("is-open", isOpen);
+          fab.setAttribute("aria-expanded", String(isOpen));
+
+          try {
+            localStorage.setItem(storageKey, isOpen ? "1" : "0");
+          } catch {}
+        };
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (!isOpen || Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        try {
+          isOpen = localStorage.getItem(storageKey) === "1";
+        } catch {
+          isOpen = false;
+        }
+
+        syncState();
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        fab.addEventListener("click", (event) => {
+          event.stopPropagation();
+          isOpen = !isOpen;
+          syncState();
+        });
+
+        sidebar.addEventListener("click", (event) => {
+          event.stopPropagation();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && isOpen) {
+            isOpen = false;
+            syncState();
+            fab.focus();
+          }
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>
