@@ -544,15 +544,6 @@ schedule 回溯合法化
           event.stopPropagation();
         });
 
-        document.addEventListener("click", (event) => {
-          if (!isOpen) return;
-          const target = event.target;
-          if (!(target instanceof Node)) return;
-          if (sidebar.contains(target) || fab.contains(target)) return;
-          isOpen = false;
-          syncState();
-        });
-
         document.addEventListener("keydown", (event) => {
           if (event.key === "Escape" && isOpen) {
             isOpen = false;

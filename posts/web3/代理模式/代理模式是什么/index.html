@@ -440,15 +440,6 @@ bytes32 constant BEACON_SLOT = bytes32(uint256(keccak256(&quot;eip1967.proxy.bea
           event.stopPropagation();
         });
 
-        document.addEventListener("click", (event) => {
-          if (!isOpen) return;
-          const target = event.target;
-          if (!(target instanceof Node)) return;
-          if (sidebar.contains(target) || fab.contains(target)) return;
-          isOpen = false;
-          syncState();
-        });
-
         document.addEventListener("keydown", (event) => {
           if (event.key === "Escape" && isOpen) {
             isOpen = false;
