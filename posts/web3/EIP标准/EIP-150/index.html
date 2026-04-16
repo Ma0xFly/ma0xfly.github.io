@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.CSGHR4jb.css"></head> <body class="is-post-page"> <div class="page-shell is-post-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☽</span> </button> </nav> </header> </div> <main id="main-content" class="page-shell page-main is-post-main">  <div class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">EIP标准</span>  </div> <p class="eyebrow">2026/4/16</p> <h1>EIP-150</h1> <p class="lead"># EIP-150: IO 密集型操作的 Gas 成本调整 (Gas cost changes for IO-heavy operations) &gt; **一句话总结**：EIP-150 大幅提高了 `EXTCODESIZE`、`EXTCODECOPY`、`BALANCE`、`SL</p>  <div class="tag-row" style="justify-content: center; margin-bottom: 24px;">  </div> <p class="source-note">来源路径：web3/EIP标准/EIP-150.md</p> </header> <div class="article-main"> <div class="article-content"><h1>EIP-150: IO 密集型操作的 Gas 成本调整 (Gas cost changes for IO-heavy operations)</h1><blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.CKGpImX1.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☽</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <div class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">EIP标准</span>  </div> <p class="eyebrow">2026/4/16</p> <h1>EIP-150</h1> <p class="lead"># EIP-150: IO 密集型操作的 Gas 成本调整 (Gas cost changes for IO-heavy operations) &gt; **一句话总结**：EIP-150 大幅提高了 `EXTCODESIZE`、`EXTCODECOPY`、`BALANCE`、`SL</p>  <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/EIP标准/EIP-150.md</p> </header> <div class="article-main"> <div class="article-content"><h1>EIP-150: IO 密集型操作的 Gas 成本调整 (Gas cost changes for IO-heavy operations)</h1><blockquote>
 <p><strong>一句话总结</strong>：EIP-150 大幅提高了 <code>EXTCODESIZE</code>、<code>EXTCODECOPY</code>、<code>BALANCE</code>、<code>SLOAD</code>、<code>CALL</code> 系列等涉及跨账户访问（I/O 密集型）操作码的 Gas 价格，并引入了 <strong>&quot;63/64 规则&quot;</strong> 限制子调用可用 Gas，从根源上扼杀了 2016 年上海 DevCon 2 期间令以太坊网络近乎瘫痪的 DoS 攻击向量。</p>
 </blockquote>
 <h2 id="section-1">📜 核心元数据 (Metadata)</h2><blockquote>
@@ -155,7 +155,7 @@ for depth in range(1, 1025):
 </ul>
 </li>
 </ul>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/DeFi协议/uniswap_v4/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">uniswap_v4</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/EIP标准/EIP-1559/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-1559</h4> </a> </div> </nav> </div> </article> <aside class="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>文章目录</strong> </div> <ol class="article-outline__list"> <li class="article-outline__item depth-2" data-toc-id="section-1"> <a href="#section-1">📜 核心元数据 (Metadata)</a> </li><li class="article-outline__item depth-2" data-toc-id="section-2"> <a href="#section-2">1. 核心理念与全网级痛点 (Core Concept &amp; Motivation)</a> </li><li class="article-outline__item depth-2" data-toc-id="section-3"> <a href="#section-3">2. 核心架构与底层修改细节 (Core Specification)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">A. 全局参数 / 常量变动 (Parameters)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">B. EVM 指令集与 Gas 计价改动 (Opcodes &amp; Gas Changes)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">C. 交易类型与区块结构 (Transaction &amp; Block Header Changes)</a> </li><li class="article-outline__item depth-2" data-toc-id="section-7"> <a href="#section-7">3. 从宏观到微观的生命周期 (Lifecycle Workflow)</a> </li><li class="article-outline__item depth-2" data-toc-id="section-8"> <a href="#section-8">4. 关键机制深度解析 (Deep Dive)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">A. 核心难点：为什么这些操作码之前那么便宜？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">B. 核心难点：63/64 规则为什么能防止调用栈深度攻击？</a> </li><li class="article-outline__item depth-2" data-toc-id="section-11"> <a href="#section-11">5. 对生态与智能合约的系统级冲击 (Impact Analysis)</a> </li> </ol> </nav> </aside> </div> </div>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/DeFi协议/uniswap_v4/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">uniswap_v4</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/EIP标准/EIP-1559/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-1559</h4> </a> </div> </nav> </div> </article> <aside class="article-sidebar"> <details class="article-outline-drawer" id="article-outline-drawer"> <summary class="article-outline-trigger"> <span>文章目录</span> <span class="article-outline-trigger__icon">+</span> </summary> <nav class="article-outline" aria-label="文章目录"> <ol class="article-outline__list"> <li class="article-outline__item depth-2" data-toc-id="section-1"> <a href="#section-1">📜 核心元数据 (Metadata)</a> </li><li class="article-outline__item depth-2" data-toc-id="section-2"> <a href="#section-2">1. 核心理念与全网级痛点 (Core Concept &amp; Motivation)</a> </li><li class="article-outline__item depth-2" data-toc-id="section-3"> <a href="#section-3">2. 核心架构与底层修改细节 (Core Specification)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">A. 全局参数 / 常量变动 (Parameters)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">B. EVM 指令集与 Gas 计价改动 (Opcodes &amp; Gas Changes)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">C. 交易类型与区块结构 (Transaction &amp; Block Header Changes)</a> </li><li class="article-outline__item depth-2" data-toc-id="section-7"> <a href="#section-7">3. 从宏观到微观的生命周期 (Lifecycle Workflow)</a> </li><li class="article-outline__item depth-2" data-toc-id="section-8"> <a href="#section-8">4. 关键机制深度解析 (Deep Dive)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">A. 核心难点：为什么这些操作码之前那么便宜？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">B. 核心难点：63/64 规则为什么能防止调用栈深度攻击？</a> </li><li class="article-outline__item depth-2" data-toc-id="section-11"> <a href="#section-11">5. 对生态与智能合约的系统级冲击 (Impact Analysis)</a> </li> </ol> </nav> </details> </aside> </div> </div>  </main> <script>
       (() => {
         const root = document.documentElement;
         const scrollFlagKey = "scroll-to-top-once";
@@ -212,11 +212,18 @@ for depth in range(1, 1025):
       })();
     </script> </body> </html>  <script>
       (() => {
-        const outlineNav = document.querySelector(".article-outline");
+        const drawer = document.getElementById("article-outline-drawer");
+        const outlineNav = drawer?.querySelector(".article-outline");
+        const triggerIcon = drawer?.querySelector(".article-outline-trigger__icon");
         const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
         const links = Array.from(document.querySelectorAll(".article-outline a[href^='#']"));
 
-        if (!outlineNav || !headings.length || !links.length) return;
+        if (!drawer || !outlineNav || !headings.length || !links.length) return;
+
+        const syncDrawerIcon = () => {
+          if (!triggerIcon) return;
+          triggerIcon.textContent = drawer.open ? "−" : "+";
+        };
 
         const itemMap = new Map(
           links.map((link) => {
@@ -228,10 +235,7 @@ for depth in range(1, 1025):
         let lastH2Id = "";
         const headingMeta = headings.map((heading) => {
           const depth = Number(heading.tagName.slice(1));
-          if (depth === 2) {
-            lastH2Id = heading.id;
-          }
-
+          if (depth === 2) lastH2Id = heading.id;
           return {
             id: heading.id,
             parentId: depth === 3 ? lastH2Id : "",
@@ -253,7 +257,6 @@ for depth in range(1, 1025):
             const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
             const isCurrent = targetId === id;
             const isParentActive = Boolean(parentId && targetId === parentId && targetId !== id);
-
             link.toggleAttribute("aria-current", isCurrent);
             link.classList.toggle("is-current", isCurrent);
             link.classList.toggle("is-parent-active", isParentActive);
@@ -265,22 +268,24 @@ for depth in range(1, 1025):
             item.classList.toggle("is-parent-active", Boolean(parentId && itemId === parentId && itemId !== id));
           });
 
-          const activeLink = links.find((link) => decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, "")) === id);
-          if (activeLink) {
-            const linkTop = activeLink.offsetTop;
-            const linkBottom = linkTop + activeLink.offsetHeight;
-            const viewTop = outlineNav.scrollTop;
-            const viewBottom = viewTop + outlineNav.clientHeight;
-            const padding = 24;
+          if (!drawer.open) return;
 
-            if (linkTop - padding < viewTop) {
-              outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
-            } else if (linkBottom + padding > viewBottom) {
-              outlineNav.scrollTo({
-                top: linkBottom - outlineNav.clientHeight + padding,
-                behavior: "smooth",
-              });
-            }
+          const activeLink = links.find((link) => decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, "")) === id);
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
           }
         };
 
@@ -296,9 +301,7 @@ for depth in range(1, 1025):
             }
           }
 
-          if (current) {
-            setActive(current.id, current.parentId);
-          }
+          if (current) setActive(current.id, current.parentId);
         };
 
         const requestUpdate = () => {
@@ -307,6 +310,8 @@ for depth in range(1, 1025):
           window.requestAnimationFrame(updateOutline);
         };
 
+        syncDrawerIcon();
+        drawer.addEventListener("toggle", syncDrawerIcon);
         window.addEventListener("scroll", requestUpdate, { passive: true });
         window.addEventListener("resize", requestUpdate);
         window.addEventListener("hashchange", requestUpdate);
