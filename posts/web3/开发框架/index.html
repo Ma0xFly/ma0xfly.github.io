@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.CKGpImX1.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☽</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <div class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   </div> <p class="eyebrow">2026/4/16</p> <h1>开发框架</h1> <p class="lead"># Scaffold-ETH 2 Scaffold-ETH 2 (SE-2) 是目前以太坊生态中最主流、最高效的**全栈开发脚手架（Boilerplate）**。 对于开发者，尤其是刚入门 Web3 的工程师，它解决了最大的痛点：**如何在本地快速搭建一套包含“前端 UI + 智</p>  <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/开发框架.md</p> </header> <div class="article-main"> <div class="article-content"><h1>Scaffold-ETH 2</h1><p>Scaffold-ETH 2 (SE-2) 是目前以太坊生态中最主流、最高效的<strong>全栈开发脚手架（Boilerplate）</strong>。</p>
+    </script><link rel="stylesheet" href="/_astro/_folder_.CwqdxmBw.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☽</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   </div> <p class="eyebrow">2026/4/16</p> <h1>开发框架</h1> <p class="lead"># Scaffold-ETH 2 Scaffold-ETH 2 (SE-2) 是目前以太坊生态中最主流、最高效的**全栈开发脚手架（Boilerplate）**。 对于开发者，尤其是刚入门 Web3 的工程师，它解决了最大的痛点：**如何在本地快速搭建一套包含“前端 UI + 智</p>  <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/开发框架.md</p> </header> <div class="article-main"> <div class="article-content"><h1>Scaffold-ETH 2</h1><p>Scaffold-ETH 2 (SE-2) 是目前以太坊生态中最主流、最高效的<strong>全栈开发脚手架（Boilerplate）</strong>。</p>
 <p>对于开发者，尤其是刚入门 Web3 的工程师，它解决了最大的痛点：<strong>如何在本地快速搭建一套包含“前端 UI + 智能合约 + 本地测试链 + 钱包连接”的完整环境。</strong></p>
 <hr>
 <h3 id="section-1">1. 核心架构：由什么组成？</h3><p>SE-2 并不是单一的工具，而是一套经过严选的技术栈组合。它将前后端打通，让你只需关注业务逻辑。</p>
@@ -311,17 +311,28 @@ export function ContractDemo() {
       })();
     </script> </body> </html>  <script>
       (() => {
+        const shell = document.getElementById("article-shell");
         const drawer = document.getElementById("article-outline-drawer");
         const outlineNav = drawer?.querySelector(".article-outline");
+        const trigger = drawer?.querySelector(".article-outline-trigger");
         const triggerIcon = drawer?.querySelector(".article-outline-trigger__icon");
         const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
         const links = Array.from(document.querySelectorAll(".article-outline a[href^='#']"));
+        const storageKey = "article-outline-open";
 
-        if (!drawer || !outlineNav || !headings.length || !links.length) return;
+        if (!shell || !drawer || !outlineNav || !trigger || !headings.length || !links.length) return;
 
-        const syncDrawerIcon = () => {
-          if (!triggerIcon) return;
-          triggerIcon.textContent = drawer.open ? "−" : "+";
+        const syncDrawerState = () => {
+          if (triggerIcon) {
+            triggerIcon.textContent = drawer.open ? "−" : "+";
+          }
+
+          shell.classList.toggle("article-shell--toc-expanded", drawer.open);
+          shell.classList.toggle("article-shell--toc-collapsed", !drawer.open);
+
+          try {
+            localStorage.setItem(storageKey, drawer.open ? "1" : "0");
+          } catch {}
         };
 
         const itemMap = new Map(
@@ -356,6 +367,7 @@ export function ContractDemo() {
             const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
             const isCurrent = targetId === id;
             const isParentActive = Boolean(parentId && targetId === parentId && targetId !== id);
+
             link.toggleAttribute("aria-current", isCurrent);
             link.classList.toggle("is-current", isCurrent);
             link.classList.toggle("is-parent-active", isParentActive);
@@ -409,8 +421,32 @@ export function ContractDemo() {
           window.requestAnimationFrame(updateOutline);
         };
 
-        syncDrawerIcon();
-        drawer.addEventListener("toggle", syncDrawerIcon);
+        try {
+          drawer.open = localStorage.getItem(storageKey) === "1";
+        } catch {
+          drawer.open = false;
+        }
+
+        syncDrawerState();
+        drawer.addEventListener("toggle", syncDrawerState);
+
+        document.addEventListener("click", (event) => {
+          if (!drawer.open) return;
+          const target = event.target;
+          if (!(target instanceof Node)) return;
+          if (drawer.contains(target)) return;
+          drawer.open = false;
+          syncDrawerState();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && drawer.open) {
+            drawer.open = false;
+            syncDrawerState();
+            trigger.focus();
+          }
+        });
+
         window.addEventListener("scroll", requestUpdate, { passive: true });
         window.addEventListener("resize", requestUpdate);
         window.addEventListener("hashchange", requestUpdate);

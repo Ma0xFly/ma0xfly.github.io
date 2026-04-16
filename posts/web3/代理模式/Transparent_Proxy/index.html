@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.CKGpImX1.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☽</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <div class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">代理模式</span>  </div> <p class="eyebrow">2026/4/16</p> <h1>Transparent_Proxy</h1> <p class="lead"># Transparent Proxy（透明代理） &gt; **一句话总结**：Transparent Proxy 将升级逻辑放在 **Proxy 合约自身**中，并通过 **`msg.sender` 路由机制**从根源上消灭了函数选择器冲突（Selector Clash）——Adm</p>  <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/代理模式/Transparent_Proxy.md</p> </header> <div class="article-main"> <div class="article-content"><h1>Transparent Proxy（透明代理）</h1><blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.CwqdxmBw.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☽</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">代理模式</span>  </div> <p class="eyebrow">2026/4/16</p> <h1>Transparent_Proxy</h1> <p class="lead"># Transparent Proxy（透明代理） &gt; **一句话总结**：Transparent Proxy 将升级逻辑放在 **Proxy 合约自身**中，并通过 **`msg.sender` 路由机制**从根源上消灭了函数选择器冲突（Selector Clash）——Adm</p>  <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/代理模式/Transparent_Proxy.md</p> </header> <div class="article-main"> <div class="article-content"><h1>Transparent Proxy（透明代理）</h1><blockquote>
 <p><strong>一句话总结</strong>：Transparent Proxy 将升级逻辑放在 <strong>Proxy 合约自身</strong>中，并通过 <strong><code>msg.sender</code> 路由机制</strong>从根源上消灭了函数选择器冲突（Selector Clash）——Admin 只能调用管理函数，普通用户只能调用业务函数，二者的调用通道在物理层面完全隔离。</p>
 </blockquote>
 <h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><ul>
@@ -257,17 +257,28 @@
       })();
     </script> </body> </html>  <script>
       (() => {
+        const shell = document.getElementById("article-shell");
         const drawer = document.getElementById("article-outline-drawer");
         const outlineNav = drawer?.querySelector(".article-outline");
+        const trigger = drawer?.querySelector(".article-outline-trigger");
         const triggerIcon = drawer?.querySelector(".article-outline-trigger__icon");
         const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
         const links = Array.from(document.querySelectorAll(".article-outline a[href^='#']"));
+        const storageKey = "article-outline-open";
 
-        if (!drawer || !outlineNav || !headings.length || !links.length) return;
+        if (!shell || !drawer || !outlineNav || !trigger || !headings.length || !links.length) return;
 
-        const syncDrawerIcon = () => {
-          if (!triggerIcon) return;
-          triggerIcon.textContent = drawer.open ? "−" : "+";
+        const syncDrawerState = () => {
+          if (triggerIcon) {
+            triggerIcon.textContent = drawer.open ? "−" : "+";
+          }
+
+          shell.classList.toggle("article-shell--toc-expanded", drawer.open);
+          shell.classList.toggle("article-shell--toc-collapsed", !drawer.open);
+
+          try {
+            localStorage.setItem(storageKey, drawer.open ? "1" : "0");
+          } catch {}
         };
 
         const itemMap = new Map(
@@ -302,6 +313,7 @@
             const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
             const isCurrent = targetId === id;
             const isParentActive = Boolean(parentId && targetId === parentId && targetId !== id);
+
             link.toggleAttribute("aria-current", isCurrent);
             link.classList.toggle("is-current", isCurrent);
             link.classList.toggle("is-parent-active", isParentActive);
@@ -355,8 +367,32 @@
           window.requestAnimationFrame(updateOutline);
         };
 
-        syncDrawerIcon();
-        drawer.addEventListener("toggle", syncDrawerIcon);
+        try {
+          drawer.open = localStorage.getItem(storageKey) === "1";
+        } catch {
+          drawer.open = false;
+        }
+
+        syncDrawerState();
+        drawer.addEventListener("toggle", syncDrawerState);
+
+        document.addEventListener("click", (event) => {
+          if (!drawer.open) return;
+          const target = event.target;
+          if (!(target instanceof Node)) return;
+          if (drawer.contains(target)) return;
+          drawer.open = false;
+          syncDrawerState();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && drawer.open) {
+            drawer.open = false;
+            syncDrawerState();
+            trigger.focus();
+          }
+        });
+
         window.addEventListener("scroll", requestUpdate, { passive: true });
         window.addEventListener("resize", requestUpdate);
         window.addEventListener("hashchange", requestUpdate);

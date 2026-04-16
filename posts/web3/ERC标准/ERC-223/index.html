@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.CKGpImX1.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☽</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <div class="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <p class="eyebrow">2026/4/16</p> <h1>ERC-223</h1> <p class="lead"># ERC-223: 防误转改进标准 (Token Fallback Standard) &gt; **一句话总结**：ERC-223 是以太坊主网上极早期的 ERC-20 改进提案，核心旨在通过强制性“接收钩子（Fallback）”机制，解决 ERC-20 代币极其容易被误转入不支持</p>  <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/ERC标准/ERC-223.md</p> </header> <div class="article-main"> <div class="article-content"><h1>ERC-223: 防误转改进标准 (Token Fallback Standard)</h1><blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.CwqdxmBw.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☽</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <p class="eyebrow">2026/4/16</p> <h1>ERC-223</h1> <p class="lead"># ERC-223: 防误转改进标准 (Token Fallback Standard) &gt; **一句话总结**：ERC-223 是以太坊主网上极早期的 ERC-20 改进提案，核心旨在通过强制性“接收钩子（Fallback）”机制，解决 ERC-20 代币极其容易被误转入不支持</p>  <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/ERC标准/ERC-223.md</p> </header> <div class="article-main"> <div class="article-content"><h1>ERC-223: 防误转改进标准 (Token Fallback Standard)</h1><blockquote>
 <p><strong>一句话总结</strong>：ERC-223 是以太坊主网上极早期的 ERC-20 改进提案，核心旨在通过强制性“接收钩子（Fallback）”机制，解决 ERC-20 代币极其容易被误转入不支持该代币的死账合约中而导致永久丢失的痛点。</p>
 </blockquote>
 <h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><blockquote>
@@ -160,17 +160,28 @@ function isContract(address _addr) private view returns (bool is_contract) {
       })();
     </script> </body> </html>  <script>
       (() => {
+        const shell = document.getElementById("article-shell");
         const drawer = document.getElementById("article-outline-drawer");
         const outlineNav = drawer?.querySelector(".article-outline");
+        const trigger = drawer?.querySelector(".article-outline-trigger");
         const triggerIcon = drawer?.querySelector(".article-outline-trigger__icon");
         const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
         const links = Array.from(document.querySelectorAll(".article-outline a[href^='#']"));
+        const storageKey = "article-outline-open";
 
-        if (!drawer || !outlineNav || !headings.length || !links.length) return;
+        if (!shell || !drawer || !outlineNav || !trigger || !headings.length || !links.length) return;
 
-        const syncDrawerIcon = () => {
-          if (!triggerIcon) return;
-          triggerIcon.textContent = drawer.open ? "−" : "+";
+        const syncDrawerState = () => {
+          if (triggerIcon) {
+            triggerIcon.textContent = drawer.open ? "−" : "+";
+          }
+
+          shell.classList.toggle("article-shell--toc-expanded", drawer.open);
+          shell.classList.toggle("article-shell--toc-collapsed", !drawer.open);
+
+          try {
+            localStorage.setItem(storageKey, drawer.open ? "1" : "0");
+          } catch {}
         };
 
         const itemMap = new Map(
@@ -205,6 +216,7 @@ function isContract(address _addr) private view returns (bool is_contract) {
             const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
             const isCurrent = targetId === id;
             const isParentActive = Boolean(parentId && targetId === parentId && targetId !== id);
+
             link.toggleAttribute("aria-current", isCurrent);
             link.classList.toggle("is-current", isCurrent);
             link.classList.toggle("is-parent-active", isParentActive);
@@ -258,8 +270,32 @@ function isContract(address _addr) private view returns (bool is_contract) {
           window.requestAnimationFrame(updateOutline);
         };
 
-        syncDrawerIcon();
-        drawer.addEventListener("toggle", syncDrawerIcon);
+        try {
+          drawer.open = localStorage.getItem(storageKey) === "1";
+        } catch {
+          drawer.open = false;
+        }
+
+        syncDrawerState();
+        drawer.addEventListener("toggle", syncDrawerState);
+
+        document.addEventListener("click", (event) => {
+          if (!drawer.open) return;
+          const target = event.target;
+          if (!(target instanceof Node)) return;
+          if (drawer.contains(target)) return;
+          drawer.open = false;
+          syncDrawerState();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && drawer.open) {
+            drawer.open = false;
+            syncDrawerState();
+            trigger.focus();
+          }
+        });
+
         window.addEventListener("scroll", requestUpdate, { passive: true });
         window.addEventListener("resize", requestUpdate);
         window.addEventListener("hashchange", requestUpdate);
