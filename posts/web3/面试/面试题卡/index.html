@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.Dd8DrOW1.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☽</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">面试题卡</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  </div> <div class="article-meta-row"> <span>2026/4/16</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/面试/面试题卡.md</p> </header> <div class="article-main"> <div class="article-content"><p>这份文档用于集中存放 Web3 安全面试题卡。格式尽量固定，方便后续持续追加：</p>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BBbmEVTx.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☽</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">面试题卡</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">面试</span>  </div> <div class="article-meta-row"> <span>2026/4/16</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/面试/面试题卡.md</p> </header> <div class="article-main"> <div class="article-content"><p>这份文档用于集中存放 Web3 安全面试题卡。格式尽量固定，方便后续持续追加：</p>
 <ul>
 <li><code>问题</code>：面试官可能的问法</li>
 <li><code>短答</code>：30 秒版本</li>
@@ -144,7 +144,44 @@
 <li>风险是如果新的 implementation 没有正确保留升级接口或校验逻辑，proxy 可能还能转发，但系统已经无法继续升级，甚至直接变砖。</li>
 </ul>
 <hr>
-<h3 id="section-9">题卡 8：EIP-1967 为什么能降低 storage collision 风险？</h3><p><strong>问题</strong></p>
+<h3 id="section-9">题卡 8：为什么可升级代理不能靠 <code>constructor</code> 初始化，而必须用 <code>initialize</code>？</h3><p><strong>问题</strong></p>
+<ul>
+<li>可升级代理里为什么不能把关键状态写在 logic contract 的 <code>constructor</code> 里？</li>
+<li>为什么一定要通过 proxy 去调用 <code>initialize</code>？还要防什么额外风险？</li>
+</ul>
+<p><strong>短答</strong></p>
+<ul>
+<li>代理模式的核心是<strong>逻辑与状态分离</strong>：logic 存代码，proxy 存状态。</li>
+<li><code>constructor</code> 只会在 implementation 自己部署时执行，写入的是 implementation 自己的 storage，不会初始化 proxy 的 storage。</li>
+<li>所以必须通过 proxy 用 <code>delegatecall</code> 执行 <code>initialize</code>，把状态写进 proxy 上下文；同时还要防止 implementation 自身被人直接调用初始化并接管。</li>
+</ul>
+<p><strong>展开</strong></p>
+<ul>
+<li>这题要先抓住代理模式的本质：</li>
+<li>proxy 持有状态</li>
+<li>implementation 提供逻辑</li>
+<li>用户平时交互的不是 implementation，而是 proxy</li>
+<li>关键点在 <code>delegatecall</code>：proxy 调 implementation 代码时，执行环境仍然是 proxy，所以 storage 写入落在 proxy 上</li>
+<li>这也解释了为什么 <code>constructor</code> 不适合做可升级状态初始化：</li>
+<li><code>constructor</code> 只在 implementation 部署那一刻跑一次</li>
+<li>当时还没有通过 proxy 的 <code>delegatecall</code> 上下文</li>
+<li>因此它改到的是 implementation 自己的 storage，不是 proxy 的 storage</li>
+<li>结果就是：logic 看起来“初始化过了”，但真正承载业务状态的 proxy 其实还是未初始化状态</li>
+<li>正确做法是提供 <code>initialize</code> / <code>reinitializer</code> 这类外部初始化入口，再由 proxy 去调用</li>
+<li>这样代码虽然在 implementation 里，但状态写入发生在 proxy 的 storage，上下文才是对的</li>
+<li>这里还有第二层安全点：</li>
+<li>如果 implementation 自身没有被禁用初始化，攻击者可能直接调用 implementation 的 <code>initialize</code></li>
+<li>一旦把 owner / admin / upgrader 之类权限变量初始化到 implementation 自己名下，就可能为后续攻击链打开入口，尤其在 UUPS 场景里风险更高</li>
+<li>所以工程上通常要同时做两件事：</li>
+<li>通过 proxy 调用初始化函数，确保业务状态落在 proxy</li>
+<li>在 implementation 构造阶段调用 <code>_disableInitializers()</code>，防止实现合约本体被单独初始化</li>
+<li>面试里更好的纠偏说法是：</li>
+<li>storage collision 讨论的是“布局冲突”</li>
+<li>初始化问题讨论的是“状态写入发生在哪个上下文”</li>
+<li>两者有关，但不是一回事</li>
+</ul>
+<hr>
+<h3 id="section-10">题卡 9：EIP-1967 为什么能降低 storage collision 风险？</h3><p><strong>问题</strong></p>
 <ul>
 <li>EIP-1967 解决了什么问题？为什么它常和代理模式一起被问？</li>
 </ul>
@@ -163,7 +200,7 @@
 <li>所以它不是“从根本上消灭所有碰撞”，而是通过标准化把高风险冲突面大幅缩小。</li>
 </ul>
 <hr>
-<h3 id="section-10">题卡 9：为什么高 TVL 协议的 Proxy Admin 不应该是 EOA？</h3><p><strong>问题</strong></p>
+<h3 id="section-11">题卡 10：为什么高 TVL 协议的 Proxy Admin 不应该是 EOA？</h3><p><strong>问题</strong></p>
 <ul>
 <li>一个 DeFi 协议为什么不能让单个 EOA 直接掌控升级权限？</li>
 </ul>
@@ -182,7 +219,7 @@
 <li>所以成熟做法通常是 <code>Proxy Admin + Multisig/DAO + Timelock</code> 组合，而不是把希望押在一个人身上。</li>
 </ul>
 <hr>
-<h3 id="section-11">题卡 10：如果面试官让我 90 秒解释钻石代理，我该怎么答？</h3><p><strong>问题</strong></p>
+<h3 id="section-12">题卡 11：如果面试官让我 90 秒解释钻石代理，我该怎么答？</h3><p><strong>问题</strong></p>
 <ul>
 <li>什么是 Diamond Proxy？什么时候会考虑它？</li>
 </ul>
@@ -201,7 +238,7 @@
 <li>面试里如果被追问，你可以补一句：它本质上是在代理模式上继续做函数级路由和模块化拆分。</li>
 </ul>
 <hr>
-<h2 id="section-12">Day 2：调用上下文、Gas 与签名授权</h2><h3 id="section-13">题卡 1：<code>call</code>、<code>delegatecall</code>、<code>staticcall</code> 的核心区别是什么？</h3><p><strong>问题</strong></p>
+<h2 id="section-13">Day 2：调用上下文、Gas 与签名授权</h2><h3 id="section-14">题卡 1：<code>call</code>、<code>delegatecall</code>、<code>staticcall</code> 的核心区别是什么？</h3><p><strong>问题</strong></p>
 <ul>
 <li>面试里如果让我快速区分 <code>call</code>、<code>delegatecall</code>、<code>staticcall</code>，我该怎么答？</li>
 </ul>
@@ -219,7 +256,7 @@
 <li>面试里最好不要只背“谁更常用”，而是从 4 个维度讲：</li>
 </ul>
 <hr>
-<h3 id="section-14">题卡 2：<code>call</code> 会怎么影响 storage、<code>msg.sender</code> 和 <code>msg.value</code>？</h3><p><strong>问题</strong></p>
+<h3 id="section-15">题卡 2：<code>call</code> 会怎么影响 storage、<code>msg.sender</code> 和 <code>msg.value</code>？</h3><p><strong>问题</strong></p>
 <ul>
 <li>普通 <code>call</code> 执行时，上下文到底怎么变？</li>
 </ul>
@@ -237,7 +274,7 @@
 <li><code>msg.value</code> 也不是自动沿用上层值，必须由 A 在 <code>call{value: ...}</code> 时显式指定。</li>
 </ul>
 <hr>
-<h3 id="section-15">题卡 3：为什么 <code>delegatecall</code> 会保留原始 <code>msg.sender</code>？</h3><p><strong>问题</strong></p>
+<h3 id="section-16">题卡 3：为什么 <code>delegatecall</code> 会保留原始 <code>msg.sender</code>？</h3><p><strong>问题</strong></p>
 <ul>
 <li>为什么 <code>delegatecall</code> 下 <code>msg.sender</code> 不会变成被调合约地址？</li>
 </ul>
@@ -255,7 +292,7 @@
 <li>但风险也很大，因为一旦逻辑合约里有危险代码，它操作的是 proxy 的状态，不是自己的一块隔离区。</li>
 </ul>
 <hr>
-<h3 id="section-16">题卡 4：为什么 <code>staticcall</code> 写状态会 revert？</h3><p><strong>问题</strong></p>
+<h3 id="section-17">题卡 4：为什么 <code>staticcall</code> 写状态会 revert？</h3><p><strong>问题</strong></p>
 <ul>
 <li><code>staticcall</code> 为什么能保证只读？如果里面调用写状态函数会怎样？</li>
 </ul>
@@ -272,7 +309,7 @@
 <li>这类设计的意义在于：上层调用者可以强制要求“我这次外部读取必须是只读的”，降低意外交互风险。</li>
 </ul>
 <hr>
-<h3 id="section-17">题卡 5：<code>call{value: ...}</code> 的潜在风险与防御是什么？</h3><p><strong>问题</strong></p>
+<h3 id="section-18">题卡 5：<code>call{value: ...}</code> 的潜在风险与防御是什么？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官追问“<code>call</code> 携带 <code>msg.value</code> 转账时，除了重入还有什么风险”，我该怎么答？</li>
 </ul>
@@ -313,7 +350,7 @@
 <li>低级 <code>call</code> 必须检查返回值</li>
 </ul>
 <hr>
-<h3 id="section-18">题卡 6：EIP-150 的 63/64 规则是什么？</h3><p><strong>问题</strong></p>
+<h3 id="section-19">题卡 6：EIP-150 的 63/64 规则是什么？</h3><p><strong>问题</strong></p>
 <ul>
 <li>什么是 63/64 规则？</li>
 </ul>
@@ -340,7 +377,7 @@
 <li>另一个副作用是，深层嵌套调用时 gas 会层层衰减，这让调用深度天然受到软约束，也让 gas griefing 和复杂回调链分析变得更现实。</li>
 </ul>
 <hr>
-<h3 id="section-19">题卡 7：EIP-150 对攻击和防御分别意味着什么？</h3><p><strong>问题</strong></p>
+<h3 id="section-20">题卡 7：EIP-150 对攻击和防御分别意味着什么？</h3><p><strong>问题</strong></p>
 <ul>
 <li>63/64 规则除了是机制题，对安全分析有什么意义？</li>
 </ul>
@@ -362,7 +399,7 @@
 <li>它不是万能防线，但会改变很多边界条件。</li>
 </ul>
 <hr>
-<h3 id="section-20">题卡 8：<code>permit</code> 的完整链路该怎么讲？</h3><p><strong>问题</strong></p>
+<h3 id="section-21">题卡 8：<code>permit</code> 的完整链路该怎么讲？</h3><p><strong>问题</strong></p>
 <ul>
 <li>EIP-2612 <code>permit</code> 到底在做什么？如果面试官让我从头讲一遍，我该怎么答？</li>
 </ul>
@@ -385,7 +422,7 @@
 <li>所以 <code>permit</code> 的本质不是“省一次 approve”这么简单，而是把授权从普通交易改成了“签名 + 提交”的双阶段模型。</li>
 </ul>
 <hr>
-<h3 id="section-21">题卡 9：为什么 <code>permit</code> 必须有 <code>nonce</code> 和 <code>deadline</code>？</h3><p><strong>问题</strong></p>
+<h3 id="section-22">题卡 9：为什么 <code>permit</code> 必须有 <code>nonce</code> 和 <code>deadline</code>？</h3><p><strong>问题</strong></p>
 <ul>
 <li><code>permit</code> 里为什么几乎总会有 <code>nonce</code> 和 <code>deadline</code>？</li>
 </ul>
@@ -404,7 +441,7 @@
 <li>面试里再补一句更完整：它们都不能防止用户主动签给钓鱼消息，但能收缩被利用的窗口和方式。</li>
 </ul>
 <hr>
-<h3 id="section-22">题卡 10：<code>permit</code> 和 EIP-1559 分别最容易被追问什么？</h3><p><strong>问题</strong></p>
+<h3 id="section-23">题卡 10：<code>permit</code> 和 EIP-1559 分别最容易被追问什么？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果 Day 2 最后被追问到 <code>permit</code> 风险或 EIP-1559 基础，我该怎么稳住？</li>
 </ul>
@@ -427,7 +464,7 @@
 <li>如果时间紧，Day 2 优先保住调用语义、EIP-150 和 <code>permit</code>，EIP-1559 作为保底基础题即可。</li>
 </ul>
 <hr>
-<h3 id="section-23">题卡 11：Multicall + <code>delegatecall</code> 为什么会出现“多次存款、只付一次钱”？</h3><p><strong>问题</strong></p>
+<h3 id="section-24">题卡 11：Multicall + <code>delegatecall</code> 为什么会出现“多次存款、只付一次钱”？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官给你一个 Multicall 例子，问为什么循环里能多次 deposit，却只进来一次 ETH，你怎么解释？</li>
 </ul>
@@ -467,7 +504,7 @@
 <li>标准防御：禁止多重传递 <code>msg.value</code>，或把 ETH 先转成 WETH / 内部 shares 再批量处理</li>
 </ul>
 <hr>
-<h2 id="section-24">Day 3：重入、UTXO vs Account、Slither</h2><h3 id="section-25">题卡 1：如果不用 DeFi 术语，怎么重新定义重入？</h3><p><strong>问题</strong></p>
+<h2 id="section-25">Day 3：重入、UTXO vs Account、Slither</h2><h3 id="section-26">题卡 1：如果不用 DeFi 术语，怎么重新定义重入？</h3><p><strong>问题</strong></p>
 <ul>
 <li>不提 AMM、借贷、提款，单从程序与状态机角度看，重入到底是什么？</li>
 </ul>
@@ -484,7 +521,7 @@
 <li>一旦关键状态还没更新完，或者某个资源还没被正式扣减，新的调用就可能读到旧状态、重复消费同一资源，或者触发不该通过的校验。</li>
 </ul>
 <hr>
-<h3 id="section-26">题卡 4：什么是跨函数重入？</h3><p><strong>问题</strong></p>
+<h3 id="section-27">题卡 4：什么是跨函数重入？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果不是重进同一个函数，也算重入吗？</li>
 </ul>
@@ -501,7 +538,7 @@
 <li>面试里最好强调：只要多个入口共享同一临界状态，就要按“一个状态机”来防，而不是按“一个函数一个函数”来防。</li>
 </ul>
 <hr>
-<h3 id="section-27">题卡 6：什么是只读重入，为什么“只读”也危险？</h3><p><strong>问题</strong></p>
+<h3 id="section-28">题卡 6：什么是只读重入，为什么“只读”也危险？</h3><p><strong>问题</strong></p>
 <ul>
 <li>没有直接写坏状态，为什么只读重入仍然能造成经济损失？</li>
 </ul>
@@ -519,7 +556,7 @@
 <li>所以只读重入的本质是：状态快照失真被外部系统消费，而不是传统意义上的重复扣款。</li>
 </ul>
 <hr>
-<h3 id="section-28">题卡 7：UTXO 和 Account 模型的核心差异是什么？</h3><p><strong>问题</strong></p>
+<h3 id="section-29">题卡 7：UTXO 和 Account 模型的核心差异是什么？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官让我从底层模型上比较 UTXO 和 Account，我该怎么答？</li>
 </ul>
@@ -577,7 +614,7 @@
 <li>代价则是全局状态竞争和时序敏感性更强</li>
 </ul>
 <hr>
-<h3 id="section-29">题卡 8：为什么 Account 模型更容易产生 MEV 和临界资源竞争？</h3><p>MEV 现在通常指 Maximal Extractable Value，最大可提取价值。</p>
+<h3 id="section-30">题卡 8：为什么 Account 模型更容易产生 MEV 和临界资源竞争？</h3><p>MEV 现在通常指 Maximal Extractable Value，最大可提取价值。</p>
 <p>简单说，就是：区块生产者或能影响交易排序的人，通过控制一笔交易：</p>
 <ul>
 <li>先后顺序</li>
@@ -604,7 +641,7 @@
 <li>谁先访问、谁插队、谁夹在中间，都会改变最终收益分配。</li>
 </ul>
 <hr>
-<h3 id="section-30">题卡 9：Slither 到底在做什么？为什么它不是“神奇扫漏洞”？</h3><p><strong>问题</strong></p>
+<h3 id="section-31">题卡 9：Slither 到底在做什么？为什么它不是“神奇扫漏洞”？</h3><p><strong>问题</strong></p>
 <ul>
 <li>Slither 这种静态分析工具，底层到底在干嘛？</li>
 </ul>
@@ -626,7 +663,7 @@
 <li>它特别适合做“第一轮筛查”和“代码味道定位”，但最后仍需要人结合业务语义判断是否真能被利用。</li>
 </ul>
 <hr>
-<h3 id="section-31">题卡 10：为什么静态分析常常会误报，面试里该怎么答？</h3><p><strong>问题</strong></p>
+<h3 id="section-32">题卡 10：为什么静态分析常常会误报，面试里该怎么答？</h3><p><strong>问题</strong></p>
 <ul>
 <li>工具都报出来了，为什么还说不一定真 exploitable？</li>
 </ul>
@@ -650,7 +687,7 @@
 <li>面试里如果你能把“工具发现”与“人工验证”区分开，通常会显得比只会跑命令更专业。</li>
 </ul>
 <hr>
-<h3 id="section-32">题卡 11：静态分析在 AST/CFG 和跨合约污点分析上的边界是什么？</h3><p><strong>问题</strong></p>
+<h3 id="section-33">题卡 11：静态分析在 AST/CFG 和跨合约污点分析上的边界是什么？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官追问“你说 Slither 有边界，那具体边界在哪”，该怎么答？</li>
 </ul>
@@ -684,7 +721,7 @@
 <li>先静态高召回，再动态证实，再人工定性</li>
 </ul>
 <hr>
-<h2 id="section-33">Day 4：AMM、TWAP、Flash Loan</h2><h3 id="section-34">题卡 1：Uniswap V2 的核心做市逻辑是什么？</h3><p><strong>问题</strong></p>
+<h2 id="section-34">Day 4：AMM、TWAP、Flash Loan</h2><h3 id="section-35">题卡 1：Uniswap V2 的核心做市逻辑是什么？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官让我用一句话讲 Uniswap V2，我该怎么答？</li>
 </ul>
@@ -704,7 +741,7 @@
 <li>所以 V2 的本质是：价格不是预先喂给池子的，而是由储备比例和交易本身共同决定。</li>
 </ul>
 <hr>
-<h3 id="section-35">题卡 4：Uniswap V3 的 Tick 和区间流动性是什么？</h3><p><strong>问题</strong></p>
+<h3 id="section-36">题卡 4：Uniswap V3 的 Tick 和区间流动性是什么？</h3><p><strong>问题</strong></p>
 <ul>
 <li>V3 比 V2 高级在哪？Tick 和区间流动性要怎么讲？</li>
 </ul>
@@ -725,7 +762,7 @@
 <li>所以 V3 的本质是：牺牲简单性，换取更高资本效率和更精细的流动性管理。</li>
 </ul>
 <hr>
-<h3 id="section-36">题卡 5：为什么说 V3 的资本效率更高，但风险也更复杂？</h3><p><strong>问题</strong></p>
+<h3 id="section-37">题卡 5：为什么说 V3 的资本效率更高，但风险也更复杂？</h3><p><strong>问题</strong></p>
 <ul>
 <li>V3 为什么被说成“更高效但更难管”？</li>
 </ul>
@@ -745,7 +782,7 @@
 <li>所以面试里可以说：V3 让 LP 更像策略交易员，而不只是被动存钱的人。</li>
 </ul>
 <hr>
-<h3 id="section-37">题卡 6：TWAP 是什么，为什么比 Spot Price 更难操纵？</h3><p><strong>问题</strong></p>
+<h3 id="section-38">题卡 6：TWAP 是什么，为什么比 Spot Price 更难操纵？</h3><p><strong>问题</strong></p>
 <ul>
 <li>什么是 TWAP？为什么大家常说它比现价更安全？</li>
 </ul>
@@ -765,7 +802,7 @@
 <li>这正是它的工程价值所在。</li>
 </ul>
 <hr>
-<h3 id="section-38">题卡 7：为什么 TWAP 不是万能的？评估它还要看什么？</h3><p><strong>问题</strong></p>
+<h3 id="section-39">题卡 7：为什么 TWAP 不是万能的？评估它还要看什么？</h3><p><strong>问题</strong></p>
 <ul>
 <li>面试里如果被追问“TWAP 也会被操纵吗”，我该怎么答？</li>
 </ul>
@@ -787,7 +824,7 @@
 <li>TWAP 解决的是“瞬时价格可被低成本拉歪”的问题，但面对低流动性池或高收益攻击目标时，仍然可能失守。</li>
 </ul>
 <hr>
-<h3 id="section-39">题卡 8：Flash Loan 到底是什么，为什么它不是漏洞本身？</h3><p><strong>问题</strong></p>
+<h3 id="section-40">题卡 8：Flash Loan 到底是什么，为什么它不是漏洞本身？</h3><p><strong>问题</strong></p>
 <ul>
 <li>闪电贷到底是什么？为什么很多人说“闪电贷不是漏洞，只是放大器”？</li>
 </ul>
@@ -807,7 +844,7 @@
 <li>所以它是资金放大器、攻击加速器，不是根因。</li>
 </ul>
 <hr>
-<h3 id="section-40">题卡 9：Callback 在闪电贷攻击链里扮演什么角色？</h3><p><strong>问题</strong></p>
+<h3 id="section-41">题卡 9：Callback 在闪电贷攻击链里扮演什么角色？</h3><p><strong>问题</strong></p>
 <ul>
 <li>为什么面试里老要问 callback？它和攻击到底是什么关系？</li>
 </ul>
@@ -828,7 +865,7 @@
 <li>面试里如果你能把 callback 说成“资金真正进入攻击链的起点”，会比只说“回调函数很重要”更到位。</li>
 </ul>
 <hr>
-<h3 id="section-41">题卡 10：一个典型的价格操纵 / 闪电贷攻击链该怎么讲？</h3><p><strong>问题</strong></p>
+<h3 id="section-42">题卡 10：一个典型的价格操纵 / 闪电贷攻击链该怎么讲？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果让我系统讲一遍价格操纵类攻击链，我该怎么有条理地回答？</li>
 </ul>
@@ -853,7 +890,7 @@
 <li>限制单区块内敏感操作</li>
 </ul>
 <hr>
-<h2 id="section-42">Day 5：Lending、Liquidation、Mock Interview</h2><h3 id="section-43">题卡 1：借贷协议的基本结构是什么？</h3><p><strong>问题</strong></p>
+<h2 id="section-43">Day 5：Lending、Liquidation、Mock Interview</h2><h3 id="section-44">题卡 1：借贷协议的基本结构是什么？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果让我抽象地讲 DeFi 借贷协议，它的核心结构是什么？</li>
 </ul>
@@ -879,7 +916,7 @@
 <li>所以你可以把借贷协议看成“链上的自动抵押借贷银行”，但这个银行没有人工风控，全靠代码、参数和外部价格源维持偿付能力。</li>
 </ul>
 <hr>
-<h3 id="section-44">题卡 2：为什么借贷协议需要 <code>cToken</code> / <code>aToken</code> 这类存款凭证？</h3><p><strong>问题</strong></p>
+<h3 id="section-45">题卡 2：为什么借贷协议需要 <code>cToken</code> / <code>aToken</code> 这类存款凭证？</h3><p><strong>问题</strong></p>
 <ul>
 <li>存款凭证到底是干什么的？为什么不能只记一个余额？</li>
 </ul>
@@ -901,7 +938,7 @@
 <li>所以不要把它们理解成“奖励积分”，更准确地说，它们是“生息头寸凭证”。</li>
 </ul>
 <hr>
-<h3 id="section-45">题卡 3：<code>aToken</code> 和 <code>cToken</code> 的高层差异是什么？</h3><p><strong>问题</strong></p>
+<h3 id="section-46">题卡 3：<code>aToken</code> 和 <code>cToken</code> 的高层差异是什么？</h3><p><strong>问题</strong></p>
 <ul>
 <li>Aave 的 <code>aToken</code> 和 Compound 的 <code>cToken</code> 都是存款凭证，但差别在哪？</li>
 </ul>
@@ -921,7 +958,7 @@
 <li>面试里如果你能说出“一个偏余额模型，一个偏兑换率模型”，通常就够稳了。</li>
 </ul>
 <hr>
-<h3 id="section-46">题卡 4：借款利息为什么必须持续累计？协议是怎么理解这件事的？</h3><p><strong>问题</strong></p>
+<h3 id="section-47">题卡 4：借款利息为什么必须持续累计？协议是怎么理解这件事的？</h3><p><strong>问题</strong></p>
 <ul>
 <li>借贷协议里的利息不是每秒真实转账，那它到底怎么累计？</li>
 </ul>
@@ -944,7 +981,7 @@
 <li>这也是为什么很多借贷协议的核心风险并不只是权限漏洞，而是利率、索引、汇率、精度和状态同步问题。</li>
 </ul>
 <hr>
-<h3 id="section-47">题卡 5：<code>LTV</code>、<code>liquidation threshold</code>、<code>close factor</code>、<code>liquidation bonus</code> 分别是什么？</h3><p><strong>问题</strong></p>
+<h3 id="section-48">题卡 5：<code>LTV</code>、<code>liquidation threshold</code>、<code>close factor</code>、<code>liquidation bonus</code> 分别是什么？</h3><p><strong>问题</strong></p>
 <ul>
 <li>这些清算参数老是混在一起，它们到底各管什么？</li>
 </ul>
@@ -969,7 +1006,7 @@
 <li>面试里如果把这几个概念混了，通常会被继续追问。</li>
 </ul>
 <hr>
-<h3 id="section-48">题卡 6：健康因子 / 可清算条件应该怎么理解？</h3><p><strong>问题</strong></p>
+<h3 id="section-49">题卡 6：健康因子 / 可清算条件应该怎么理解？</h3><p><strong>问题</strong></p>
 <ul>
 <li>健康因子到底是什么？为什么不能只背一个公式？</li>
 </ul>
@@ -992,7 +1029,7 @@
 <li>所以健康因子不是“一个神秘分数”，而是风险参数、价格、债务和会计状态共同作用下的结果。</li>
 </ul>
 <hr>
-<h3 id="section-49">题卡 7：为什么清算不是“惩罚用户”，而是协议自救机制？</h3><p><strong>问题</strong></p>
+<h3 id="section-50">题卡 7：为什么清算不是“惩罚用户”，而是协议自救机制？</h3><p><strong>问题</strong></p>
 <ul>
 <li>为什么借贷协议必须有清算？它的本质作用是什么？</li>
 </ul>
@@ -1015,7 +1052,7 @@
 <li>所以更准确的说法是：清算是系统级风险处置机制，而不是“惩罚不小心的用户”。</li>
 </ul>
 <hr>
-<h3 id="section-50">题卡 8：为什么借贷协议高度依赖预言机，而预言机又会成为核心风险？</h3><p><strong>问题</strong></p>
+<h3 id="section-51">题卡 8：为什么借贷协议高度依赖预言机，而预言机又会成为核心风险？</h3><p><strong>问题</strong></p>
 <ul>
 <li>借贷协议为什么离不开预言机？它又为什么这么危险？</li>
 </ul>
@@ -1042,7 +1079,7 @@
 <li>所以对借贷协议来说，预言机既是基础设施，也是最危险的单点之一。</li>
 </ul>
 <hr>
-<h3 id="section-51">题卡 9：为什么一个账户看起来安全，却可能突然变得可清算？</h3><p><strong>问题</strong></p>
+<h3 id="section-52">题卡 9：为什么一个账户看起来安全，却可能突然变得可清算？</h3><p><strong>问题</strong></p>
 <ul>
 <li>用户前一秒还没事，为什么下一秒就被清算了？</li>
 </ul>
@@ -1066,7 +1103,7 @@
 <li>所以面试里可以把这类问题概括为：借贷安全性是动态状态，不是一次性判断。</li>
 </ul>
 <hr>
-<h3 id="section-52">题卡 10：Aave 和 Compound 的面试级差异该怎么讲？以及如何串成一轮追问？</h3><p><strong>问题</strong></p>
+<h3 id="section-53">题卡 10：Aave 和 Compound 的面试级差异该怎么讲？以及如何串成一轮追问？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官追问 Aave 和 Compound 的差异，或者把 Lending 和前几天题目串起来，我该怎么稳住？</li>
 </ul>
@@ -1094,7 +1131,7 @@
 <li>这样整轮回答会显得不是四个孤立知识点，而是一套能串起来的安全理解框架。</li>
 </ul>
 <hr>
-<h2 id="section-53">Day 6-7：Euler Finance 漏洞复现与 PoC</h2><h3 id="section-54">题卡 1：Euler Finance 攻击全貌——3 分钟怎么讲清？</h3><p><strong>问题</strong></p>
+<h2 id="section-54">Day 6-7：Euler Finance 漏洞复现与 PoC</h2><h3 id="section-55">题卡 1：Euler Finance 攻击全貌——3 分钟怎么讲清？</h3><p><strong>问题</strong></p>
 <ul>
 <li>面试官让你用 3 分钟讲清 Euler Finance 攻击链，你怎么组织？</li>
 </ul>
@@ -1117,7 +1154,7 @@
 <li><strong>教训</strong>：协议不是在单个权限点上失守，而是在系统性风险边界上失守。安全规则必须被所有入口统一执行。</li>
 </ul>
 <hr>
-<h3 id="section-55">题卡 3：为什么攻击者主动把自己推到可清算状态？</h3><p><strong>问题</strong></p>
+<h3 id="section-56">题卡 3：为什么攻击者主动把自己推到可清算状态？</h3><p><strong>问题</strong></p>
 <ul>
 <li>正常用户都想远离清算，攻击者为什么反其道而行？</li>
 </ul>
@@ -1138,7 +1175,7 @@
 </li>
 </ul>
 <hr>
-<h3 id="section-56">题卡 5：PoC 怎么拆、怎么验证、怎么写断言？</h3><p><strong>问题</strong></p>
+<h3 id="section-57">题卡 5：PoC 怎么拆、怎么验证、怎么写断言？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果要写一个高质量的 Euler PoC，应该怎么组织，关键断言有哪些？</li>
 </ul>
@@ -1163,7 +1200,7 @@
 <li>断言的面试价值：说明你不是抄 PoC，而是理解状态机如何失守。</li>
 </ul>
 <hr>
-<h3 id="section-57">题卡 7：如果我是审计员，如何早期发现这类漏洞？</h3><p><strong>问题</strong></p>
+<h3 id="section-58">题卡 7：如果我是审计员，如何早期发现这类漏洞？</h3><p><strong>问题</strong></p>
 <ul>
 <li>面试官追问&quot;你会怎么在审计中发现类似问题&quot;，怎么回答？</li>
 </ul>
@@ -1185,7 +1222,7 @@
 <li><strong>修复思路</strong>：在所有改变头寸风险的路径末尾统一加入健康检查，或提取成 modifier/internal function 确保不遗漏。</li>
 </ul>
 <hr>
-<h3 id="section-58">题卡 8：<code>checkLiquidity()</code> / <code>deferLiquidityStatus</code> 为什么是这次事故真正的风控闸门？</h3><p><strong>问题</strong></p>
+<h3 id="section-59">题卡 8：<code>checkLiquidity()</code> / <code>deferLiquidityStatus</code> 为什么是这次事故真正的风控闸门？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官继续往源码层追，<code>checkLiquidity()</code> 到底为什么这么关键？</li>
 </ul>
@@ -1207,7 +1244,7 @@
 <li>等于让协议接受了一个本不该暂时存在的危险状态组合。</li>
 </ul>
 <hr>
-<h3 id="section-59">题卡 9：为什么 PoC 里必须拆成 <code>violator</code> 和 <code>liquidator</code> 两个角色？</h3><p><strong>问题</strong></p>
+<h3 id="section-60">题卡 9：为什么 PoC 里必须拆成 <code>violator</code> 和 <code>liquidator</code> 两个角色？</h3><p><strong>问题</strong></p>
 <ul>
 <li>为什么不能让攻击者自己清算自己？PoC 里拆双角色只是写法习惯吗？</li>
 </ul>
@@ -1226,7 +1263,7 @@
 <li>所以这道题的加分点在于：你不仅知道攻击链，还知道协议本身不允许哪种偷懒实现。</li>
 </ul>
 <hr>
-<h3 id="section-60">题卡 10：为什么既做 Foundry fork test，也做 Tenderly 广播调试？</h3><p><strong>问题</strong></p>
+<h3 id="section-61">题卡 10：为什么既做 Foundry fork test，也做 Tenderly 广播调试？</h3><p><strong>问题</strong></p>
 <ul>
 <li>既然本地 fork test 已经能跑通，为什么还要去 Tenderly 广播？</li>
 </ul>
@@ -1250,7 +1287,7 @@
 <li>这个细节很工程化，面试里说出来会明显提高可信度。</li>
 </ul>
 <hr>
-<h2 id="section-61">Day 8-9：Sentiment 2023-04-04 基于 Balancer read-only reentrancy 的攻击复现</h2><h3 id="section-62">题卡 1：这个案例高层上到底发生了什么？</h3><p><strong>问题</strong></p>
+<h2 id="section-62">Day 8-9：Sentiment 2023-04-04 基于 Balancer read-only reentrancy 的攻击复现</h2><h3 id="section-63">题卡 1：这个案例高层上到底发生了什么？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果让我先用高层语言讲这个案例，我该怎么开口？</li>
 </ul>
@@ -1271,7 +1308,7 @@
 <li>所以这个案例最值得记住的不是某个函数名，而是“只读不等于安全，读错快照也能造成真钱损失”。</li>
 </ul>
 <hr>
-<h3 id="section-63">题卡 2：为什么这是“只读重入”，而不是普通重入？</h3><p><strong>问题</strong></p>
+<h3 id="section-64">题卡 2：为什么这是“只读重入”，而不是普通重入？</h3><p><strong>问题</strong></p>
 <ul>
 <li>这个案例为什么会被归类成 read-only reentrancy？</li>
 </ul>
@@ -1293,7 +1330,7 @@
 <li>所以 read-only reentrancy 的关键不是“只读函数有副作用”，而是“中间态被下游当成了稳定真相”。</li>
 </ul>
 <hr>
-<h3 id="section-64">题卡 3：Balancer 这边的根因是什么？</h3><p><strong>问题</strong></p>
+<h3 id="section-65">题卡 3：Balancer 这边的根因是什么？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果把上游根因讲清楚，Balancer 这边到底出了什么问题？</li>
 </ul>
@@ -1315,7 +1352,7 @@
 <li>攻击者并不一定要永久篡改这些值，只要能卡在这个窗口里，让下游读到它，就足够了。</li>
 </ul>
 <hr>
-<h3 id="section-65">题卡 4：Sentiment 为什么会中招？</h3><p><strong>问题</strong></p>
+<h3 id="section-66">题卡 4：Sentiment 为什么会中招？</h3><p><strong>问题</strong></p>
 <ul>
 <li>上游池子出了问题，为什么最终亏钱的是 Sentiment？</li>
 </ul>
@@ -1340,7 +1377,7 @@
 <li>这也是为什么 DeFi 组合性风险这么高：一个协议的只读问题，可能变成另一个协议的真金白银损失。</li>
 </ul>
 <hr>
-<h3 id="section-66">题卡 5：这条攻击链应该怎么拆？</h3><p><strong>问题</strong></p>
+<h3 id="section-67">题卡 5：这条攻击链应该怎么拆？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果我要把这个真实攻击讲成一条清晰链路，应该怎么拆？</li>
 </ul>
@@ -1366,7 +1403,7 @@
 <li>你只要把这个数据流讲顺，案例就不会碎。</li>
 </ul>
 <hr>
-<h3 id="section-67">题卡 6：如果要做复现，PoC 应该拆成哪几段？</h3><p><strong>问题</strong></p>
+<h3 id="section-68">题卡 6：如果要做复现，PoC 应该拆成哪几段？</h3><p><strong>问题</strong></p>
 <ul>
 <li>Day 8-9 合并成一个真实案例时，PoC 最稳的拆法是什么？</li>
 </ul>
@@ -1393,7 +1430,7 @@
 <li>信错以后真的亏钱了</li>
 </ul>
 <hr>
-<h3 id="section-68">题卡 7：做这个 PoC 最值得写哪些状态断言？</h3><p><strong>问题</strong></p>
+<h3 id="section-69">题卡 7：做这个 PoC 最值得写哪些状态断言？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果我不想只写“脚本跑通”，那最该断言什么？</li>
 </ul>
@@ -1417,7 +1454,7 @@
 <li>这类断言会让你的 PoC 从“黑盒打通”升级成“白盒解释攻击机理”。</li>
 </ul>
 <hr>
-<h3 id="section-69">题卡 8：这个案例最适合怎么做 3 分钟口述？</h3><p><strong>问题</strong></p>
+<h3 id="section-70">题卡 8：这个案例最适合怎么做 3 分钟口述？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试让我 3 分钟讲完这个案例，最稳的结构是什么？</li>
 </ul>
@@ -1444,7 +1481,7 @@
 <li>有工程教训</li>
 </ul>
 <hr>
-<h3 id="section-70">题卡 9：这个案例最适合提炼出什么工程教训？</h3><p><strong>问题</strong></p>
+<h3 id="section-71">题卡 9：这个案例最适合提炼出什么工程教训？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果不只是讲攻击过程，这个案例最值得沉淀什么工程教训？</li>
 </ul>
@@ -1464,7 +1501,7 @@
 <li>面试里如果能从这里提升到“安全设计不只是权限控制，也包括输入可信度建模”，通常会显得你抽象能力更强。</li>
 </ul>
 <hr>
-<h3 id="section-71">题卡 10：如果只复现一个只读重入真实案例，为什么选 Sentiment？</h3><p><strong>问题</strong></p>
+<h3 id="section-72">题卡 10：如果只复现一个只读重入真实案例，为什么选 Sentiment？</h3><p><strong>问题</strong></p>
 <ul>
 <li>面试官如果问“为什么选这个案例做复现”，怎么回答？</li>
 </ul>
@@ -1488,7 +1525,7 @@
 <li>这会比只讲一个孤立池子 bug 更有说服力。</li>
 </ul>
 <hr>
-<h3 id="section-72">题卡 11：<code>getPrice()</code> 和 <code>borrow()</code> 分别是这条链上的哪两个边界？</h3><p><strong>问题</strong></p>
+<h3 id="section-73">题卡 11：<code>getPrice()</code> 和 <code>borrow()</code> 分别是这条链上的哪两个边界？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果我要把这个案例讲得更像源码审计，而不是复述文章，最该点哪两个函数？</li>
 </ul>
@@ -1512,7 +1549,7 @@
 <li><code>borrow()</code> 是脏数据兑现成真实资金流出的边界</li>
 </ul>
 <hr>
-<h3 id="section-73">题卡 12：为什么 <code>nonReentrant</code> 没挡住这次攻击？</h3><p><strong>问题</strong></p>
+<h3 id="section-74">题卡 12：为什么 <code>nonReentrant</code> 没挡住这次攻击？</h3><p><strong>问题</strong></p>
 <ul>
 <li>Sentiment 不是有 <code>nonReentrant</code> 吗，为什么还是被打穿了？</li>
 </ul>
@@ -1533,7 +1570,7 @@
 <li>所以这次问题的本质不是“本地锁失效”，而是“本地锁根本不覆盖跨协议脏读”。</li>
 </ul>
 <hr>
-<h3 id="section-74">题卡 13：为什么攻击者要走 ETH 退出路径？</h3><p><strong>问题</strong></p>
+<h3 id="section-75">题卡 13：为什么攻击者要走 ETH 退出路径？</h3><p><strong>问题</strong></p>
 <ul>
 <li>为什么案例里会特别强调 <code>exitPool()</code> 走 ETH 退出路径？</li>
 </ul>
@@ -1555,7 +1592,7 @@
 <li>所以你可以把它讲成：ETH 退出路径不是“可有可无的实现细节”，而是把中间态窗口真正暴露给攻击者的执行机制。</li>
 </ul>
 <hr>
-<h3 id="section-75">题卡 14：<code>priceBefore / priceDuring / priceAfter</code> 这组数字到底证明了什么？</h3><p><strong>问题</strong></p>
+<h3 id="section-76">题卡 14：<code>priceBefore / priceDuring / priceAfter</code> 这组数字到底证明了什么？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果我要拿“证据”说服面试官，这三个价格该怎么解释？</li>
 </ul>
@@ -1578,7 +1615,7 @@
 <li>这恰好对应只读重入的本质：窗口短，但足够致命。</li>
 </ul>
 <hr>
-<h3 id="section-76">题卡 15：这类问题的修复思路应该怎么讲？</h3><p><strong>问题</strong></p>
+<h3 id="section-77">题卡 15：这类问题的修复思路应该怎么讲？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官继续追问“那怎么修”，这类案例应该怎么回答才不空？</li>
 </ul>
@@ -1601,7 +1638,7 @@
 <li>上游修的是“别暴露脏快照”</li>
 <li>下游修的是“别在快照可信性未确认前先放真钱”</li>
 </ul>
-<h2 id="section-77">MemeScan 项目小节</h2><h3 id="section-78">题卡 4：<code>MemeScan</code> 这种项目，60 秒版话术应该怎么讲？</h3><p><strong>问题</strong></p>
+<h2 id="section-78">MemeScan 项目小节</h2><h3 id="section-79">题卡 4：<code>MemeScan</code> 这种项目，60 秒版话术应该怎么讲？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官让我快速介绍 <code>MemeScan</code>，最稳的 60 秒结构是什么？</li>
 </ul>
@@ -1623,7 +1660,7 @@
 <li>60 秒版本的关键不是讲全，而是让面试官立刻明白：这不是普通爬虫，而是一个“可验证的安全分析系统”。</li>
 </ul>
 <hr>
-<h3 id="section-79">题卡 5：<code>MemeScan</code> 的 3 分钟版该怎么展开？</h3><p><strong>问题</strong></p>
+<h3 id="section-80">题卡 5：<code>MemeScan</code> 的 3 分钟版该怎么展开？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官追问项目细节，3 分钟版怎么讲最稳？</li>
 </ul>
@@ -1648,7 +1685,7 @@
 <li>这样讲出来，面试官听到的不是“我做了个工具”，而是“我对问题建模、验证路径和工程取舍有清楚理解”。</li>
 </ul>
 <hr>
-<h3 id="section-80">题卡 6：<code>MemeScan</code> 面试时哪些点不要说错？</h3><p><strong>问题</strong></p>
+<h3 id="section-81">题卡 6：<code>MemeScan</code> 面试时哪些点不要说错？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官深挖实现细节，哪些地方最容易一吹就露馅？</li>
 </ul>
@@ -1670,7 +1707,7 @@
 <li>因为这说明你不是在包装概念，而是真的理解当前代码长什么样。</li>
 </ul>
 <hr>
-<h3 id="section-81">题卡 7：<code>MemeScan</code> 有哪些局限适合主动承认？</h3><p><strong>问题</strong></p>
+<h3 id="section-82">题卡 7：<code>MemeScan</code> 有哪些局限适合主动承认？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官问“你最想优化哪块”或“当前还有什么边界”，怎么回答更稳？</li>
 </ul>
@@ -1690,7 +1727,7 @@
 <li>面试里这种回答比“我们已经做得很完整了”更像真实工程师。</li>
 </ul>
 <hr>
-<h3 id="section-82">题卡 7.1：为什么 <code>MemeScan</code> 要单独成一个项目包？</h3><p><strong>问题</strong></p>
+<h3 id="section-83">题卡 7.1：为什么 <code>MemeScan</code> 要单独成一个项目包？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官问“你为什么把 MemeScan 当成单独的项目来讲”，怎么答最稳？</li>
 </ul>
@@ -1715,7 +1752,7 @@
 <li>核心价值不是命中规则，而是证明一个风险是否真的能被复现</li>
 </ul>
 <hr>
-<h2 id="section-83">Uniswap V2 DEX 项目小节</h2><h3 id="section-84">题卡 7.2：为什么 <code>Uniswap V2 DEX</code> 要单独讲实现，而不是只讲原理？</h3><p><strong>问题</strong></p>
+<h2 id="section-84">Uniswap V2 DEX 项目小节</h2><h3 id="section-85">题卡 7.2：为什么 <code>Uniswap V2 DEX</code> 要单独讲实现，而不是只讲原理？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官问“你为什么把 Uniswap V2 DEX 也单独拿出来讲”，该怎么答？</li>
 </ul>
@@ -1740,7 +1777,7 @@
 <li>能讲原理不够，能把原理落成代码才算真正理解</li>
 </ul>
 <hr>
-<h3 id="section-85">题卡 8：<code>Uniswap V2 DEX</code> 这个项目，60 秒到 3 分钟该怎么讲？</h3><p><strong>问题</strong></p>
+<h3 id="section-86">题卡 8：<code>Uniswap V2 DEX</code> 这个项目，60 秒到 3 分钟该怎么讲？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官问我简历里的 <code>Uniswap V2 DEX</code>，我怎么讲才能让它看起来像“我真的做过 AMM”，而不是只背过原理？</li>
 </ul>
@@ -1767,7 +1804,7 @@
 <li><strong>我不是只看过 V2 原理，而是亲手把 AMM 和 LP 机制从概念实现成了可运行的合约逻辑。</strong></li>
 </ul>
 <hr>
-<h3 id="section-86">题卡 9：<code>Uniswap V2 DEX</code> 写进简历，bullet 应该怎么写？</h3><p><strong>问题</strong></p>
+<h3 id="section-87">题卡 9：<code>Uniswap V2 DEX</code> 写进简历，bullet 应该怎么写？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果把 <code>Uniswap V2 DEX</code> 写成一条简历 bullet，怎么写信息密度更高？</li>
 </ul>
@@ -1788,7 +1825,7 @@
 <li>这类 bullet 的价值在于：它不是“看过协议源码”，而是“你用代码把机制做出来了”。</li>
 </ul>
 <hr>
-<h3 id="section-87">题卡 10：如果面试官追问 Uniswap V2 对 FoT 代币为什么不兼容，该怎么答？</h3><p><strong>问题</strong></p>
+<h3 id="section-88">题卡 10：如果面试官追问 Uniswap V2 对 FoT 代币为什么不兼容，该怎么答？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官追问 Uniswap V2 对 Fee-on-Transfer（FoT）代币为什么不兼容，最该抓哪条执行流？</li>
 </ul>
@@ -1815,7 +1852,7 @@
 <li>把 FoT 问题和 EIP-150 的 <code>63/64</code> Gas 转发规则，或和协议手续费概念混为一谈</li>
 </ul>
 <hr>
-<h2 id="section-88">真实面经补位</h2><h3 id="section-89">题卡 1：面对大批量目标，自动化漏扫方案应该怎么设计？</h3><p><strong>问题</strong></p>
+<h2 id="section-89">真实面经补位</h2><h3 id="section-90">题卡 1：面对大批量目标，自动化漏扫方案应该怎么设计？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果让我设计一套面向大批量目标的自动化漏扫方案，怎么答才不会停在“规则匹配”四个字？</li>
 </ul>
@@ -1840,7 +1877,7 @@
 <li>面试里最好主动强调：Slither 这类工具擅长第一轮筛查，但真正值钱的是“筛查 -&gt; 排序 -&gt; 验证 -&gt; 复核”的完整闭环。</li>
 </ul>
 <hr>
-<h3 id="section-90">题卡 2：Front-running 的原理是什么？</h3><p><strong>问题</strong></p>
+<h3 id="section-91">题卡 2：Front-running 的原理是什么？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官直接问 front-running 原理，我怎么答更像懂链上机制？</li>
 </ul>
@@ -1861,7 +1898,7 @@
 <li>所以 front-running 不是孤立现象，它本质上是“公开可观测交易意图 + 排序权可变现”。</li>
 </ul>
 <hr>
-<h3 id="section-91">题卡 3：Solidity 0.8+ 之后，整数溢出还要怎么答？</h3><p><strong>问题</strong></p>
+<h3 id="section-92">题卡 3：Solidity 0.8+ 之后，整数溢出还要怎么答？</h3><p><strong>问题</strong></p>
 <ul>
 <li>现在编译器都自带检查了，面试再问整型溢出，我该怎么回答才不显得过时？</li>
 </ul>
@@ -1882,7 +1919,7 @@
 <li>这会比单纯背 SafeMath 或背版本差异更到位。</li>
 </ul>
 <hr>
-<h2 id="section-92">本轮模拟面试补强专题</h2><h3 id="section-93">题卡 1：为什么 Searcher 不需要依赖 Event，也能发现可清算状态或套利空间？</h3><p><strong>问题</strong></p>
+<h2 id="section-93">本轮模拟面试补强专题</h2><h3 id="section-94">题卡 1：为什么 Searcher 不需要依赖 Event，也能发现可清算状态或套利空间？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果链上事件还没发出来，Searcher 为什么还是能提前发现机会？</li>
 </ul>
@@ -1908,7 +1945,7 @@
 <li>真正的分界线是：这笔待打包交易是不是已经暴露在可观察 orderflow 里，以及别人能不能模拟出你的状态变化。</li>
 </ul>
 <hr>
-<h3 id="section-94">题卡 2：MEV 到底是什么？</h3><p><strong>问题</strong></p>
+<h3 id="section-95">题卡 2：MEV 到底是什么？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官先问一句“MEV 是什么”，我该怎么答得既不空泛又不跑偏？</li>
 </ul>
@@ -1936,7 +1973,7 @@
 <li><strong>MEV 本质上是排序权和状态先后关系的货币化。</strong></li>
 </ul>
 <hr>
-<h3 id="section-95">题卡 3：Front-running、Back-running、Sandwich 到底怎么区分？</h3><p><strong>问题</strong></p>
+<h3 id="section-96">题卡 3：Front-running、Back-running、Sandwich 到底怎么区分？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官不满足于“抢跑”两个字，我该怎么把三类典型 MEV 说清？</li>
 </ul>
@@ -1964,7 +2001,7 @@
 <li>更像专业回答的说法是：MEV 的核心是排序权可变现，而 front-run / back-run / sandwich 是排序权变现的三种常见形态。</li>
 </ul>
 <hr>
-<h3 id="section-96">题卡 4：Flashbots 和 Private RPC 到底解决了什么？又解决不了什么？</h3><p><strong>问题</strong></p>
+<h3 id="section-97">题卡 4：Flashbots 和 Private RPC 到底解决了什么？又解决不了什么？</h3><p><strong>问题</strong></p>
 <ul>
 <li>面试官如果追问“那用 Flashbots 或私有 RPC 不就行了”，我该怎么答？</li>
 </ul>
@@ -1989,7 +2026,7 @@
 </ul>
 <hr>
 <hr>
-<h3 id="section-97">题卡 5：Uniswap V2 里 Factory、Router、Pair 各自负责什么？谁发 <code>PairCreated</code>？</h3><p><strong>问题</strong></p>
+<h3 id="section-98">题卡 5：Uniswap V2 里 Factory、Router、Pair 各自负责什么？谁发 <code>PairCreated</code>？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官要我精确讲 Uniswap V2 架构，我该怎么答才不会把接口说混？</li>
 </ul>
@@ -2019,7 +2056,7 @@
 <li>所以如果面试官问“监听流动性池创建该监听谁”，准确答案是：监听 <code>Factory</code> 的 <code>PairCreated</code>，不是监听 <code>Pair</code> 自己。</li>
 </ul>
 <hr>
-<h3 id="section-98">题卡 6：<code>mint</code>、<code>burn</code>、<code>swap</code> 底层到底是怎么改储备量的？</h3><p><strong>问题</strong></p>
+<h3 id="section-99">题卡 6：<code>mint</code>、<code>burn</code>、<code>swap</code> 底层到底是怎么改储备量的？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果继续追问 Uniswap V2，<code>mint / burn / swap</code> 这几个动作底层是谁在改储备量？</li>
 </ul>
@@ -2052,7 +2089,7 @@
 <li>所以更专业的表述是：Router 是入口和编排层，Pair 才是储备与定价状态的最终真相源。</li>
 </ul>
 <hr>
-<h3 id="section-99">题卡 7：<code>reserve0/reserve1</code> 为什么必须通过 <code>_update()</code> 和 <code>balanceOf(this)</code> 对齐？</h3><p><strong>问题</strong></p>
+<h3 id="section-100">题卡 7：<code>reserve0/reserve1</code> 为什么必须通过 <code>_update()</code> 和 <code>balanceOf(this)</code> 对齐？</h3><p><strong>问题</strong></p>
 <ul>
 <li>面试官如果追问 Uniswap V2 状态机，你怎么解释 <code>mint / burn / swap</code> 结束后为什么一定要 <code>_update()</code>？</li>
 </ul>
@@ -2091,7 +2128,7 @@ $$</p>
 <li>这就是你在审计里必须抓住的核心：V2 的真实状态演进是“<code>balance</code> 先变化，<code>reserve</code> 后同步”。</li>
 </ul>
 <hr>
-<h3 id="section-100">题卡 9：如果不使用 EIP-1967，黑客会怎么利用 Storage Collision 接管 Proxy？</h3><p><strong>问题</strong></p>
+<h3 id="section-101">题卡 9：如果不使用 EIP-1967，黑客会怎么利用 Storage Collision 接管 Proxy？</h3><p><strong>问题</strong></p>
 <ul>
 <li>如果面试官继续高压追问，具体会怎么利用 storage collision 拿走代理合约控制权？</li>
 </ul>
@@ -2117,7 +2154,7 @@ $$</p>
 <li>一旦 <code>admin</code> 被改成攻击者地址，升级控制权也等于被拿走</li>
 <li>所以 EIP-1967 的价值不是“神奇防御一切”，而是把这些关键槽位放到普通编译器几乎不会自然碰到的位置，极大降低业务变量误撞上去的概率。</li>
 </ul>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/面试/面试计划/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">面试计划</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/面试/面试项目资料源/blocksec面经/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">blocksec面经</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list"> <li class="article-outline__item depth-2" data-toc-id="section-1"> <a href="#section-1">Day 1：Storage 布局与代理模式</a> </li><li class="article-outline__item depth-3" data-toc-id="section-2"> <a href="#section-2">题卡 1：Solidity 的 storage layout 是怎么分配的？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-3"> <a href="#section-3">题卡 2：什么是紧凑打包，为什么它重要？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">题卡 3：mapping 的 storage slot 怎么算？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">题卡 4：dynamic array 的 storage slot 怎么算？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">题卡 5：什么是 storage collision？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-7"> <a href="#section-7">题卡 6：为什么 delegatecall 会导致代理合约写自己的 storage？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-8"> <a href="#section-8">题卡 7：Transparent Proxy 和 UUPS 的核心区别是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">题卡 8：EIP-1967 为什么能降低 storage collision 风险？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">题卡 9：为什么高 TVL 协议的 Proxy Admin 不应该是 EOA？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-11"> <a href="#section-11">题卡 10：如果面试官让我 90 秒解释钻石代理，我该怎么答？</a> </li><li class="article-outline__item depth-2" data-toc-id="section-12"> <a href="#section-12">Day 2：调用上下文、Gas 与签名授权</a> </li><li class="article-outline__item depth-3" data-toc-id="section-13"> <a href="#section-13">题卡 1：call、delegatecall、staticcall 的核心区别是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-14"> <a href="#section-14">题卡 2：call 会怎么影响 storage、msg.sender 和 msg.value？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-15"> <a href="#section-15">题卡 3：为什么 delegatecall 会保留原始 msg.sender？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-16"> <a href="#section-16">题卡 4：为什么 staticcall 写状态会 revert？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-17"> <a href="#section-17">题卡 5：call{value: ...} 的潜在风险与防御是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-18"> <a href="#section-18">题卡 6：EIP-150 的 63/64 规则是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-19"> <a href="#section-19">题卡 7：EIP-150 对攻击和防御分别意味着什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-20"> <a href="#section-20">题卡 8：permit 的完整链路该怎么讲？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-21"> <a href="#section-21">题卡 9：为什么 permit 必须有 nonce 和 deadline？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-22"> <a href="#section-22">题卡 10：permit 和 EIP-1559 分别最容易被追问什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-23"> <a href="#section-23">题卡 11：Multicall + delegatecall 为什么会出现“多次存款、只付一次钱”？</a> </li><li class="article-outline__item depth-2" data-toc-id="section-24"> <a href="#section-24">Day 3：重入、UTXO vs Account、Slither</a> </li><li class="article-outline__item depth-3" data-toc-id="section-25"> <a href="#section-25">题卡 1：如果不用 DeFi 术语，怎么重新定义重入？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-26"> <a href="#section-26">题卡 4：什么是跨函数重入？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-27"> <a href="#section-27">题卡 6：什么是只读重入，为什么“只读”也危险？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-28"> <a href="#section-28">题卡 7：UTXO 和 Account 模型的核心差异是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-29"> <a href="#section-29">题卡 8：为什么 Account 模型更容易产生 MEV 和临界资源竞争？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-30"> <a href="#section-30">题卡 9：Slither 到底在做什么？为什么它不是“神奇扫漏洞”？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-31"> <a href="#section-31">题卡 10：为什么静态分析常常会误报，面试里该怎么答？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-32"> <a href="#section-32">题卡 11：静态分析在 AST/CFG 和跨合约污点分析上的边界是什么？</a> </li><li class="article-outline__item depth-2" data-toc-id="section-33"> <a href="#section-33">Day 4：AMM、TWAP、Flash Loan</a> </li><li class="article-outline__item depth-3" data-toc-id="section-34"> <a href="#section-34">题卡 1：Uniswap V2 的核心做市逻辑是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-35"> <a href="#section-35">题卡 4：Uniswap V3 的 Tick 和区间流动性是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-36"> <a href="#section-36">题卡 5：为什么说 V3 的资本效率更高，但风险也更复杂？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-37"> <a href="#section-37">题卡 6：TWAP 是什么，为什么比 Spot Price 更难操纵？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-38"> <a href="#section-38">题卡 7：为什么 TWAP 不是万能的？评估它还要看什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-39"> <a href="#section-39">题卡 8：Flash Loan 到底是什么，为什么它不是漏洞本身？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-40"> <a href="#section-40">题卡 9：Callback 在闪电贷攻击链里扮演什么角色？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-41"> <a href="#section-41">题卡 10：一个典型的价格操纵 / 闪电贷攻击链该怎么讲？</a> </li><li class="article-outline__item depth-2" data-toc-id="section-42"> <a href="#section-42">Day 5：Lending、Liquidation、Mock Interview</a> </li><li class="article-outline__item depth-3" data-toc-id="section-43"> <a href="#section-43">题卡 1：借贷协议的基本结构是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-44"> <a href="#section-44">题卡 2：为什么借贷协议需要 cToken / aToken 这类存款凭证？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-45"> <a href="#section-45">题卡 3：aToken 和 cToken 的高层差异是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-46"> <a href="#section-46">题卡 4：借款利息为什么必须持续累计？协议是怎么理解这件事的？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-47"> <a href="#section-47">题卡 5：LTV、liquidation threshold、close factor、liquidation bonus 分别是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-48"> <a href="#section-48">题卡 6：健康因子 / 可清算条件应该怎么理解？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-49"> <a href="#section-49">题卡 7：为什么清算不是“惩罚用户”，而是协议自救机制？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-50"> <a href="#section-50">题卡 8：为什么借贷协议高度依赖预言机，而预言机又会成为核心风险？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-51"> <a href="#section-51">题卡 9：为什么一个账户看起来安全，却可能突然变得可清算？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-52"> <a href="#section-52">题卡 10：Aave 和 Compound 的面试级差异该怎么讲？以及如何串成一轮追问？</a> </li><li class="article-outline__item depth-2" data-toc-id="section-53"> <a href="#section-53">Day 6-7：Euler Finance 漏洞复现与 PoC</a> </li><li class="article-outline__item depth-3" data-toc-id="section-54"> <a href="#section-54">题卡 1：Euler Finance 攻击全貌——3 分钟怎么讲清？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-55"> <a href="#section-55">题卡 3：为什么攻击者主动把自己推到可清算状态？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-56"> <a href="#section-56">题卡 5：PoC 怎么拆、怎么验证、怎么写断言？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-57"> <a href="#section-57">题卡 7：如果我是审计员，如何早期发现这类漏洞？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-58"> <a href="#section-58">题卡 8：checkLiquidity() / deferLiquidityStatus 为什么是这次事故真正的风控闸门？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-59"> <a href="#section-59">题卡 9：为什么 PoC 里必须拆成 violator 和 liquidator 两个角色？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-60"> <a href="#section-60">题卡 10：为什么既做 Foundry fork test，也做 Tenderly 广播调试？</a> </li><li class="article-outline__item depth-2" data-toc-id="section-61"> <a href="#section-61">Day 8-9：Sentiment 2023-04-04 基于 Balancer read-only reentrancy 的攻击复现</a> </li><li class="article-outline__item depth-3" data-toc-id="section-62"> <a href="#section-62">题卡 1：这个案例高层上到底发生了什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-63"> <a href="#section-63">题卡 2：为什么这是“只读重入”，而不是普通重入？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-64"> <a href="#section-64">题卡 3：Balancer 这边的根因是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-65"> <a href="#section-65">题卡 4：Sentiment 为什么会中招？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-66"> <a href="#section-66">题卡 5：这条攻击链应该怎么拆？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-67"> <a href="#section-67">题卡 6：如果要做复现，PoC 应该拆成哪几段？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-68"> <a href="#section-68">题卡 7：做这个 PoC 最值得写哪些状态断言？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-69"> <a href="#section-69">题卡 8：这个案例最适合怎么做 3 分钟口述？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-70"> <a href="#section-70">题卡 9：这个案例最适合提炼出什么工程教训？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-71"> <a href="#section-71">题卡 10：如果只复现一个只读重入真实案例，为什么选 Sentiment？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-72"> <a href="#section-72">题卡 11：getPrice() 和 borrow() 分别是这条链上的哪两个边界？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-73"> <a href="#section-73">题卡 12：为什么 nonReentrant 没挡住这次攻击？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-74"> <a href="#section-74">题卡 13：为什么攻击者要走 ETH 退出路径？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-75"> <a href="#section-75">题卡 14：priceBefore / priceDuring / priceAfter 这组数字到底证明了什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-76"> <a href="#section-76">题卡 15：这类问题的修复思路应该怎么讲？</a> </li><li class="article-outline__item depth-2" data-toc-id="section-77"> <a href="#section-77">MemeScan 项目小节</a> </li><li class="article-outline__item depth-3" data-toc-id="section-78"> <a href="#section-78">题卡 4：MemeScan 这种项目，60 秒版话术应该怎么讲？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-79"> <a href="#section-79">题卡 5：MemeScan 的 3 分钟版该怎么展开？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-80"> <a href="#section-80">题卡 6：MemeScan 面试时哪些点不要说错？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-81"> <a href="#section-81">题卡 7：MemeScan 有哪些局限适合主动承认？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-82"> <a href="#section-82">题卡 7.1：为什么 MemeScan 要单独成一个项目包？</a> </li><li class="article-outline__item depth-2" data-toc-id="section-83"> <a href="#section-83">Uniswap V2 DEX 项目小节</a> </li><li class="article-outline__item depth-3" data-toc-id="section-84"> <a href="#section-84">题卡 7.2：为什么 Uniswap V2 DEX 要单独讲实现，而不是只讲原理？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-85"> <a href="#section-85">题卡 8：Uniswap V2 DEX 这个项目，60 秒到 3 分钟该怎么讲？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-86"> <a href="#section-86">题卡 9：Uniswap V2 DEX 写进简历，bullet 应该怎么写？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-87"> <a href="#section-87">题卡 10：如果面试官追问 Uniswap V2 对 FoT 代币为什么不兼容，该怎么答？</a> </li><li class="article-outline__item depth-2" data-toc-id="section-88"> <a href="#section-88">真实面经补位</a> </li><li class="article-outline__item depth-3" data-toc-id="section-89"> <a href="#section-89">题卡 1：面对大批量目标，自动化漏扫方案应该怎么设计？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-90"> <a href="#section-90">题卡 2：Front-running 的原理是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-91"> <a href="#section-91">题卡 3：Solidity 0.8+ 之后，整数溢出还要怎么答？</a> </li><li class="article-outline__item depth-2" data-toc-id="section-92"> <a href="#section-92">本轮模拟面试补强专题</a> </li><li class="article-outline__item depth-3" data-toc-id="section-93"> <a href="#section-93">题卡 1：为什么 Searcher 不需要依赖 Event，也能发现可清算状态或套利空间？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-94"> <a href="#section-94">题卡 2：MEV 到底是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-95"> <a href="#section-95">题卡 3：Front-running、Back-running、Sandwich 到底怎么区分？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-96"> <a href="#section-96">题卡 4：Flashbots 和 Private RPC 到底解决了什么？又解决不了什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-97"> <a href="#section-97">题卡 5：Uniswap V2 里 Factory、Router、Pair 各自负责什么？谁发 PairCreated？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-98"> <a href="#section-98">题卡 6：mint、burn、swap 底层到底是怎么改储备量的？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-99"> <a href="#section-99">题卡 7：reserve0/reserve1 为什么必须通过 update() 和 balanceOf(this) 对齐？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-100"> <a href="#section-100">题卡 9：如果不使用 EIP-1967，黑客会怎么利用 Storage Collision 接管 Proxy？</a> </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/面试/面试计划/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">面试计划</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/面试/面试项目资料源/blocksec面经/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">blocksec面经</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <a class="article-outline__group-link" href="#section-1">Day 1：Storage 布局与代理模式</a> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-2"> <a href="#section-2">题卡 1：Solidity 的 storage layout 是怎么分配的？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-3"> <a href="#section-3">题卡 2：什么是紧凑打包，为什么它重要？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">题卡 3：mapping 的 storage slot 怎么算？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">题卡 4：dynamic array 的 storage slot 怎么算？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">题卡 5：什么是 storage collision？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-7"> <a href="#section-7">题卡 6：为什么 delegatecall 会导致代理合约写自己的 storage？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-8"> <a href="#section-8">题卡 7：Transparent Proxy 和 UUPS 的核心区别是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">题卡 8：为什么可升级代理不能靠 constructor 初始化，而必须用 initialize？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">题卡 9：EIP-1967 为什么能降低 storage collision 风险？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-11"> <a href="#section-11">题卡 10：为什么高 TVL 协议的 Proxy Admin 不应该是 EOA？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-12"> <a href="#section-12">题卡 11：如果面试官让我 90 秒解释钻石代理，我该怎么答？</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-13"> <a class="article-outline__group-link" href="#section-13">Day 2：调用上下文、Gas 与签名授权</a> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-14"> <a href="#section-14">题卡 1：call、delegatecall、staticcall 的核心区别是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-15"> <a href="#section-15">题卡 2：call 会怎么影响 storage、msg.sender 和 msg.value？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-16"> <a href="#section-16">题卡 3：为什么 delegatecall 会保留原始 msg.sender？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-17"> <a href="#section-17">题卡 4：为什么 staticcall 写状态会 revert？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-18"> <a href="#section-18">题卡 5：call{value: ...} 的潜在风险与防御是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-19"> <a href="#section-19">题卡 6：EIP-150 的 63/64 规则是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-20"> <a href="#section-20">题卡 7：EIP-150 对攻击和防御分别意味着什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-21"> <a href="#section-21">题卡 8：permit 的完整链路该怎么讲？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-22"> <a href="#section-22">题卡 9：为什么 permit 必须有 nonce 和 deadline？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-23"> <a href="#section-23">题卡 10：permit 和 EIP-1559 分别最容易被追问什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-24"> <a href="#section-24">题卡 11：Multicall + delegatecall 为什么会出现“多次存款、只付一次钱”？</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-25"> <a class="article-outline__group-link" href="#section-25">Day 3：重入、UTXO vs Account、Slither</a> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-26"> <a href="#section-26">题卡 1：如果不用 DeFi 术语，怎么重新定义重入？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-27"> <a href="#section-27">题卡 4：什么是跨函数重入？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-28"> <a href="#section-28">题卡 6：什么是只读重入，为什么“只读”也危险？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-29"> <a href="#section-29">题卡 7：UTXO 和 Account 模型的核心差异是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-30"> <a href="#section-30">题卡 8：为什么 Account 模型更容易产生 MEV 和临界资源竞争？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-31"> <a href="#section-31">题卡 9：Slither 到底在做什么？为什么它不是“神奇扫漏洞”？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-32"> <a href="#section-32">题卡 10：为什么静态分析常常会误报，面试里该怎么答？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-33"> <a href="#section-33">题卡 11：静态分析在 AST/CFG 和跨合约污点分析上的边界是什么？</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-34"> <a class="article-outline__group-link" href="#section-34">Day 4：AMM、TWAP、Flash Loan</a> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-35"> <a href="#section-35">题卡 1：Uniswap V2 的核心做市逻辑是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-36"> <a href="#section-36">题卡 4：Uniswap V3 的 Tick 和区间流动性是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-37"> <a href="#section-37">题卡 5：为什么说 V3 的资本效率更高，但风险也更复杂？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-38"> <a href="#section-38">题卡 6：TWAP 是什么，为什么比 Spot Price 更难操纵？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-39"> <a href="#section-39">题卡 7：为什么 TWAP 不是万能的？评估它还要看什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-40"> <a href="#section-40">题卡 8：Flash Loan 到底是什么，为什么它不是漏洞本身？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-41"> <a href="#section-41">题卡 9：Callback 在闪电贷攻击链里扮演什么角色？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-42"> <a href="#section-42">题卡 10：一个典型的价格操纵 / 闪电贷攻击链该怎么讲？</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-43"> <a class="article-outline__group-link" href="#section-43">Day 5：Lending、Liquidation、Mock Interview</a> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-44"> <a href="#section-44">题卡 1：借贷协议的基本结构是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-45"> <a href="#section-45">题卡 2：为什么借贷协议需要 cToken / aToken 这类存款凭证？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-46"> <a href="#section-46">题卡 3：aToken 和 cToken 的高层差异是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-47"> <a href="#section-47">题卡 4：借款利息为什么必须持续累计？协议是怎么理解这件事的？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-48"> <a href="#section-48">题卡 5：LTV、liquidation threshold、close factor、liquidation bonus 分别是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-49"> <a href="#section-49">题卡 6：健康因子 / 可清算条件应该怎么理解？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-50"> <a href="#section-50">题卡 7：为什么清算不是“惩罚用户”，而是协议自救机制？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-51"> <a href="#section-51">题卡 8：为什么借贷协议高度依赖预言机，而预言机又会成为核心风险？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-52"> <a href="#section-52">题卡 9：为什么一个账户看起来安全，却可能突然变得可清算？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-53"> <a href="#section-53">题卡 10：Aave 和 Compound 的面试级差异该怎么讲？以及如何串成一轮追问？</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-54"> <a class="article-outline__group-link" href="#section-54">Day 6-7：Euler Finance 漏洞复现与 PoC</a> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-55"> <a href="#section-55">题卡 1：Euler Finance 攻击全貌——3 分钟怎么讲清？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-56"> <a href="#section-56">题卡 3：为什么攻击者主动把自己推到可清算状态？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-57"> <a href="#section-57">题卡 5：PoC 怎么拆、怎么验证、怎么写断言？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-58"> <a href="#section-58">题卡 7：如果我是审计员，如何早期发现这类漏洞？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-59"> <a href="#section-59">题卡 8：checkLiquidity() / deferLiquidityStatus 为什么是这次事故真正的风控闸门？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-60"> <a href="#section-60">题卡 9：为什么 PoC 里必须拆成 violator 和 liquidator 两个角色？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-61"> <a href="#section-61">题卡 10：为什么既做 Foundry fork test，也做 Tenderly 广播调试？</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-62"> <a class="article-outline__group-link" href="#section-62">Day 8-9：Sentiment 2023-04-04 基于 Balancer read-only reentrancy 的攻击复现</a> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-63"> <a href="#section-63">题卡 1：这个案例高层上到底发生了什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-64"> <a href="#section-64">题卡 2：为什么这是“只读重入”，而不是普通重入？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-65"> <a href="#section-65">题卡 3：Balancer 这边的根因是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-66"> <a href="#section-66">题卡 4：Sentiment 为什么会中招？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-67"> <a href="#section-67">题卡 5：这条攻击链应该怎么拆？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-68"> <a href="#section-68">题卡 6：如果要做复现，PoC 应该拆成哪几段？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-69"> <a href="#section-69">题卡 7：做这个 PoC 最值得写哪些状态断言？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-70"> <a href="#section-70">题卡 8：这个案例最适合怎么做 3 分钟口述？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-71"> <a href="#section-71">题卡 9：这个案例最适合提炼出什么工程教训？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-72"> <a href="#section-72">题卡 10：如果只复现一个只读重入真实案例，为什么选 Sentiment？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-73"> <a href="#section-73">题卡 11：getPrice() 和 borrow() 分别是这条链上的哪两个边界？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-74"> <a href="#section-74">题卡 12：为什么 nonReentrant 没挡住这次攻击？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-75"> <a href="#section-75">题卡 13：为什么攻击者要走 ETH 退出路径？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-76"> <a href="#section-76">题卡 14：priceBefore / priceDuring / priceAfter 这组数字到底证明了什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-77"> <a href="#section-77">题卡 15：这类问题的修复思路应该怎么讲？</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-78"> <a class="article-outline__group-link" href="#section-78">MemeScan 项目小节</a> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-79"> <a href="#section-79">题卡 4：MemeScan 这种项目，60 秒版话术应该怎么讲？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-80"> <a href="#section-80">题卡 5：MemeScan 的 3 分钟版该怎么展开？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-81"> <a href="#section-81">题卡 6：MemeScan 面试时哪些点不要说错？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-82"> <a href="#section-82">题卡 7：MemeScan 有哪些局限适合主动承认？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-83"> <a href="#section-83">题卡 7.1：为什么 MemeScan 要单独成一个项目包？</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-84"> <a class="article-outline__group-link" href="#section-84">Uniswap V2 DEX 项目小节</a> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-85"> <a href="#section-85">题卡 7.2：为什么 Uniswap V2 DEX 要单独讲实现，而不是只讲原理？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-86"> <a href="#section-86">题卡 8：Uniswap V2 DEX 这个项目，60 秒到 3 分钟该怎么讲？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-87"> <a href="#section-87">题卡 9：Uniswap V2 DEX 写进简历，bullet 应该怎么写？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-88"> <a href="#section-88">题卡 10：如果面试官追问 Uniswap V2 对 FoT 代币为什么不兼容，该怎么答？</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-89"> <a class="article-outline__group-link" href="#section-89">真实面经补位</a> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-90"> <a href="#section-90">题卡 1：面对大批量目标，自动化漏扫方案应该怎么设计？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-91"> <a href="#section-91">题卡 2：Front-running 的原理是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-92"> <a href="#section-92">题卡 3：Solidity 0.8+ 之后，整数溢出还要怎么答？</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-93"> <a class="article-outline__group-link" href="#section-93">本轮模拟面试补强专题</a> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-94"> <a href="#section-94">题卡 1：为什么 Searcher 不需要依赖 Event，也能发现可清算状态或套利空间？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-95"> <a href="#section-95">题卡 2：MEV 到底是什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-96"> <a href="#section-96">题卡 3：Front-running、Back-running、Sandwich 到底怎么区分？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-97"> <a href="#section-97">题卡 4：Flashbots 和 Private RPC 到底解决了什么？又解决不了什么？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-98"> <a href="#section-98">题卡 5：Uniswap V2 里 Factory、Router、Pair 各自负责什么？谁发 PairCreated？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-99"> <a href="#section-99">题卡 6：mint、burn、swap 底层到底是怎么改储备量的？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-100"> <a href="#section-100">题卡 7：reserve0/reserve1 为什么必须通过 update() 和 balanceOf(this) 对齐？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-101"> <a href="#section-101">题卡 9：如果不使用 EIP-1967，黑客会怎么利用 Storage Collision 接管 Proxy？</a> </li> </ol> </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
       (() => {
         const root = document.documentElement;
         const scrollFlagKey = "scroll-to-top-once";
@@ -2179,14 +2216,15 @@ $$</p>
         const fab = document.getElementById("article-toc-fab");
         const outlineNav = sidebar?.querySelector(".article-outline__body");
         const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
-        const links = Array.from(document.querySelectorAll(".article-outline a[href^='#']"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
         const storageKey = "article-outline-open";
 
-        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !links.length) return;
+        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !groupLinks.length) return;
 
         let isOpen = false;
         let activeId = "";
-        let activeParentId = "";
+        let activeGroupId = "";
         let ticking = false;
 
         const syncState = () => {
@@ -2201,10 +2239,10 @@ $$</p>
           } catch {}
         };
 
-        const itemMap = new Map(
-          links.map((link) => {
+        const groupMap = new Map(
+          groupLinks.map((link) => {
             const id = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
-            return [id, link.closest(".article-outline__item")];
+            return [id, link.closest(".article-outline__group")];
           }),
         );
 
@@ -2214,35 +2252,42 @@ $$</p>
           if (depth === 2) lastH2Id = heading.id;
           return {
             id: heading.id,
+            depth,
             parentId: depth === 3 ? lastH2Id : "",
             element: heading,
           };
         });
 
         const setActive = (id, parentId = "") => {
-          if (!id || (id === activeId && parentId === activeParentId)) return;
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
 
           activeId = id;
-          activeParentId = parentId;
+          activeGroupId = parentId || id;
 
-          links.forEach((link) => {
+          groupLinks.forEach((link) => {
             const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
-            const isCurrent = targetId === id;
-            const isParentActive = Boolean(parentId && targetId === parentId && targetId !== id);
-            link.toggleAttribute("aria-current", isCurrent);
-            link.classList.toggle("is-current", isCurrent);
-            link.classList.toggle("is-parent-active", isParentActive);
+            const isCurrentGroup = targetId === activeGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isCurrentGroup);
           });
 
-          itemMap.forEach((item, itemId) => {
-            if (!item) return;
-            item.classList.toggle("is-current", itemId === id);
-            item.classList.toggle("is-parent-active", Boolean(parentId && itemId === parentId && itemId !== id));
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
           });
 
           if (!isOpen) return;
 
-          const activeLink = links.find((link) => decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, "")) === id);
+          const activeLink = [...groupLinks, ...childLinks].find((link) => decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, "")) === id);
           if (!activeLink) return;
 
           const linkTop = activeLink.offsetTop;
@@ -2273,7 +2318,9 @@ $$</p>
             }
           }
 
-          if (current) setActive(current.id, current.parentId);
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
         };
 
         const requestUpdate = () => {

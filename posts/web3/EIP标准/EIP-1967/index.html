@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.Dd8DrOW1.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☽</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">EIP-1967</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">EIP标准</span>  </div> <div class="article-meta-row"> <span>2026/4/16</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/EIP标准/EIP-1967.md</p> </header> <div class="article-main"> <div class="article-content"><h1>EIP-1967: 标准代理存储插槽 (Standard Proxy Storage Slots)</h1><blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.BBbmEVTx.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☽</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">EIP-1967</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">EIP标准</span>  </div> <div class="article-meta-row"> <span>2026/4/16</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/EIP标准/EIP-1967.md</p> </header> <div class="article-main"> <div class="article-content"><h1>EIP-1967: 标准代理存储插槽 (Standard Proxy Storage Slots)</h1><blockquote>
 <p><strong>一句话总结</strong>：EIP-1967 规定了智能合约代理（Proxy）存放逻辑合约地址（Implementation）、管理员地址（Admin）以及信标地址（Beacon）的特定、极远端哈希存储槽位，彻底解决了代理合约和逻辑合约之间的存储碰撞（Storage Collision）问题，并为区块链浏览器（如 Etherscan）提供了统一的解析标准。</p>
 </blockquote>
 <h2 id="section-1">📜 核心元数据 (Metadata)</h2><blockquote>
@@ -134,7 +134,7 @@ function _setImplementation(address newImpl) private {
 ✅ 只要查询出来的不是 0 (空槽)，Etherscan 会立马通过网页判定这就是个 Proxy！网页会自动点亮 <strong>[Read as Proxy]</strong> 与 <strong>[Write as Proxy]</strong> 选项按钮卡片，并自动帮你找出躲藏在这之后的真正幕后逻辑合约（甚至主动调用展示其实际源码 ABI），它利用标准化的屠龙刀，在浏览器层面彻底驱散了代理黑盒试图为散户构建的代码阅读迷雾。</li>
 <li><strong>长远倒逼演进</strong>：EIP-1967 仅仅只是个寻址说明书，它只是回答了“数据该存在这座黑山的哪里”。但对于这座黑山“该由谁在什么条件下引爆炸药升级管理”（例如著名的透明代理 Admin 选择器碰撞死锁问题）以及“升级的引信线埋在里面还是外面”的问题，它只字不提。这直接迫使和引发了后续 ERC-1822 (UUPS 通用可升级代理) 和 Beacon 代理模式在框架级业务控制层面上不断狂野内卷和突围。</li>
 </ul>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/EIP标准/EIP-1559/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-1559</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/EIP标准/EIP-2612/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-2612</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list"> <li class="article-outline__item depth-2" data-toc-id="section-1"> <a href="#section-1">📜 核心元数据 (Metadata)</a> </li><li class="article-outline__item depth-2" data-toc-id="section-2"> <a href="#section-2">1. 核心理念与全网级痛点 (Core Concept &amp; Motivation)</a> </li><li class="article-outline__item depth-2" data-toc-id="section-3"> <a href="#section-3">2. 核心架构与底层修改细节 (Core Specification)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">A. 全局参数 / 常量变动 (Parameters)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">B. EVM 指令集与 Gas 计价改动 (Opcodes &amp; Gas Changes)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">C. 交易类型与区块结构 (Transaction &amp; Block Header Changes)</a> </li><li class="article-outline__item depth-2" data-toc-id="section-7"> <a href="#section-7">3. 从宏观到微观的生命周期 (Lifecycle Workflow)</a> </li><li class="article-outline__item depth-2" data-toc-id="section-8"> <a href="#section-8">4. 关键机制深度解析与数学公式 (Deep Dive &amp; Cryptography)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">A. 核心难点：为什么是这个特定的 Hash，而且还要减 1？</a> </li><li class="article-outline__item depth-2" data-toc-id="section-10"> <a href="#section-10">5. 对生态与智能合约的系统级冲击 (Impact Analysis)</a> </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/EIP标准/EIP-1559/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-1559</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/EIP标准/EIP-2612/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-2612</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <a class="article-outline__group-link" href="#section-1">📜 核心元数据 (Metadata)</a>  </li><li class="article-outline__group" data-group-id="section-2"> <a class="article-outline__group-link" href="#section-2">1. 核心理念与全网级痛点 (Core Concept &amp; Motivation)</a>  </li><li class="article-outline__group" data-group-id="section-3"> <a class="article-outline__group-link" href="#section-3">2. 核心架构与底层修改细节 (Core Specification)</a> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">A. 全局参数 / 常量变动 (Parameters)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">B. EVM 指令集与 Gas 计价改动 (Opcodes &amp; Gas Changes)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">C. 交易类型与区块结构 (Transaction &amp; Block Header Changes)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-7"> <a class="article-outline__group-link" href="#section-7">3. 从宏观到微观的生命周期 (Lifecycle Workflow)</a>  </li><li class="article-outline__group" data-group-id="section-8"> <a class="article-outline__group-link" href="#section-8">4. 关键机制深度解析与数学公式 (Deep Dive &amp; Cryptography)</a> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">A. 核心难点：为什么是这个特定的 Hash，而且还要减 1？</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-10"> <a class="article-outline__group-link" href="#section-10">5. 对生态与智能合约的系统级冲击 (Impact Analysis)</a>  </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
       (() => {
         const root = document.documentElement;
         const scrollFlagKey = "scroll-to-top-once";
@@ -196,14 +196,15 @@ function _setImplementation(address newImpl) private {
         const fab = document.getElementById("article-toc-fab");
         const outlineNav = sidebar?.querySelector(".article-outline__body");
         const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
-        const links = Array.from(document.querySelectorAll(".article-outline a[href^='#']"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
         const storageKey = "article-outline-open";
 
-        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !links.length) return;
+        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !groupLinks.length) return;
 
         let isOpen = false;
         let activeId = "";
-        let activeParentId = "";
+        let activeGroupId = "";
         let ticking = false;
 
         const syncState = () => {
@@ -218,10 +219,10 @@ function _setImplementation(address newImpl) private {
           } catch {}
         };
 
-        const itemMap = new Map(
-          links.map((link) => {
+        const groupMap = new Map(
+          groupLinks.map((link) => {
             const id = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
-            return [id, link.closest(".article-outline__item")];
+            return [id, link.closest(".article-outline__group")];
           }),
         );
 
@@ -231,35 +232,42 @@ function _setImplementation(address newImpl) private {
           if (depth === 2) lastH2Id = heading.id;
           return {
             id: heading.id,
+            depth,
             parentId: depth === 3 ? lastH2Id : "",
             element: heading,
           };
         });
 
         const setActive = (id, parentId = "") => {
-          if (!id || (id === activeId && parentId === activeParentId)) return;
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
 
           activeId = id;
-          activeParentId = parentId;
+          activeGroupId = parentId || id;
 
-          links.forEach((link) => {
+          groupLinks.forEach((link) => {
             const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
-            const isCurrent = targetId === id;
-            const isParentActive = Boolean(parentId && targetId === parentId && targetId !== id);
-            link.toggleAttribute("aria-current", isCurrent);
-            link.classList.toggle("is-current", isCurrent);
-            link.classList.toggle("is-parent-active", isParentActive);
+            const isCurrentGroup = targetId === activeGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isCurrentGroup);
           });
 
-          itemMap.forEach((item, itemId) => {
-            if (!item) return;
-            item.classList.toggle("is-current", itemId === id);
-            item.classList.toggle("is-parent-active", Boolean(parentId && itemId === parentId && itemId !== id));
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
           });
 
           if (!isOpen) return;
 
-          const activeLink = links.find((link) => decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, "")) === id);
+          const activeLink = [...groupLinks, ...childLinks].find((link) => decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, "")) === id);
           if (!activeLink) return;
 
           const linkTop = activeLink.offsetTop;
@@ -290,7 +298,9 @@ function _setImplementation(address newImpl) private {
             }
           }
 
-          if (current) setActive(current.id, current.parentId);
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
         };
 
         const requestUpdate = () => {
