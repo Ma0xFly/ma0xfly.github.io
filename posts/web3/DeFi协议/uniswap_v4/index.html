@@ -1,0 +1,342 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Uniswap V4: 可编程流动性平台 | 沉于思，录以隙</title><meta name="description" content="# Uniswap V4: 可编程流动性平台 > **一句话总结**：Uniswap V4 打破了前代单纯做市引擎的身份，通过引入革命性的 Hooks（钩子系统）和万剑归宗的 Singleton（单例架构），彻底转型为一个允许开发者在其核心流动性之上搭建无数特色金融玩法的底层平台"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.vzbGpqN6.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">Uniswap V4: 可编程流动性平台</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">DeFi协议</span>  </div> <div class="article-meta-row"> <span>2026/3/6</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/DeFi协议/uniswap_v4.md</p> </header> <div class="article-main"> <div class="article-content"><h1>Uniswap V4: 可编程流动性平台</h1><blockquote>
+<p><strong>一句话总结</strong>：Uniswap V4 打破了前代单纯做市引擎的身份，通过引入革命性的 Hooks（钩子系统）和万剑归宗的 Singleton（单例架构），彻底转型为一个允许开发者在其核心流动性之上搭建无数特色金融玩法的底层平台基建。</p>
+</blockquote>
+<hr>
+<h2 id="section-1">1. 核心痛点与破局思路 (Problem &amp; Solution)</h2><p><strong>核心痛点：V3 的“僵化”与极度费 Gas 的散装店铺</strong>
+虽然 V3 的集中流动性将资金效率提升了极境，但它有着非常刻板的枷锁：</p>
+<ul>
+<li><strong>规则太死板</strong>：费率档位被写死（0.05%, 0.3%, 1%），无法随大盘恐慌程度自动调节。想要挂限价单、想要按预言机动态调整？通通不行。就像一个极权商场，所有店铺必须踩点开关门，不准搞任何特色营销。</li>
+<li><strong>极度割裂的露天摊位部署</strong>：每一次新建一个代币交易对，Factory 都要在以太坊上新盖一栋独立的智能合约大楼。如果有连环换手（如 A $\to$ B $\to$ C），代币就必须从一栋楼提出来、转移、然后扔进另一栋楼，这一连串的代币真实跨合约传输极其消耗宝贵的 Gas 费。</li>
+</ul>
+<p><strong>破局思路</strong>：V4 直接推翻了这堵墙，把“定价权与规则库”全部下放给第三方开发者，并且把散落全网的成千上万家店铺全部吸进同一栋无边界的巨型写字楼中。</p>
+<hr>
+<h2 id="section-2">2. 致命杀器：Hooks（钩子系统）🪝 (Core Mechanics)</h2><p>V4 最大的革命性改变在于暴露了 <strong>Hooks（事件切面）</strong> 接口。
+大白话翻译：Hooks 允许外部开发者在这台无情的金融换算机器运转的几个“关键施法读条时间”，硬行将自带的第三方代码逻辑插队塞入。</p>
+<p>**触发爆裂的“关键时刻”**包含：</p>
+<ul>
+<li>Swap（代币交换）开始之前 / 结束之后。</li>
+<li>往池子里 Modify Liquidity（存钱/撤资）之前 / 之后。</li>
+</ul>
+<p><strong>由此引爆的“特色摊位”万花筒玩法</strong>：</p>
+<ul>
+<li><strong>动态自适应手续费</strong>：通过前置钩子侦测链上的恐慌指数。大盘平静时手续费只收 0.05%，大盘暴跌巨鲸砸盘时，钩子强行将通道过路费飙升到 3%，不仅保护了池子还赚足了血汗钱。</li>
+<li><strong>重磅：原生限价单 (Limit Orders)</strong>：终于可以像币安一样把资金寄存在某一个钩子里挂好指令：“等 ETH 跌穿 1500 U 时刻，再放行帮我买入”。</li>
+<li><strong>TWAP 持久战时间加权自动倒货</strong>：大户防止瞬间砸出巨坑，把订单托付给钩子，拆成 100 份在未来的一个星期慢慢往池子里推。</li>
+<li><strong>自建池锚定预言机</strong>：甚至可以直接废了协议的数学公式，强制这笔交易结算要按照某个指定的外部数据源计费。</li>
+</ul>
+<hr>
+<h2 id="section-3">3. 核心底座革命：Singleton 架构 (Architecture)</h2><p><strong>从“千城万店”变身“超级单体写字楼” (Singleton)</strong>。
+不再像 V2/V3 那样为 PEPE/ETH，LINK/USDC 去不停地部署成千上万个孤儿合约了。V4 中，<strong>天上地下，全宇宙只有唯一的这一个大智能合约 (PoolManager)</strong>。在它庞大身躯的肚子里，用代码的哈希库（Mapping）隔开了数以千万计的账本房。</p>
+<p>极度的合并带来了前所未有的 <strong>闪电算盘结账 (Flash Accounting)</strong>：</p>
+<ul>
+<li>在以前的跨池交易（比如买家 A，用 ETH $\to$ USDC $\to$ DAI），真金白银必须进行真实的两进两出转移。</li>
+<li><strong>V4 虚空结账</strong>：由于大家都在同一个智能合约主体内，系统只会打开你名下的状态本，在这个函数执行的转瞬之间划记号：“收入 1 ETH, 划走 2000 USDC”。</li>
+<li><strong>只有在所有人全部倒腾完、操作关门前的那一刹那刻</strong>，协议才会大声喊出一句：“算总账！”根据每个端点最后的<strong>净余额</strong>进行唯一一次极其克制的硬核转账划拨。这种虚假算账只转移终点差额的作法，极大程度地节省了整个大以太坊网络的 Gas 转账磨损费。</li>
+</ul>
+<hr>
+<h2 id="section-4">4. 三代机制演进极简总结 (Evolution &amp; Conclusion)</h2><p>Uniswap 帝国的千年演进史，本质上就是一场把算力极大压榨，把金融裁判权力极尽下放的史诗：</p>
+<table>
+<thead>
+<tr>
+<th align="left">特性</th>
+<th align="left">V2 (2020)</th>
+<th align="left">V3 (2021)</th>
+<th align="left">V4 (2024 未来式)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>金融核心论</strong></td>
+<td align="left">纯净的恒定乘积公式</td>
+<td align="left">高难度的集中流动性割裂微积分</td>
+<td align="left"><strong>全开放的插件钩子系统 (Hooks)</strong></td>
+</tr>
+<tr>
+<td align="left"><strong>金库承载物理形态</strong></td>
+<td align="left">散装露天摊位（每个池子建一个独立合约楼）</td>
+<td align="left">散装露天摊位</td>
+<td align="left"><strong>千变万化的 Singleton 全包围航母壳</strong></td>
+</tr>
+<tr>
+<td align="left"><strong>权力天平</strong></td>
+<td align="left">数学公式代替了做市商老板。</td>
+<td align="left">协议说：定价权还给散户 LP。你决定在哪个区间设埋伏。</td>
+<td align="left">协议说：<strong>连游戏规则都给你们。自己通过 Hooks 去发明无限种交易逻辑！</strong></td>
+</tr>
+</tbody></table>
+<p>Uniswap V4 不再武断地定义市场应该长什么样，它现在是一张只负责提供闪电结账算力的白纸。然后冷冷地将舞台让给了无数充满贪婪与天才想象力的开发者。</p>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/DeFi协议/Curve/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">Curve Finance: 稳定兑换做市商协议</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/DeFi协议/Aave/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">Aave: 点对池 (Peer-to-Pool) 去中心化借贷协议</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>1. 核心痛点与破局思路 (Problem &amp; Solution)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>2. 致命杀器：Hooks（钩子系统）🪝 (Core Mechanics)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>3. 核心底座革命：Singleton 架构 (Architecture)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-4"> <button class="article-outline__group-link" type="button" data-group-target="section-4"> <span>4. 三代机制演进极简总结 (Evolution &amp; Conclusion)</span>  </button>  </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const fab = document.getElementById("article-toc-fab");
+        const outlineNav = sidebar?.querySelector(".article-outline__body");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+        const storageKey = "article-outline-open";
+
+        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let isOpen = false;
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const syncState = () => {
+          shell.classList.toggle("article-shell--toc-expanded", isOpen);
+          shell.classList.toggle("article-shell--toc-collapsed", !isOpen);
+          sidebar.classList.toggle("is-open", isOpen);
+          fab.classList.toggle("is-open", isOpen);
+          fab.setAttribute("aria-expanded", String(isOpen));
+
+          try {
+            localStorage.setItem(storageKey, isOpen ? "1" : "0");
+          } catch {}
+        };
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (!isOpen || Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        try {
+          isOpen = localStorage.getItem(storageKey) === "1";
+        } catch {
+          isOpen = false;
+        }
+
+        syncState();
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        fab.addEventListener("click", (event) => {
+          event.stopPropagation();
+          isOpen = !isOpen;
+          syncState();
+        });
+
+        sidebar.addEventListener("click", (event) => {
+          event.stopPropagation();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && isOpen) {
+            isOpen = false;
+            syncState();
+            fab.focus();
+          }
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

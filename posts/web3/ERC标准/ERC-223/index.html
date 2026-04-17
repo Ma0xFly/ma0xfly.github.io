@@ -1,0 +1,369 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ERC-223: 防误转改进标准 (Token Fallback Standard) | 沉于思，录以隙</title><meta name="description" content="# ERC-223: 防误转改进标准 (Token Fallback Standard) > **一句话总结**：ERC-223 是以太坊主网上极早期的 ERC-20 改进提案，核心旨在通过强制性“接收钩子（Fallback）”机制，解决 ERC-20 代币极其容易被误转入不支持"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.vzbGpqN6.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">ERC-223: 防误转改进标准 (Token Fallback Standard)</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <div class="article-meta-row"> <span>2026/3/9</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/ERC标准/ERC-223.md</p> </header> <div class="article-main"> <div class="article-content"><h1>ERC-223: 防误转改进标准 (Token Fallback Standard)</h1><blockquote>
+<p><strong>一句话总结</strong>：ERC-223 是以太坊主网上极早期的 ERC-20 改进提案，核心旨在通过强制性“接收钩子（Fallback）”机制，解决 ERC-20 代币极其容易被误转入不支持该代币的死账合约中而导致永久丢失的痛点。</p>
+</blockquote>
+<h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><blockquote>
+<p><strong>信息源原则</strong>：底层的通信/代币标准必须以 <strong>Ethereum EIP 官方文档 (ethereum.org/EIPS)</strong> 和最主流的防呆实现库（如 <strong>OpenZeppelin</strong> 或 <strong>Solmate</strong>）的源码作为<strong>唯一第一手真理源</strong>。切忌大量摘抄二手的科普文章。</p>
+</blockquote>
+<ul>
+<li><strong>官方 EIP 提案编号与链接</strong>：<a href="https://eips.ethereum.org/EIPS/eip-223">EIP-223: Token Fallback Standard</a></li>
+<li><strong>当前标准状态</strong>：Draft (未广泛采用)</li>
+<li><strong>权威参考实现 (Reference Implementation)</strong>：由于未被主流采用，无 OpenZeppelin 官方防呆实现。</li>
+<li><strong>依赖基座标准</strong>：是对 ERC-20 缺陷的直接修补尝试。</li>
+</ul>
+<hr>
+<h2 id="section-2">1. 核心理念与痛点解决 (Core Concept)</h2><ul>
+<li><strong>传统痛点/背景</strong>：这是以太坊早期历史上最大的痛点之一。ERC-20 的 <code>transfer</code> 函数只是在合约内部非常呆板地把发送方的余额减去、接收方的余额加上。如果用户手滑，把价值几百万的 ERC-20 代币转给了一个从来没写过 <code>转出代币</code> 代码的普通智能合约（甚至是代币合约自身地址），这笔钱就会像送进黑洞一样，永远沉睡锁死在那个地址里。据估计，早期因此丢失的资金高达数亿美元。</li>
+<li><strong>破局思路</strong>：向以太坊原生货币 ETH 发送的逻辑看齐！如果你给一个不支持收款的合约打 ETH，交易会自动 Revert。ERC-223 提出：任何在处理资金转移时，必须去探测接收方到底是不是智能合约。如果是合约，强制去敲对方的门（调用对方的一个回调函数）。如果对方不理你或者敲门失败，交易直接回滚报错，把钱还给用户。</li>
+</ul>
+<hr>
+<h2 id="section-3">2. 核心接口与数据结构 (Core Interfaces)</h2><blockquote>
+<p>该标准并没有发明全新的账本，它只是借用了 ERC-20 的 <code>_balances</code> 账本，在其转移逻辑中强行插入了一道防止资金锁死的“收款人身份探测验证机制”。</p>
+</blockquote>
+<h3 id="section-4">A. 核心状态结构 (State Variables)</h3><pre><code class="language-solidity">// 完全复用 ERC-20 的底层账本体系进行加减操作
+mapping(address =&gt; uint256) private _balances;
+uint256 private _totalSupply;
+</code></pre>
+<h3 id="section-5">B. 关键机制与底层逻辑 (Core Functions)</h3><h4>1. <code>transfer(to, value, data)</code> (带附言和探路灯的转账)</h4><p>ERC-223 最大的贡献就是重载了这个同名同姓的转账函数，引入了 <code>data</code> 附言并自带防跌落检测。</p>
+<ul>
+<li><strong>白话逻辑解析</strong>：除了正常从你的账户扣钱加给 <code>to</code> 之外，最后它会动用以太坊底层指令（如 <code>extcodesize</code>）查明 <code>to</code> 到底是个普通的人类钱包（EOA）还是个代码智能合约（Contract）。如果是智能合约，它会强行按响对方门上的 <code>tokenFallback</code> 门铃。如果对方没有实现这个门铃来接客，整笔转账报错回滚，你的钱安全退回。</li>
+<li><strong>核心源码骨架</strong>：<pre><code class="language-solidity">function transfer(address to, uint value, bytes calldata data) public returns (bool) {
+    uint256 fromBalance = _balances[msg.sender];
+    require(fromBalance &gt;= value, &quot;ERC223: insufficient balance&quot;);
+    
+    // 1. 正常的底层账本加减法
+    unchecked { _balances[msg.sender] = fromBalance - value; }
+    _balances[to] += value;
+
+    // 2. 防跌落探测机制的核心门卫！
+    if (isContract(to)) {
+        // 如果对方是机器，强制其接管后续控制权并响应，否则就判定其无法处理该代币，全体回滚退款
+        IERC223Recipient(to).tokenFallback(msg.sender, value, data);
+    }
+    
+    emit Transfer(msg.sender, to, value, data); // 注意事件记录附带了 data 备忘录
+    return true;
+}
+</code></pre>
+</li>
+</ul>
+<h4>2. <code>tokenFallback</code> (接收方必须具备的安全落地垫)</h4><ul>
+<li><strong>白话逻辑解析</strong>：所有想要接收 ERC-223 代币的金库智能合约，必须写明白这个收留资金的落地动作函数，在这里面可以读取 <code>data</code> 做诸如“入账后自动理财”之类的后续自动化动作。如果不手写这个门铃，上面的探测函数调用过来时就会失败报错。</li>
+</ul>
+<h3 id="section-6">C. 关键事件 (Events)</h3><ul>
+<li><code>Transfer(address indexed from, address indexed to, uint value, bytes data)</code>：比 ERC-20 的古典记录事件多出了一个可以自定义写入任何十六进制信息的 <code>data</code> 字段。</li>
+</ul>
+<hr>
+<h2 id="section-7">3. 标准业务工作流 (Standard Workflow)</h2><p><strong>用户通过 ERC-223 机制向某个金库充值代币的流程：</strong></p>
+<ol>
+<li><strong>发起定投 (Transfer)</strong>：用户调用 ERC-223 代币的 <code>transfer(金库合约地址, 100, &quot;memo&quot;)</code>。</li>
+<li><strong>底层拦截与敲门 (Checks &amp; Interactions)</strong>：代币合约扣掉用户的 100 个代币余额，然后它用底层的汇编代码 <code>EXTCODESIZE</code> 查明金库到底是个真实的人（钱包私钥），还是个机器（智能合约）。</li>
+<li><strong>强行回调 (Fallback)</strong>：由于金库是机器，代币合约立刻要求金库接电话，强制调用 <code>金库合约.tokenFallback(用户地址, 100, &quot;memo&quot;)</code>。</li>
+<li><strong>安全落袋 (Completion)</strong>：金库合约不仅在电话里收到了钱已经到账的通知，还可以直接利用传过来的 <code>data</code> 去执行后续自动化逻辑（比如收到钱自动发卡）。双方挂断电话，交易成功。</li>
+</ol>
+<hr>
+<h2 id="section-8">4. 关键机制与难点解析 (Key Mechanics)</h2><blockquote>
+<p>对于协议中那些绕人的数学计算、状态机流转或者是舍入取整规则，<strong>必须配以核心公式推导或精简版代码辅助理解</strong>。</p>
+</blockquote>
+<h3 id="section-9">A. 核心难点一：如何判断接收方是人还是狗（智能合约）？</h3><ul>
+<li><strong>原理讲解</strong>：在以太坊里，无论是普通人的私钥钱包（EOA）还是写在链上的智能合约（Contract），长得都是一模一样的 0x 地址。但在 EVM 底层，唯一的区别是合约地址的背后存有一坨机器编译好的字节码。ERC-223 依靠这套底层的字节码探测机制来决定是否发起回调。</li>
+<li><strong>核心逻辑代码 (Solidity)</strong>：<pre><code class="language-solidity">// 在 ERC-223 的转账函数底层，必然有下面这段判定防线
+function isContract(address _addr) private view returns (bool is_contract) {
+    uint length;
+    // 内联汇编：极其冰冷无情地去链上读取这个地址的字节码长度
+    assembly {
+        length := extcodesize(_addr)
+    }
+    return (length &gt; 0);
+}
+</code></pre>
+<em>代码拆解</em>：如果你用普通 Metamask 钱包收钱，<code>extcodesize</code> 读出来的长度是 0，合约就放心大胆地把数字加上去给你。如果读出来大于 0，那完蛋，必须得走强制回调函数 <code>tokenFallback</code> 验明真身。这套极其朴素的代码后来成为了所有“敲门机制”（如 ERC-721）的核心基座。</li>
+</ul>
+<hr>
+<h2 id="section-10">5. 周边生态与后续演进 (Ecosystem)</h2><ul>
+<li><strong>主流采用方</strong>：极少。由于生不逢时，它提出来的时候 ERC-20 早已席卷天下并被写死了。</li>
+<li><strong>标准的局限性</strong>：<ol>
+<li>向后兼容性极差。它和市面上已经泛滥的老合约（那些压根没写 <code>tokenFallback</code> 的金库、多签钱包或交易所账本）完全没法配合。如果你发币用它，没人能接收。</li>
+<li>EVM 底层的重入风险开始暴露。</li>
+</ol>
+</li>
+<li><strong>后续打补丁的扩展提案</strong>：<ul>
+<li><strong>ERC-777</strong>：以太坊官方后来尝试推出的“加强版 ERC-223”，使用了更优雅的 <code>hooks</code> 注册表（ERC-1820），但依然由于极其严重的“重入攻击（Reentrancy）”漏洞被全网封杀，最终 DeFi 业界含泪拥抱了最简陋但最可控的 ERC-20。</li>
+</ul>
+</li>
+</ul>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/DeFi协议/Aave/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">Aave: 点对池 (Peer-to-Pool) 去中心化借贷协议</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/ERC标准/ERC-2612/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-2612: Permit 扩展标准</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>📜 核心元数据与参阅资料 (Metadata &amp; References)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>1. 核心理念与痛点解决 (Core Concept)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>2. 核心接口与数据结构 (Core Interfaces)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">A. 核心状态结构 (State Variables)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">B. 关键机制与底层逻辑 (Core Functions)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">C. 关键事件 (Events)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-7"> <button class="article-outline__group-link" type="button" data-group-target="section-7"> <span>3. 标准业务工作流 (Standard Workflow)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-8"> <button class="article-outline__group-link" type="button" data-group-target="section-8"> <span>4. 关键机制与难点解析 (Key Mechanics)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">A. 核心难点一：如何判断接收方是人还是狗（智能合约）？</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-10"> <button class="article-outline__group-link" type="button" data-group-target="section-10"> <span>5. 周边生态与后续演进 (Ecosystem)</span>  </button>  </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const fab = document.getElementById("article-toc-fab");
+        const outlineNav = sidebar?.querySelector(".article-outline__body");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+        const storageKey = "article-outline-open";
+
+        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let isOpen = false;
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const syncState = () => {
+          shell.classList.toggle("article-shell--toc-expanded", isOpen);
+          shell.classList.toggle("article-shell--toc-collapsed", !isOpen);
+          sidebar.classList.toggle("is-open", isOpen);
+          fab.classList.toggle("is-open", isOpen);
+          fab.setAttribute("aria-expanded", String(isOpen));
+
+          try {
+            localStorage.setItem(storageKey, isOpen ? "1" : "0");
+          } catch {}
+        };
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (!isOpen || Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        try {
+          isOpen = localStorage.getItem(storageKey) === "1";
+        } catch {
+          isOpen = false;
+        }
+
+        syncState();
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        fab.addEventListener("click", (event) => {
+          event.stopPropagation();
+          isOpen = !isOpen;
+          syncState();
+        });
+
+        sidebar.addEventListener("click", (event) => {
+          event.stopPropagation();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && isOpen) {
+            isOpen = false;
+            syncState();
+            fab.focus();
+          }
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

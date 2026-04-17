@@ -1,0 +1,400 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>EIP-1967: 标准代理存储插槽 (Standard Proxy Storage Slots) | 沉于思，录以隙</title><meta name="description" content="# EIP-1967: 标准代理存储插槽 (Standard Proxy Storage Slots) > **一句话总结**：EIP-1967 规定了智能合约代理（Proxy）存放逻辑合约地址（Implementation）、管理员地址（Admin）以及信标地址（Beacon）"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.vzbGpqN6.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">EIP-1967: 标准代理存储插槽 (Standard Proxy Storage Slots)</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">EIP标准</span>  </div> <div class="article-meta-row"> <span>2026/3/17</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/EIP标准/EIP-1967.md</p> </header> <div class="article-main"> <div class="article-content"><h1>EIP-1967: 标准代理存储插槽 (Standard Proxy Storage Slots)</h1><blockquote>
+<p><strong>一句话总结</strong>：EIP-1967 规定了智能合约代理（Proxy）存放逻辑合约地址（Implementation）、管理员地址（Admin）以及信标地址（Beacon）的特定、极远端哈希存储槽位，彻底解决了代理合约和逻辑合约之间的存储碰撞（Storage Collision）问题，并为区块链浏览器（如 Etherscan）提供了统一的解析标准。</p>
+</blockquote>
+<h2 id="section-1">📜 核心元数据 (Metadata)</h2><blockquote>
+<p><strong>信息源原则</strong>：底层网络协议必须以 <strong>Ethereum EIP 官方文档 (eips.ethereum.org/core)</strong> 和核心客户端或开源标准库的架构机制为准。</p>
+</blockquote>
+<ul>
+<li><strong>官方 EIP 提案编号与链接</strong>：<a href="https://eips.ethereum.org/EIPS/eip-1967">EIP-1967: Standard Proxy Storage Slots</a></li>
+<li><strong>协议类型 (Type)</strong>：Standards Track / ERC</li>
+<li><strong>所属分叉/升级名称 (Hard Fork)</strong>：无特定底层分叉依赖（纯智能合约应用层架构标准）</li>
+<li><strong>当前标准状态</strong>：Final</li>
+<li><strong>前置依赖 EIP</strong>：无。常与 ERC-1822 (UUPS), ERC-1167 (Minimal Proxy) 结合探讨。</li>
+</ul>
+<hr>
+<h2 id="section-2">1. 核心理念与全网级痛点 (Core Concept &amp; Motivation)</h2><ul>
+<li><p><strong>传统状态机/共识痛点</strong>：在没有这个 EIP 之前，可升级代理合约（Proxy）通常将核心控制变量（如逻辑合约地址 <code>implementation</code> 和管理员 <code>admin</code>）存放在代理合约的 Slot 0 或 Slot 1 等常规位置中。这就导致了一个致命的安全性问题：当通过 <code>delegatecall</code> 委托调用发生时，<strong>如果逻辑合约的设计者恰好也把自己的业务变量（如 <code>owner</code>）声明在了第一行（Slot 0）</strong>，业务逻辑就会直接将数据覆写进底层的 Slot 0 中，覆盖掉代理合约维持生命线的 <code>implementation</code> 地址（这就是臭名昭著的<strong>存储碰撞 Storage Collision</strong>）。
+此外，全网缺乏统一标准，导致 Etherscan 等区块链生态工具根本无法自动识别某个合约是不是代理，每次都要人工配置，无法替普通用户解析出背后真实的逻辑合约源码。</p>
+</li>
+<li><p><strong>破局思路</strong>：引入一个所有逻辑开发者都不可能“恰巧按顺序”碰上的极远端“随机”槽位（基于特定常数字符串的 Keccak256 哈希计算得出），强制全行业的 Proxy 把底层的关键配置（如逻辑地址）存在这些无人之境。</p>
+</li>
+<li><p><strong>专属核心概念</strong>：</p>
+<ul>
+<li><strong>Implementation Slot</strong>: 存放底层不可变业务逻辑代码所在的合约地址。</li>
+<li><strong>Admin Slot</strong>: 存放有权触发升级的主控角色（或合约）地址。</li>
+<li><strong>Beacon Slot</strong>: 存放信标合约地址（用于工厂模式下，批量、统一步伐同时升级成百上千个 Proxy 的统一入口）。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="section-3">2. 核心架构与底层修改细节 (Core Specification)</h2><blockquote>
+<p><strong>极度重要</strong>：EIP-1967 不修改以太坊节点执行层（EVM），而是利用内联汇编统一了 Solidity 在 EVM Storage 物理内存布局中的寻址规范。</p>
+</blockquote>
+<h3 id="section-4">A. 全局参数 / 常量变动 (Parameters)</h3><pre><code class="language-solidity">// EIP-1967 定义的三个全局神圣槽位 (Slots)
+bytes32 constant IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
+bytes32 constant ADMIN_SLOT = 0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103;
+bytes32 constant BEACON_SLOT = 0xa3f0ad74e5423aebfd80d3ef4346578335a9a72aeaee59ff6cb3582b35133d50;
+</code></pre>
+<ul>
+<li><strong>配置解读</strong>：代理合约在读取或更改升级逻辑时，被强行要求绝不使用高级语言常规变量声明，而是利用 Yul 汇编直接无视变量名约束，向上述 256 位常量指定的绝对物理地址强行写入和读取数据。</li>
+</ul>
+<h3 id="section-5">B. EVM 指令集与 Gas 计价改动 (Opcodes &amp; Gas Changes)</h3><p>无新增。本规范纯粹依赖 <code>SLOAD</code>, <code>SSTORE</code> 存储指令以及 <code>DELEGATECALL</code> 操作码。由于访问的均是硬编码的极偏槽位，首次读写同样遵循冷访问（2100 Gas）与热访问 Gas 收费标准。</p>
+<h3 id="section-6">C. 交易类型与区块结构 (Transaction &amp; Block Header Changes)</h3><p>无。</p>
+<hr>
+<h2 id="section-7">3. 从宏观到微观的生命周期 (Lifecycle Workflow)</h2><p>将上面零散的节点变更串联起来，还原一笔带着新特性的交互，是如何被执行的。</p>
+<p><strong>以一次基于 EIP-1967 Proxy 的无缝升级和交互生命周期为例：</strong></p>
+<ol>
+<li><strong>部署逻辑 (Deploy Logic)</strong>：开发者先将核心业务代码 <code>LogicV1</code> 部署到链上，产生物理地址 A。</li>
+<li><strong>初始化代理 (Deploy Proxy)</strong>：部署 <code>Proxy</code> 合约，并在其特有的初始化函数中，底层直接向极远端 <code>IMPLEMENTATION_SLOT</code> 的物理槽位写入地址 A；同时将控制者地址写入 <code>ADMIN_SLOT</code>。</li>
+<li><strong>用户调用 (User Call)</strong>：用户向 Proxy 发起资金转账或业务调用。</li>
+<li><strong>底层寻址与透传 (Delegatecall)</strong>：Proxy 底层执行 fallback 中的 <code>SLOAD(IMPLEMENTATION_SLOT)</code> 拉取出地址 A 这个逻辑黑盒，随后触发 <code>DELEGATECALL</code> 把地址 A 的代码挂载到 Proxy 自己的环境（Storage）上运行。由于 A 的自己写的业务变量是从正常的 <code>Slot 0</code> 开始分配的，这完美避开了 Proxy 管理使用的遥远 1967 槽位，绝对不可能导致互相覆盖。</li>
+<li><strong>代理升级 (Upgrade)</strong>：当业务发生迭代，开发者部署全新的 <code>LogicV2</code> (地址 B)。Admin 主动向 Proxy 发起升级调用指令，Proxy 的底层代码单纯将 <code>IMPLEMENTATION_SLOT</code> 槽位内的地址由 A 猛然抹除，覆写成地址 B。下个哪怕仅仅一秒后的用户调用到达时，全盘拉取的业务逻辑就已经变成 V2 了，前端用户的感知地址根本没变。</li>
+</ol>
+<hr>
+<h2 id="section-8">4. 关键机制深度解析与数学公式 (Deep Dive &amp; Cryptography)</h2><h3 id="section-9">A. 核心难点：为什么是这个特定的 Hash，而且还要减 1？</h3><ul>
+<li><p><strong>原理讲解</strong>：如果我们仅仅使用普通的哈希如 <code>keccak256(&quot;eip1967.proxy.implementation&quot;)</code>，由于以太坊中 Mapping 的底层寻址计算公式就是 <code>keccak256(key . slot)</code>，是否存在极小概率（或被人恶意针对构造）使得在一个极度庞杂的合约中，恰好有一个公开的 Mapping 映射变量被分配的位置，刚好生成这同一个哈希值并引发碰撞风险？
+为了消除最后哪怕千亿亿分之一的理论物理攻击面，并且从密码学反向上直接证明“<strong>这世间没有任何人知道这个终局槽位哈希值的原像 (Preimage)</strong>”，该标准极其狠毒地在正常的哈希结果之后强行减去了 <code>1</code>！这就导致这三个 Slot不再是任何 keccak256 的直接输出，从密码学上证明了&quot;没有任何正常路径能生成这个数&quot;。</p>
+</li>
+<li><p><strong>数学推导/公式</strong>：
+$$ \text{Implementation Slot} = \text{uint256}(\text{keccak256}(\text{&quot;eip1967.proxy.implementation&quot;})) - 1 $$
+$$ \text{Admin Slot} = \text{uint256}(\text{keccak256}(\text{&quot;eip1967.proxy.admin&quot;})) - 1 $$
+$$ \text{Beacon Slot} = \text{uint256}(\text{keccak256}(\text{&quot;eip1967.proxy.beacon&quot;})) - 1 $$</p>
+</li>
+</ul>
+<h4>推演：Implementation Slot 是怎么算出来的？</h4><p>整个过程只有 <strong>两步</strong>，拿 Implementation Slot 做完整演示：</p>
+<p><strong>Step 1：对一串人类可读的英文字符串做 Keccak256 哈希</strong></p>
+<p>输入就是一段你我都能看懂的普通英文字符串（不是地址、不是数字，就是纯文本）：</p>
+<pre><code>&quot;eip1967.proxy.implementation&quot;
+</code></pre>
+<p>把它丢进 Keccak256 哈希函数，出来的结果是一个 <strong>256 位（32 字节）的十六进制数</strong>：</p>
+<pre><code>keccak256(&quot;eip1967.proxy.implementation&quot;)
+= 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbd
+                                                                  ^^^
+                                                              注意最后是 d
+</code></pre>
+<p><strong>Step 2：把哈希结果减去 1</strong></p>
+<p>在上一步的结果上，<strong>直接当作一个超大整数减去 1</strong>：</p>
+<pre><code>  0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbd
+-                                                                 1
+= 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc
+                                                                  ^^^
+                                                    最末位 d → c，完成！
+</code></pre>
+<p><strong>最终结果</strong>就是你在代码中看到的那串常量：</p>
+<pre><code class="language-solidity">bytes32 constant IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
+</code></pre>
+<blockquote>
+<p><strong>就是这么简单</strong>：一段英文 → 哈希 → 减 1 → 得到一个宇宙级别的随机坑位编号。Admin Slot 和 Beacon Slot 的过程完全一样，只是换了输入字符串（<code>&quot;eip1967.proxy.admin&quot;</code> 和 <code>&quot;eip1967.proxy.beacon&quot;</code>）。</p>
+</blockquote>
+<p><strong>你可以用 Foundry 亲自验证：</strong></p>
+<pre><code class="language-bash">cast keccak &quot;eip1967.proxy.implementation&quot;
+# 输出: 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbd
+
+# 减 1 就是最终的 IMPLEMENTATION_SLOT
+</code></pre>
+<p>或者在 Solidity 中验证：</p>
+<pre><code class="language-solidity">bytes32 slot = bytes32(uint256(keccak256(&quot;eip1967.proxy.implementation&quot;)) - 1);
+// slot == 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc ✅
+</code></pre>
+<ul>
+<li><strong>实现架构伪代码 (Solidity Assembly)</strong>：<pre><code class="language-solidity">// 获取底层的实现地址
+function _getImplementation() internal view returns (address impl) {
+    // 必须通过 Yul 内联汇编精准穿透读取 1967 插槽
+    assembly {
+        impl := sload(0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc)
+    }
+}
+
+// 覆写底层实现地址 (升级)
+function _setImplementation(address newImpl) private {
+    assembly {
+        sstore(0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc, newImpl)
+    }
+}
+</code></pre>
+<em>代码拆解</em>：在 Proxy 合约里，绝不能出现 <code>address public implementation;</code> 这种高级语言声明方式。只能粗暴地使用 <code>sload</code> 和 <code>sstore</code> 操作码直击上述 256 位常量指定的暗黑物理坐标。</li>
+</ul>
+<hr>
+<h2 id="section-10">5. 对生态与智能合约的系统级冲击 (Impact Analysis)</h2><ul>
+<li><strong>对 DApp 开发者的影响（基石奠定）</strong>：对于当今生态，它是现代智能合约可升级体系<strong>不可逾越的绝对基石</strong>。举世闻名的 Transparent Proxy（透明代理）和各种 UUPS 模式架构全部重度拥挤并依赖 EIP-1967。开发者只需简单地继承使用 OpenZeppelin 等防呆框架封装好的工具类，终于能够睡个安稳觉，无需再为逻辑升级引发离奇的存储崩溃而战战兢兢。</li>
+<li><strong>对基础设施体系的系统性利好</strong>：极大帮助了整个以太坊的基础设施生态！由于实现了业界强标准一统，现今任何用户去 Etherscan 搜索任意合约，哪怕它是黑盒不开源的，Etherscan 的后台侦探节点也只需向链上悄悄进行一次 RPC 查询：
+<code>eth_getStorageAt(address, 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc)</code>
+✅ 只要查询出来的不是 0 (空槽)，Etherscan 会立马通过网页判定这就是个 Proxy！网页会自动点亮 <strong>[Read as Proxy]</strong> 与 <strong>[Write as Proxy]</strong> 选项按钮卡片，并自动帮你找出躲藏在这之后的真正幕后逻辑合约（甚至主动调用展示其实际源码 ABI），它利用标准化的屠龙刀，在浏览器层面彻底驱散了代理黑盒试图为散户构建的代码阅读迷雾。</li>
+<li><strong>长远倒逼演进</strong>：EIP-1967 仅仅只是个寻址说明书，它只是回答了“数据该存在这座黑山的哪里”。但对于这座黑山“该由谁在什么条件下引爆炸药升级管理”（例如著名的透明代理 Admin 选择器碰撞死锁问题）以及“升级的引信线埋在里面还是外面”的问题，它只字不提。这直接迫使和引发了后续 ERC-1822 (UUPS 通用可升级代理) 和 Beacon 代理模式在框架级业务控制层面上不断狂野内卷和突围。</li>
+</ul>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/代理模式/Transparent_Proxy/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">Transparent Proxy（透明代理）</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/区块链技术原理/比特币基础/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">比特币基础</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>📜 核心元数据 (Metadata)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>1. 核心理念与全网级痛点 (Core Concept &amp; Motivation)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>2. 核心架构与底层修改细节 (Core Specification)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">A. 全局参数 / 常量变动 (Parameters)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">B. EVM 指令集与 Gas 计价改动 (Opcodes &amp; Gas Changes)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">C. 交易类型与区块结构 (Transaction &amp; Block Header Changes)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-7"> <button class="article-outline__group-link" type="button" data-group-target="section-7"> <span>3. 从宏观到微观的生命周期 (Lifecycle Workflow)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-8"> <button class="article-outline__group-link" type="button" data-group-target="section-8"> <span>4. 关键机制深度解析与数学公式 (Deep Dive &amp; Cryptography)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">A. 核心难点：为什么是这个特定的 Hash，而且还要减 1？</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-10"> <button class="article-outline__group-link" type="button" data-group-target="section-10"> <span>5. 对生态与智能合约的系统级冲击 (Impact Analysis)</span>  </button>  </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const fab = document.getElementById("article-toc-fab");
+        const outlineNav = sidebar?.querySelector(".article-outline__body");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+        const storageKey = "article-outline-open";
+
+        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let isOpen = false;
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const syncState = () => {
+          shell.classList.toggle("article-shell--toc-expanded", isOpen);
+          shell.classList.toggle("article-shell--toc-collapsed", !isOpen);
+          sidebar.classList.toggle("is-open", isOpen);
+          fab.classList.toggle("is-open", isOpen);
+          fab.setAttribute("aria-expanded", String(isOpen));
+
+          try {
+            localStorage.setItem(storageKey, isOpen ? "1" : "0");
+          } catch {}
+        };
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (!isOpen || Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        try {
+          isOpen = localStorage.getItem(storageKey) === "1";
+        } catch {
+          isOpen = false;
+        }
+
+        syncState();
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        fab.addEventListener("click", (event) => {
+          event.stopPropagation();
+          isOpen = !isOpen;
+          syncState();
+        });
+
+        sidebar.addEventListener("click", (event) => {
+          event.stopPropagation();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && isOpen) {
+            isOpen = false;
+            syncState();
+            fab.focus();
+          }
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

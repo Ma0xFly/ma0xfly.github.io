@@ -1,0 +1,314 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>web3生态分层 | 沉于思，录以隙</title><meta name="description" content="现在的WEB3生态，已经不是一个简单的比特币网络了，它演化成了一个庞大复杂的数字国家。我们可以用分层的方式来拆解它，就像理解一个城市的：地基、公路、水电煤、商业区。 ## 基础设施层 L0→L3 ### L0 底层传输层 它的主要作用是解决不同区块链，如比特币、以太坊、波卡等之间"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.vzbGpqN6.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">web3生态分层</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">区块链技术原理</span>  </div> <div class="article-meta-row"> <span>2026/1/20</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/区块链技术原理/web3生态分层.md</p> </header> <div class="article-main"> <div class="article-content"><p>现在的WEB3生态，已经不是一个简单的比特币网络了，它演化成了一个庞大复杂的数字国家。我们可以用分层的方式来拆解它，就像理解一个城市的：地基、公路、水电煤、商业区。</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/4ed22e773aad38a08722fec6d1b90893_MD5.png" alt=""></p>
+<h2 id="section-1">基础设施层 L0→L3</h2><h3 id="section-2">L0 底层传输层</h3><p>它的主要作用是解决不同区块链，如比特币、以太坊、波卡等之间的通信和价值传输问题。</p>
+<p>其代表项目有Polkadot和Cosmos。</p>
+<p>这些项目并不想各自单独构建一个封闭的城市，而是致力于打造一个连接所有城市的国家高速公路网，实现区块链之间的互联互通。</p>
+<h3 id="section-3">L1 底层区块链</h3><p>相当于城市的地基和基本法。它是一个独立的区块链系统，能够保障自身的安全。</p>
+<p>其代表项目包括Bitcoin，被视为数字黄金；Ethereum，被称为世界计算机；Solana以及Avalanche，以高速链著称。</p>
+<p>每个独立的区块链就像一座城市，拥有自己的法律体系，即共识机制和税收系统，也就是Gas费。</p>
+<h3 id="section-4">L2 扩容方案</h3><p>类似于城市的高架桥和地铁。</p>
+<p>由于在L1主链上进行交易，存在拥堵且手续费高昂的问题，所以L2扩容方案在主链旁边构建了高速通道，用于处理大量的小额交易，最终再将交易结果传回主链进行结算。</p>
+<p>其核心目标是提升区块链的扩展性。代表项目有Optimism、Arbitrum以及Lightning Network。</p>
+<p>L2扩容方案对支付领域意义重大！未来海量的微支付交易几乎必然会发生在L2上，因为其手续费极低且交易速度极快。</p>
+<h3 id="section-5">L3 应用链</h3><p>就如同城市里的某个大型主题乐园。</p>
+<p>当某个大型应用觉得在公共链上发展受到限制时，就会基于L2或L1的技术，搭建一个为自己量身定制的专属链。</p>
+<p>目前的一种代表趋势是基于Cosmos SDK或OP Stack来构建特定应用链。</p>
+<h2 id="section-6">中间件层，城市的水电煤</h2><p>这一层不直接面向最终用户，但为上层应用提供关键服务。没有它们，应用层就是空中楼阁。</p>
+<h3 id="section-7">预言机，区块链的事实来源</h3><p>区块链本身是一个相对封闭的系统，无法直接获取链外的股票价格、天气数据、比赛结果等真实世界的信息。</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/5e7ecb1994fc21a113fdc59252602a3b_MD5.png" alt=""></p>
+<p>图片来源：csdn-wonderBlock-预言机</p>
+<p>而预言机就如同区块链的事实来源，负责将外部真实世界的数据可靠地传输给区块链上的智能合约。其代表项目是Chainlink。</p>
+<p>举个例子</p>
+<p>一个去中心化金融DeFi借贷协议需要实时了解以太坊ETH的价格，以此判断是否要对抵押资产进行清算，而这个ETH的实时价格数据就是由Chainlink提供的。</p>
+<h3 id="section-8">节点服务，WEB3的云计算服务</h3><p>节点服务相当于WEB3领域的云计算服务。并非每个开发者都愿意自己搭建节点来与区块链进行交互，节点服务提供商就应运而生。</p>
+<p>这些公司会提供现成的应用程序编程接口，让开发者能够轻松地查询链上数据、发送交易。其代表项目有Infura和Alchemy。</p>
+<p>对于WEB2开发者而言，节点服务是他们进入WEB3世界最常用的桥梁或工具。</p>
+<h3 id="section-9">索引协议，区块链数据的搜索引擎</h3><p>索引协议的作用类似于百度或谷歌。</p>
+<p>由于区块链上的数据量极为庞大，犹如一片数据的海洋，那么如何才能快速查询到某个地址的所有交易记录呢？索引协议能够帮助高效地组织和查询这些数据。其代表项目是The Graph。</p>
+<h2 id="section-10">应用层，普通人能看到的商业区</h2><p>建立在底层设施之上、直接面向用户的应用层，是创新与财富效应最为集中的领域。</p>
+<h3 id="section-11"><strong>DeFi，去中心化金融：以代码重构华尔街</strong></h3><p>DeFi利用代码重新构建了整个华尔街的金融体系。无需银行、券商、交易所等传统中介机构，便可实现：</p>
+<p>借贷，如Aave、Compound；交易，如Uniswap、Sushiswap；衍生品交易，如dYdX；生息，如Yearn等所有金融活动。</p>
+<p>其核心创新在于AMM，自动化做市商机制，以Uniswap为例，它允许任何人无需许可地为任意交易对提供流动性，即做市，并赚取费用，彻底颠覆了传统的订单簿模式。</p>
+<h3 id="section-12"><strong>NFT，非同质化代币：数字所有权凭证</strong></h3><p>NFT是数字所有权证书，它不仅仅局限于JPEG图片，更是任何独一无二的数字资产，甚至实物资产的所有权凭证。</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/1c3434f245fcf777e819e7d171788345_MD5.png" alt=""></p>
+<p>其应用场景广泛，涵盖：</p>
+<p>数字艺术，如CryptoPunks；藏品，如NBA Top Shot；游戏资产，如Axie Infinity；身份认证，如域名ENS；门票、房地产等多个领域。</p>
+<h3 id="section-13"><strong>DAO，去中心化自治组织：以代码制定规则的社区与公司</strong></h3><p>DAO是通过代码设定规则的公司或社区。成员通过持有代币进行投票决策，社区或公司的金库资金由多签钱包或智能合约管理，实现了无人化管理与全球协同。</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/94abec4b8cbe54f362ccaf283133f59e_MD5.png" alt=""></p>
+<p>代表项目有ConstitutionDAO，曾试图拍卖美国宪法；BitDAO，大型风投DAO等。</p>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;">  </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/区块链技术原理/钱包/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">钱包地址生成逻辑</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>基础设施层 L0→L3</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-2"> <a href="#section-2">L0 底层传输层</a> </li><li class="article-outline__item depth-3" data-toc-id="section-3"> <a href="#section-3">L1 底层区块链</a> </li><li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">L2 扩容方案</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">L3 应用链</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-6"> <button class="article-outline__group-link" type="button" data-group-target="section-6"> <span>中间件层，城市的水电煤</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-7"> <a href="#section-7">预言机，区块链的事实来源</a> </li><li class="article-outline__item depth-3" data-toc-id="section-8"> <a href="#section-8">节点服务，WEB3的云计算服务</a> </li><li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">索引协议，区块链数据的搜索引擎</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-10"> <button class="article-outline__group-link" type="button" data-group-target="section-10"> <span>应用层，普通人能看到的商业区</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-11"> <a href="#section-11">DeFi，去中心化金融：以代码重构华尔街</a> </li><li class="article-outline__item depth-3" data-toc-id="section-12"> <a href="#section-12">NFT，非同质化代币：数字所有权凭证</a> </li><li class="article-outline__item depth-3" data-toc-id="section-13"> <a href="#section-13">DAO，去中心化自治组织：以代码制定规则的社区与公司</a> </li> </ol> </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const fab = document.getElementById("article-toc-fab");
+        const outlineNav = sidebar?.querySelector(".article-outline__body");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+        const storageKey = "article-outline-open";
+
+        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let isOpen = false;
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const syncState = () => {
+          shell.classList.toggle("article-shell--toc-expanded", isOpen);
+          shell.classList.toggle("article-shell--toc-collapsed", !isOpen);
+          sidebar.classList.toggle("is-open", isOpen);
+          fab.classList.toggle("is-open", isOpen);
+          fab.setAttribute("aria-expanded", String(isOpen));
+
+          try {
+            localStorage.setItem(storageKey, isOpen ? "1" : "0");
+          } catch {}
+        };
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (!isOpen || Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        try {
+          isOpen = localStorage.getItem(storageKey) === "1";
+        } catch {
+          isOpen = false;
+        }
+
+        syncState();
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        fab.addEventListener("click", (event) => {
+          event.stopPropagation();
+          isOpen = !isOpen;
+          syncState();
+        });
+
+        sidebar.addEventListener("click", (event) => {
+          event.stopPropagation();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && isOpen) {
+            isOpen = false;
+            syncState();
+            fab.focus();
+          }
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>
