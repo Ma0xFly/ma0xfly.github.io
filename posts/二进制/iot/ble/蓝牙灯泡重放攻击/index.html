@@ -1,0 +1,327 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>蓝牙灯泡重放攻击 | 沉于思，录以隙</title><meta name="description" content="# 低功耗蓝牙协议栈 BLE是低功耗蓝牙的英文缩写（Bluetooth Low Energy），是蓝牙4.0版本起开始支持的新的、低功耗版本的蓝牙技术规范。 低功耗蓝牙瞄准多个市场，特别是移动智能终端，智能家居，互联设备等领域，主要特点包括： - 低功耗，使用纽扣电池就可以运行数"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.vzbGpqN6.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">蓝牙灯泡重放攻击</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">iot</span>  <span class="directory-sep">/</span> <span class="directory-text">ble</span>  </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>二进制</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：二进制/iot/ble/蓝牙灯泡重放攻击.md</p> </header> <div class="article-main"> <div class="article-content"><h1>低功耗蓝牙协议栈</h1><p>BLE是低功耗蓝牙的英文缩写（Bluetooth Low Energy），是蓝牙4.0版本起开始支持的新的、低功耗版本的蓝牙技术规范。</p>
+<p>低功耗蓝牙瞄准多个市场，特别是移动智能终端，智能家居，互联设备等领域，主要特点包括：</p>
+<ul>
+<li>低功耗，使用纽扣电池就可以运行数月至数年。</li>
+<li>快连接，毫秒级的连接速度，传统蓝牙甚至长达数分钟。</li>
+<li>远距离，长达数百米的通信距离，而传统蓝牙通常10米左右。</li>
+</ul>
+<p>​       <img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20250504145635287.png" alt="image-20250504145635287"></p>
+<p>​       <strong>物理层(phy)</strong>:使用GFSK调制无线信号，并将2.4GHz频段划分为40个射频信道(3个广播信道，37个数据信道)。</p>
+<ul>
+<li><p><strong>直接测试模式（DTM）</strong>：通过测试仪器直接连接蓝牙设备控制接口，自动完成与蓝牙模块之间的交互命令和蓝牙参数的设定，从而对蓝牙模块进行测试。</p>
+</li>
+<li><p><strong>链路层（LL）</strong>：定义逻辑通道并为通道选择调频技术；控制设备的射频状态（等待、广播、扫描、发起连接等）和角色；控制数据包的发送时机、完整性等。</p>
+</li>
+<li><p><strong>主机控制器接口（HCI）</strong>：为主机和控制器提供统一的通信接口。这一层的功能可以通过软件API来实现，也可以使用硬件外设来实现。</p>
+</li>
+<li><p><strong>逻辑链路控制和适配协议（L2CAP）</strong>：用于协商与建立逻辑通信信道。BLE使用固定逻辑通信信道来传输协议数据，可避免建立信道时带来的额外时间消耗。</p>
+</li>
+<li><p><strong>安全管理器（SM）</strong>：定义了设备配对与密钥分配的方式，并为设备之间的安全连接和数据交换提供服务。</p>
+</li>
+<li><p><strong>属性协议（ATT）</strong>：定义了访问服务端设备数据的规则（比如读、写等）。数据存储在属性服务器的属性（attribute）中，供属性客户端执行读写操作。</p>
+</li>
+<li><p><strong>通用属性规范（GAP）</strong>：负责处理设备的访问模式和程序，具体包括定义蓝牙设备的角色、通信操作模式和过程，定义蓝牙地址、蓝牙名称等与蓝牙相关的参数。</p>
+</li>
+<li><p><strong>通用访问规范（GAP）</strong>：主要用来控制设备连接和广播。通用访问规范可使你的设备被其他设备发现，并决定了你的设备是否可以或者怎样与交互设备进行通信。</p>
+</li>
+<li><p><strong>各种应用程序</strong>：基于蓝牙协议的应用程序</p>
+</li>
+<li><p><strong>通用属性配置文件(GATT)</strong>
+GATT配置文件定义了如何通过BLE连接来交换所有配置文件和用户数据。它为基于GATT的配置文件提供了参考框架和精确的用例，以确保不同供应商生产的设备之间的互操作性。标准的BLE配置文件都以GATT配置文件为基础，并且必须遵守GATT配置文件才能正常运行。
+​     尽管蓝牙规范在属性协议(ATT)中定义了属性，但定义的这些属性是与ATT相关的。ATT依靠公开的所有概念提供一系列精确的协议数据单元(PDU)，以允许客户端访问服务器上的属性。</p>
+<p>​      而GATT进一步建立了严格的层次结构，允许使用一组简洁的规则在客户端和服务器之间访问与检索数据，而这些规则共同构成了所有基于 GATT 的配置文件使用的框架。</p>
+<p>​      <strong>在GATT服务器中，属性被分组为服务(service)，每个服务可以包含零个或多个特征(characteristic)，不同的特征之间用唯一的 UUID区分，这些特征又可以包括零个或多个描述符(descriptor)。对于声称与 GATT 兼容的任何 BLE 设备来说，都具有相应的层次结构。</strong></p>
+<p>  <img src="C:/Users/86198/AppData/Roaming/Typora/typora-user-images/image-20240622201454991.png" alt="image-20240622201454991"></p>
+<p>​       在日常生活中，一种常见的 BLE 设备是智能手环。假设它包含 3 个服务，分别是提供设备信息的服务、统计步数的服务和检测心率的服务。在提供设备信息的服务中，包含的特征有厂商信息、硬件信息和版本信息等，而在检测心率的服务中则包含心率的特征等。每个特征都有对应的值（value）和描述符，用于提供更多相关信息。心率特征中的值是与心率相关的数据，而描述符是对该value的描述说明，如value的单位。权限等。</p>
+<p>​       尽管BLE设备的配对操作是加密的，但每个特征的值可以在不加密的状态下进行读写。当特征值发生改变时，蓝牙设备会收到相应的通知。</p>
+</li>
+</ul>
+<h1>智能灯泡攻击实验</h1><h2 id="section-1">环境搭建</h2><p><a href="https://blog.csdn.net/XiaoXiaoPengBo/article/details/115156929">https://blog.csdn.net/XiaoXiaoPengBo/article/details/115156929</a></p>
+<p>工具：wireshark3.4+52832dongle+lifesmart智能灯泡+lightblue app+lifesmart app</p>
+<p>注意：python版本一定要换</p>
+<h2 id="section-2">1.确定蓝牙设备mac地址</h2><p>打开蓝牙灯泡并用产品官方app与其蓝牙连接，再使用lightblue检测蓝牙信号强度，找到一靠近灯泡信号飙升远离灯泡信号掉的最明显的设备就是蓝牙灯泡。我这里是第二个设备，BULB。</p>
+<p><img src="C:/Users/86198/AppData/Roaming/Typora/typora-user-images/image-20240622202302750.png" alt="image-20240622202302750"> </p>
+<h2 id="section-3">2.wireshark抓蓝牙数据包</h2><p>插上52832，用btatt过滤规则，查看ATT层传输的数据。device选择mac地址监听目标设备，当52832指示灯变从红色闪烁变绿即连接成功。(连接时手机不能熄屏，要留在lifesmart应用否指连接断开)</p>
+<p><img src="C:/Users/86198/AppData/Roaming/Typora/typora-user-images/image-20250508184507717.png" alt="image-20250508184507717"></p>
+<p><img src="C:/Users/86198/AppData/Roaming/Typora/typora-user-images/image-20240622205827402.png" alt="image-20240622205827402"></p>
+<p>多次在lifesmart app上开关灯泡，找到对应开关的服务。</p>
+<p><img src="C:/Users/86198/AppData/Roaming/Typora/typora-user-images/image-20240622204720722.png" alt="image-20240622204720722"></p>
+<p>黑色标记的2条是开关操作，发现每次操作value倒数第七位自增1，开灯末尾是181，关灯180.并且找到了servic和其特征的uuid红线划出了。</p>
+<h2 id="section-4">3.重放攻击</h2><p>  现在灯是开的，我们通过lightblue app  改写上述服务的特征值，达到重放攻击。</p>
+<p>输入Value: 0e000000000000000000000410020180.灯灭</p>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/二进制/iot/通信原理/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">通信原理</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/二进制/iot/ble/蓝牙协议栈/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">蓝牙协议栈</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>环境搭建</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>1.确定蓝牙设备mac地址</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>2.wireshark抓蓝牙数据包</span>  </button>  </li><li class="article-outline__group" data-group-id="section-4"> <button class="article-outline__group-link" type="button" data-group-target="section-4"> <span>3.重放攻击</span>  </button>  </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const fab = document.getElementById("article-toc-fab");
+        const outlineNav = sidebar?.querySelector(".article-outline__body");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+        const storageKey = "article-outline-open";
+
+        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let isOpen = false;
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const syncState = () => {
+          shell.classList.toggle("article-shell--toc-expanded", isOpen);
+          shell.classList.toggle("article-shell--toc-collapsed", !isOpen);
+          sidebar.classList.toggle("is-open", isOpen);
+          fab.classList.toggle("is-open", isOpen);
+          fab.setAttribute("aria-expanded", String(isOpen));
+
+          try {
+            localStorage.setItem(storageKey, isOpen ? "1" : "0");
+          } catch {}
+        };
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (!isOpen || Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        try {
+          isOpen = localStorage.getItem(storageKey) === "1";
+        } catch {
+          isOpen = false;
+        }
+
+        syncState();
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        fab.addEventListener("click", (event) => {
+          event.stopPropagation();
+          isOpen = !isOpen;
+          syncState();
+        });
+
+        sidebar.addEventListener("click", (event) => {
+          event.stopPropagation();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && isOpen) {
+            isOpen = false;
+            syncState();
+            fab.focus();
+          }
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

@@ -1,0 +1,388 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>gatt协议 | 沉于思，录以隙</title><meta name="description" content="# gatt协议 协议将设备分为2种。client客户端和server服务端 客户端发送命令，请求，确认信息给服务端，读取和写入存储在服务端的特征值 `(Characteristics )` 服务端通过下图三种方式返回数据给客户端，设备包含由 `GATT` 客户端读取或写入的 `"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.vzbGpqN6.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">gatt协议</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">iot</span>  <span class="directory-sep">/</span> <span class="directory-text">ble</span>  </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>二进制</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：二进制/iot/ble/gatt协议.md</p> </header> <div class="article-main"> <div class="article-content"><h1>gatt协议</h1><p>协议将设备分为2种。client客户端和server服务端</p>
+<p>客户端发送命令，请求，确认信息给服务端，读取和写入存储在服务端的特征值 <code>(Characteristics )</code></p>
+<p>服务端通过下图三种方式返回数据给客户端，设备包含由 <code>GATT</code> 客户端读取或写入的 <code>Characteristic</code>，每当客户端发送请求时，服务端就会接受并执行相应的请求。</p>
+<p>区分三种行为：<strong>Notification、Indication 和 Response</strong></p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>主动发起者</th>
+<th>是否由服务端主动推送</th>
+<th>是否需要客户端确认</th>
+<th>通常用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Notification</strong></td>
+<td>服务端</td>
+<td>✅ 是</td>
+<td>❌ 否</td>
+<td>实时传感数据（如心率）</td>
+</tr>
+<tr>
+<td><strong>Indication</strong></td>
+<td>服务端</td>
+<td>✅ 是</td>
+<td>✅ 是</td>
+<td>重要数据（如报警、状态变更）</td>
+</tr>
+<tr>
+<td><strong>Response</strong></td>
+<td>服务端</td>
+<td>❌ 否（被动响应）</td>
+<td>✅ 是（回应客户端请求）</td>
+<td>回应读写请求（如客户端 <code>read</code>）</td>
+</tr>
+</tbody></table>
+<hr>
+<p>🔁 Notification（通知）</p>
+<ul>
+<li>服务端发送数据到客户端，无需等待回应</li>
+<li><strong>速度快，但不保证送达</strong></li>
+<li>客户端只需在 CCCD 写 <code>0x0100</code> 来启用</li>
+</ul>
+<p>🔐 Indication（指示）</p>
+<ul>
+<li>服务端发送后 <strong>必须收到客户端确认（ACK）</strong></li>
+<li><strong>传输更可靠，但速度慢</strong></li>
+<li>客户端在 CCCD 写 <code>0x0200</code> 启用</li>
+</ul>
+<hr>
+<p>📨 Response（响应）</p>
+<ul>
+<li>是客户端执行命令（如 <code>read</code> 或 <code>write</code>) 后，<strong>服务端对请求的回应</strong></li>
+<li>不需要启用 CCCD，也不是推送，而是请求-响应模型</li>
+<li>例如：<ul>
+<li><code>gatttool --char-read -a 0x003e</code> ← 客户端请求</li>
+<li>服务端返回：<code>Characteristic value/descriptor: 01 02 03</code> ← 响应</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>类比理解：</p>
+<table>
+<thead>
+<tr>
+<th>行为</th>
+<th>类比</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Notification</td>
+<td>服务端发广播，不管你有没有收到</td>
+</tr>
+<tr>
+<td>Indication</td>
+<td>服务端发快递，要求你签收</td>
+</tr>
+<tr>
+<td>Response</td>
+<td>你打电话问问题，对方回答你</td>
+</tr>
+</tbody></table>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20250504161246377.png" alt="image-20250504161246377"></p>
+<p>数据存在服务端(器)，存储的数据的形式是profile(配置文件)，在profile下有各种service(服务)，service下有各种characteristic(特征)，客户端可以发现和获取服务端的 <code>Service</code> 和 <code>Characteristic</code>，然后与之通信。<code>Service</code> 可以理解为一个功能集<code>Characteristic</code> 是双方通信的最小单元，是一个抽象功能单元</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20250504161734198-1765528365584113.png" alt="image-20250504161734198"></p>
+<h1>数据格式</h1><h2 id="section-1">service</h2><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20250504162430813-1765528365588115.png" alt="image-20250504162430813"></p>
+<h3 id="section-2">Service Declaration(服务申明)</h3><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20250504162504445-1765528365588116.png" alt="image-20250504162504445"></p>
+<h3 id="section-3">Service include(服务包含)</h3><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20250504162558046-1765528365588114.png" alt="image-20250504162558046"></p>
+<h3 id="section-4">characteristic(特征)</h3><ul>
+<li>UUID（Universally Unique Identifier）：用于唯一标识Characteristic。</li>
+<li>Properties（属性）：指定了Characteristic的行为，例如读取、写入、通知等。</li>
+<li>Value（值）：存储Characteristic的当前值。</li>
+<li>Descriptors（描述符）：提供了关于Characteristic的更多信息，如读写权限、单位、格式等。</li>
+</ul>
+<p>比如我现在的服务端是我的烧录了 <code>BLECTF</code> 的 <code>esp32</code> ，它由很多 <code>Characteristic</code> 组成</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20250505153855691-1765528365588117.png" alt="image-20250505153855691"></p>
+<p><code>handle</code> 是特征的句柄，<code>char properties</code> 是特征的属性，<code>char value handle</code> 是特征值的句柄，<code>uuid</code> 是特征的通用唯一标识符</p>
+<p>句柄是一个简单的地址索引，用于定位某个 Attribute（属性）在 GATT 表中的位置。</p>
+<p>拿着为0x45的 <code>handle</code> 举例</p>
+<pre><code class="language-bash">handle = 0x0045, char properties = 0x1a, char value handle = 0x0046, uuid = 0000ff0f-0000-1000-8000-00805f9b34fb
+┌──(kali㉿kali)-[~]
+└─$ gatttool -b 2C:BC:BB:0B:DC:82 --char-read --handle=0x45                                         
+Characteristic value/descriptor: 1a 46 00 0f ff 
+</code></pre>
+<p><code>1a</code> 就是特征属性，代表权限</p>
+<p><code>46</code> 是这个特征的特征值的句柄 ，我们可以通过其去查看这个特征的描述</p>
+<p><code>00 0f ff</code> 是 <code>UUID</code> 的缩略</p>
+<p>通过0x46的 <code>handle</code> 去读取 <code>Value/Descriptor</code> ，得到的就是这个特征的描述</p>
+<pre><code class="language-bash">┌──(kali㉿kali)-[~]
+└─$ gatttool -b 2C:BC:BB:0B:DC:82 --char-read --handle=0x46
+Characteristic value/descriptor: 4c 69 73 74 65 6e 20 74 6f 20 6d 65 20 66 6f 72 20 6d 75 6c 74 69 20 6e 6f 74 69 66 69 63 61 74 69 6f 6e 73 
+</code></pre>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/二进制/iot/ble/蓝牙协议栈/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">蓝牙协议栈</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/二进制/iot/ble/blectf/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">blectf</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>service</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-2"> <a href="#section-2">Service Declaration(服务申明)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-3"> <a href="#section-3">Service include(服务包含)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">characteristic(特征)</a> </li> </ol> </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const fab = document.getElementById("article-toc-fab");
+        const outlineNav = sidebar?.querySelector(".article-outline__body");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+        const storageKey = "article-outline-open";
+
+        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let isOpen = false;
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const syncState = () => {
+          shell.classList.toggle("article-shell--toc-expanded", isOpen);
+          shell.classList.toggle("article-shell--toc-collapsed", !isOpen);
+          sidebar.classList.toggle("is-open", isOpen);
+          fab.classList.toggle("is-open", isOpen);
+          fab.setAttribute("aria-expanded", String(isOpen));
+
+          try {
+            localStorage.setItem(storageKey, isOpen ? "1" : "0");
+          } catch {}
+        };
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (!isOpen || Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        try {
+          isOpen = localStorage.getItem(storageKey) === "1";
+        } catch {
+          isOpen = false;
+        }
+
+        syncState();
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        fab.addEventListener("click", (event) => {
+          event.stopPropagation();
+          isOpen = !isOpen;
+          syncState();
+        });
+
+        sidebar.addEventListener("click", (event) => {
+          event.stopPropagation();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && isOpen) {
+            isOpen = false;
+            syncState();
+            fab.focus();
+          }
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

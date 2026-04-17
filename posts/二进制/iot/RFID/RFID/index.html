@@ -1,0 +1,328 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>RFID | 沉于思，录以隙</title><meta name="description" content="# RFID ## 破解IC 卡初探 参考资料： [[原创\]食堂饭卡破解-智能设备-看雪-安全社区|安全招聘|kanxue.com](https://bbs.kanxue.com/thread-259757.htm) [Proxmark3 Easy破解门禁卡学习过程 - Lzy"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.vzbGpqN6.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">RFID</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">iot</span>  <span class="directory-sep">/</span> <span class="directory-text">RFID</span>  </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>二进制</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：二进制/iot/RFID/RFID.md</p> </header> <div class="article-main"> <div class="article-content"><h1>RFID</h1><h2 id="section-1">破解IC 卡初探</h2><p>参考资料：</p>
+<p>[<a href="https://bbs.kanxue.com/thread-259757.htm">原创]食堂饭卡破解-智能设备-看雪-安全社区|安全招聘|kanxue.com</a></p>
+<p><a href="https://lzy-wi.github.io/2018/07/26/proxmark3/#%E5%89%8D%E8%A8%80">Proxmark3 Easy破解门禁卡学习过程 - Lzywi&#39;Blog (lzy-wi.github.io)</a></p>
+<p><a href="https://autkevin.github.io/2021/07/22/ACR122%E7%A0%B4%E8%A7%A3IC%E5%8D%A1/#%E5%8A%9F%E8%83%BD">ACR122破解IC卡 - AEOLIAN (autkevin.github.io)</a></p>
+<h3 id="section-2">Mifare 1卡基础知识</h3><p>NXP Mifare S50（M1）高频13.56MHz是最常见的射频卡，每张卡独一无二UID号，可存储、修改扇区数据(一卡通、门禁、电梯卡)。</p>
+<p>M1卡有16个扇区(Sectors)，每个扇区都有独立的密钥一个扇区有4个快(Block)每个快可以保存16字节的内容，共可以存储1KB数据。</p>
+<p>0扇区0块是特殊的数据块，用于存放制造商代码，固化不可修改。</p>
+<p>扇区的第4块用来保存密钥和控制字。</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/dbb72443dbd75b603c82a11bd7ee9045_MD5.png" alt=""></p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/787d91a333b6732a96ef29df2780e417_MD5.png" alt=""></p>
+<p>UID : 是独一无二的</p>
+<p>BCC : 是UID号的校验位</p>
+<p>控制位： 控制KEYA和KEYB的权限</p>
+<p>卡内的数据是由密钥加密后发送给阅读器。</p>
+<p>Mifare 1的变种卡
+UID卡是国人针对M1 S50卡特制的变种卡，使用方式和M1完全一样多用于复制M1卡，可用后门指令，可对全卡任何数据编辑(包括UID号码)，不需要密钥即可读写数据，响应后门指令，可被读卡器鉴别发现。
+FUID卡是UID卡的优化版本，0扇区0块数据只可修改一次，不响应后门指令，不可被读卡器鉴别。
+CUID卡是针对UID卡的进一步优化，可对全卡任何数据编辑，不响应后门指令，如果数据写入错误可能无法恢复。（如UID的校验位BCC写入错误之后，这张卡无法被任何阅读器识别）</p>
+<h3 id="section-3">操作过程</h3><p>我使用的是ACR122U读卡器（pm3太贵了），安装ACR122U的驱动后便可以开始破解卡。</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/e80e6042d31446cf3900b67c55c2c2b3_MD5.jpg" alt=""></p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/8aebcb65fea50a208a9f021fe27b51da_MD5.png" alt=""></p>
+<p>我买的是普通IC M1卡因此只能复制其他ic卡数据，不能复制0扇区第一块的uid等数据。如果要复制门禁卡切记要买可以改uid的白卡。</p>
+<h3 id="section-4">UID克隆工具破解IC卡</h3><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/70a9f3c7fb15b7a97d1b818404e5c64d_MD5.png" alt=""></p>
+<h3 id="section-5">破解并导出dump/</h3><p>把卡放上去，点击开始破解，出现破解完成即可。</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/467fd02cb883d2b9a3cc250882fb7834_MD5.png" alt=""></p>
+<p>破解成功之后，卡的dump数据就已经被导出了。</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/0e47a5083922710a8b13b54713885e32_MD5.png" alt=""></p>
+<h3 id="section-6">dump导入白卡</h3><p>打开UID卡克隆软件.exe</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/7e2f6b76de2a9bbba9e3158a26c7d0c1_MD5.png" alt=""></p>
+<p>连接读卡器 -&gt; 连接卡片 -&gt; 导入文件(选择刚才破解时导出的dump) -&gt; 点击写卡，即可把数据写入其中。</p>
+<h3 id="section-7">卡匠破解IC卡</h3><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/f6f57af20d6836d76c36dcbda75d114d_MD5.png" alt=""></p>
+<h3 id="section-8">破解并导出dump</h3><p>打开卡匠M1密钥分析器.exe，破解秘钥并导出，一定要选择保存路径，将导出的dump数据放在指定的文件夹下面。</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/e5ea1cf153aea5756629f43697fd59f2_MD5.png" alt=""></p>
+<h3 id="section-9">dump导入白卡</h3><p>打开卡匠M1复制克隆工具.exe，将数据导出到白卡上。</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/93b836d58122d73b10c33bc4aeadf811_MD5.png" alt=""></p>
+<h3 id="section-10">卡匠破解软件功能</h3><h4>数据复制(普通卡)</h4><p>写入除了UID（0号块）之外的63个块的数据。</p>
+<h4>克隆卡片(特种IC卡)</h4><p>卡片克隆用于完全克隆IC卡（带UID也一起克隆），需要可改写UID的特种IC卡。</p>
+<pre><code>1. 点击“克隆卡片”按钮，IC卡读写器红灯开始闪烁，开始克隆卡片； 
+2. 当IC卡读写器绿灯亮起时，说明克隆过程结束，此时查看操作日志，如无错误则说明克隆操作成功。
+</code></pre>
+<p>克隆卡操作与复制卡操作的区别在于：</p>
+<p>1、使用的卡片不同：复制卡使用新的普通的IC卡，克隆卡使用可改写UID的特种IC卡。</p>
+<p>2、结果不同：复制卡是将除0扇区0块以外的数据，全部写入新的普
+通的IC卡中，得到一张与原卡数据相同，但UID号不同的卡。而克隆卡是连同0扇区0块的数据在内，全部写入可改写UID的特种IC卡中，得到一张与原卡完全一样的（包括UID号）卡。</p>
+<h4>卡片还原(普通卡)</h4><p>此功能仅对普通IC卡有效，请勿对可改写UID的特种卡使
+用本功能！此功能用于将已经写入数据的卡中数据清空，并将所有扇区密码改成12个F。使用此功能时，按照以下步骤操作：</p>
+<pre><code>1. 使用Mifare密钥分析器软件，对需要清空数据的卡进行数据分析； 
+2. 将分析得到的数据文件导入到Mifare卡复制克隆工具中；
+3. 点击“卡片还原”按钮，当IC卡读写器绿灯亮起时，说明还原过程结束，此时查看操作日志，如无错误则说明操作成功； 
+4. 如需要验证卡内数据是否被清空，可以导入“空白卡.dump”，然后点击“卡片校检”，予以验证。
+</code></pre>
+<h4>卡片校验</h4><p>卡片校检：此功能用于验证卡中数据与“原卡数据”区内的数据是否相符。</p>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/二进制/pwn/常用快捷键和指令/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">常用快捷键和指令</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/车联网/硬件/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">硬件</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>破解IC 卡初探</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-2"> <a href="#section-2">Mifare 1卡基础知识</a> </li><li class="article-outline__item depth-3" data-toc-id="section-3"> <a href="#section-3">操作过程</a> </li><li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">UID克隆工具破解IC卡</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">破解并导出dump/</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">dump导入白卡</a> </li><li class="article-outline__item depth-3" data-toc-id="section-7"> <a href="#section-7">卡匠破解IC卡</a> </li><li class="article-outline__item depth-3" data-toc-id="section-8"> <a href="#section-8">破解并导出dump</a> </li><li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">dump导入白卡</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">卡匠破解软件功能</a> </li> </ol> </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const fab = document.getElementById("article-toc-fab");
+        const outlineNav = sidebar?.querySelector(".article-outline__body");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+        const storageKey = "article-outline-open";
+
+        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let isOpen = false;
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const syncState = () => {
+          shell.classList.toggle("article-shell--toc-expanded", isOpen);
+          shell.classList.toggle("article-shell--toc-collapsed", !isOpen);
+          sidebar.classList.toggle("is-open", isOpen);
+          fab.classList.toggle("is-open", isOpen);
+          fab.setAttribute("aria-expanded", String(isOpen));
+
+          try {
+            localStorage.setItem(storageKey, isOpen ? "1" : "0");
+          } catch {}
+        };
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (!isOpen || Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        try {
+          isOpen = localStorage.getItem(storageKey) === "1";
+        } catch {
+          isOpen = false;
+        }
+
+        syncState();
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        fab.addEventListener("click", (event) => {
+          event.stopPropagation();
+          isOpen = !isOpen;
+          syncState();
+        });
+
+        sidebar.addEventListener("click", (event) => {
+          event.stopPropagation();
+        });
+
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && isOpen) {
+            isOpen = false;
+            syncState();
+            fab.focus();
+          }
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>
