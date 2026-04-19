@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>代理模式 | 标签浏览</title><meta name="description" content="个人数字花园，记录技术研究、阅读摘记与阶段性沉淀。"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class="active">标签</a> <a href="/#archive-search">搜索</a> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <a href="/tags" class="back-link">&larr; 返回标签列表</a> <section class="garden-section hero"> <h1>#代理模式</h1> <p class="lead">该主题下的相关随笔与知识归档。 该标签下共收录 4 篇已公开文章。</p> </section> <section class="garden-section"> <div class="post-list"> <a href="/posts/web3/代理模式/UUPS_Proxy/" class="post-row"> <span class="date">2026-4-16</span> <div> <h3 class="title">UUPS_Proxy</h3> <p class="row-meta"># UUPS Proxy（通用可升级代理标准） &gt; **一句话总结**：UUPS（Universal Upgradeable Proxy Standard）将升级逻辑从 Proxy 搬到了 **Implementation 合约自身**中，使得 Proxy 退化成一个极简的纯转发</p> </div> </a><a href="/posts/web3/代理模式/代理模式是什么/" class="post-row"> <span class="date">2026-3-18</span> <div> <h3 class="title">代理模式是什么</h3> <p class="row-meta"># 代理模式核心概念 &gt; **一句话总结**：代理模式（Proxy Pattern）是以太坊智能合约&quot;可升级&quot;的底层基石，利用 `delegatecall` 操作码实现**代码与数据的物理分离**——用户永远与同一个地址（Proxy）交互，而 Proxy 背后指向的业务逻辑代码（</p> </div> </a><a href="/posts/web3/代理模式/Diamond_Proxy/" class="post-row"> <span class="date">2026-3-18</span> <div> <h3 class="title">Diamond_Proxy</h3> <p class="row-meta"># Diamond Proxy（钻石代理 / ERC-2535） &gt; **一句话总结**：Diamond Proxy 是一种**多面代理（Multi-Facet Proxy）**标准，将一个 Proxy 的后端拆分成多个独立的 **Facet（切面）**合约，每个 Facet 承</p> </div> </a><a href="/posts/web3/代理模式/Transparent_Proxy/" class="post-row"> <span class="date">2026-3-17</span> <div> <h3 class="title">Transparent_Proxy</h3> <p class="row-meta"># Transparent Proxy（透明代理） &gt; **一句话总结**：Transparent Proxy 将升级逻辑放在 **Proxy 合约自身**中，并通过 **`msg.sender` 路由机制**从根源上消灭了函数选择器冲突（Selector Clash）——Adm</p> </div> </a> </div> </section>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+      })();
+    </script> </body> </html> 

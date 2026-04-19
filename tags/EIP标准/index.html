@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>EIP标准 | 标签浏览</title><meta name="description" content="个人数字花园，记录技术研究、阅读摘记与阶段性沉淀。"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <div class="page-shell"> <header class="topbar"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class="active">标签</a> <a href="/#archive-search">搜索</a> </nav> </header> </div> <main id="main-content" class="page-shell page-main">  <a href="/tags" class="back-link">&larr; 返回标签列表</a> <section class="garden-section hero"> <h1>#EIP标准</h1> <p class="lead">该主题下的相关随笔与知识归档。 该标签下共收录 4 篇已公开文章。</p> </section> <section class="garden-section"> <div class="post-list"> <a href="/posts/web3/EIP标准/EIP-1559/" class="post-row"> <span class="date">2026-3-24</span> <div> <h3 class="title">EIP-1559</h3> <p class="row-meta"># EIP-1559: 费用市场改革 (Fee market change for ETH 1.0 chain) &gt; **一句话总结**：EIP-1559 彻底重构了以太坊的交易费用定价机制——从原来的&quot;盲目竞价拍卖&quot;（First-Price Auction）改为由**协议自动计</p> </div> </a><a href="/posts/web3/EIP标准/EIP-2612/" class="post-row"> <span class="date">2026-3-18</span> <div> <h3 class="title">EIP-2612</h3> <p class="row-meta"># EIP-2612: ERC-20 Permit — 基于签名的授权扩展 (Permit Extension for EIP-20 Signed Approvals) &gt; **一句话总结**：EIP-2612 为标准 ERC-20 代币引入了一个 `permit()` 函数，允</p> </div> </a><a href="/posts/web3/EIP标准/EIP-150/" class="post-row"> <span class="date">2026-3-18</span> <div> <h3 class="title">EIP-150</h3> <p class="row-meta"># EIP-150: IO 密集型操作的 Gas 成本调整 (Gas cost changes for IO-heavy operations) &gt; **一句话总结**：EIP-150 大幅提高了 `EXTCODESIZE`、`EXTCODECOPY`、`BALANCE`、`SL</p> </div> </a><a href="/posts/web3/EIP标准/EIP-1967/" class="post-row"> <span class="date">2026-3-17</span> <div> <h3 class="title">EIP-1967</h3> <p class="row-meta"># EIP-1967: 标准代理存储插槽 (Standard Proxy Storage Slots) &gt; **一句话总结**：EIP-1967 规定了智能合约代理（Proxy）存放逻辑合约地址（Implementation）、管理员地址（Admin）以及信标地址（Beacon）</p> </div> </a> </div> </section>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+      })();
+    </script> </body> </html> 
