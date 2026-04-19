@@ -1,0 +1,313 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ERC-165 | 沉于思，录以隙</title><meta name="description" content="# ERC-165: 接口检测标准 (Standard Interface Detection) > **一句话总结**：ERC-165 是智能合约界发明的“自省（Introspection）”功能。它强制要求智能合约挂出一块招牌，告诉外界自己到底实现了哪些标准接口，是防呆机制和"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.6ncck4XA.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">ERC-165</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <div class="article-meta-row"> <span>2026/3/6</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/ERC标准/ERC-165.md</p> </header> <div class="article-main"> <div class="article-content"><h1>ERC-165: 接口检测标准 (Standard Interface Detection)</h1><blockquote>
+<p><strong>一句话总结</strong>：ERC-165 是智能合约界发明的“自省（Introspection）”功能。它强制要求智能合约挂出一块招牌，告诉外界自己到底实现了哪些标准接口，是防呆机制和高阶路由交互的基础。</p>
+</blockquote>
+<h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><blockquote>
+<p><strong>信息源原则</strong>：底层的通信/代币标准必须以 <strong>Ethereum EIP 官方文档 (ethereum.org/EIPS)</strong> 和最主流的防呆实现库（如 <strong>OpenZeppelin</strong> 或 <strong>Solmate</strong>）的源码作为<strong>唯一第一手真理源</strong>。切忌大量摘抄二手的科普文章。</p>
+</blockquote>
+<ul>
+<li><strong>官方 EIP 提案编号与链接</strong>：<a href="https://eips.ethereum.org/EIPS/eip-165">EIP-165: Standard Interface Detection</a></li>
+<li><strong>当前标准状态</strong>：Final</li>
+<li><strong>权威参考实现 (Reference Implementation)</strong>：OpenZeppelin <code>contracts/utils/introspection/ERC165.sol</code></li>
+<li><strong>依赖基座标准</strong>：无。它是极早期的架构级标准，被后续诸如 ERC-721, ERC-1155 强制依赖。</li>
+</ul>
+<hr>
+<h2 id="section-2">1. 核心理念与痛点解决 (Core Concept)</h2><ul>
+<li><strong>传统痛点/背景</strong>：由于以太坊上的智能合约无法通过代码本身来识别彼此。当你拿到一个未知的合约地址想要转账时，你不知道它是不是一个支持 NFT 接收机制的钱包，或者它支不支持 ERC-20。如果贸然去调用一个它根本没有的函数，交易就会直接 Revert 失败，不仅白白烧毁大量 Gas 费，还有极其恐怖的卡币风险。</li>
+<li><strong>破局思路</strong>：ERC-165 提出了一个极简的协议。它要求所有正规合约都必须向外宣称一串代表自身武功门派的唯一组合编码（<code>InterfaceId</code>）。外部合约在交互之前，先敲门问一句：“你支持 0x80ac58cd（即 ERC-721）吗？”从而避免无脑强行交互。</li>
+</ul>
+<hr>
+<h2 id="section-3">2. 核心接口与数据结构 (Core Interfaces)</h2><blockquote>
+<p>结构极其简单，整个标准的核心在于一个基于字典哈希映射的身材自检功能。</p>
+</blockquote>
+<h3 id="section-4">A. 核心状态结构 (State Variables)</h3><pre><code class="language-solidity">// 一个用来记录本项目到底宣称支持了哪些“标准身份证(InterfaceId)”的查证字典
+mapping(bytes4 =&gt; bool) private _supportedInterfaces;
+</code></pre>
+<h3 id="section-5">B. 关键机制与底层逻辑 (Core Functions)</h3><h4>1. <code>supportsInterface</code> (身份验明正身)</h4><p>这是外界探测该合约真实面目的唯一触角。</p>
+<ul>
+<li><strong>白话逻辑解析</strong>：外部智能合约或平台输入一串由四个字节构成的 16 进制标识符（比如代表 ERC-721 的 <code>0x80ac58cd</code>），如果当前合约内部字典记载了该标识符为真，则向全网广播 <code>true</code>，证明自己支持接盘或该功能。</li>
+<li><strong>核心源码骨架</strong>：<pre><code class="language-solidity">// 对外公开的探测雷达
+function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
+    // 必须无条件首先支持 ERC-165 本身的根骨标识符 0x01ffc9a7
+    return interfaceId == type(IERC165).interfaceId || _supportedInterfaces[interfaceId];
+}
+
+// 内部注册函数（项目方通常在 constructor 铸造时调用，为自己贴标签）
+function _registerInterface(bytes4 interfaceId) internal virtual {
+    require(interfaceId != 0xffffffff, &quot;ERC165: invalid interface id&quot;);
+    _supportedInterfaces[interfaceId] = true;
+}
+</code></pre>
+</li>
+</ul>
+<hr>
+<h2 id="section-6">3. 标准业务工作流 (Standard Workflow)</h2><p><strong>OpenSea 交易所判断一个陌生地址能否接收 NFT：</strong></p>
+<ol>
+<li><strong>发起试探 (Probe)</strong>：某用户要提现一只高价值 NFT 到地址 <code>0xABC...</code>。</li>
+<li><strong>底层自检 (Introspection)</strong>：OpenSea 的交易所在向 <code>0xABC</code> 调用 <code>safeTransferFrom</code> 转账前，底层安全守护机制首先悄悄调用 <code>0xABC.supportsInterface(0x150b7a02)</code>。</li>
+<li><strong>出示招牌 (Validation)</strong>：如果 <code>0xABC</code> 只是一个没有实现任何相关逻辑的白丁私钥钱包账户或者是普通合约，它会报错或者返回 <code>false</code>。如果它是一个专门收藏 NFT 的冷钱包智能合约，它内置的 165 模块会立刻返回 <code>true</code>。</li>
+<li><strong>决定执行 (Execution)</strong>：拿到 <code>true</code>，OpenSea 安全机制放行，正式执行高风险的转账逻辑。拿到 <code>false</code>，界面直接驳回：“该地址不支持接收该资产”。</li>
+</ol>
+<hr>
+<h2 id="section-7">4. 关键机制与难点解析 (Key Mechanics)</h2><blockquote>
+<p>对于协议中那些绕人的数学计算、状态机流转或者是舍入取整规则，<strong>必须配以核心公式推导或精简版代码辅助理解</strong>。</p>
+</blockquote>
+<h3 id="section-8">A. 核心难点一：什么是 InterfaceID? 它是怎么计算出来的？</h3><ul>
+<li><strong>原理讲解</strong>：InterfaceID 不是随便瞎编的。它是把一个接口（Interface）声明的所有方法名及其参数类型拼接起来，然后求一次大哈希运算（Keccak256），最后把得到的一堆结果进行“异或（XOR, <code>^</code>）”运算叠加出来的极其短小的 4 字节（Bytes4）唯一数字指纹。</li>
+<li><strong>数学推导/公式</strong>：
+$$InterfaceId = \text{selector}(function1) \oplus \text{selector}(function2) \dots$$
+比如 ERC-165 本身的接口包含了 <code>supportsInterface(bytes4)</code> 这唯一一个函数，由于它的 selector 是 <code>0x01ffc9a7</code>，所以 ERC-165 自己证明自己身份的指纹必须也是 <code>0x01ffc9a7</code>。</li>
+<li><strong>核心逻辑代码 (Solidity)</strong>：<pre><code class="language-solidity">// 一个部署了 ERC721 NFT 逻辑的智能合约必须这样宣告自己的身份
+function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
+    return
+        // 首先得证明自己懂 ERC165 这个暗号系统
+        interfaceId == type(IERC165).interfaceId || 
+        // 其次证明自己拥有 ERC721 这个门派的全部功法
+        interfaceId == type(IERC721).interfaceId || 
+        // 再次证明自己允许查看 MetaData 数据（可选扩展）
+        interfaceId == type(IERC721Metadata).interfaceId;
+}
+</code></pre>
+<em>代码拆解</em>：注意它非常死板的判断逻辑。如果传来的是上述那三组由业界权威 EIP 组织计算好、死死写在白皮书上的 <code>bytes4</code> 魔法字符串之一，就统统放行返回 <code>true</code>。它就是一张贴在餐厅门外写有“支持微信、支持支付宝”极其显眼的标识牌。</li>
+</ul>
+<hr>
+<h2 id="section-9">5. 周边生态与后续演进 (Ecosystem)</h2><ul>
+<li><strong>主流采用方</strong>：以防呆机制和高价值闻名的 ERC-721 (NFT)、ERC-1155 (多代币)、ERC-4337 (账号抽象) 将其强制设为主挂载件。</li>
+<li><strong>标准的局限性</strong>：<ol>
+<li>它只能解决“协议有没有声明（声称）懂这门功夫”的问题，但黑客依然可以写一段恶意代码，哪怕自己是个纯废柴的黑洞合约，也在 <code>supportsInterface</code> 里面直接硬编码撒谎返回 <code>true</code> 骗取资金转入（这叫伪证防线崩溃）。所以后期的 <code>safeTransferFrom</code> 还需要进一步在转入后进行回调校验机制（双保险）。</li>
+</ol>
+</li>
+</ul>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/ERC标准/ERC-3156/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-3156</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/ERC标准/ERC-1046/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-1046</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>📜 核心元数据与参阅资料 (Metadata &amp; References)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>1. 核心理念与痛点解决 (Core Concept)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>2. 核心接口与数据结构 (Core Interfaces)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">A. 核心状态结构 (State Variables)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">B. 关键机制与底层逻辑 (Core Functions)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-6"> <button class="article-outline__group-link" type="button" data-group-target="section-6"> <span>3. 标准业务工作流 (Standard Workflow)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-7"> <button class="article-outline__group-link" type="button" data-group-target="section-7"> <span>4. 关键机制与难点解析 (Key Mechanics)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-8"> <a href="#section-8">A. 核心难点一：什么是 InterfaceID? 它是怎么计算出来的？</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-9"> <button class="article-outline__group-link" type="button" data-group-target="section-9"> <span>5. 周边生态与后续演进 (Ecosystem)</span>  </button>  </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+
+        if (!shell || !sidebar || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

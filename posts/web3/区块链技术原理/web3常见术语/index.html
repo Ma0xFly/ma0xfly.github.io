@@ -1,0 +1,538 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>web3常见术语 | 沉于思，录以隙</title><meta name="description" content="# RPC RPC = Remote Procedure Call，即“远程过程调用”。 简单来说，就是一个程序（或客户端）可以像调用本地函数/方法一样，向远 端服务器节点（或服务）发出请求，让对方执行某个过程（procedure／方法／函 数），并返回结果。客户端自己并不关心这"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.6ncck4XA.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">web3常见术语</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">区块链技术原理</span>  </div> <div class="article-meta-row"> <span>2026/1/25</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/区块链技术原理/web3常见术语.md</p> </header> <div class="article-main"> <div class="article-content"><h1>RPC</h1><p>RPC = Remote Procedure Call，即“远程过程调用”。 </p>
+<p>简单来说，就是一个程序（或客户端）可以像调用本地函数/方法一样，向远 端服务器节点（或服务）发出请求，让对方执行某个过程（procedure／方法／函 数），并返回结果。客户端自己并不关心这个过程实际运行在哪台机器或在什么 网络之中。 </p>
+<p> <strong>在区块链里的含义与作用：</strong> 
+ 在区块链生态中，RPC 通常指 区块链节点提供的一种接口，供应用程序 （比如钱包、dApp、区块浏览器等）远程调用。通过这种接口，应用可以： 
+ • 查询区块、交易、账户余额、智能合约状态等数据； 
+ • 提交新的事务到网络； 
+ • 调用智能合约的方法； 
+ • 监测交易确认状态等。  </p>
+<p> 节点（RPC 点）或 RPC 服务商就提供这些接口和 endpoint。应用端只 需要知道这个 endpoint 地址，以及支持的 RPC 方法，就能与区块链交互，而 不需要每个应用都自己运行完整节点。</p>
+<p>开发者或机构运行全节点的必要性?这个问题可以直接记成一句话： 谁在给你的 dApp 喂数据，谁就在“半控”你的安全和用户。 自己跑全节 点 = 不求人 + 更安全 + 更隐私 + 更去中心化。</p>
+<h1>以太坊节点与客户端软件</h1><h2 id="section-1">一、 基础概念</h2><ul>
+<li><p><strong>节点 (Node)</strong>: 任何运行以太坊客户端软件并连接到网络的计算机。</p>
+</li>
+<li><p><strong>客户端 (Client)</strong>: 协议的具体软件实现，负责验证数据、同步区块、维护网络安全。</p>
+</li>
+</ul>
+<hr>
+<h2 id="section-2">二、 客户端架构（The Merge 后）</h2><p>自 The Merge 升级后，以太坊节点架构从单体转变为<strong>模块化</strong>。一个完整的节点必须同时运行执行层和共识层客户端。</p>
+<h3 id="section-3">1. 执行客户端 (Execution Client, EL) —— “干活的书记员”</h3><ul>
+<li><p><strong>旧称</strong>: Eth1 客户端</p>
+</li>
+<li><p><strong>核心职责</strong>: 处理链上的<strong>业务逻辑</strong>与<strong>状态</strong>。</p>
+<ul>
+<li><p>监听交易与区块广播。</p>
+</li>
+<li><p>在 <strong>EVM</strong> 中执行交易和智能合约。</p>
+</li>
+<li><p>维护世界状态（World State）：账户余额、合约存储等。</p>
+</li>
+<li><p><strong>对外接口</strong>: 提供 JSON-RPC (<code>eth_*</code>) 供 dApp、钱包调用。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>常用软件</strong>: Geth, Nethermind, Besu, Erigon, Reth。</p>
+</li>
+</ul>
+<h3 id="section-4">2. 共识客户端 (Consensus Client, CL) —— “裁决的法官”</h3><ul>
+<li><p><strong>旧称</strong>: Eth2 客户端 / 信标链客户端</p>
+</li>
+<li><p><strong>核心职责</strong>: 负责 <strong>PoS 共识</strong>。</p>
+<ul>
+<li><p>维护信标链（Beacon Chain）视图。</p>
+</li>
+<li><p>执行 Fork Choice Rule (如 LMD-GHOST) 选择主链。</p>
+</li>
+<li><p>将执行客户端处理好的数据（Payload）打包或验证。</p>
+</li>
+<li><p><strong>类比</strong>: 法官根据书记员（EL）的案卷，裁定区块是否合法。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>常用软件</strong>: Lighthouse, Prysm, Teku, Nimbus, Lodestar。</p>
+</li>
+</ul>
+<h3 id="section-5">3. 验证者客户端 (Validator) —— “陪审团代表”</h3><ul>
+<li><p><strong>定位</strong>: 共识客户端的“插件”或独立进程（可选）。</p>
+</li>
+<li><p><strong>核心职责</strong>: 参与出块与质押（Staking）。</p>
+<ul>
+<li><p>管理验证者私钥。</p>
+</li>
+<li><p><strong>提议 (Propose)</strong>: 轮到自己时，提议新区块。</p>
+</li>
+<li><p><strong>投票 (Attest)</strong>: 对看到的区块进行投票。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>注意</strong>: 仅在需要质押 ETH 赚取收益时运行。</p>
+</li>
+</ul>
+<hr>
+<h2 id="section-6">三、 节点类型（按数据存储与用途区分）</h2><p>根据数据保留策略和同步方式的不同，节点分为三类。</p>
+<h3 id="section-7">1. 全节点 (Full Node)</h3><ul>
+<li><p><strong>定义</strong>: 保存当前状态 + 全部区块数据（但<strong>修剪</strong>历史状态）。</p>
+</li>
+<li><p><strong>数据策略</strong>:</p>
+<ul>
+<li><p>从创世块（或可信快照）开始验证。</p>
+</li>
+<li><p>保存所有区块头和区块体（交易记录）。</p>
+</li>
+<li><p><strong>State Pruning (修剪)</strong>: 只保留最近约 128 个区块的完整状态，旧状态被修剪以节省空间。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>能力</strong>:</p>
+<ul>
+<li><p>独立验证链的合法性（不求人）。</p>
+</li>
+<li><p>作为 dApp/钱包的自托管入口。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>局限</strong>: 无法快速查询很久以前的某个具体状态（如：查询 3 年前某区块高度的 <code>mapping</code> 值需重放计算）。</p>
+</li>
+</ul>
+<h3 id="section-8">2. 归档节点 (Archive Node)</h3><ul>
+<li><p><strong>定义</strong>: <strong>禁用修剪</strong>的全节点（全节点 + 所有历史状态）。</p>
+</li>
+<li><p><strong>数据策略</strong>:</p>
+<ul>
+<li><p>保存从创世至今每一个区块高度的<strong>完整状态树</strong>。</p>
+</li>
+<li><p><strong>体量巨大</strong>: 需 TB 级存储。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>能力</strong>:</p>
+<ul>
+<li>“国家档案馆”：可毫秒级查询历史上任何时刻的合约存储、余额。</li>
+</ul>
+</li>
+<li><p><strong>适用场景</strong>:</p>
+<ul>
+<li><p>区块浏览器 (Etherscan)。</p>
+</li>
+<li><p><strong>安全分析/溯源</strong>: 调试历史攻击交易，复现当时的状态。</p>
+</li>
+<li><p>链上数据分析机构 (Dune, Nansen)。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="section-9">3. 轻节点 (Light Node)</h3><ul>
+<li><p><strong>定义</strong>: 只存<strong>区块头</strong> (Block Headers)。</p>
+</li>
+<li><p><strong>数据策略</strong>:</p>
+<ul>
+<li><p>不存交易体，不存状态树。</p>
+</li>
+<li><p><strong>按需获取</strong>: 利用 Merkle Proof 向全节点请求具体数据并验证。</p>
+</li>
+<li><p><strong>同步委员会 (Sync Committee)</strong>: PoS 特性，通过验证 512 个签名快速追踪链头。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>能力</strong>:</p>
+<ul>
+<li><p>极低资源消耗（手机、浏览器插件可运行）。</p>
+</li>
+<li><p><strong>最小化信任</strong>: 依然具备数学上的可验证性，不需要完全信任数据提供方。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>局限</strong>: 不参与共识，严重依赖全节点提供数据服务。</p>
+</li>
+</ul>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/f8780e333a5da55b81df001e34c47dcb_MD5.jpg" alt=""></p>
+<h1>ENS (Ethereum Name Service)</h1><h3 id="section-10">1. 什么是 ENS？</h3><p>ENS（以太坊域名服务）类似于互联网中的 <strong>DNS（域名系统）</strong>。</p>
+<ul>
+<li><strong>核心功能</strong>：它将冗长、难以记忆的以太坊地址（如 <code>0xae9459...</code>）映射为人类可读的名称（如 <code>sanfordstout.eth</code>）,。</li>
+<li><strong>类比</strong>：就像我们访问网站时输入 <code>google.com</code> 而不是 IP 地址 <code>142.250.190.46</code> 一样，ENS 让用户可以通过简单的名称来发送交易或识别身份，而不必复制粘贴复杂的哈希地址,。</li>
+</ul>
+<h3 id="section-11">2. ENS 的本质与特性</h3><ul>
+<li><strong>它是 NFT (ERC-721)</strong>：<ul>
+<li>注册的 ENS 域名本质上是一个 <strong>NFT</strong>（非同质化代币），遵循 ERC-721 标准,,。</li>
+<li><strong>所有权即控制权</strong>：拥有该 NFT 的钱包地址即拥有该域名的控制权。如果你将 ENS NFT 发送给别人，接收者将获得该域名的所有权并能控制其解析指向,。</li>
+<li><strong>唯一性</strong>：每个 ENS 域名都有一个唯一的 Token ID。</li>
+</ul>
+</li>
+<li><strong>Web3 的跨平台身份</strong>：<ul>
+<li>ENS 不仅仅是地址的别名，它代表了你在 Web3 世界的 <strong>通用身份</strong>。</li>
+<li><strong>身份随行</strong>：当你登录不同的去中心化应用（如 OpenSea, Uniswap, Zapper）时，这些应用会自动识别并显示你的 ENS 名称，而不是冷冰冰的地址。你的身份、声誉和库存（Inventory）会跟随你的域名在不同服务间流转,,。</li>
+</ul>
+</li>
+</ul>
+<h3 id="section-12">3. 注册机制 (Commit-Reveal 模式)</h3><p>为了防止恶意抢注（Front-running），ENS 的注册过程设计了独特的 <strong>&quot;Commit-Reveal&quot;（提交-揭示）</strong> 机制，需要两笔交易,：</p>
+<ol>
+<li><strong>Commit (提交)</strong>：<ul>
+<li>用户首先向智能合约发送一个“提交”交易。这笔交易包含你想要注册的名字的哈希值（即承诺），但不会公开具体名字,。</li>
+<li><strong>目的</strong>：防止有人在内存池（Mempool）中看到你想注册的名字后，通过提高 Gas 费来抢先打包交易从而窃取该域名。</li>
+</ul>
+</li>
+<li><strong>等待期</strong>：<ul>
+<li>提交后需要等待大约 <strong>1分钟</strong>。这是一种防止恶意干扰的博弈机制,。</li>
+</ul>
+</li>
+<li><strong>Reveal (揭示/注册)</strong>：<ul>
+<li>等待期结束后，发送第二笔交易“揭示”名字并正式注册。这笔交易会生成 NFT 并完成注册流程,。</li>
+</ul>
+</li>
+</ol>
+<h3 id="section-13">4. 反向解析 (Reverse Record)</h3><ul>
+<li><strong>定义</strong>：正向解析是“名字 -&gt; 地址”，而反向解析是“地址 -&gt; 名字”。</li>
+<li><strong>作用</strong>：当你连接钱包到 DApp 时，应用只知道你的 <code>0x...</code> 地址。为了让应用显示你的 ENS 名称（例如在右上角显示 <code>sanfordstout.eth</code>），你必须设置反向记录。</li>
+<li><strong>操作</strong>：这需要从该地址发起一笔单独的交易，声明“这个地址对应的主要名称是这个 ENS”。只有地址的拥有者才能设置其反向记录，这保证了身份的真实性。</li>
+</ul>
+<h3 id="section-14">5. 高级功能与应用</h3><ul>
+<li><strong>子域名 (Subdomains)</strong>：<ul>
+<li>拥有一个主域名后，你可以创建子域名（例如 <code>game.eda.eth</code> 或 <code>punk.austingriffith.eth</code>）。这类似于传统的 DNS 子域名结构。</li>
+<li>这对于组织或多钱包管理非常有用（例如用子域名区分不同的钱包用途）。</li>
+</ul>
+</li>
+<li><strong>简化转账体验</strong>：<ul>
+<li>用户在转账时只需输入对方的 ENS 名称，钱包会自动解析出对应的以太坊地址，极大地降低了转错账的风险并提升了用户体验。</li>
+</ul>
+</li>
+</ul>
+<h3 id="section-15">6. 局限性与注意事项</h3><ul>
+<li><strong>女巫攻击 (Sybil Resistance)</strong>：虽然有数十万个 ENS 持有者，但这并不代表有数十万个真实人类用户。一个人可以创建无数个地址并注册无数个 ENS，因此 ENS 数量不等于用户数量,。</li>
+<li><strong>审查与索引</strong>：虽然 ENS 是去中心化的标准，但部分 Web2 或 Web3 平台（如某些 NFT 市场）可能因为索引问题或主观选择，不一定能完美支持或显示 ENS 名称,。</li>
+</ul>
+<h1>NFT (Non-Fungible Token)</h1><p> 、
+<img src="/__published_media/external/%E5%9B%BE%E5%BA%93/0ceb1a2c50270c37a85b60ef9426cc94_MD5.jpg" alt=""></p>
+<h3 id="section-16">1. 本质与定义：ERC-20 vs. ERC-721</h3><p>NFT 代表非同质化代币，理解它的最好方式是与同质化代币（Fungible Token）进行对比：</p>
+<ul>
+<li><strong>同质化代币 (ERC-20)</strong>：类似于货币、黄金或石油。<ul>
+<li><strong>记录方式</strong>：智能合约通过一个巨大的数组来追踪<strong>余额（Balance）</strong>。</li>
+<li><strong>特性</strong>：所有的代币都是一样的。如果我有 100 个币，转给你 50 个，剩下的 50 个与转走的 50 个没有任何区别，它们混在一起。</li>
+</ul>
+</li>
+<li><strong>非同质化代币 (ERC-721)</strong>：类似于棒球卡或独特的收藏品。<ul>
+<li><strong>记录方式</strong>：智能合约追踪的是**“谁拥有哪一个特定的 ID”**。例如，合约记录“Token #1 属于 Alice”。</li>
+<li><strong>特性</strong>：每个代币都有唯一的元数据（Metadata）和属性，无法互换。</li>
+</ul>
+</li>
+</ul>
+<h3 id="section-17">2. 核心特性 (Key Characteristics)</h3><h4>A. 链上来源与真实性 (On-Chain Provenance)</h4><ul>
+<li><strong>数字所有权</strong>：NFT 提供了数字资产的所有权证明。</li>
+<li><strong>防伪</strong>：艺术家铸造（Mint）一个系列后，所有人都能在链上看到该系列是由特定艺术家的合约创建的。即使有人复制了图片并重新铸造（“Knockoff”），市场和区块链也能轻易识别出它并非来自原始合约，因此没有价值。</li>
+<li><strong>数字稀缺性 (Digital Scarcity)</strong>：艺术家在合约中设定供应上限（如 10,000 个 Punk）。一旦达到上限，代码层面保证了无法再增发，从而创造了稀缺性。</li>
+</ul>
+<h4>B. 元数据与存储 (Metadata &amp; Storage)</h4><p>NFT 的核心是 <strong>Token URI</strong>，它指向描述该 NFT 的元数据（通常是一个 JSON 文件，包含名称、图像链接、属性等）。存储方式主要有两种：</p>
+<ol>
+<li><strong>IPFS (去中心化存储)</strong>：<ul>
+<li><strong>内容寻址 (Content Addressable)</strong>：IPFS 通过内容的哈希值来生成地址。如果图像或元数据发生任何变化（例如从 Buffalo 变成 Bison），其哈希地址也会改变。</li>
+<li><strong>不可篡改性</strong>：这保证了你购买的 NFT 元数据是不可变的。如果链接指向 IPFS，你可以确信内容不会被偷偷替换。</li>
+</ul>
+</li>
+<li><strong>链上渲染 (On-Chain SVG)</strong>：<ul>
+<li>少数 NFT（如 Loogies）不依赖外部存储，而是直接将图像数据（SVG代码）和颜色逻辑写在智能合约里。</li>
+<li><strong>特性</strong>：虽然 Gas 费昂贵，但它是最持久的存在形式，只要以太坊存在，图像就存在。这也被视为一种技术上的“炫耀（Flex）”。</li>
+</ul>
+</li>
+<li><strong>Web服务器 (风险提示)</strong>：<ul>
+<li>如果 NFT 指向的是中心化的 Web 服务器，控制者可以随时更换图片或关闭服务器（“Rug Pull”），导致你拥有的 NFT 变成空白或毫无价值的东西。</li>
+</ul>
+</li>
+</ol>
+<h4>C. 可组合性与效用 (Composability &amp; Utility)</h4><p>NFT 不仅仅是图片，它们可以拥有丰富的功能：</p>
+<ul>
+<li><strong>属性 (Properties)</strong>：NFT 可以包含稀有度不同的属性（如“圆顶”、“撕裂”等），这些属性可以被市场过滤和定价。</li>
+<li><strong>门控与权限 (Token Gating)</strong>：拥有特定的 NFT 可以作为进入聊天室、参与投票或参加现实世界会议的“门票”。</li>
+<li><strong>游戏道具</strong>：NFT 可以是游戏中的马、鸡或武器。由于所有权在链上，游戏开发者无法随意拿走你的道具，你甚至可以在不同的游戏或应用中使用同一个 NFT。</li>
+</ul>
+<h3 id="section-18">3. 创作者经济 (Creator Economy)</h3><ul>
+<li><strong>去中介化</strong>：NFT 允许创作者直接与粉丝连接，无需经过 Spotify 或画廊等中间商，直接变现“超级粉丝”的支持。</li>
+<li><strong>版税 (Royalties)</strong>：创作者可以在智能合约中编写逻辑（如荷兰式拍卖或转账逻辑），确保在二级市场交易时，每一笔销售的一定比例（如 10%）自动发送给原艺术家。</li>
+</ul>
+<h3 id="section-19">4. 跨平台身份 (Interoperability)</h3><ul>
+<li><strong>身份随行</strong>：你的 NFT 是你 Web3 身份和库存（Inventory）的一部分。无论你登录 OpenSea、Zapper 还是 Rarible，这些应用都会识别出你钱包中持有的 NFT。</li>
+<li><strong>ENS 也是 NFT</strong>：以太坊域名（ENS）本质上也是一个符合 ERC-721 标准的 NFT，它既是你的名字，也是可以交易的资产。</li>
+</ul>
+<hr>
+<h1>IPFS (InterPlanetary File System)</h1><h3 id="section-20">1. 什么是 IPFS？</h3><p>IPFS 是一个**点对点（Peer-to-Peer）**的分布式文件存储网络。</p>
+<ul>
+<li><strong>核心定义</strong>：它不是区块链，而是一个<strong>存储层（Storage Layer）</strong>。</li>
+<li><strong>网络结构</strong>：数据不存储在单一的中心化服务器上，而是分布在网络中连接的用户计算机（节点）上。这利用了去中心化的激励机制，鼓励人们在网络中存储和共享信息。</li>
+</ul>
+<h3 id="section-21">2. 核心机制：内容寻址 (Content Addressing)</h3><p>这是 IPFS 最本质的特性，区别于 Web2 的“位置寻址”。</p>
+<ul>
+<li><strong>位置 vs. 内容</strong>：<ul>
+<li><strong>Web2 (HTTP)</strong>：基于<strong>位置</strong>寻找文件（“数据在哪里？” 例如 <code>google.com/image.jpg</code>）。如果服务器关闭或文件被替换，链接就会失效或指向错误内容,。</li>
+<li><strong>Web3 (IPFS)</strong>：基于<strong>内容</strong>寻找文件（“数据是什么？”）。系统根据文件内容生成唯一的**哈希值（Hash）**作为地址。</li>
+</ul>
+</li>
+<li><strong>哈希即地址</strong>：<ul>
+<li><strong>唯一性</strong>：任何两个相同的文件都会生成完全相同的哈希（去重）。</li>
+<li><strong>敏感性</strong>：如果你修改了文件中的任何一点内容（例如将元数据中的 &quot;Buffalo&quot; 改为 &quot;Bison&quot;），哪怕只是一个字母，生成的哈希地址也会完全改变（例如从 <code>h91d</code> 变为 <code>xcxq</code>）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="section-22">3. IPFS 与 区块链 (NFT) 的关系</h3><p>为了形象理解两者的分工，我们可以使用**“购物小票与仓库”**的比喻：</p>
+<h4>A. 形象比喻</h4><ul>
+<li><strong>区块链 (智能合约) = 购物小票/所有权证书</strong>,<ul>
+<li><strong>作用</strong>：昂贵的、不可篡改的记账本。它记录**“谁拥有什么”**（例如：“Alice 拥有 Token #1”）。</li>
+<li><strong>特点</strong>：存储数据非常昂贵，只存最关键的“指针”或“收据”。</li>
+</ul>
+</li>
+<li><strong>IPFS = 去中心化仓库</strong><ul>
+<li><strong>作用</strong>：便宜的、防篡改的存储柜。它保存**“那个东西具体是什么”**（图像文件、元数据 JSON）。</li>
+<li><strong>特点</strong>：通过“内容寻址”保证货物没被调包。如果有人修改了图片，哈希地址就变了，与区块链小票上的地址就不匹配了。</li>
+</ul>
+</li>
+</ul>
+<h4>B. 技术流程 (Token URI)</h4><p>在 NFT 项目中，数据流通常如下,,：</p>
+<ol>
+<li><strong>智能合约</strong>：存储 Token ID 和 <code>tokenURI</code> 函数。</li>
+<li><strong>tokenURI</strong>：返回一个指向 IPFS 的哈希链接（如 <code>ipfs://Qm...</code>）。</li>
+<li><strong>元数据 (Metadata)</strong>：该链接指向 IPFS 上的一份 JSON 文件，里面描述了 NFT 的名称、属性（Attributes）。</li>
+<li><strong>图像数据</strong>：JSON 文件中包含另一个 IPFS 链接，指向实际的图片文件。</li>
+</ol>
+<h3 id="section-23">4. 为什么 NFT 需要 IPFS？(防止 Rug Pull)</h3><ul>
+<li><strong>Web2 服务器的风险</strong>：如果 NFT 的元数据存储在中心化服务器上，管理员可以在后台悄悄替换图片，或者因为不想维护服务器而关闭它。这被称为 &quot;Rug Pull&quot;（卷地毯/跑路），导致你手里的 NFT 变成空白或毫无价值的东西,。</li>
+<li><strong>IPFS 的不可篡改性 (Immutability)</strong>：由于内容寻址的特性，只要合约指向特定的 IPFS 哈希，你就可以<strong>确信该链接指向的内容永远不会改变</strong>。这是 Web3 数字资产真实性的重要保障,。</li>
+</ul>
+<h3 id="section-24">5. 局限性：Pinning (数据持久化)</h3><p>虽然 IPFS 是去中心化的，但数据<strong>不会自动永久保存</strong>。</p>
+<ul>
+<li><strong>存储原理</strong>：数据实际上是存储在节点的硬盘上的。如果没有节点（人或服务器）愿意“托管”（Host）特定的数据，它可能会从网络中消失。</li>
+<li><strong>Pinning 服务</strong>：为了防止数据丢失，必须进行 <strong>&quot;Pinning&quot;（固定）</strong> 操作，即明确告诉节点“请永久保留这个文件”。</li>
+<li><strong>解决方案</strong>：开发者通常使用 <strong>Pinata</strong> 或 <strong>Arweave</strong> 等服务来确保 IPFS 内容被持久化存储。</li>
+</ul>
+<hr>
+<p><strong>总结</strong>：IPFS 是 Web3 的硬盘。它通过<strong>内容寻址</strong>解决了信任问题（你确定你下载的就是你想要的），通过<strong>分布式存储</strong>解决了单点故障问题。它与作为“结算层”的区块链完美互补，共同构成了去中心化应用的基础设施。</p>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/区块链技术原理/钱包/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">钱包</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/开发框架/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">开发框架</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>一、 基础概念</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>二、 客户端架构（The Merge 后）</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-3"> <a href="#section-3">1. 执行客户端 (Execution Client, EL) —— “干活的书记员”</a> </li><li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">2. 共识客户端 (Consensus Client, CL) —— “裁决的法官”</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">3. 验证者客户端 (Validator) —— “陪审团代表”</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-6"> <button class="article-outline__group-link" type="button" data-group-target="section-6"> <span>三、 节点类型（按数据存储与用途区分）</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-7"> <a href="#section-7">1. 全节点 (Full Node)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-8"> <a href="#section-8">2. 归档节点 (Archive Node)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">3. 轻节点 (Light Node)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">1. 什么是 ENS？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-11"> <a href="#section-11">2. ENS 的本质与特性</a> </li><li class="article-outline__item depth-3" data-toc-id="section-12"> <a href="#section-12">3. 注册机制 (Commit-Reveal 模式)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-13"> <a href="#section-13">4. 反向解析 (Reverse Record)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-14"> <a href="#section-14">5. 高级功能与应用</a> </li><li class="article-outline__item depth-3" data-toc-id="section-15"> <a href="#section-15">6. 局限性与注意事项</a> </li><li class="article-outline__item depth-3" data-toc-id="section-16"> <a href="#section-16">1. 本质与定义：ERC-20 vs. ERC-721</a> </li><li class="article-outline__item depth-3" data-toc-id="section-17"> <a href="#section-17">2. 核心特性 (Key Characteristics)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-18"> <a href="#section-18">3. 创作者经济 (Creator Economy)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-19"> <a href="#section-19">4. 跨平台身份 (Interoperability)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-20"> <a href="#section-20">1. 什么是 IPFS？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-21"> <a href="#section-21">2. 核心机制：内容寻址 (Content Addressing)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-22"> <a href="#section-22">3. IPFS 与 区块链 (NFT) 的关系</a> </li><li class="article-outline__item depth-3" data-toc-id="section-23"> <a href="#section-23">4. 为什么 NFT 需要 IPFS？(防止 Rug Pull)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-24"> <a href="#section-24">5. 局限性：Pinning (数据持久化)</a> </li> </ol> </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+
+        if (!shell || !sidebar || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

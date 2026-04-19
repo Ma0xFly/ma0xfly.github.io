@@ -1,0 +1,360 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ERC-1155 | 沉于思，录以隙</title><meta name="description" content="# ERC-1155: 多代币标准 (Multi-Token Standard) > **一句话总结**：ERC-1155 是链游和复杂衍生品体系的超级大本营。它打破了“发一个币就得建一个新合约”的铁律，允许在一个独立的智能合约中同时管理无数种真金白银（ERC-20）和独一无二的"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.6ncck4XA.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">ERC-1155</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <div class="article-meta-row"> <span>2026/3/6</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/ERC标准/ERC-1155.md</p> </header> <div class="article-main"> <div class="article-content"><h1>ERC-1155: 多代币标准 (Multi-Token Standard)</h1><blockquote>
+<p><strong>一句话总结</strong>：ERC-1155 是链游和复杂衍生品体系的超级大本营。它打破了“发一个币就得建一个新合约”的铁律，允许在一个独立的智能合约中同时管理无数种真金白银（ERC-20）和独一无二的稀有装备（ERC-721），并引入了史诗级的<strong>批量转账 (Batch Transfer)</strong> 功能。</p>
+</blockquote>
+<h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><blockquote>
+<p><strong>信息源原则</strong>：底层的通信/代币标准必须以 <strong>Ethereum EIP 官方文档 (ethereum.org/EIPS)</strong> 和最主流的防呆实现库（如 <strong>OpenZeppelin</strong> 或 <strong>Solmate</strong>）的源码作为<strong>唯一第一手真理源</strong>。切忌大量摘抄二手的科普文章。</p>
+</blockquote>
+<ul>
+<li><strong>官方 EIP 提案编号与链接</strong>：<a href="https://eips.ethereum.org/EIPS/eip-1155">EIP-1155: Multi Token Standard</a></li>
+<li><strong>当前标准状态</strong>：Final</li>
+<li><strong>权威参考实现 (Reference Implementation)</strong>：OpenZeppelin <code>contracts/token/ERC1155/ERC1155.sol</code></li>
+<li><strong>依赖基座标准</strong>：必须与 ERC-165 (接口自省) 配合使用。</li>
+</ul>
+<hr>
+<h2 id="section-2">1. 核心理念与痛点解决 (Core Concept)</h2><ul>
+<li><strong>传统痛点/背景</strong>：如果一家链游公司要发售：1 种作为金币的代币（ERC-20），10 把独一无二的神器宝剑（10 个 ERC-721 合约？），以及数千瓶功效相同的红药水。在 ERC-1155 出现之前，项目方必须部署十几个智能合约。更要命的是，如果玩家要把这批物资交易给另一个人，他必须对十几个合约分别发起 <code>approve</code>，然后分十几次付天价 Gas 费转账。</li>
+<li><strong>破局思路</strong>：由区块链游戏开发商 Enjin 提出的 ERC-1155 引入了**“大一统的代币 ID (Token ID)”** 以及对应的**“份额机制 (Amount)”**。所有的代币种类（无论是 FT 还是 NFT）都被统摄在这个唯一的合约大金库里。</li>
+<li><strong>专属名词解释</strong>：<ul>
+<li><strong>Semi-Fungible Token (半同质化代币)</strong>：比如演唱会 VIP 区的门票，它们作为一个品类（tokenId = 5）总体有 100 张（amount = 100），这 100 张互相之间是完全等价的。但对于整个金库来说，它们又和普通区门票（tokenId = 6）截然不同。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="section-3">2. 核心接口与数据结构 (Core Interfaces)</h2><blockquote>
+<p>相比 ERC-20 的一维哈希表，和 ERC-721 的所有权查寝表，ERC-1155 有着极其雄心勃勃的<strong>二维账本</strong>结构。</p>
+</blockquote>
+<h3 id="section-4">A. 核心状态结构 (State Variables)</h3><pre><code class="language-solidity">// 1. 终极二维账本：查库房。
+// 输入 物品分类编号(id) 和 玩家地址(account)，精准返回这个玩家在这个分类下的物资数量（amount）。
+mapping(uint256 =&gt; mapping(address =&gt; uint256)) private _balances;
+
+// 2. 全局授权账本：和 ERC-721 一样，谁能全权代理我名下所有的资产？（注意 1155 没有单品授权）
+mapping(address =&gt; mapping(address =&gt; bool)) private _operatorApprovals;
+</code></pre>
+<h3 id="section-5">B. 关键机制与底层逻辑 (Core Functions)</h3><h4>1. <code>safeTransferFrom</code> (单品过户)</h4><p>将指定分类（ID）的代币进行转移。</p>
+<ul>
+<li><strong>白话逻辑解析</strong>：底层就是纯粹的二维账本加减法。并在末尾附带了类似 ERC-721 的防呆敲门机制 <code>onERC1155Received</code>。</li>
+<li><strong>核心源码骨架</strong>：<pre><code class="language-solidity">function safeTransferFrom(address from, address to, uint256 id, uint256 amount) public {
+    require(from == msg.sender || _operatorApprovals[from][msg.sender], &quot;NOT_AUTHORIZED&quot;);
+
+    // 纯粹的二维账本平账逻辑
+    uint256 fromBalance = _balances[id][from];
+    require(fromBalance &gt;= amount, &quot;INSUFFICIENT_BALANCE&quot;);
+    unchecked { _balances[id][from] = fromBalance - amount; }
+    
+    _balances[id][to] += amount;
+
+    emit TransferSingle(msg.sender, from, to, id, amount);
+    
+    // ...这里省略了安全敲门机制...
+}
+</code></pre>
+</li>
+</ul>
+<h4>2. <code>safeBatchTransferFrom</code> (打包批量过户)</h4><p>1155 的杀手级绝对核心：将一大批不同的药水、宝剑打包在一个包裹里发给对方，省去十几次独立转账的 Gas 费。</p>
+<ul>
+<li><strong>白话逻辑解析</strong>：用数组将多个物品 ID 和各自对应的数量传进去，在合约内部只做一次非常紧凑的 <code>for</code> 循环扣款。</li>
+<li><strong>核心源码骨架</strong>：<pre><code class="language-solidity">function safeBatchTransferFrom(address from, address to, uint256[] memory ids, uint256[] memory amounts) public {
+    require(ids.length == amounts.length, &quot;LENGTH_MISMATCH&quot;);
+    require(from == msg.sender || _operatorApprovals[from][msg.sender], &quot;NOT_AUTHORIZED&quot;);
+
+    // 最硬核的部分：在一次交易内疯狂循环平账所有物资
+    for (uint256 i = 0; i &lt; ids.length; ++i) {
+        uint256 id = ids[i];
+        uint256 amount = amounts[i];
+
+        uint256 fromBalance = _balances[id][from];
+        require(fromBalance &gt;= amount, &quot;INSUFFICIENT_BALANCE&quot;);
+        unchecked { _balances[id][from] = fromBalance - amount; }
+        _balances[id][to] += amount;
+    }
+
+    emit TransferBatch(msg.sender, from, to, ids, amounts);
+    // ...这里省略了批量的安全敲门机制...
+}
+</code></pre>
+</li>
+</ul>
+<h3 id="section-6">C. 关键事件 (Events)</h3><ul>
+<li><code>TransferSingle(...)</code>：发了一件或者同种类的几件单品。</li>
+<li><code>TransferBatch(...)</code>：发了一个混合资产大礼包。这是 ERC-1155 独有的高效率事件，要求所有的链下索引器（The Graph/区块浏览器）具备强大的数组解包渲染解析能力。</li>
+</ul>
+<hr>
+<h2 id="section-7">3. 标准业务工作流 (Standard Workflow)</h2><p><strong>你在链游中打怪掉落（Mint）并把战利品打包交易给商人的流程：</strong></p>
+<ol>
+<li><strong>统一印钞 (Mint / MintBatch)</strong>：怪物死亡，系统调用内部函数 <code>_mintBatch</code>，一次性向你的地址写入：100 枚金币 (<code>id=1</code>) 和 1 把屠龙刀 (<code>id=2</code>)。触发 <code>TransferBatch</code> 事件。</li>
+<li><strong>委托商会 (Approve)</strong>：你找地精商人代卖，调用 <code>setApprovalForAll(商人合约, true)</code>。注意：ERC-1155 为了简化代码，直接<strong>砍掉了只针对单品的 approve</strong>，只要授权，就是允许对方动用你在这个1155全宇宙合约里的所有物资。</li>
+<li><strong>一口气交割 (Batch TransferFrom)</strong>：买家付款，商人合约被唤醒，直接调用 <code>safeBatchTransferFrom(你的地址, 买家地址, [1, 2], [100, 1])</code>。只需一笔微不足道的运费（Gas），100 块钱和 1 把刀瞬间过户到了买家账上。</li>
+</ol>
+<hr>
+<h2 id="section-8">4. 关键机制与难点解析 (Key Mechanics)</h2><blockquote>
+<p>对于协议中那些绕人的数学计算、状态机流转或者是舍入取整规则，<strong>必须配以核心公式推导或精简版代码辅助理解</strong>。</p>
+</blockquote>
+<h3 id="section-9">A. 核心难点一：FT 和 NFT 在同一个账本里的坍缩表达</h3><ul>
+<li><strong>原理讲解</strong>：初学者最迷惑的是，如果大一统了，那我在代码层面到底怎么向系统证明我发的是一个不可替代的 NFT？答案极其粗暴简单：<strong>控制单据印量 (Supply)</strong>。</li>
+<li><strong>数学推导/公式</strong>：
+$$NFT \iff TotalSupply(ID) == 1$$
+$$FT \iff TotalSupply(ID) &gt; 1$$</li>
+<li><strong>业务逻辑</strong>：在 ERC-1155 的内部，它根本不认识什么是 NFT，它只认数字。如果你告诉系统，铸造一把名为“埃辛诺斯战刃”的武器（<code>tokenId = 123</code>），并且规定这个 <code>123</code> 全宇宙<strong>只铸造唯一的一张 (amount = 1)</strong>，那么它在现实物理表现上，就是那个永远无法被分割和等价替换的超级 ERC-721 NFT。如果 <code>amount</code> 发出去 1 亿个，那就是 ERC-20。一统江湖，大道至简。</li>
+</ul>
+<h3 id="section-10">B. 核心难点二：成倍暴击的“批量接收”重入攻击</h3><ul>
+<li><strong>原理讲解</strong>：刚才在 ERC-721 里讲过，如果目标是合约，我们要去敲门（触发接收方的 <code>onERC721Received</code> 回调）。ERC-1155 为了打包传输，更是直接开创了宏伟的 <code>onERC1155BatchReceived</code> 钩子。
+这极度危险！在执行 <code>safeBatchTransferFrom</code> 时，黑客如果在这个批量的钩子中写上恶意的再入攻击代码，相当于他拿着一把无数次触发回调的机关枪，可以在你一笔交易未落账的极短缝隙里，把你上亿价值的资产全数转移。</li>
+<li><strong>核心逻辑代码 (Solidity)</strong>：<pre><code class="language-solidity">// 在打包转移函数的极度危险地带
+function safeBatchTransferFrom(address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data) public virtual override {
+    // 永远记住：先把自己的内帐平掉（Checks &amp; Effects）
+    for (uint256 i = 0; i &lt; ids.length; ++i) {
+        uint256 id = ids[i];
+        uint256 amount = amounts[i];
+        // 如果这里没扣款就先去调下面那个敲门函数，金库瞬间搬空
+        _balances[id][from] -= amount; 
+        _balances[id][to] += amount;
+    }
+    // 所有账本全部扣死锁定了，再去敲那些图谋不轨的黑客合约的门（Interactions）
+    _doSafeBatchTransferAcceptanceCheck(operator, from, to, ids, amounts, data);
+}
+</code></pre>
+<em>代码拆解</em>：注意 <code>_doSafeBatchTransferAcceptanceCheck</code> 永远被放在那个计算余额的 <code>for</code> 循环<strong>之后</strong>。这是 EVM 世界的生存底线。如果把顺序写反，黑客在回调里反复调用 <code>safeBatchTransferFrom</code>，而旧余额却还没被减去，等于无损刷钱机。</li>
+</ul>
+<hr>
+<h2 id="section-11">5. 周边生态与后续演进 (Ecosystem)</h2><ul>
+<li><strong>主流采用方</strong>：Enjin, The Sandbox, Adidas Originals 衍生品等绝大部分包含不同会员等级 / 多游戏道具的大型 Dapp。</li>
+<li><strong>标准的局限性</strong>：<ol>
+<li>它太庞大笨重了。虽然它的出发点是好的，但在很多纯粹只需要处理加密艺术品 (纯粹的 1/1 NFT) 的场景下，强制引入 <code>_balances[id][account]</code> 的二维表显得极为冗余和低效。</li>
+<li>强制剥夺了用户的单点防御能力。刚才说过它取消了针对单品 <code>Approve</code> 的权限，用户一旦把 ERC-1155 系列授权给某个市场，就意味着彻底暴露了自己在该宇宙下的所有资产。一旦市场被黑，裤衩都不剩。</li>
+</ol>
+</li>
+</ul>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/ERC标准/ERC-721/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-721</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/ERC标准/ERC-3156/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-3156</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>📜 核心元数据与参阅资料 (Metadata &amp; References)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>1. 核心理念与痛点解决 (Core Concept)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>2. 核心接口与数据结构 (Core Interfaces)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">A. 核心状态结构 (State Variables)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">B. 关键机制与底层逻辑 (Core Functions)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">C. 关键事件 (Events)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-7"> <button class="article-outline__group-link" type="button" data-group-target="section-7"> <span>3. 标准业务工作流 (Standard Workflow)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-8"> <button class="article-outline__group-link" type="button" data-group-target="section-8"> <span>4. 关键机制与难点解析 (Key Mechanics)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">A. 核心难点一：FT 和 NFT 在同一个账本里的坍缩表达</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">B. 核心难点二：成倍暴击的“批量接收”重入攻击</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-11"> <button class="article-outline__group-link" type="button" data-group-target="section-11"> <span>5. 周边生态与后续演进 (Ecosystem)</span>  </button>  </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+
+        if (!shell || !sidebar || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

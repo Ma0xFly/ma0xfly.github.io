@@ -1,0 +1,656 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>GLibcHeap | 沉于思，录以隙</title><meta name="description" content="本文将对 Glibc 堆上的内存管理作简要介绍，部分内容翻译自参考资料中的文章。略过了许多细节，主要是为了对新手友好。 默认读者熟悉操作系统、C 语言及其运行机制，并且对于 C 中的函数调用栈有所了解。 ## 什么是堆？ 堆是每个程序被分配到的一块内存区域，和栈的区别主要在于堆内"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.6ncck4XA.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">GLibcHeap</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">pwn</span>  </div> <div class="article-meta-row"> <span>2026/4/17</span> <span>二进制</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：二进制/pwn/GLibcHeap.md</p> </header> <div class="article-main"> <div class="article-content"><p>本文将对 Glibc 堆上的内存管理作简要介绍，部分内容翻译自参考资料中的文章。略过了许多细节，主要是为了对新手友好。</p>
+<p>默认读者熟悉操作系统、C 语言及其运行机制，并且对于 C 中的函数调用栈有所了解。</p>
+<h2 id="section-1">什么是堆？</h2><p>堆是每个程序被分配到的一块内存区域，和栈的区别主要在于堆内存是动态分配的。也就是说，程序可以从<code>heap</code>段请求一块内存，或者释放一块内存。</p>
+<p>另外，堆内存是全局的，即在程序的任意位置都可以访问到堆，并不一定要在调用<code>malloc</code>的那个函数里访问。这是因为 C 语言使用指针指向动态分配的内存。但相比访问栈上的静态局部变量，使用指针也带来了一定的开销。</p>
+<h2 id="section-2">使用动态分配的内存</h2><p>GLibc 采用 ptmalloc2 内存分配器管理堆内存，相比前身 dlmalloc，它增加了对多线程的支持。多线程的好处就不多赘述了。</p>
+<p>借助<code>stdlib.h</code>我们可以使用<code>malloc</code>和<code>free</code>函数来操作堆内存：</p>
+<pre><code class="language-c">char *buffer = (char *)malloc(10);
+
+strcpy(buffer, &quot;hello&quot;);
+printf(&quot;%s\n&quot;, buffer);
+
+free(buffer);
+</code></pre>
+<p>第一行分配了 10 字节给<code>buffer</code>，注意这里的强制类型转换是必须的；第 2-3 行使用了<code>buffer</code>这块内存，并在最后一行释放。</p>
+<p>下面是<code>malloc</code>和<code>free</code>函数的注释：</p>
+<pre><code class="language-c">/*
+  malloc(size_t n)
+  Returns a pointer to a newly allocated chunk of at least n bytes, or null
+  if no space is available. Additionally, on failure, errno is
+  set to ENOMEM on ANSI C systems.
+
+  If n is zero, malloc returns a minumum-sized chunk. (The minimum
+  size is 16 bytes on most 32bit systems, and 24 or 32 bytes on 64bit
+  systems.)  On most systems, size_t is an unsigned type, so calls
+  with negative arguments are interpreted as requests for huge amounts
+  of space, which will often fail. The maximum supported value of n
+  differs across systems, but is in all cases less than the maximum
+  representable value of a size_t.
+*/
+
+/*
+  free(void* p)
+  Releases the chunk of memory pointed to by p, that had been previously
+  allocated using malloc or a related routine such as realloc.
+  It has no effect if p is null. It can have arbitrary (i.e., bad!)
+  effects if p has already been freed.
+
+  Unless disabled (using mallopt), freeing very large spaces will
+  when possible, automatically trigger operations that give
+  back unused memory to the system, thus reducing program footprint.
+*/
+</code></pre>
+<p>注意，即使申请 0 字节内存，<code>malloc</code>依然会分配一个最小的 chunk；如果传给<code>free</code>的参数是空指针，<code>free</code>不会做任何事，而如果传入的是一个已经<code>free</code>过的指针，那么后果是不可预期的。这里尤其需要注意的是，与<code>Java</code>等语言不同，C 语言中释放掉分配到的内存的责任在于程序员，并且分配到的内存只应使用<em>一次</em>。</p>
+<p>这两个函数在更底层上是使用<code>brk()</code>和<code>mmap()</code>这两个系统调用来管理内存的。</p>
+<h2 id="section-3">两个系统调用</h2><p>注意申请内存时，Linux 内核只会先分配一段虚拟内存，真正使用时才会映射到物理内存上去。</p>
+<h3 id="section-4">brk()</h3><p><code>brk()</code>通过增加<code>break location</code>来获取内存，一开始<code>heap</code>段的起点<code>start_brk</code>和<code>heap</code>段的终点<code>brk</code>指向同一个位置。</p>
+<ul>
+<li>ASLR 关闭时，两者指向 data/bss 段的末尾，也就是<code>end_data</code></li>
+<li>ASLR 开启时，两者指向 data/bss 段的末尾加上一段随机 brk 偏移</li>
+</ul>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/7143d746ac80c1516ce4a3f7bf347f69_MD5.png" alt=""></p>
+<blockquote>
+<p>注：注意与<code>sbrk()</code>的区别，后者是 C 语言库函数，<code>malloc</code>源码中的<code>MORECORE</code>就是调用的<code>sbrk()</code>。</p>
+</blockquote>
+<h3 id="section-5">mmap()</h3><p>用于创建私有的匿名映射段，主要是为了分配一块新的内存，且这块内存只有调用<code>mmap()</code>的进程可以使用，所以称之为私有的。与之进行相反操作的是<code>munmap()</code>，删除一块内存区域上的映射。</p>
+<h2 id="section-6">多线程与 Arena</h2><p>前面提到，ptmalloc2 的一大改进就在于多线程，那么他是如何做到的呢？不难猜到，每个线程必定要维护一些独立的数据结构，并且对这些数据结构的访问是需要加锁的。的确，在 ptmalloc2 中，每个线程拥有自己的<code>freelist</code>，也就是维护空闲内存的一个链表；以及自己的<code>arena</code>，一段连续的堆内存区域。特别地，主线程的<code>arena</code>叫做<code>main_arena</code>。注意<strong>只有<code>main_arena</code>可以访问<code>heap</code>段和<code>mmap</code>映射区域，<code>non_main_arena</code>只能访问<code>mmap</code>映射区域</strong>。</p>
+<blockquote>
+<p>注：线程较多时，互斥锁机制会导致性能下降。</p>
+</blockquote>
+<p>当我们在程序中第一次申请内存时还没有<code>heap</code>段，因此 132KB 的<code>heap</code>段，也就是我们的<code>main_arena</code>，会被创建（<strong>通过<code>brk()</code></strong>），无论我们申请的内存是多大。对于接下来的内存申请，<code>malloc</code>都会从<code>main_arena</code>中尝试取出一块内存进行分配。如果空间不够，<code>main_arena</code>可以通过<code>brk()</code>扩张；如果空闲空间太多，也可以缩小。</p>
+<p>那么对于<code>non_main_arena</code>呢？前面提到它只能访问<code>mmap</code>映射区域，因为在创建时它就是由<code>mmap()</code>创建的——1MB 的内存空间会被映射到进程地址空间，不过实际上只有 132KB 是可读写的，这 132KB 就是该线程的<code>heap</code>结构，或者叫<code>non_main_arena</code>。</p>
+<blockquote>
+<p>注：当然了，当申请的空间大于 128KB 且<code>arena</code>中没有足够空间时，无论在哪个<code>arena</code>里都只能通过<code>mmap()</code>分配内存。</p>
+</blockquote>
+<p><code>arena</code>也不是和线程一对一的，实际上有数量限制：</p>
+<pre><code class="language-c">For 32 bit systems:
+     Number of arena = 2 * number of cores.
+For 64 bit systems:
+     Number of arena = 8 * number of cores.
+</code></pre>
+<p>而当我们<code>free</code>一小块内存时，内存也不会直接归还给内核，而是给 ptmalloc2 让他去维护，后者会将空闲内存丢入 bin 中，或者说<code>freelist</code>中也可以。如果过了一会我们的程序又要申请内存，那么 ptmalloc2 就会从 bin 中找一块空闲的内存进行分配，找不到的话才会去问内核要内存。</p>
+<h2 id="section-7">维护多个堆</h2><p>前面提到，<code>main_arena</code>只有一个堆，并且可以灵活地放缩；<code>non_main_arena</code>则只能通过<code>mmap()</code>获得一个堆。那么如果<code>non_main_arena</code>里分配的堆内存不够了怎么办？很简单，再<code>mmap()</code>一次，创建一个新的堆。</p>
+<p>所以，在<code>non_main_arena</code>里，我们必须考虑如何维护多个堆的问题。这里我们会涉及三个头部：</p>
+<ul>
+<li><code>heap_info</code>：每个堆的头部，<code>main_arena</code>是没有的</li>
+<li><code>malloc_state</code>：<code>arena</code>的头部，<code>main_arena</code>的这个部分是<strong>全局变量</strong>而不属于堆段</li>
+<li><code>malloc_chunk</code>：每个 chunk 的头部</li>
+</ul>
+<p>具体一点，<code>heap_info</code>完整定义如下：</p>
+<pre><code class="language-c">typedef struct _heap_info
+{
+  mstate ar_ptr; /* Arena for this heap. */
+  struct _heap_info *prev; /* Previous heap. */
+  size_t size;   /* Current size in bytes. */
+  size_t mprotect_size; /* Size in bytes that has been mprotected
+                           PROT_READ|PROT_WRITE.  */
+  /* Make sure the following data is properly aligned, particularly
+     that sizeof (heap_info) + 2 * SIZE_SZ is a multiple of
+     MALLOC_ALIGNMENT. */
+  char pad[-6 * SIZE_SZ &amp; MALLOC_ALIGN_MASK];
+} heap_info;
+</code></pre>
+<p>而<code>malloc_state</code>的完整定义如下：</p>
+<p>{% raw %}<details><summary>👇</summary>{% endraw %}</p>
+<pre><code class="language-c">struct malloc_state
+{
+  /* Serialize access.  */
+  mutex_t mutex;
+
+  /* Flags (formerly in max_fast).  */
+  int flags;
+
+  /* Fastbins */
+  mfastbinptr fastbinsY[NFASTBINS];
+
+  /* Base of the topmost chunk -- not otherwise kept in a bin */
+  mchunkptr top;
+
+  /* The remainder from the most recent split of a small request */
+  mchunkptr last_remainder;
+
+  /* Normal bins packed as described above */
+  mchunkptr bins[NBINS * 2 - 2];
+
+  /* Bitmap of bins */
+  unsigned int binmap[BINMAPSIZE];
+
+  /* Linked list */
+  struct malloc_state *next;
+
+  /* Linked list for free arenas.  Access to this field is serialized
+     by free_list_lock in arena.c.  */
+  struct malloc_state *next_free;
+
+  /* Number of threads attached to this arena.  0 if the arena is on
+     the free list.  Access to this field is serialized by
+     free_list_lock in arena.c.  */
+  INTERNAL_SIZE_T attached_threads;
+
+  /* Memory allocated from the system in this arena.  */
+  INTERNAL_SIZE_T system_mem;
+  INTERNAL_SIZE_T max_system_mem;
+};
+</code></pre>
+<p>{% raw %}</details>{% endraw %}</p>
+<p>其中<code>INTERNAL_SIZE_T</code>默认和<code>size_t</code>相同：</p>
+<pre><code class="language-c">#ifndef INTERNAL_SIZE_T
+#define INTERNAL_SIZE_T size_t
+#endif
+</code></pre>
+<p>在后面介绍 chunk 和 bin 的时候，我们会发现其中几个字段的作用，<code>malloc_chunk</code>我们也会在后面看到。</p>
+<p>对于<code>arena</code>中只有单个堆的情况：
+<img src="/__published_media/external/%E5%9B%BE%E5%BA%93/17d3fc028a1df16689e51dc6a2c5494d_MD5.png" alt=""></p>
+<p>对于<code>non_main_arena</code>中有多个堆的情况：
+<img src="/__published_media/external/%E5%9B%BE%E5%BA%93/1688aed252afa2d90dd24c37ae6dd92f_MD5.png" alt=""></p>
+<p>注意到有多个堆的情况下，旧的堆的 Top chunk 会被认为是普通的空闲块。</p>
+<h2 id="section-8">Chunk 的结构</h2><p>通俗地说，一块由分配器分配的内存块叫做一个 chunk，包含了元数据和用户数据。具体一点，chunk 完整定义如下：</p>
+<pre><code class="language-c">struct malloc_chunk {
+  INTERNAL_SIZE_T      mchunk_prev_size;  /* Size of previous chunk (if free).  */
+  INTERNAL_SIZE_T      mchunk_size;       /* Size in bytes, including overhead. */
+  struct malloc_chunk* fd;                /* double links -- used only if free. */
+  struct malloc_chunk* bk;
+  /* Only used for large blocks: pointer to next larger size.  */
+  struct malloc_chunk* fd_nextsize; /* double links -- used only if free. */
+  struct malloc_chunk* bk_nextsize;
+};
+
+typedef struct malloc_chunk* mchunkptr;
+</code></pre>
+<p>这里出现的6个字段均为元数据。</p>
+<p>一个 chunk 可以是以下几种类型之一：</p>
+<ul>
+<li>已分配的（Allocated chunk）</li>
+<li>空闲的（Free chunk）</li>
+<li>Top chunk</li>
+<li>Last Remainder chunk</li>
+</ul>
+<p>我们一个一个来看。</p>
+<h3 id="section-9">Allocated chunk</h3><p><img src="C:%5CUsers%5C86198%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20240214214225707.png" alt="image-20240214214225707"></p>
+<p>第一个部分（32 位上 4B，64 位上 8B）叫做<code>prev_size</code>，只有在前一个 chunk 空闲时才表示前一个块的大小，否则这里就是无效的，可以被前一个块征用（存储用户数据）。</p>
+<blockquote>
+<p>这里的前一个chunk，指内存中相邻的前一个，而不是freelist链表中的前一个。<code>PREV_INUSE</code>代表的“前一个chunk”同理。</p>
+</blockquote>
+<p>第二个部分的高位存储当前 chunk 的大小，低 3 位分别表示：</p>
+<ul>
+<li>P: <code>PREV_INUSE</code> 之前的 chunk 已经被分配则为 1</li>
+<li>M: <code>IS_MMAPED</code> 当前 chunk 是<code>mmap()</code>得到的则为 1</li>
+<li>N: <code>NON_MAIN_ARENA</code> 当前 chunk 在<code>non_main_arena</code>里则为 1</li>
+</ul>
+<p>对应源码如下：</p>
+<pre><code class="language-c">/* size field is or&#39;ed with PREV_INUSE when previous adjacent chunk in use */
+#define PREV_INUSE 0x1
+
+/* extract inuse bit of previous chunk */
+#define prev_inuse(p)       ((p)-&gt;size &amp; PREV_INUSE)
+
+
+/* size field is or&#39;ed with IS_MMAPPED if the chunk was obtained with mmap() */
+#define IS_MMAPPED 0x2
+
+/* check for mmap()&#39;ed chunk */
+#define chunk_is_mmapped(p) ((p)-&gt;size &amp; IS_MMAPPED)
+
+
+/* size field is or&#39;ed with NON_MAIN_ARENA if the chunk was obtained
+   from a non-main arena.  This is only set immediately before handing
+   the chunk to the user, if necessary.  */
+#define NON_MAIN_ARENA 0x4
+
+/* check for chunk from non-main arena */
+#define chunk_non_main_arena(p) ((p)-&gt;size &amp; NON_MAIN_ARENA)
+</code></pre>
+<p>你可能会有几个困惑：</p>
+<ol>
+<li><p><code>fd</code>、<code>bk</code>、<code>fd_nextsize</code>、<code>bk_nextsize</code>这几个字段去哪里了？
+对于已分配的 chunk 来说它们没用，所以也被征用了，用来存储用户数据。</p>
+</li>
+<li><p>为什么第二个部分的低 3 位就这么被吞了而不会影响<code>size</code>？
+这是因为<code>malloc</code>会将用户申请的内存大小转化为实际分配的内存，以此来满足（至少）8字节对齐的要求，同时留出额外空间存放 chunk 头部。由于（至少）8字节对齐了，低3位自然就没用了。在获取真正的<code>size</code>时，会忽略低3位：</p>
+</li>
+</ol>
+<pre><code class="language-c">/*
+   Bits to mask off when extracting size
+
+   Note: IS_MMAPPED is intentionally not masked off from size field in
+   macros for which mmapped chunks should never be seen. This should
+   cause helpful core dumps to occur if it is tried by accident by
+   people extending or adapting this malloc.
+ */
+#define SIZE_BITS (PREV_INUSE | IS_MMAPPED | NON_MAIN_ARENA)
+
+/* Get size, ignoring use bits */
+#define chunksize(p)         ((p)-&gt;size &amp; ~(SIZE_BITS))
+</code></pre>
+<ol start="3">
+<li><code>malloc</code>是如何将申请的大小转化为实际分配的大小的呢？
+核心在于<code>request2size</code>宏：</li>
+</ol>
+<pre><code class="language-c">/* pad request bytes into a usable size -- internal version */
+
+#define request2size(req)                                         \
+  (((req) + SIZE_SZ + MALLOC_ALIGN_MASK &lt; MINSIZE)  ?             \
+   MINSIZE :                                                      \
+   ((req) + SIZE_SZ + MALLOC_ALIGN_MASK) &amp; ~MALLOC_ALIGN_MASK)
+</code></pre>
+<p>其中用到的其它宏定义：</p>
+<pre><code class="language-c">#  define MALLOC_ALIGNMENT       (2 *SIZE_SZ)
+
+/* The corresponding bit mask value */
+#define MALLOC_ALIGN_MASK      (MALLOC_ALIGNMENT - 1)
+
+/* The smallest possible chunk */
+#define MIN_CHUNK_SIZE        (offsetof(struct malloc_chunk, fd_nextsize))
+
+/* The smallest size we can malloc is an aligned minimal chunk */
+#define MINSIZE  \
+  (unsigned long)(((MIN_CHUNK_SIZE+MALLOC_ALIGN_MASK) &amp; ~MALLOC_ALIGN_MASK))
+</code></pre>
+<ol start="4">
+<li>这里还有一个<code>mem</code>指针，是做什么用的？
+这是调用<code>malloc</code>时返回给用户的指针。实际上，真正的chunk 是从<code>chunk</code>指针开始的。</li>
+</ol>
+<pre><code class="language-c">/* The corresponding word size */
+#define SIZE_SZ                (sizeof(INTERNAL_SIZE_T))
+
+/* conversion from malloc headers to user pointers, and back */
+
+#define chunk2mem(p)   ((void*)((char*)(p) + 2*SIZE_SZ))
+#define mem2chunk(mem) ((mchunkptr)((char*)(mem) - 2*SIZE_SZ))
+</code></pre>
+<ol start="5">
+<li>用户申请的内存大小就是用户数据可用的内存大小吗？
+不一定，原因还是字节对齐问题。要获得可用内存大小，可以用<code>malloc_usable_size()</code>获得，其核心函数是：</li>
+</ol>
+<pre><code class="language-c">static size_t
+musable (void *mem)
+{
+  mchunkptr p;
+  if (mem != 0)
+    {
+      p = mem2chunk (mem);
+
+      if (__builtin_expect (using_malloc_checking == 1, 0))
+        return malloc_check_get_size (p);
+
+      if (chunk_is_mmapped (p))
+        return chunksize (p) - 2 * SIZE_SZ;
+      else if (inuse (p))
+        return chunksize (p) - SIZE_SZ;
+    }
+  return 0;
+}
+</code></pre>
+<h3 id="section-10">Free chunk</h3><p><img src="C:%5CUsers%5C86198%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20240214220311611.png" alt="image-20240214220311611"></p>
+<p>首先，<code>prev_size</code>必定存储上一个块的用户数据，因为 Free chunk 的上一个块必定是 Allocated chunk，否则会发生合并。</p>
+<p>接着，多出来的<code>fd</code>指向同一个 bin 中的前一个 Free chunk，<code>bk</code>指向同一个 bin 中的后一个 Free chunk。</p>
+<p>这里提到了 bin，我们将在后面介绍。</p>
+<p>此外，对于 large bins 中的 Free chunk，<code>fd_nextsize</code>与<code>bk_nextsize</code>会生效，分别指向 large bins 中前一个（更大的）和后一个（更小的）空闲块。</p>
+<h3 id="section-11">Top chunk</h3><p>一个<code>arena</code>顶部的 chunk 叫做 Top chunk，它不属于任何 bin。当所有 bin 中都没有空闲的可用 chunk 时，我们切割 Top chunk 来满足用户的内存申请。假设 Top chunk 当前大小为 N 字节，用户申请了 K 字节的内存，那么 Top chunk 将被切割为：</p>
+<ul>
+<li>一个 K 字节的 chunk，分配给用户</li>
+<li>一个 N-K 字节的 chunk，称为 Last Remainder chunk</li>
+</ul>
+<p>后者成为新的 Top chunk。如果连 Top chunk 都不够用了，那么：</p>
+<ul>
+<li>在<code>main_arena</code>中，用<code>brk()</code>扩张 Top chunk</li>
+<li>在<code>non_main_arena</code>中，用<code>mmap()</code>分配新的堆</li>
+</ul>
+<blockquote>
+<p>注：Top chunk 的 PREV_INUSE 位总是 1</p>
+</blockquote>
+<h3 id="section-12">Last Remainder chunk</h3><p>当需要分配一个比较小的 K 字节的 chunk 但是 small bins 中找不到满足要求的，且 Last Remainder chunk 的大小 N 能满足要求，那么 Last Remainder chunk 将被切割为：</p>
+<ul>
+<li>一个 K 字节的 chunk，分配给用户</li>
+<li>一个 N-K 字节的 chunk，成为新的 Last Remainder chunk</li>
+</ul>
+<p>它的存在使得连续的小空间内存申请，分配到的内存都是相邻的，从而达到了更好的局部性。</p>
+<h2 id="section-13">Bin 的结构</h2><p>bin 是实现了空闲链表的数据结构，用来存储空闲 chunk，可分为：</p>
+<ul>
+<li>10 个 fast bins，存储在<code>fastbinsY</code>中</li>
+<li>1 个 unsorted bin，存储在<code>bin[1]</code></li>
+<li>62 个 small bins，存储在<code>bin[2]</code>至<code>bin[63]</code></li>
+<li>63 个 large bins，存储在<code>bin[64]</code>至<code>bin[126]</code></li>
+</ul>
+<p>还是一个一个来看。</p>
+<h3 id="section-14">fast bins</h3><p>非常像高速缓存 cache，主要用于提高小内存分配效率。相邻空闲 chunk 不会被合并，这会导致外部碎片增多但是<code>free</code>效率提升。注意 fast bins 是 10 个 <strong>LIFO 的单链表</strong>。最后三个链表保留未使用。</p>
+<p>chunk大小（含chunk头部）：0x10-0x40（64位0x20-0x80）B，相邻bin存放的大小相差0x8（0x10）B。</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/32d5389e40cec70fe84153b2c13a95a0_MD5.png" alt=""></p>
+<blockquote>
+<p>注：加入 fast bins 的 chunk，它的<code>IN_USE</code>位（准确地说，是下一个 chunk 的<code>PREV_INUSE</code>位）依然是 1。这就是为什么相邻的“空闲”chunk 不会被合并，因为它们根本不会被认为是空闲的。</p>
+</blockquote>
+<p>关于fastbin最大大小，参见宏<code>DEFAULT_MXFAST</code>：</p>
+<pre><code class="language-c">#ifndef DEFAULT_MXFAST
+#define DEFAULT_MXFAST     (64 * SIZE_SZ / 4)
+#endif
+</code></pre>
+<p>在初始化时，这个值会被赋值给全局变量<code>global_max_fast</code>。</p>
+<p>申请fast chunk时遵循<code>first fit</code>原则。释放一个fast chunk时，首先检查它的大小以及对应fastbin此时的第一个chunk <code>old</code>的大小是否合法，随后它会被插入到对应fastbin的链表头，此时其<code>fd</code>指向<code>old</code>。</p>
+<h3 id="section-15">unsorted bin</h3><p>非常像缓冲区 buffer，大小超过 fast bins 阈值的 chunk 被释放时会加入到这里，这使得 ptmalloc2 可以复用最近释放的 chunk，从而提升效率。</p>
+<p>unsorted bin 是一个双向循环链表，chunk 大小：大于<code>global_max_fast</code>。
+<img src="/__published_media/external/%E5%9B%BE%E5%BA%93/52d2a1fe0407eae480dea15dde18fcad_MD5.png" alt=""></p>
+<p>当程序申请大于<code>global_max_fast</code>内存时，分配器遍历unsorted bin，每次取最后的一个unsorted chunk。</p>
+<ol>
+<li><p>如果unsorted chunk满足以下四个条件，它就会被切割为一块满足申请大小的chunk和另一块剩下的chunk，前者返回给程序，后者重新回到unsorted bin。</p>
+<ul>
+<li>申请大小属于small bin范围</li>
+<li>unosrted bin中只有该chunk</li>
+<li>这个chunk同样也是last remainder chunk</li>
+<li>切割之后的大小依然可以作为一个chunk</li>
+</ul>
+</li>
+<li><p>否则，从unsorted bin中删除unsorted chunk。</p>
+<ul>
+<li>若unsorted chunk恰好和申请大小相同，则直接返回这个chunk</li>
+<li>若unsorted chunk属于small bin范围，插入到相应small bin</li>
+<li>若unsorted chunk属于large bin范围，则跳转到3。</li>
+</ul>
+</li>
+<li><p>此时unsorted chunk属于large bin范围。</p>
+<ul>
+<li>若对应large bin为空，直接插入unsorted chunk，其<code>fd_nextsize</code>与<code>bk_nextsize</code>指向自身。</li>
+<li>否则，跳转到4。</li>
+</ul>
+</li>
+<li><p>到这一步，我们需按大小降序插入对应large bin。</p>
+<ul>
+<li>若对应large bin最后一个chunk大于unsorted chunk，则插入到最后</li>
+<li>否则，从对应large bin第一个chunk开始，沿<code>fd_nextsize</code>（即变小）方向遍历，直到找到一个chunk <code>fwd</code>，其大小小于等于unsorted chunk的大小<ul>
+<li>若<code>fwd</code>大小等于unsorted chunk大小，则插入到<code>fwd</code>后面</li>
+<li>否则，插入到<code>fwd</code>前面</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p>直到找到满足要求的unsorted chunk，或无法找到，去top chunk切割为止。</p>
+<h3 id="section-16">small bins</h3><p>小于 0x200（0x400）B 的 chunk 叫做 small chunk，而 small bins 可以存放的就是这些 small chunks。chunk 大小同样是从 16B 开始每次+8B。</p>
+<p>small bins 是 62 个双向循环链表，并且是 FIFO 的，这点和 fast bins 相反。同样相反的是相邻的空闲 chunk 会被合并。</p>
+<p>chunk大小：0x10-0x1f0B（0x20-0x3f0），相邻bin存放的大小相差0x8（0x10）B。</p>
+<p>释放非fast chunk时，按以下步骤执行：</p>
+<ol>
+<li>若前一个相邻chunk空闲，则合并，触发对前一个相邻chunk的<code>unlink</code>操作</li>
+<li>若下一个相邻chunk是top chunk，则合并并结束；否则继续执行3</li>
+<li>若下一个相邻chunk空闲，则合并，触发对下一个相邻chunk的<code>unlink</code>操作；否则，设置下一个相邻chunk的<code>PREV_INUSE</code>为<code>0</code></li>
+<li>将现在的chunk插入unsorted bin。</li>
+<li>若<code>size</code>超过了<code>FASTBIN_CONSOLIDATION_THRESHOLD</code>，则尽可能地合并fastbin中的chunk，放入unsorted bin。若top chunk大小超过了<code>mp_.trim_threshold</code>，则归还部分内存给OS。</li>
+</ol>
+<pre><code class="language-c">#ifndef DEFAULT_TRIM_THRESHOLD
+#define DEFAULT_TRIM_THRESHOLD (128 * 1024)
+#endif
+
+#define FASTBIN_CONSOLIDATION_THRESHOLD  (65536UL)
+</code></pre>
+<h3 id="section-17">large bins</h3><p>大于等于 0x200（0x400）B 的 chunk 叫做 large chunk，而 large bins 可以存放的就是这些 large chunks。</p>
+<p>large bins 是 63 个双向循环链表，插入和删除可以发生在任意位置，相邻空闲 chunk 也会被合并。chunk 大小就比较复杂了：</p>
+<ul>
+<li>前 32 个 bins：从 0x200B 开始每次+0x40B</li>
+<li>接下来的 16 个 bins：每次+0x200B</li>
+<li>接下来的 8 个 bins：每次+0x1000B</li>
+<li>接下来的 4 个 bins：每次+0x8000B</li>
+<li>接下来的 2 个 bins：每次+0x40000B</li>
+<li>最后的 1 个 bin：只有一个 chunk，大小和 large bins 剩余的大小相同</li>
+</ul>
+<p>注意同一个 bin 中的 chunks 不是相同大小的，按大小降序排列。这和上面的几种 bins 都不一样。而在取出chunk时，也遵循<code>best fit</code>原则，取出满足大小的最小chunk。</p>
+<h2 id="section-18">内存分配流程</h2><p>我觉得这类复杂的流程比较需要靠流程图来理解，因此我画了一下：</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/734e5e85697b83e788d5dfdfc57bdf69_MD5.png" alt=""></p>
+<p>相关宏：</p>
+<pre><code class="language-c">#define NBINS             128
+#define NSMALLBINS         64
+#define SMALLBIN_WIDTH    MALLOC_ALIGNMENT
+#define SMALLBIN_CORRECTION (MALLOC_ALIGNMENT &gt; 2 * SIZE_SZ)
+#define MIN_LARGE_SIZE    ((NSMALLBINS - SMALLBIN_CORRECTION) * SMALLBIN_WIDTH)
+
+#define in_smallbin_range(sz)  \
+  ((unsigned long) (sz) &lt; (unsigned long) MIN_LARGE_SIZE)
+
+#ifndef DEFAULT_MMAP_THRESHOLD_MIN
+#define DEFAULT_MMAP_THRESHOLD_MIN (128 * 1024)
+#endif
+
+#ifndef DEFAULT_MMAP_THRESHOLD
+#define DEFAULT_MMAP_THRESHOLD DEFAULT_MMAP_THRESHOLD_MIN
+#endif
+</code></pre>
+<h2 id="section-19">内存释放流程</h2><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/927015302cdf082035b4b4d6c6dae726_MD5.png" alt=""></p>
+<h2 id="section-20">参考资料</h2><ul>
+<li><a href="https://heap-exploitation.dhavalkapil.com/">Heap Exploitation</a></li>
+<li><a href="https://sploitfun.wordpress.com/2015/02/10/understanding-glibc-malloc/">Understanding glibc malloc</a></li>
+<li><a href="https://sploitfun.wordpress.com/2015/02/11/syscalls-used-by-malloc/">Syscalls used by malloc</a></li>
+<li><a href="https://paper.seebug.org/papers/Archive/refs/heap/glibc%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86ptmalloc%E6%BA%90%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90.pdf">glibc 内存管理 ptmalloc 源代码分析</a></li>
+<li><a href="https://sensepost.com/blog/2017/painless-intro-to-the-linux-userland-heap/">Painless intro to the Linux userland heap</a></li>
+</ul>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/二进制/pwn/堆/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">堆</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/solidity语法/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">solidity语法</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>什么是堆？</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>使用动态分配的内存</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>两个系统调用</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">brk()</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">mmap()</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-6"> <button class="article-outline__group-link" type="button" data-group-target="section-6"> <span>多线程与 Arena</span>  </button>  </li><li class="article-outline__group" data-group-id="section-7"> <button class="article-outline__group-link" type="button" data-group-target="section-7"> <span>维护多个堆</span>  </button>  </li><li class="article-outline__group" data-group-id="section-8"> <button class="article-outline__group-link" type="button" data-group-target="section-8"> <span>Chunk 的结构</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">Allocated chunk</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">Free chunk</a> </li><li class="article-outline__item depth-3" data-toc-id="section-11"> <a href="#section-11">Top chunk</a> </li><li class="article-outline__item depth-3" data-toc-id="section-12"> <a href="#section-12">Last Remainder chunk</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-13"> <button class="article-outline__group-link" type="button" data-group-target="section-13"> <span>Bin 的结构</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-14"> <a href="#section-14">fast bins</a> </li><li class="article-outline__item depth-3" data-toc-id="section-15"> <a href="#section-15">unsorted bin</a> </li><li class="article-outline__item depth-3" data-toc-id="section-16"> <a href="#section-16">small bins</a> </li><li class="article-outline__item depth-3" data-toc-id="section-17"> <a href="#section-17">large bins</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-18"> <button class="article-outline__group-link" type="button" data-group-target="section-18"> <span>内存分配流程</span>  </button>  </li><li class="article-outline__group" data-group-id="section-19"> <button class="article-outline__group-link" type="button" data-group-target="section-19"> <span>内存释放流程</span>  </button>  </li><li class="article-outline__group" data-group-id="section-20"> <button class="article-outline__group-link" type="button" data-group-target="section-20"> <span>参考资料</span>  </button>  </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+
+        if (!shell || !sidebar || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

@@ -1,0 +1,386 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ERC-2612 | 沉于思，录以隙</title><meta name="description" content="# ERC-2612: Permit 扩展标准 > **一句话总结**：通过 EIP-712 签名机制替代传统 `approve` 交易，实现链下授权链上执行，节省一笔交易并提升用户体验。 ## 📜 核心元数据与参阅资料 (Metadata &#38; References) > **"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.6ncck4XA.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">ERC-2612</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <div class="article-meta-row"> <span>2026/3/11</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/ERC标准/ERC-2612.md</p> </header> <div class="article-main"> <div class="article-content"><h1>ERC-2612: Permit 扩展标准</h1><blockquote>
+<p><strong>一句话总结</strong>：通过 EIP-712 签名机制替代传统 <code>approve</code> 交易，实现链下授权链上执行，节省一笔交易并提升用户体验。</p>
+</blockquote>
+<h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><blockquote>
+<p><strong>信息源原则</strong>：底层的通信/代币标准必须以 <strong>Ethereum EIP 官方文档 (ethereum.org/EIPS)</strong> 和最主流的防呆实现库（如 <strong>OpenZeppelin</strong> 或 <strong>Solmate</strong>）的源码作为<strong>唯一第一手真理源</strong>。切忌大量摘抄二手的科普文章。</p>
+</blockquote>
+<ul>
+<li><strong>官方 EIP 提案编号与链接</strong>：[EIP-2612: Permit (<a href="https://eips.ethereum.org/EIPS/eip-2612)%5D">https://eips.ethereum.org/EIPS/eip-2612)]</a></li>
+<li><strong>当前标准状态</strong>：Review</li>
+<li><strong>权威参考实现 (Reference Implementation)</strong>：<a href="https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/extensions/ERC20Permit.sol">OpenZeppelin contracts/token/ERC20/extensions/ERC20Permit.sol</a></li>
+<li><strong>依赖基座标准</strong>：基于 ERC-20 扩展，依赖 EIP-712 类型化数据签名标准</li>
+</ul>
+<hr>
+<h2 id="section-2">1. 核心理念与痛点解决 (Core Concept)</h2><ul>
+<li><strong>传统痛点/背景</strong>：在没有 ERC-2612 之前，用户想要将 ERC-20 代币转账给第三方合约（如 Uniswap），必须先调用 <code>approve(spender, amount)</code> 授权，然后再调用合约执行交易。这不仅消耗两笔 Gas，还容易发生授权金额过大导致的安全风险。</li>
+<li><strong>破局思路</strong>：引入 <code>permit</code> 函数，允许用户在链下对授权消息进行 EIP-712 类型化签名，第三方合约直接调用 <code>permit</code> + <code>transferFrom</code> 或合二为一，用户无需发起单独的 approve 交易。</li>
+<li><strong>专属名词解释</strong>：<ul>
+<li><strong>Permit</strong>：通过签名替代 approve 的授权机制</li>
+<li><strong>Nonce</strong>：每个地址独立的计数器，防止签名重放攻击</li>
+<li><strong>Deadline</strong>：签名的有效期截止时间戳</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="section-3">2. 核心接口与数据结构 (Core Interfaces)</h2><blockquote>
+<p><strong>极度重要</strong>：必须在这里贴出协议最本质的<strong>状态变量（State Variables）</strong>，因为任何智能合约的本质都是对底层哈希账本（<code>mapping</code>）的读写。核心函数的解释也必须发掘到源码，附带<strong>最核心的 Solidity 代码骨架</strong>（剥离安全防呆校验后的纯净业务逻辑）。</p>
+</blockquote>
+<h3 id="section-4">A. 核心状态结构 (State Variables)</h3><pre><code class="language-solidity">mapping(address =&gt; uint256) private _nonces;
+
+bytes32 private constant _PERMIT_TYPEHASH = keccak256(
+    &quot;Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)&quot;
+);
+
+bytes32 private _DOMAIN_SEPARATOR;
+</code></pre>
+<ul>
+<li><strong>_nonces</strong>：记录每个地址的签名使用次数，防止重放攻击</li>
+<li><strong>_PERMIT_TYPEHASH</strong>：EIP-712 类型的哈希值，用于验证签名</li>
+<li><strong>_DOMAIN_SEPARATOR</strong>：EIP-712 域分隔符，隔离不同合约/链的签名</li>
+</ul>
+<h3 id="section-5">B. 关键机制与底层逻辑 (Core Functions)</h3><blockquote>
+<p>这里不要用简单的表格。必须展示核心函数实际改变底层账本的简版源码代码片段。</p>
+</blockquote>
+<h4><code>permit(owner, spender, value, deadline, v, r, s)</code> (通过签名授权)</h4><ul>
+<li><strong>白话逻辑解析</strong>：验证签名合法性后，直接修改 <code>_allowances</code> 账本，相当于链下签名链上生效。推模式（用户主动授权）。</li>
+<li><strong>核心源码骨架 (Solidity)</strong>：<pre><code class="language-solidity">function permit(
+    address owner,
+    address spender,
+    uint256 value,
+    uint256 deadline,
+    uint8 v,
+    bytes32 r,
+    bytes32 s
+) public {
+    require(block.timestamp &lt;= deadline, &quot;Permit expired&quot;);
+    
+    bytes32 structHash = keccak256(abi.encode(
+        _PERMIT_TYPEHASH,
+        owner,
+        spender,
+        value,
+        _nonces[owner]++,
+        deadline
+    ));
+    
+    bytes32 digest = keccak256(abi.encodePacked(
+        &quot;\x19\x01&quot;,
+        _DOMAIN_SEPARATOR,
+        structHash
+    ));
+    
+    address signer = ecrecover(digest, v, r, s);
+    require(signer == owner, &quot;Invalid signature&quot;);
+    
+    _allowances[owner][spender] = value;
+    
+    emit Approval(owner, spender, value);
+}
+</code></pre>
+</li>
+</ul>
+<h4><code>nonces(owner)</code> (查询当前 nonce 值)</h4><ul>
+<li><strong>白话逻辑解析</strong>：返回地址当前的 nonce，用于链下构建正确的签名。</li>
+<li><strong>核心源码骨架 (Solidity)</strong>：<pre><code class="language-solidity">function nonces(address owner) public view returns (uint256) {
+    return _nonces[owner];
+}
+</code></pre>
+</li>
+</ul>
+<h3 id="section-6">C. 关键事件 (Events)</h3><ul>
+<li><code>Approval(owner, spender, value)</code>：permit 成功时触发，与 ERC-20 标准一致，方便链下索引授权状态变化</li>
+<li>事件对于 The Graph 索引器追踪授权历史、钱包 UI 显示授权状态至关重要</li>
+</ul>
+<hr>
+<h2 id="section-7">3. 标准业务工作流 (Standard Workflow)</h2><p>将上面零散的函数串联起来，还原一个真实的交互业务闭环。</p>
+<p><strong>一个完整的 Permit 授权 + 转账流程：</strong></p>
+<ol>
+<li><strong>链下签名</strong>：用户在钱包或前端构建 EIP-712 签名消息，包含 owner、spender、value、nonce、deadline，生成 (v, r, s) 签名。</li>
+<li><strong>提交 Permit</strong>：用户或第三方合约调用 <code>permit(owner, spender, value, deadline, v, r, s)</code>，合约验证签名并更新 <code>_allowances[owner][spender]</code>。</li>
+<li><strong>执行 TransferFrom</strong>：合约立即调用 <code>transferFrom(owner, recipient, amount)</code>，基于刚才的授权进行转账。</li>
+<li><strong>Nonce 自增</strong>：permit 函数内部执行 <code>_nonces[owner]++</code>，该签名使用后失效。</li>
+</ol>
+<hr>
+<h2 id="section-8">4. 关键机制与难点解析 (Key Mechanics)</h2><blockquote>
+<p><strong>这是 ERC 标准笔记中最具价值的部分</strong>。对于协议中那些绕人的数学计算、状态机流转或者是舍入取整规则，<strong>必须配以核心公式推导或精简版代码辅助理解</strong>。</p>
+</blockquote>
+<h3 id="section-9">A. 核心难点一：EIP-712 类型化数据签名</h3><ul>
+<li><p><strong>原理讲解</strong>：传统的 <code>eth_sign</code> 方式容易被钓鱼攻击，EIP-712 引入结构化数据签名，用户看到的是可读的 JSON 对象而非乱码，大幅提升安全性。</p>
+</li>
+<li><p><strong>数学推导/公式</strong>：
+$$\text{digest} = \text{keccak256}(&quot;\x19\x01&quot; || \text{DOMAIN_SEPARATOR} || \text{structHash})$$
+$$\text{structHash} = \text{keccak256}(\text{encode}(\text{TYPEHASH}, \text{owner}, \text{spender}, \text{value}, \text{nonce}, \text{deadline}))$$</p>
+</li>
+<li><p><strong>核心逻辑代码 (Solidity)</strong>：</p>
+<pre><code class="language-solidity">// 提取出协议中最能体现该机制的 5-10 行核心、去除了防呆修饰符的伪代码/源码。
+function _hashTypedDataV4(bytes32 structHash) internal view returns (bytes32) {
+    return keccak256(abi.encodePacked(&quot;\x19\x01&quot;, _DOMAIN_SEPARATOR, structHash));
+}
+
+// _DOMAIN_SEPARATOR 构建
+bytes32 _DOMAIN_SEPARATOR = keccak256(abi.encode(
+    keccak256(&quot;EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)&quot;),
+    keccak256(bytes(name)),
+    keccak256(bytes(version)),
+    block.chainid,
+    address(this)
+));
+</code></pre>
+<p><em>代码拆解</em>：<code>&quot;\x19\x01&quot;</code> 是 EIP-191 的版本标识，<code>_DOMAIN_SEPARATOR</code> 绑定了合约名、版本、链 ID 和合约地址，确保不同链/合约的签名互不通用。<code>structHash</code> 对用户输入的参数进行哈希，保证签名的唯一性。</p>
+</li>
+<li><p><strong>主流采用方</strong>：</p>
+<ul>
+<li><strong>Uniswap V2/V3</strong>：支持 permit 授权交易池</li>
+<li><strong>1inch</strong>：DEX 聚合器广泛采用</li>
+<li><strong>Aave/V3</strong>：借贷协议支持 permit 抵押资产</li>
+<li><strong>USDC/USDT (部分实现)</strong>：部分稳定币已集成 permit</li>
+</ul>
+</li>
+<li><p><strong>标准的局限性</strong>：</p>
+<ul>
+<li>增加了合约代码复杂度和 Gas 成本（需要存储 nonce 和 DOMAIN_SEPARATOR）</li>
+<li>用户可能不理解签名含义仍需教育</li>
+<li>不是所有 ERC-20 代币都实现了此标准</li>
+</ul>
+</li>
+<li><p><strong>后续打补丁的扩展提案</strong>：</p>
+<ul>
+<li><strong>ERC-4494</strong>：将 permit 机制扩展到 ERC-721（基于签名的 NFT 授权）</li>
+<li><strong>Dai 的 permit</strong>：在 ERC-2612 定稿前 Dai 协议先行实现了类似功能</li>
+</ul>
+</li>
+</ul>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/漏洞笔记/拒绝服务攻击漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">拒绝服务攻击漏洞</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/区块链技术原理/以太坊（世界计算机）/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">以太坊（世界计算机）</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>📜 核心元数据与参阅资料 (Metadata &amp; References)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>1. 核心理念与痛点解决 (Core Concept)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>2. 核心接口与数据结构 (Core Interfaces)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">A. 核心状态结构 (State Variables)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">B. 关键机制与底层逻辑 (Core Functions)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">C. 关键事件 (Events)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-7"> <button class="article-outline__group-link" type="button" data-group-target="section-7"> <span>3. 标准业务工作流 (Standard Workflow)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-8"> <button class="article-outline__group-link" type="button" data-group-target="section-8"> <span>4. 关键机制与难点解析 (Key Mechanics)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">A. 核心难点一：EIP-712 类型化数据签名</a> </li> </ol> </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+
+        if (!shell || !sidebar || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

@@ -1,0 +1,463 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>EIP-2612 | 沉于思，录以隙</title><meta name="description" content="# EIP-2612: ERC-20 Permit — 基于签名的授权扩展 (Permit Extension for EIP-20 Signed Approvals) > **一句话总结**：EIP-2612 为标准 ERC-20 代币引入了一个 `permit()` 函数，允"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.6ncck4XA.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">EIP-2612</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">EIP标准</span>  </div> <div class="article-meta-row"> <span>2026/3/18</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/EIP标准/EIP-2612.md</p> </header> <div class="article-main"> <div class="article-content"><h1>EIP-2612: ERC-20 Permit — 基于签名的授权扩展 (Permit Extension for EIP-20 Signed Approvals)</h1><blockquote>
+<p><strong>一句话总结</strong>：EIP-2612 为标准 ERC-20 代币引入了一个 <code>permit()</code> 函数，允许用户通过 <strong>链下 EIP-712 签名</strong> 来完成代币授权（approve），彻底消除了&quot;用户必须先发一笔 approve 交易再发一笔操作交易&quot;的两步操作痛点，实现了 <strong>Gasless Approval（无 Gas 授权）</strong>。</p>
+</blockquote>
+<h2 id="section-1">📜 核心元数据 (Metadata)</h2><blockquote>
+<p><strong>信息源原则</strong>：底层网络协议必须以 <strong>Ethereum EIP 官方文档 (eips.ethereum.org)</strong> 和以太坊黄皮书 (Yellow Paper) 为准。</p>
+</blockquote>
+<ul>
+<li><strong>官方 EIP 提案编号与链接</strong>：<a href="https://eips.ethereum.org/EIPS/eip-2612">ERC-2612: Permit Extension for EIP-20 Signed Approvals</a></li>
+<li><strong>协议类型 (Type)</strong>：Standards Track / ERC（应用层标准，不修改 EVM 底层）</li>
+<li><strong>所属分叉/升级名称 (Hard Fork)</strong>：无。这是一个<strong>纯合约层面的标准</strong>，不依赖任何硬分叉，任何 ERC-20 代币都可以自行选择实现。</li>
+<li><strong>当前标准状态</strong>：Final</li>
+<li><strong>前置依赖 EIP</strong>：<ul>
+<li><strong>EIP-20</strong>：标准 ERC-20 代币接口（本标准是其扩展）。</li>
+<li><strong>EIP-712</strong>：类型化结构数据签名标准（<code>permit</code> 的签名格式严格遵循 EIP-712）。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="section-2">1. 核心理念与全网级痛点 (Core Concept &amp; Motivation)</h2><ul>
+<li><p><strong>传统 ERC-20 的交互痛点</strong>：
+在标准的 ERC-20 中，如果用户想让一个智能合约（如 Uniswap Router）代自己花费代币，必须完成<strong>两笔链上交易</strong>：</p>
+<ol>
+<li><strong>第一笔：<code>approve()</code></strong>：用户先发一笔交易，授权合约可以使用多少代币。</li>
+<li><strong>第二笔：实际操作</strong>：用户再发一笔交易调用目标合约（合约内部调用 <code>transferFrom()</code> 从用户账户转走代币）。</li>
+</ol>
+<p>这意味着：</p>
+<ul>
+<li>用户需要支付<strong>两次 Gas 费</strong>（审批一次 + 操作一次）。</li>
+<li>对于<strong>没有 ETH 的用户</strong>（比如你只有 USDC 却没有 ETH），你连第一步 <code>approve</code> 的 Gas 都付不起，根本无法与 DeFi 交互。</li>
+<li>用户体验极差：每次操作都需要确认两次钱包弹窗。</li>
+</ul>
+</li>
+<li><p><strong>破局思路</strong>：<strong>把 <code>approve</code> 搬到链下去做</strong>。用户不需要发送一笔链上交易来授权，而是在钱包里用私钥对一条结构化消息签名（就像&quot;签一张支票&quot;），然后把这个签名交给任何人。任何人拿着这个签名，都可以调用合约的 <code>permit()</code> 函数来替用户完成链上授权。</p>
+</li>
+<li><p><strong>专属核心概念</strong>：</p>
+<ul>
+<li><strong><code>permit()</code></strong>：EIP-2612 引入的核心函数。任何人调用它并提交一个合法的 EIP-712 签名，就能代替代币持有者完成 <code>approve()</code> 操作。</li>
+<li><strong>Gasless Approval（无 Gas 授权）</strong>：用户自己不需要花 Gas 来 approve，Gas 由调用 <code>permit()</code> 的第三方（如 Relayer、DApp 后端）支付。</li>
+<li><strong>EIP-712 签名</strong>：一种结构化的链下签名标准，钱包（如 MetaMask）弹出的签名窗口会以人类可读的格式展示签名内容（如&quot;你正在授权 XX 合约花费 100 USDC&quot;），远比签名一堆十六进制哈希安全得多。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="section-3">2. 核心架构与底层修改细节 (Core Specification)</h2><blockquote>
+<p>EIP-2612 是<strong>纯合约层标准</strong>，不修改 EVM 指令集、不改变区块结构、不引入新交易类型。它只要求实现 EIP-2612 的 ERC-20 合约<strong>额外暴露三个函数</strong>。</p>
+</blockquote>
+<h3 id="section-4">A. 新增接口（3 个函数）</h3><pre><code class="language-solidity">// 核心函数：任何人都可以调用，用链下签名来完成 approve 操作
+function permit(
+    address owner,     // 代币持有者（签名者）
+    address spender,   // 被授权人（谁可以花钱）
+    uint256 value,     // 授权额度
+    uint256 deadline,  // 签名过期时间（Unix 时间戳）
+    uint8 v,           // ┐
+    bytes32 r,         // ├── ECDSA 签名的三个分量
+    bytes32 s          // ┘
+) external;
+
+// 查询某个地址当前的 nonce（防重放攻击的计数器）
+function nonces(address owner) external view returns (uint256);
+
+// 返回该合约的 EIP-712 Domain Separator（用于签名域隔离）
+function DOMAIN_SEPARATOR() external view returns (bytes32);
+</code></pre>
+<h3 id="section-5">B. <code>permit()</code> 函数的执行逻辑</h3><p>当 <code>permit()</code> 被调用时，合约必须验证以下条件<strong>全部满足</strong>才能成功：</p>
+<ol>
+<li><strong>时间校验</strong>：<code>block.timestamp &lt;= deadline</code>（签名未过期）。</li>
+<li><strong>地址校验</strong>：<code>owner != address(0)</code>（防止授权给零地址的僵尸资金）。</li>
+<li><strong>Nonce 校验</strong>：传入的 nonce 必须等于 <code>nonces[owner]</code> 的当前值（防重放攻击）。</li>
+<li><strong>签名校验</strong>：<code>(v, r, s)</code> 是 <code>owner</code> 对以下 EIP-712 结构化消息的合法 <code>secp256k1</code> 签名。</li>
+</ol>
+<p>如果所有条件都通过：</p>
+<ul>
+<li>设置 <code>allowance[owner][spender] = value</code>（等同于执行了 <code>approve</code>）。</li>
+<li>将 <code>nonces[owner]</code> 加 1（使得同一个签名无法被第二次使用）。</li>
+<li>触发标准的 <code>Approval</code> 事件。</li>
+</ul>
+<p><strong>任何条件不满足 → 必须 <code>revert</code>。</strong></p>
+<h3 id="section-6">C. EIP-712 签名消息结构</h3><p>用户在链下签名的消息，严格遵循 EIP-712 的结构化格式：</p>
+<p><strong>1. <code>DOMAIN_SEPARATOR</code>（域隔离哈希）：</strong></p>
+<pre><code class="language-solidity">DOMAIN_SEPARATOR = keccak256(abi.encode(
+    keccak256(&#39;EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)&#39;),
+    keccak256(bytes(name)),        // 代币名称，如 &quot;USD Coin&quot;
+    keccak256(bytes(version)),     // 版本号，如 &quot;1&quot;
+    chainId,                       // 当前链 ID（防止跨链重放）
+    address(this)                  // 合约地址（防止跨合约重放）
+));
+</code></pre>
+<p><strong>2. <code>Permit</code> 类型哈希 + 最终签名数据：</strong></p>
+<pre><code class="language-solidity">bytes32 structHash = keccak256(abi.encode(
+    keccak256(&quot;Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)&quot;),
+    owner,
+    spender,
+    value,
+    nonce,
+    deadline
+));
+
+// 最终签名的消息（EIP-712 标准格式）
+bytes32 digest = keccak256(abi.encodePacked(
+    &quot;\x19\x01&quot;,
+    DOMAIN_SEPARATOR,
+    structHash
+));
+
+// 用 ecrecover 恢复签名者地址，必须等于 owner
+address recoveredAddress = ecrecover(digest, v, r, s);
+require(recoveredAddress == owner, &quot;INVALID_SIGNER&quot;);
+</code></pre>
+<h3 id="section-7">D. 交易类型与区块结构 (Transaction &amp; Block Header Changes)</h3><p>无。EIP-2612 是纯合约层标准，不涉及任何底层协议修改。</p>
+<hr>
+<h2 id="section-8">3. 从宏观到微观的生命周期 (Lifecycle Workflow)</h2><p><strong>一笔 EIP-2612 <code>permit</code> + Swap 的完整流程（以 Uniswap V2 为例）：</strong></p>
+<pre><code>用户钱包（链下）                      链上合约
+    │                                    │
+    │ ① 用户在 DApp 前端点击&quot;Swap&quot;       │
+    │    钱包弹出 EIP-712 签名请求      │
+    │    显示：&quot;授权 Router 花费 100 USDC&quot;│
+    │                                    │
+    │ ② 用户点击&quot;签名&quot;（不花 Gas！）     │
+    │    获得 (v, r, s) 签名            │
+    │                                    │
+    │ ③ DApp 将签名 + swap 参数打包     │
+    │    发送一笔交易到 Router 合约     │
+    │           ─────────────────────►   │
+    │                                    │ ④ Router 合约先调用
+    │                                    │    USDC.permit(owner, router, 100, ...)
+    │                                    │    → USDC 合约验证签名 → approve 生效
+    │                                    │
+    │                                    │ ⑤ Router 合约再调用
+    │                                    │    USDC.transferFrom(owner, pool, 100)
+    │                                    │    → 代币转入流动性池
+    │                                    │
+    │                                    │ ⑥ 完成 swap，用户收到目标代币
+    │           ◄─────────────────────   │
+</code></pre>
+<p><strong>关键区别</strong>：传统流程需要用户发送 <strong>2 笔交易</strong>（approve + swap），现在只需要 <strong>1 个签名 + 1 笔交易</strong>，用户体验和 Gas 成本直接减半。</p>
+<hr>
+<h2 id="section-9">4. 关键机制深度解析 (Deep Dive)</h2><h3 id="section-10">A. 核心难点：为什么需要 <code>nonce</code>？</h3><p>如果没有 <code>nonce</code>，同一个签名可以被<strong>无限次重复提交</strong>（重放攻击）。攻击者截获一个合法签名后，就可以反复调用 <code>permit()</code> 来重新授权。</p>
+<p><code>nonce</code> 机制确保：</p>
+<ul>
+<li>每个签名中嵌入了一个<strong>唯一的递增计数器</strong>。</li>
+<li>合约验证时要求签名中的 nonce 必须等于链上存储的 <code>nonces[owner]</code> 当前值。</li>
+<li>签名被使用一次后，<code>nonces[owner]++</code>，旧签名中的 nonce 就永远对不上了。</li>
+<li>和以太坊交易本身的 nonce 是<strong>独立的</strong>，互不干扰。</li>
+</ul>
+<h3 id="section-11">B. 核心难点：<code>DOMAIN_SEPARATOR</code> 为什么要包含 <code>chainId</code> 和 <code>address(this)</code>？</h3><p>这是为了防止<strong>跨链重放</strong>和<strong>跨合约重放</strong>：</p>
+<table>
+<thead>
+<tr>
+<th align="left">攻击场景</th>
+<th align="left">防御字段</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">以太坊主网上的签名被拿到 BSC 上重放</td>
+<td align="left"><code>chainId</code> 不同 → 签名无效</td>
+</tr>
+<tr>
+<td align="left">USDC 合约的签名被拿到 USDT 合约上重放</td>
+<td align="left"><code>address(this)</code> 不同 → 签名无效</td>
+</tr>
+<tr>
+<td align="left">硬分叉后旧链上的签名在新链上重放</td>
+<td align="left"><code>chainId</code> 不同 → 签名无效</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>⚠️ <strong>安全注意</strong>：如果 <code>DOMAIN_SEPARATOR</code> 在合约部署时计算并缓存为 <code>immutable</code>，那么万一以太坊发生<strong>链分裂/硬分叉</strong>（chainId 改变），缓存的旧 <code>DOMAIN_SEPARATOR</code> 就会导致跨链重放漏洞。建议每次调用时动态计算，或在 <code>chainId</code> 改变时重新计算。</p>
+</blockquote>
+<h3 id="section-12">C. 核心难点：<code>ecrecover</code> 返回零地址的陷阱</h3><p>EVM 的 <code>ecrecover</code> 预编译合约有一个危险特性：当传入<strong>畸形签名</strong>（无效的 v, r, s 值）时，它<strong>不会 revert</strong>，而是<strong>静默返回零地址</strong> <code>address(0)</code>。</p>
+<p>如果合约没有检查 <code>owner != address(0)</code>，攻击者就可以：</p>
+<ol>
+<li>构造一个 <code>owner = address(0)</code> 的 permit 调用，配上任意无效签名。</li>
+<li><code>ecrecover</code> 返回 <code>address(0)</code> == <code>owner</code> → 校验通过！</li>
+<li>攻击者获得了零地址上所有代币的 <code>approve</code> 权限（&quot;僵尸资金&quot;攻击）。</li>
+</ol>
+<p>因此 EIP-2612 明确要求：<strong>必须校验 <code>owner != address(0)</code></strong>。</p>
+<hr>
+<h2 id="section-13">5. 对生态与智能合约的系统级冲击 (Impact Analysis)</h2><ul>
+<li><p><strong>对 DApp 开发者的影响</strong>：</p>
+<ul>
+<li><strong>用户体验革命</strong>：用户不再需要两步操作（approve → 操作），现在可以一步完成（签名 + 操作合并为一笔交易）。</li>
+<li><strong>无 ETH 操作成为可能</strong>：用户只持有 ERC-20 代币（如 USDC）但没有 ETH 时，只要有 Relayer 愿意代付 Gas，用户就可以链下签名完成所有操作。</li>
+<li><strong>主流协议全面采用</strong>：Uniswap V2/V3 的 LP Token、USDC (Circle)、DAI (MakerDAO)、AAVE aToken 等主流代币均已实现 EIP-2612。</li>
+</ul>
+</li>
+<li><p><strong>对安全审计的影响</strong>：</p>
+<ul>
+<li><strong>Permit 钓鱼攻击</strong>：用户在不知情的情况下签署了恶意的 <code>permit</code> 签名（如钓鱼网站诱导签名 <code>value = type(uint256).max</code>），攻击者就可以拿走用户的所有代币。<strong>这已成为当前 Web3 最大的钓鱼攻击向量之一</strong>。<ul>
+<li>防范：钱包需要清晰展示 EIP-712 签名内容；用户需要仔细阅读签名弹窗。</li>
+</ul>
+</li>
+<li><strong>前端运行 (Front-running)</strong>：如果用户把 permit 签名发送给 DApp 后端，后端在提交链上交易前，签名可能被第三方截获并<strong>抢先提交</strong>（front-run）。尽管最终效果对用户一致（授权确实生效了），但可能干扰到特定的业务逻辑流程。</li>
+<li><strong>签名审查 (Censorship)</strong>：Relayer 收到签名之后可以<strong>选择不提交</strong>——用户的签名被&quot;扣留&quot;了。<code>deadline</code> 参数可以缓解这个问题：到期后签名自动作废，用户可以重新签名。</li>
+</ul>
+</li>
+<li><p><strong>与 DAI 的先驱实现的差异</strong>：
+DAI 是最早实现 <code>permit</code> 的代币之一，但其实现与 EIP-2612 标准略有不同：</p>
+<table>
+<thead>
+<tr>
+<th align="left">差异点</th>
+<th align="left">DAI 的 <code>permit</code></th>
+<th align="left">EIP-2612 标准</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">授权额度</td>
+<td align="left"><code>bool allowed</code>（全额或零）</td>
+<td align="left"><code>uint256 value</code>（精确额度）</td>
+</tr>
+<tr>
+<td align="left">过期参数名</td>
+<td align="left"><code>expiry</code></td>
+<td align="left"><code>deadline</code></td>
+</tr>
+<tr>
+<td align="left">规范性</td>
+<td align="left">先驱实现，不完全兼容标准</td>
+<td align="left">统一标准（Uniswap V2 采用）</td>
+</tr>
+</tbody></table>
+</li>
+<li><p><strong>长远倒逼演进</strong>：</p>
+<ul>
+<li>EIP-2612 只解决了 <code>approve</code> 的 Gasless 问题。更进一步的 <strong>ERC-4337（Account Abstraction 账户抽象）</strong> 试图从钱包层面彻底抹去 EOA 限制，使得所有交易都可以由智能合约钱包发起并代付 Gas。</li>
+<li><strong>EIP-2612 的 permit 模式已被证明是 Account Abstraction 普及前最实用的过渡方案</strong>。</li>
+</ul>
+</li>
+</ul>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/EIP标准/EIP-150/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-150</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/EIP标准/EIP-1559/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-1559</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>📜 核心元数据 (Metadata)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>1. 核心理念与全网级痛点 (Core Concept &amp; Motivation)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>2. 核心架构与底层修改细节 (Core Specification)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">A. 新增接口（3 个函数）</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">B. permit() 函数的执行逻辑</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">C. EIP-712 签名消息结构</a> </li><li class="article-outline__item depth-3" data-toc-id="section-7"> <a href="#section-7">D. 交易类型与区块结构 (Transaction &amp; Block Header Changes)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-8"> <button class="article-outline__group-link" type="button" data-group-target="section-8"> <span>3. 从宏观到微观的生命周期 (Lifecycle Workflow)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-9"> <button class="article-outline__group-link" type="button" data-group-target="section-9"> <span>4. 关键机制深度解析 (Deep Dive)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">A. 核心难点：为什么需要 nonce？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-11"> <a href="#section-11">B. 核心难点：DOMAINSEPARATOR 为什么要包含 chainId 和 address(this)？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-12"> <a href="#section-12">C. 核心难点：ecrecover 返回零地址的陷阱</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-13"> <button class="article-outline__group-link" type="button" data-group-target="section-13"> <span>5. 对生态与智能合约的系统级冲击 (Impact Analysis)</span>  </button>  </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+
+        if (!shell || !sidebar || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

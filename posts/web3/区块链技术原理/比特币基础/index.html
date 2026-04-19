@@ -1,0 +1,501 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>比特币基础 | 沉于思，录以隙</title><meta name="description" content="## 区块结构 区块头 | 字段 | 含义（简洁） | pwn 类比 | | ----------------------- | --------------- | ----------------------- | | **Version** | 节点使用哪代规则 | “str"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.6ncck4XA.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">比特币基础</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">区块链技术原理</span>  </div> <div class="article-meta-row"> <span>2026/3/18</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/区块链技术原理/比特币基础.md</p> </header> <div class="article-main"> <div class="article-content"><h2 id="section-1">区块结构</h2><p>区块头</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/45f941bff426ac8f15fa644d236c5101_MD5.jpg" alt=""></p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>含义（简洁）</th>
+<th>pwn 类比</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Version</strong></td>
+<td>节点使用哪代规则</td>
+<td>“struct version 字段”</td>
+</tr>
+<tr>
+<td><strong>Previous Block Hash</strong></td>
+<td>指向上一个区块</td>
+<td>链表里的 <code>prev</code><br/> 指针</td>
+</tr>
+<tr>
+<td><strong>Merkle Root</strong></td>
+<td>所有交易的哈希树根</td>
+<td>整个交易池的“总校验和”</td>
+</tr>
+<tr>
+<td><strong>Timestamp</strong></td>
+<td>区块时间戳</td>
+<td>日志的 timestamp 字段</td>
+</tr>
+<tr>
+<td><strong>nBits（target）</strong></td>
+<td>挖矿难度</td>
+<td>你设置的过关条件</td>
+</tr>
+<tr>
+<td><strong>Nonce</strong></td>
+<td>为找到目标哈希而不断变的随机数</td>
+<td>brute force fuzzing 随机值</td>
+</tr>
+</tbody></table>
+<h2 id="section-2">数据结构Merkle hash（保证区块不可篡改）</h2><p><strong>Merkle Hash = 把大量数据分层哈希形成一棵树，最后得到一个根哈希（Merkle Root）用作整体的校验证明。</strong></p>
+<p>换句话说：<br>它是一个 <strong>多级 hash 结构</strong>，用来证明“某个数据属于某个大集合”。 如一笔交易 Tx）确实属于某个 Merkle Root 对应的集合。  </p>
+<p>例如：<br>你从区块头里看到 Merkle Root = R，<br>现在别人告诉你：Tx3 在这个区块，他给了你一组 Merkle 证明（Merkle Proof）  </p>
+<p><strong>这样首先是极大地提高了区块链的运行效率和可扩展性，使得区块头只需包含根哈希值而不必封装所有底层数据，这使得哈希运算可以高效地运行在智能手机甚至物联网设备上；其次是Merkle Tree可支持“简化支付验证协议”（SPV），即在不运行完整区块链网络节点的情况下，也能够对交易数据进行检验。</strong></p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/9f1f1cb18a33d3e8768c7332f4a4e0b4_MD5.webp" alt=""></p>
+<h2 id="section-3">UTXO 模型 (Unspent Transaction Output)</h2><p><strong>UTXO = 未花费的交易输出。比特币没有“账户”，也没有“余额”，只有一堆散落的、带锁的“硬币”（UTXO）。</strong></p>
+<h3 id="section-4">🪙 一、核心机制</h3><p>在比特币世界里：</p>
+<ol>
+<li><strong>硬币是不可分割的整体</strong>：一个 UTXO 就像一张特定面值的钞票（比如一张面值为 2.5 BTC 的钞票），你不能“撕下”一半去付账。</li>
+<li><strong>交易本质 = 销毁旧硬币，铸造新硬币</strong>：转账时，你是把手里的 UTXO 作为输入（Input）“彻底熔化销毁”，然后按你的意愿重新“铸造”出新的 UTXO 作为输出（Output）。<ul>
+<li><strong>找零机制</strong>：如果你有 2.5 BTC 的 UTXO，想转给别人 1 BTC。</li>
+<li><strong>实际操作</strong>：销毁 2.5 BTC 的 UTXO，生成两个全新 UTXO：一个 1 BTC 给对方，另一个 1.499 BTC（扣除 0.001 BTC 矿工费）作为找零发给自己。</li>
+</ul>
+</li>
+</ol>
+<h3 id="section-5">⚖️ 二、账户模型 vs UTXO 模型</h3><table>
+<thead>
+<tr>
+<th align="left">特性</th>
+<th align="left">账户模型 (如以太坊/银行)</th>
+<th align="left">UTXO 模型 (比特币)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>状态存储</strong></td>
+<td align="left">类似全局字典，记录所有人余额</td>
+<td align="left">没有全局余额，只有分散的带锁钱箱</td>
+</tr>
+<tr>
+<td align="left"><strong>状态变更</strong></td>
+<td align="left"><code>balance[A] -= 10; balance[B] += 10;</code></td>
+<td align="left">消耗所有 Input (全额销毁)，生成新 Output</td>
+</tr>
+<tr>
+<td align="left"><strong>高并发安全</strong></td>
+<td align="left">差。必须依赖 nonce 防重放，且容易产生竞态条件</td>
+<td align="left"><strong>极佳</strong>。只要不去动同一个 UTXO，不同交易天然并行不干涉</td>
+</tr>
+<tr>
+<td align="left"><strong>隐私性</strong></td>
+<td align="left">弱。长期用同一个地址作为“账户”，资金全在明处</td>
+<td align="left">强。每次找零通常都发到一个新地址（“打一枪换个地方”）</td>
+</tr>
+</tbody></table>
+<h3 id="section-6">🛡️ 三、防双花机制 (Double-Spending)</h3><p>比特币是如何防止“一块钱花两次”的？</p>
+<ul>
+<li>每个 UTXO 都有一个全网唯一的 <strong>ID</strong> = <code>产生它的那笔交易 TXID + 该交易输出列表索引 (vout)</code>。</li>
+<li>所有矿工和全节点的内存里，都维护着一个巨大的 <strong>UTXO Set (未花费输出数据库)</strong>。</li>
+<li>这就像一个针对所有活动堆块的影子内存表。如果你企图花费一笔钱，节点会立刻去表里查：这个 UTXO ID 还在不在？</li>
+<li><strong>防线触发</strong>：只要你花费成功一次，该 UTXO 就会被从表中抹去。如果后续你拿着同样 ID 的 UTXO 再发一笔交易，节点查无此物交易会被无情丢弃。</li>
+</ul>
+<hr>
+<h2 id="section-7">网络</h2><p><strong>比特币的 P2P 网络就是一个没有中心服务器的节点广播网络，所有节点互相直接通信，交换交易和区块。</strong></p>
+<ul>
+<li>不需要服务器</li>
+<li>不需要许可</li>
+<li>任意节点都能加入</li>
+<li>所有数据靠广播同步</li>
+</ul>
+<p>就像一个“去中心化聊天室”，只是大家不是发消息，而是发交易和区块。</p>
+<h3 id="section-8">网络是怎么连接的？</h3><p>每个节点启动时会：</p>
+<ol>
+<li>连接一些已知的 seed 节点（DNS seeds）</li>
+<li>获取其他节点的 IP（地址簇）</li>
+<li>随机挑选若干个节点建立 TCP 连接（通常 8 个出向连接），即邻居节点，但是不在物理相邻</li>
+</ol>
+<p>之后节点之间就保持长连接，互相交换数据包。</p>
+<hr>
+<h3 id="section-9">数据传播（Gossip 协议）</h3><p>比特币使用一种很简单的 <strong>gossip（八卦式）传播机制</strong>：</p>
+<ol>
+<li>节点收到一笔交易/区块</li>
+<li>只告诉一部分邻居 “我有新东西”</li>
+<li>对方如果没有，就来请求</li>
+<li>然后继续传播给它的邻居</li>
+</ol>
+<p>最终数据会快速扩散到全网。</p>
+<hr>
+<h3 id="section-10">如何防垃圾/攻击？</h3><p>比特币网络有若干保护措施：</p>
+<ul>
+<li><strong>Rate limiting</strong>：限制发送频率</li>
+<li><strong>Ban score</strong>：恶意行为会被拉黑一段时间</li>
+<li><strong>数据结构验证</strong>：收到的消息必须符合协议格式</li>
+<li><strong>区块/交易必须满足共识规则</strong>，否则不传播</li>
+</ul>
+<hr>
+<h3 id="section-11">节点主要交换哪些数据？</h3><p>节点之间的消息有几类（精简）：</p>
+<ul>
+<li><code>inv</code>：我这里有新交易/区块</li>
+<li><code>getdata</code>：我要这个数据</li>
+<li><code>tx</code>：传交易</li>
+<li><code>block</code>：传区块</li>
+<li><code>ping/pong</code>：保持连接</li>
+<li><code>addr</code>：分享节点 IP</li>
+</ul>
+<p>属于一个非常经典的 P2P 协议。</p>
+<hr>
+<h2 id="section-12">比特币节点</h2><p><strong>比特币节点（Bitcoin Node）= 参与比特币网络的计算机</strong>，运行Bitcoin Core 或其他兼容实现。</p>
+<p>节点的三项主要工作：</p>
+<ol>
+<li><strong>验证区块与交易</strong>（共识规则）</li>
+<li><strong>维护区块链数据</strong></li>
+<li><strong>转发数据给其他节点（P2P 网络）</strong></li>
+</ol>
+<h3 id="section-13">🧱 全节点（Full Node）</h3><p>全节点会 <strong>下载完整区块链数据</strong>，并 <strong>独立验证所有历史交易和区块</strong>。</p>
+<ul>
+<li>下载所有区块（&gt; 500 GB）</li>
+<li>对每一条交易重新执行验证规则</li>
+<li>自己决定某笔交易是否合法<br>（不依赖任何第三方）</li>
+</ul>
+<h4>权限级别</h4><p>全节点 = <strong>最可信</strong><br>它只相信自己验证过的结果。</p>
+<h4>👍 优点</h4><ul>
+<li>最高安全性</li>
+<li>不信任别人</li>
+<li>不会被骗（double-spend 陷阱等）</li>
+</ul>
+<h4>👎 缺点</h4><ul>
+<li>占用大存储</li>
+<li>同步时间长（首次同步很慢）</li>
+</ul>
+<h3 id="section-14">🪶 轻节点（Light Node / SPV Node）</h3><p>轻节点 <strong>不下载完整区块链</strong>，只下载：</p>
+<ul>
+<li>区块头（header）</li>
+<li>少量相关验证信息（Merkle proof）</li>
+</ul>
+<p>轻节点依赖全节点帮它验证交易。</p>
+<h4>📦 SPV（Simplified Payment Verification）</h4><p>轻节点通过 SPV 技术验证交易：</p>
+<ul>
+<li>不复算所有交易</li>
+<li>只检查交易是否出现在某个区块（Merkle 路径）</li>
+<li>相信全节点广播的信息</li>
+</ul>
+<h4>👍 优点</h4><ul>
+<li>小、快、无需大量空间</li>
+<li>适合手机、网页钱包</li>
+</ul>
+<h4>👎 缺点</h4><ul>
+<li>必须信任全节点提供的数据</li>
+<li>存在被欺骗的可能（误导的区块信息）</li>
+</ul>
+<hr>
+<h3 id="section-15">📌为什么比特币需要轻节点？</h3><p>因为：</p>
+<ul>
+<li>手机存不下 500+ GB 的链数据</li>
+<li>同步太慢</li>
+<li>用户需要快速参与网络</li>
+</ul>
+<p>轻节点用 SPV 方式让普通设备也能参与验证（虽然不完全可信）。</p>
+<h2 id="section-16">脚本</h2><h3 id="section-17">一、本质</h3><p>比特币脚本根本不是“编程语言”，它是一个被故意打残的、不可图灵完备的 Forth 系栈机。<br>唯一任务：在你花钱那一刻，回答一个问题——「这笔 UTXO 现在能不能被花？」。</p>
+<p>比特币里根本没有“账户余额”，只有一堆带锁的小钱箱（UTXO）</p>
+<p>每个 UTXO 就是一个结构体，里面只有两样关键东西：</p>
+<ul>
+<li>多少 BTC</li>
+<li>一段“锁脚本”（ScriptPubKey）</li>
+</ul>
+<p>想花它，就必须给矿工证明：我能配出一段“解锁脚本”，把它和锁脚本拼接后，在比特币虚拟机里执行结果为 TRUE。</p>
+<h3 id="section-18">二、核心设计限制（为什么这么残）</h3><ul>
+<li>无循环、无跳转（彻底杜绝 while、for、goto）</li>
+<li>栈最大 1000 项，脚本最大 10 000 字节（防栈溢出、DoS）</li>
+<li>大量 opcode 早被 Satoshi 永久禁用（OP_CAT、OP_MUL、OP_AND 等）</li>
+<li>不能读取链上其他状态、不能读时间（除非你主动塞进交易里）</li>
+<li>执行路径 100% 确定，任何节点跑出来结果都一模一样</li>
+</ul>
+<p>→ 相当于一个开了全防护（canary + RELRO + seccomp + no-exec-stack）的超残血 VM</p>
+<h3 id="section-19">三、上锁 vs 解锁完整流程（P2PKH 现场打靶）</h3><p>UTXO 里永远只存一把锁（Locking Script = ScriptPubKey）<br>最常见写法（1… 和 bc1q… 地址）：</p>
+<pre><code class="language-plain">OP_DUP OP_HASH160 &lt;20字节 pubkeyhash&gt; OP_EQUALVERIFY OP_CHECKSIG
+</code></pre>
+<p>你花钱时在 input 里提供钥匙（Unlocking Script = ScriptSig / Witness）：</p>
+<pre><code class="language-plain">&lt;签名&gt; &lt;完整公钥&gt;
+</code></pre>
+<p>矿工会把这两段拼接成下面这根“ROP 链”，然后丢进脚本虚拟机执行：</p>
+<pre><code class="language-plain">&lt;签名&gt; &lt;公钥&gt;  OP_DUP OP_HASH160 &lt;pubkeyhash&gt; OP_EQUALVERIFY OP_CHECKSIG
+</code></pre>
+<p>执行过程逐条 opcode（你自己推栈就能 100% 复现）：</p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>操作</th>
+<th>栈（从底→顶）</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>push 签名</td>
+<td>[sig]</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>push 公钥</td>
+<td>[sig, pubkey]</td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td>OP_DUP</td>
+<td>[sig, pubkey, pubkey]</td>
+<td>复制一份公钥</td>
+</tr>
+<tr>
+<td>4</td>
+<td>OP_HASH160</td>
+<td>[sig, pubkey, hash160(pubkey)]</td>
+<td>计算公钥哈希</td>
+</tr>
+<tr>
+<td>5</td>
+<td>push 锁里的 pubkeyhash</td>
+<td>[sig, pubkey, h1, h2]</td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td>OP_EQUALVERIFY</td>
+<td>[sig, pubkey]</td>
+<td>h1 == h2？不相等直接 Fail</td>
+</tr>
+<tr>
+<td>7</td>
+<td>OP_CHECKSIG</td>
+<td>[TRUE 或 FALSE]</td>
+<td>用公钥验签，验证是否对本交易签名</td>
+</tr>
+</tbody></table>
+<p>最后栈顶剩下非零值（TRUE）→ 矿工放行，钱归你花。</p>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/EIP标准/EIP-1967/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-1967</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/代理模式/Diamond_Proxy/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">Diamond_Proxy</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>区块结构</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>数据结构Merkle hash（保证区块不可篡改）</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>UTXO 模型 (Unspent Transaction Output)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">🪙 一、核心机制</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">⚖️ 二、账户模型 vs UTXO 模型</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">🛡️ 三、防双花机制 (Double-Spending)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-7"> <button class="article-outline__group-link" type="button" data-group-target="section-7"> <span>网络</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-8"> <a href="#section-8">网络是怎么连接的？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">数据传播（Gossip 协议）</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">如何防垃圾/攻击？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-11"> <a href="#section-11">节点主要交换哪些数据？</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-12"> <button class="article-outline__group-link" type="button" data-group-target="section-12"> <span>比特币节点</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-13"> <a href="#section-13">🧱 全节点（Full Node）</a> </li><li class="article-outline__item depth-3" data-toc-id="section-14"> <a href="#section-14">🪶 轻节点（Light Node / SPV Node）</a> </li><li class="article-outline__item depth-3" data-toc-id="section-15"> <a href="#section-15">📌为什么比特币需要轻节点？</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-16"> <button class="article-outline__group-link" type="button" data-group-target="section-16"> <span>脚本</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-17"> <a href="#section-17">一、本质</a> </li><li class="article-outline__item depth-3" data-toc-id="section-18"> <a href="#section-18">二、核心设计限制（为什么这么残）</a> </li><li class="article-outline__item depth-3" data-toc-id="section-19"> <a href="#section-19">三、上锁 vs 解锁完整流程（P2PKH 现场打靶）</a> </li> </ol> </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+
+        if (!shell || !sidebar || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

@@ -1,0 +1,955 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>工具 | 沉于思，录以隙</title><meta name="description" content="- **Hardhat**：如果你喜欢 **JavaScript**，以后想做全栈开发（写前端网页跟合约交互），Hardhat 是必经之路。因为它的测试代码和前端代码很像。 - **Foundry**：如果你想做**纯合约开发**，追求极致的速度和像黑客一样的快感，Foundry"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.6ncck4XA.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">工具</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   </div> <div class="article-meta-row"> <span>2026/4/7</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/工具.md</p> </header> <div class="article-main"> <div class="article-content"><ul>
+<li><strong>Hardhat</strong>：如果你喜欢 <strong>JavaScript</strong>，以后想做全栈开发（写前端网页跟合约交互），Hardhat 是必经之路。因为它的测试代码和前端代码很像。</li>
+<li><strong>Foundry</strong>：如果你想做<strong>纯合约开发</strong>，追求极致的速度和像黑客一样的快感，Foundry 是现在的行业新标准。</li>
+</ul>
+<h1>Foundry（偏向合约测试）</h1><p>理解这三个角色的关系：</p>
+<ol>
+<li><strong>Anvil（铁砧）</strong>：它是游戏服务器。它会在你电脑本地启动一条区块链。只要它开着，你的世界就存在；它关了，世界就消失。</li>
+<li><strong>Forge（锻造）</strong>：它是造物主工具。用来编写和把合约（比如一个自动售货机）放到服务器里。</li>
+<li><strong>Cast（施法）</strong>：它是游戏手柄。用来和合约互动（比如查询余额、按下按钮）。</li>
+</ol>
+<h2 id="section-1">forge</h2><h3 id="section-2">初始化一个项目</h3><pre><code class="language-plain">forge init my-contract
+cd my-contract
+</code></pre>
+<h3 id="section-3">写一个合约</h3><p>在 <code>src/</code> 目录下创建合约</p>
+<h3 id="section-4">编译合约</h3><pre><code class="language-solidity">forge build
+</code></pre>
+<h3 id="section-5">启动本地节点</h3><pre><code class="language-solidity">myx@cs:/mnt/e/Foundry/myproj$ anvil
+
+Available Accounts
+==================
+
+(0) 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 (10000.000000000000000000 ETH)
+(1) 0x70997970C51812dc3A010C7d01b50e0d17dc79C8 (10000.000000000000000000 ETH)
+(2) 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC (10000.000000000000000000 ETH)
+(3) 0x90F79bf6EB2c4f870365E785982E1f101E93b906 (10000.000000000000000000 ETH)
+(4) 0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65 (10000.000000000000000000 ETH)
+(5) 0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc (10000.000000000000000000 ETH)
+(6) 0x976EA74026E726554dB657fA54763abd0C3a0aa9 (10000.000000000000000000 ETH)
+(7) 0x14dC79964da2C08b23698B3D3cc7Ca32193d9955 (10000.000000000000000000 ETH)
+(8) 0x23618e81E3f5cdF7f54C3d65f7FBc0aBf5B21E8f (10000.000000000000000000 ETH)
+(9) 0xa0Ee7A142d267C1f36714E4a8F75612F20a79720 (10000.000000000000000000 ETH)
+
+Private Keys
+==================
+
+(0) 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+(1) 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
+(2) 0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a
+(3) 0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6
+(4) 0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a
+(5) 0x8b3a350cf5c34c9194ca85829a2df0ec3153be0318b5e2d3348e872092edffba
+(6) 0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e
+(7) 0x4bbbf85ce3377467afe5d46f804f221813b2bb87f24d81f60f1fcdbf7cbf4356
+(8) 0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97
+(9) 0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6
+</code></pre>
+<h3 id="section-6">设置环境变量，部署合约上链</h3><p><strong>RPC 就是让程序（Foundry、脚本、工具）连接区块链节点的 URL</strong>。<br>你要和 Sepolia testnet 通信，就必须有 Sepolia 的 RPC。 用它才能部署合约、发送交易、读区块</p>
+<pre><code class="language-bash">//用自己钱包部署到sepolia测试网
+export PRIVATE_KEY=你的私钥
+export RPC_URL=https://eth-sepolia.g.alchemy.com/v2/你的APIKEY
+forge script ./script/DeploySimpleStorage.s.sol --broadcast  --rpc-url $RPC_URL  --private-key $PRIVATE_KEY
+
+//anvil本地链模板如下
+export PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+export RPC_URL=http://127.0.0.1:8545
+forge script ./script/DeploySimpleStorage.s.sol --broadcast  --rpc-url $RPC_URL  --private-key $PRIVATE_KEY
+</code></pre>
+<h3 id="section-7">测试</h3><pre><code class="language-solidity">forge test --match-path ./test/unstoppable/Unstoppable.t.sol -vv //运行指定测试合约
+forge test -vv //只有一个测试文件直接
+forge test --match-test 函数 -vv //测试单个函数
+forge test --match-path test/poc.t.sol --match-test testExploit -vv
+
+
+forge test 默认不显示 console.log 的输出，需要加 -v 参数提高日志等级：
+
+-v → 显示基本信息
+-vv → 显示 console.log 输出 
+-vvv → 还显示失败测试的 trace
+-vvvv → 显示所有 trace
+</code></pre>
+<p>因为 <strong>Foundry 的测试会自动读取 test 中的脚本，但所有合约逻辑仍然来自 src 文件夹。</strong></p>
+<p>换句话说：</p>
+<ul>
+<li><strong>src/</strong> 里是你要审计 / 攻击 / 部署的真实合约</li>
+<li><strong>test/</strong> 里是 Foundry 自动部署 src 合约、构建攻击场景、执行 exploit 的脚本</li>
+</ul>
+<p>代码干的事是：</p>
+<ol>
+<li>执行 <code>test/unstoppable/*.t.sol</code> 文件</li>
+<li>测试脚本内部<ul>
+<li>使用 <strong>src 里的 UnstoppableLender.sol / DamnValuableToken.sol</strong></li>
+<li>然后自动部署它们</li>
+<li>自动设置初始状态</li>
+<li>自动运行 exploit</li>
+</ul>
+</li>
+<li>最后验证 challenge 是否被解掉</li>
+</ol>
+<h4>测试模式</h4><h5>Fork Test（分叉测试）</h5><p><strong>Fork Test = 基于真实链状态的本地 EVM 沙箱。</strong></p>
+<p>Foundry 允许你从主网/测试网某个区块高度创建一份“链状态快照”，然后在本地执行交易。</p>
+<p>换句话说：</p>
+<ul>
+<li><strong>代码在本地跑</strong></li>
+<li><strong>状态从链上来</strong></li>
+<li><strong>读是真实的，写是本地的，不影响链上</strong></li>
+</ul>
+<h6>使用</h6><ol>
+<li>在 foundry.toml 里写 RPC</li>
+</ol>
+<pre><code class="language-solidity">[rpc_endpoints]
+sepolianet = &quot;https://eth-sepolia.g.alchemy.com/v2/DPuDLu_tUJwkWFmyEsT7x&quot;
+</code></pre>
+<ol start="2">
+<li>测试代码中这样调用（注意选择的区块要注意高度，否则有些调用合约不在链上）</li>
+</ol>
+<pre><code class="language-solidity">contract FundMeTest is Test {
+    FundMe fundme;
+    address constant SEPOLIA_ETH_USD = 0x694AA1769357215DE4FAC081bf1f309aDC325306;
+
+    function setUp() external {  //部署合约
+        //fork测试
+        vm.createSelectFork(&quot;sepolianet&quot;, 9_000_000); //fork 到 Sepolia（会从 foundry.toml 里读 rpc_endpoints.sepolia）
+        fundme = new FundMe(SEPOLIA_ETH_USD);// 2. 用真实的 priceFeed 地址部署 FundMe
+    }
+  }
+</code></pre>
+<h4>monk</h4><p><strong>Mock = 在测试环境中，用合约模拟真实外部依赖的行为</strong></p>
+<p>特点：</p>
+<ul>
+<li>不访问链上真实合约</li>
+<li>不依赖预言机、治理、多签等外部状态</li>
+<li>可控（返回值可随时设定）</li>
+<li>可预测（不随链上状态变化）</li>
+<li>允许边界条件/攻击场景测试</li>
+</ul>
+<p>Web3 测试中常 mock 的组件：</p>
+<ul>
+<li>Price Feed（Chainlink AggregatorV3Interface）</li>
+<li>ERC20 token</li>
+<li>外部协议接口（Uniswap、Aave、Lido）</li>
+<li>Oracle 和跨链模块</li>
+</ul>
+<p>适用场景：<br><strong>你需要测试自己写的逻辑，而外部依赖本身不是测试重点。</strong></p>
+<h2 id="section-8">cast</h2><h3 id="section-9">cast call 查操作（显示变量值）</h3><pre><code class="language-bash">调用函数
+cast call 合约地址 &quot;变量名()&quot;  --rpc-url $RPC_URL 
+
+//可选参数，把数值转化为十进制
+cast call 合约地址 &quot;变量名()&quot;  --rpc-url $RPC_URL | cast --to-dec
+
+</code></pre>
+<h3 id="section-10">cast send 调用操作</h3><pre><code class="language-bash">cast send 合约地址 &quot;函数名(uint256)&quot; 参数  --rpc-url $RPC_URL --private-key $PRIVATE_KEY
+</code></pre>
+<h3 id="section-11">例子</h3><pre><code class="language-bash">myx@cs:~/web3开发/test$ cast send 0x5FbDB2315678afecb367f032d93F642f64180aa3 &quot;setNumber(uint256)&quot; 666  --rpc-url $RPC_URL --private-key $PRIVATE_KEY
+
+blockHash            0x1544600ae1151a5f5e2b51fbda1ccc19a9b51877a3b973404b4682d71ed0be28
+blockNumber          4
+contractAddress      
+cumulativeGasUsed    23808
+effectiveGasPrice    671353850
+from                 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+gasUsed              23808
+logs                 []
+logsBloom            0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+root                 
+status               1 (success)
+transactionHash      0xe78928c25a291baf8d195df78480172a0359551005f46ccdf001995a4dc60dae
+transactionIndex     0
+type                 2
+blobGasPrice         1
+blobGasUsed          
+to                   0x5FbDB2315678afecb367f032d93F642f64180aa3
+
+
+
+myx@cs:~/web3开发/test$ cast call 0x5FbDB2315678afecb367f032d93F642f64180aa3 &quot;number()&quot;  --rpc-url $RPC_URL | cast --to-dec
+666
+</code></pre>
+<h2 id="section-12">Foundry 常用作弊码 (Cheatcodes) 指南</h2><p>这些代码只能在测试环境 (<code>.t.sol</code>) 中运行，能够让我们像“上帝”一样操控区块链状态。</p>
+<table>
+<thead>
+<tr>
+<th>作弊码 (Cheatcode)</th>
+<th>功能解释</th>
+<th>常见使用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>vm.addr(privateKey)</code></td>
+<td><strong>私钥推导地址</strong>：输入一个 <code>uint256</code> 格式的私钥，计算并返回它对应的以太坊地址。</td>
+<td>当我们意外获得私钥时，需要先算出它的公钥地址以便后续伪装。</td>
+</tr>
+<tr>
+<td><code>vm.prank(address)</code></td>
+<td><strong>伪造身份 (单次)</strong>：改变<strong>下一笔</strong>外部调用的 <code>msg.sender</code>。执行完一行代码后，身份自动恢复。</td>
+<td>我们需要用多个不同的 Oracle 账号依次发送价格时，比如：<br><code>vm.prank(oracle1);</code> <br> <code>oracle.postPrice(...)</code></td>
+</tr>
+<tr>
+<td><code>vm.startPrank(address)</code> <br> <code>vm.stopPrank()</code></td>
+<td><strong>伪造身份 (持续)</strong>：在这两个调用之间的<strong>所有</strong>外部调用，<code>msg.sender</code> 都会被固定为目标地址。</td>
+<td>需要同一账号连续执行多步操作时。比如先买入，再授权，再卖出，全程保持 <code>player</code> 身份。</td>
+</tr>
+<tr>
+<td><code>vm.warp(timestamp)</code></td>
+<td><strong>时间穿越</strong>：强制修改当前区块链的时间戳 (<code>block.timestamp</code>)。</td>
+<td>绕过时间锁、延迟期。比如在 Selfie 挑战中，排队提案后强制快进 2 天（<code>+ 2 days</code>）来执行操作。</td>
+</tr>
+<tr>
+<td><code>vm.deal(address, amount)</code></td>
+<td><strong>凭空生钱</strong>：直接修改某个地址的 ETH 余额（无论他是谁）。</td>
+<td>初始化测试环境时，给攻击者或金库塞初始资金。</td>
+</tr>
+<tr>
+<td><code>vm.roll(blockNumber)</code></td>
+<td><strong>修改区块高度</strong>：强制更改当前合约的区块号 (<code>block.number</code>)。</td>
+<td>攻击依赖于特定区块才生效的治理投票或解锁逻辑。</td>
+</tr>
+<tr>
+<td><code>vm.label(address(Smoofs), &quot;Smoofs&quot;)</code></td>
+<td>标记地址，方便在调试日志中查看</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h1>Hardhat（偏向以太坊开发框架）</h1><ol>
+<li><strong>Hardhat Network</strong>：是你的<strong>本地游戏服务器</strong>（类似 Foundry 的 Anvil）。</li>
+<li><strong>Scripts (脚本)</strong>：这是你的<strong>自动机器人</strong>。我们写好 JS 代码，让机器人去部署合约。</li>
+<li><strong>Console (控制台)</strong>：这是你的<strong>聊天窗口</strong>。我们在这里用 JS 代码跟合约实时对话。</li>
+</ol>
+<p><a href="https://www.notion.so/Hardhat-2bb1a400ef9480048941c1cc6a27ffdc">https://www.notion.so/Hardhat-2bb1a400ef9480048941c1cc6a27ffdc</a>
+选择“创建一个基本示例项目”，会自动生成合约、测试和配置。</p>
+<pre><code class="language-bash">npm install --global hardhat
+mkdir eth-dev &amp;&amp; cd eth-dev
+npx hardhat
+</code></pre>
+<p><strong>启动本地节点</strong></p>
+<pre><code class="language-bash">npx hardhat node
+</code></pre>
+<p><strong>部署合约</strong></p>
+<pre><code class="language-bash">npx hardhat run scripts/deploy.js --network localhost
+</code></pre>
+<h1>Slither（智能合约静态分析工具）</h1><p>Slither 是一个基于 Python 编写的 Solidity 跨平台静态分析框架。它可以<strong>在不运行代码的情况下</strong>快速扫描智能合约，发现常见的安全漏洞（例如重入漏洞、未初始化的变量、权限控制缺陷等）。</p>
+<p>它就像代码的“全自动 X 光机”，找出隐藏的病灶。</p>
+<h2 id="section-13">2. 基本使用方法</h2><p>进入包含目标合约的项目根目录（它能自动识别 Hardhat, Foundry, Truffle 等框架），然后执行扫描：</p>
+<pre><code class="language-bash"># 自动识别框架并扫描整个项目的所有合约
+slither .
+
+# 只扫描特定的单个合约文件
+slither src/MyContract.sol
+</code></pre>
+<h2 id="section-14">3. 常见高级命令</h2><p>有时默认扫描输出的无关信息太多，你可以通过参数过滤或生成可视化报告：</p>
+<pre><code class="language-bash"># 屏蔽掉低危漏洞和纯信息提示（只看中高危漏洞，减少噪音）
+slither . --exclude-informational --exclude-low
+
+# 把扫描结果输出为 JSON 格式，方便用其他脚本处理
+slither . --json results.json
+
+# 【需要额外安装 Graphviz 工具】打印合约的继承图
+slither src/MyContract.sol --print inheritance-graph
+
+# 【需要额外安装 Graphviz 工具】打印函数控制流图（CFG）
+slither src/MyContract.sol --print cfg
+</code></pre>
+<h2 id="section-15">4. 如何看懂输出结果？</h2><p>Slither 会给终端输出不同颜色的警告，按严重等级分类：</p>
+<ul>
+<li><strong>红色 (High)</strong>：高危漏洞。如重入攻击 (<code>reentrancy</code>)、任意外部调用 (<code>arbitrary-send</code>) 等，<strong>看到红色必须仔细排查</strong>。</li>
+<li><strong>黄色 (Medium)</strong>：中危漏洞。如对不可信的返回数据未作校验等。</li>
+<li><strong>绿色 (Low / Informational)</strong>：低危漏洞或代码规范提示。如未使用的变量 (<code>unused-state</code>)、<code>solc</code> 编译器版本未锁定、可以使用 <code>immutable</code> 或 <code>constant</code> 优化 Gas 等。</li>
+</ul>
+<p>终端输出的最后会有一段总结，如：
+<code>x issues (y high, z medium)</code>，你可以根据这个直观看到合约当前的安全状况。每次跑完针对对应的行号去修改即可。</p>
+<h1>Tenderly + Foundry</h1><h3 id="section-16">用 Tenderly 作为 fork RPC 跑测试</h3><p><strong>让 Tenderly 作为 fork RPC</strong> 的意思是：</p>
+<ul>
+<li><strong>测试代码仍然在本地 Foundry 里执行</strong></li>
+<li><strong>链上状态来自 Tenderly 的 Virtual TestNet / fork</strong></li>
+<li><strong>你本地通过 RPC 去读取和修改这条 fork 的状态</strong></li>
+</ul>
+<p>也就是说：</p>
+<ul>
+<li><code>forge test --rpc-url $TENDERLY_RPC_URL ...</code> 不是“让 Tenderly 帮你跑测试”</li>
+<li>它是“让 Foundry 把 Tenderly 当成远程 fork 节点来用”</li>
+</ul>
+<p>例如：</p>
+<pre><code class="language-bash">source .env &amp;&amp; forge test --match-test testExploit -vvv --rpc-url $TENDERLY_RPC_URL --fork-block-number 16817995
+</code></pre>
+<p>这条命令的含义是：</p>
+<ol>
+<li><code>forge test</code> 在本地运行 <code>.t.sol</code> 测试文件</li>
+<li>当前 EVM 状态不是本地空链，而是从 <code>TENDERLY_RPC_URL</code> 对应的 fork 链读取</li>
+<li>读到的合约代码、余额、存储都来自 Tenderly fork</li>
+<li>测试中的状态修改只发生在这次 fork 执行上下文里</li>
+</ol>
+<h3 id="section-17">它和普通测试文件的区别</h3><h4>1. 普通 Foundry 单元测试</h4><p>特点：</p>
+<ul>
+<li>完全本地执行</li>
+<li>通常依赖 <code>anvil</code> 或 Foundry 默认本地 EVM</li>
+<li>常用 <code>vm.deal</code>、<code>vm.prank</code>、<code>mock</code> 等 cheatcode 构造环境</li>
+<li>不一定依赖真实链状态</li>
+</ul>
+<p>适合：</p>
+<ul>
+<li>测自己写的业务逻辑</li>
+<li>做边界条件、权限、重入、数学计算测试</li>
+<li>不关心主网真实状态时</li>
+</ul>
+<h4>2. Fork Test（包括 Tenderly fork RPC）</h4><p>特点：</p>
+<ul>
+<li><strong>代码本地跑，状态从真实链/远程 fork 来</strong></li>
+<li>可以直接复用主网已有合约地址、池子状态、余额和存储</li>
+<li>非常适合漏洞复现、主网合约交互、DeFi 攻击路径分析</li>
+</ul>
+<p>适合：</p>
+<ul>
+<li>复现历史攻击</li>
+<li>调试主网 DeFi 状态依赖</li>
+<li>验证某个 exploit 在特定区块高度是否成立</li>
+</ul>
+<h4>3. Tenderly 上广播脚本</h4><p>特点：</p>
+<ul>
+<li>使用 <code>forge script --broadcast</code></li>
+<li>会真的向 Tenderly Virtual TestNet 发送交易</li>
+<li>Tenderly UI 里能看到真实交易、调用栈和 Debugger</li>
+<li>更接近“链上演示”而不是“本地测试”</li>
+</ul>
+<p>例如：</p>
+<pre><code class="language-bash">source .env &amp;&amp; forge script script/EulerTenderly.s.sol:EulerTenderlyScript --rpc-url $TENDERLY_RPC_URL --broadcast -vvvv
+</code></pre>
+<p>适合：</p>
+<ul>
+<li>想在 Tenderly Explorer / Debugger 里逐步看 exploit 调用栈</li>
+<li>想看到真实交易哈希、部署记录、内部调用</li>
+<li>想把本地 PoC 变成可视化演示交易</li>
+</ul>
+<h3 id="section-18">为什么不建议直接广播 <code>.t.sol</code></h3><p><code>.t.sol</code> 是测试文件，不是脚本入口。</p>
+<p>它的主要职责是：</p>
+<ul>
+<li>写测试逻辑</li>
+<li>写断言</li>
+<li>用 <code>Test</code> 框架驱动执行</li>
+</ul>
+<p>而 <code>--broadcast</code> 需要的是：</p>
+<ul>
+<li>明确的脚本入口</li>
+<li>明确的部署步骤</li>
+<li>明确的链上交易顺序</li>
+</ul>
+<p>所以通常分工是：</p>
+<ul>
+<li><code>test/poc.t.sol</code>：用于理解、验证、教学、断言漏洞链成立</li>
+<li><code>script/*.s.sol</code>：用于真正广播到 Tenderly Virtual TestNet，方便在 UI 中调试</li>
+</ul>
+<h3 id="section-19">一个实战判断方法</h3><p>如果你的目标是：</p>
+<h4>只是验证漏洞能不能跑通</h4><p>用：</p>
+<pre><code class="language-bash">forge test --rpc-url $TENDERLY_RPC_URL ...
+</code></pre>
+<h4>想在 Tenderly UI 里点开交易、看 Debugger</h4><p>用：</p>
+<pre><code class="language-bash">forge script --broadcast --rpc-url $TENDERLY_RPC_URL ...
+</code></pre>
+<h3 id="section-20">Tenderly UI 里怎么查看 exploit 交易</h3><p>当你已经用下面这种命令成功广播后：</p>
+<pre><code class="language-bash">source .env &amp;&amp; forge script script/EulerTenderly.s.sol:EulerTenderlyScript --rpc-url $TENDERLY_RPC_URL --broadcast -vvvv
+</code></pre>
+<p>就可以去 Tenderly 页面里看这笔交易。</p>
+<h4>查看步骤</h4><ol>
+<li>打开你对应的 Tenderly <code>Virtual TestNet</code></li>
+<li>进入 <code>Transactions</code> 或 <code>Explorer</code></li>
+<li>找到刚刚广播出来的交易<ul>
+<li>一般会有一笔部署合约交易</li>
+<li>以及一笔真正执行 exploit 的交易</li>
+</ul>
+</li>
+<li>点开你要分析的那笔交易</li>
+<li>进入 <code>Debugger</code></li>
+</ol>
+<h4>在 Debugger 里重点看什么</h4><p>做DeFi 漏洞复现时，建议按调用栈顺序看：</p>
+<ol>
+<li><code>flashLoan(...)</code><ul>
+<li>确认借出的资产和数量是否正确</li>
+</ul>
+</li>
+<li><code>executeOperation(...)</code><ul>
+<li>这是 Aave V2 自动回调到攻击合约的入口</li>
+</ul>
+</li>
+<li><code>leverUp / deposit / mint / repay</code><ul>
+<li>看攻击者如何建立高杠杆仓位</li>
+</ul>
+</li>
+<li><code>donateToReserves(...)</code><ul>
+<li>看抵押物如何被主动转进储备池，但债务没有同步减少</li>
+</ul>
+</li>
+<li><code>checkLiquidation(...)</code><ul>
+<li>看 <code>healthScore</code>、<code>repay</code>、<code>yield</code>、<code>discount</code></li>
+</ul>
+</li>
+<li><code>liquidate(...)</code><ul>
+<li>看清算时资产和债务如何从 <code>violator</code> 转到 <code>liquidator</code></li>
+</ul>
+</li>
+<li><code>withdraw(...)</code><ul>
+<li>看 Euler 池里真实剩余的 DAI 如何被提走</li>
+</ul>
+</li>
+<li>Aave 还款阶段<ul>
+<li>看 <code>amountOwing</code> 是否被成功扣回</li>
+</ul>
+</li>
+</ol>
+<h4>看状态时重点关注哪些变量</h4><p>建议重点观察这些值在调用前后的变化：</p>
+<ul>
+<li><code>eDAI balance / eDAI underlying</code></li>
+<li><code>dDAI debt</code></li>
+<li><code>healthScore</code></li>
+<li><code>repay</code></li>
+<li><code>yield</code></li>
+<li><code>discount</code></li>
+<li>合约最终 DAI 余额</li>
+</ul>
+<h4>如何理解交易层级</h4><p>Tenderly Debugger 通常会把一笔交易拆成多层调用：</p>
+<ul>
+<li>最外层：你广播出去的交易</li>
+<li>中间层：协议间的外部调用（Aave -&gt; 攻击合约 -&gt; Euler）</li>
+<li>内层：模块内部调用、token transfer、清算细节</li>
+</ul>
+<p>你在分析 exploit 时，不要只看最外层成功失败，要一直往里点，直到看到：</p>
+<ul>
+<li>闪电贷回调入口</li>
+<li>核心漏洞函数</li>
+<li>清算函数</li>
+<li>资金回收函数</li>
+</ul>
+<h3 id="section-21">Tenderly 广播时为什么有时需要 <code>--slow</code></h3><p>在 <code>forge script --broadcast</code> 场景里，如果你的脚本会：</p>
+<ol>
+<li>先部署一个新合约</li>
+<li>再马上调用这个新合约上的函数</li>
+</ol>
+<p>有时会遇到这样的问题：</p>
+<ul>
+<li>本地 simulation 显示一切成功</li>
+<li>但真正广播到链上后，只看到一笔部署交易</li>
+<li>第二笔调用交易 gas 很低（比如只有 <code>21160</code>）</li>
+<li>在 Tenderly 里看不到完整 exploit 调用栈</li>
+</ul>
+<p>这通常说明：</p>
+<p><strong>第二笔调用发出时，第一笔部署交易还没被链确认，新合约代码还没真正落到链上。</strong></p>
+<p>结果就是：</p>
+<ul>
+<li>第二笔交易虽然 <code>status = success</code></li>
+<li>但它其实只是对“当时还没有代码的地址”发了一次普通 call</li>
+<li>所以不会进入你期望的 <code>attack()</code>、<code>flashLoan()</code>、<code>executeOperation()</code> 等真实逻辑</li>
+</ul>
+<h4>典型现象</h4><p>如果出现下面这种情况，就要怀疑广播顺序问题：</p>
+<ul>
+<li>一笔部署交易 gas 很高（几百万）</li>
+<li>第二笔调用交易 gas 只有 <code>21160</code> 左右</li>
+<li>Tenderly 页面里只看到一层空调用</li>
+<li>没有内部调用栈</li>
+</ul>
+<h4>解决方法</h4><p>给广播命令加 <code>--slow</code>：</p>
+<pre><code class="language-bash">source .env &amp;&amp; forge script script/EulerTenderly.s.sol:EulerTenderlyScript --rpc-url $TENDERLY_RPC_URL --broadcast --slow -vvvv
+</code></pre>
+<p><code>--slow</code> 的作用是：</p>
+<ul>
+<li>等前一笔交易先确认</li>
+<li>再发送下一笔交易</li>
+</ul>
+<p>这样在“先部署、再调用”的脚本里会更稳。</p>
+<h3 id="section-22">Tenderly 到底怎么用（按按钮理解）</h3><p>如果你第一次看 Tenderly，会很容易被一堆页面和调用树绕晕。
+最实用的理解方式不是先背概念，而是：<strong>按页面按钮理解它在回答什么问题。</strong></p>
+<h4>先记住：Tenderly 主要分成两类用途</h4><h5>1. 作为远程 fork 节点</h5><p>你在本地运行：</p>
+<pre><code class="language-bash">forge test --rpc-url $TENDERLY_RPC_URL ...
+</code></pre>
+<p>这时：</p>
+<ul>
+<li>测试代码还是在本地 Foundry 执行</li>
+<li>Tenderly 提供的是远程 fork 状态</li>
+<li>适合做 fork test、漏洞复现、真实链状态调试</li>
+</ul>
+<h5>2. 作为可视化调试器</h5><p>你在本地运行：</p>
+<pre><code class="language-bash">forge script ... --broadcast --slow --rpc-url $TENDERLY_RPC_URL -vvvv
+</code></pre>
+<p>这时：</p>
+<ul>
+<li>会真的向 Tenderly Virtual TestNet 发交易</li>
+<li>Tenderly UI 里能看到真实交易</li>
+<li>适合看完整调用栈、事件、资金流、状态变化</li>
+</ul>
+<hr>
+<h2 id="section-23">一、左边菜单分别是干什么的</h2><h3 id="section-24">1. Explorer</h3><p>这是<strong>交易浏览器</strong>。</p>
+<p>你要看：</p>
+<ul>
+<li>最近发了哪些交易</li>
+<li>哪笔是部署交易</li>
+<li>哪笔是 exploit 主交易</li>
+<li>交易哈希、gas、from、to、区块号</li>
+</ul>
+<p>怎么判断：</p>
+<ul>
+<li><code>To = contract creation</code> 或带 <code>Contract Address</code> 的，通常是部署交易</li>
+<li>调用已部署合约地址、gas 很高的，通常是主交易</li>
+</ul>
+<h3 id="section-25">2. Contracts</h3><p>这是<strong>合约中心</strong>。</p>
+<p>你要看：</p>
+<ul>
+<li>某个合约地址有没有部署成功</li>
+<li>这个地址是不是你的 exploit 合约</li>
+<li>是否已经验证源码</li>
+<li>是否能直接看源码和方法</li>
+</ul>
+<p>如果交易页右边出现：</p>
+<ul>
+<li><code>No source for this contract</code></li>
+</ul>
+<p>就说明：</p>
+<ul>
+<li>Tenderly 还没拿到这个合约的源码</li>
+<li>你可以先去 <code>Contracts</code> 页面找该地址，再做验证</li>
+</ul>
+<h3 id="section-26">3. Wallets</h3><p>这是<strong>钱包页</strong>。</p>
+<p>你要看：</p>
+<ul>
+<li>当前 Virtual TestNet 上有哪些测试钱包</li>
+<li>哪个地址在发交易</li>
+<li>哪个地址没 ETH 付 gas</li>
+</ul>
+<p>广播时报：</p>
+<ul>
+<li><code>insufficient funds for gas * price + value</code></li>
+</ul>
+<p>第一反应就去这里查广播地址有没有 ETH。</p>
+<h3 id="section-27">4. Faucet</h3><p>这是<strong>给测试地址充值</strong>的地方。</p>
+<p>主要给：</p>
+<ul>
+<li>ETH（付 gas）</li>
+<li>有时也可配合 Virtual TestNet 资金工具给测试资产</li>
+</ul>
+<h3 id="section-28">5. JSON-RPC Calls / RPC Builder</h3><p>这是<strong>调试 RPC 请求</strong>的地方。</p>
+<p>适合：</p>
+<ul>
+<li>你想验证某个 <code>eth_call</code>、<code>eth_getBalance</code>、<code>eth_getCode</code> 是不是返回了预期结果</li>
+<li>你怀疑不是 Solidity 逻辑错，而是 RPC 或链状态错</li>
+</ul>
+<h3 id="section-29">6. Simulator</h3><p>这是<strong>模拟器</strong>。</p>
+<p>适合：</p>
+<ul>
+<li>不想立刻广播交易</li>
+<li>想先手工模拟一次调用看看会不会成功</li>
+</ul>
+<hr>
+<h2 id="section-30">二、点开某笔交易后，上方几个标签怎么看</h2><p>你截图里最常用的是这几个：</p>
+<ul>
+<li><code>Summary</code></li>
+<li><code>Contracts</code></li>
+<li><code>Events</code></li>
+<li><code>State</code></li>
+<li><code>Fund Flow</code></li>
+<li><code>Gas Profiler</code></li>
+</ul>
+<h3 id="section-31">1. Summary</h3><p>这是<strong>交易总览</strong>。</p>
+<p>主要回答：</p>
+<ul>
+<li>这笔交易成功还是失败</li>
+<li>from / to 是谁</li>
+<li>gas 用了多少</li>
+<li>这是一笔部署，还是普通调用</li>
+<li>调用树大概长什么样</li>
+</ul>
+<h3 id="section-32">2. Contracts</h3><p>这是<strong>这笔交易里涉及了哪些合约</strong>。</p>
+<p>适合回答：</p>
+<ul>
+<li>这笔 exploit 到底调了哪些协议</li>
+<li>Aave、Euler、DAI、helper 合约有没有都出现</li>
+</ul>
+<h3 id="section-33">3. Events</h3><p>这是<strong>日志事件页</strong>。</p>
+<p>最适合看：</p>
+<ul>
+<li><code>Transfer</code></li>
+<li><code>Approval</code></li>
+<li><code>FlashLoan</code></li>
+<li><code>Liquidation</code></li>
+</ul>
+<p>如果你不想先读复杂调用树，可以先看 <code>Events</code>，快速确认：</p>
+<ul>
+<li>资产有没有转走</li>
+<li>闪电贷有没有发出</li>
+<li>清算有没有发生</li>
+</ul>
+<h3 id="section-34">4. State</h3><p>这是<strong>状态变化页</strong>。</p>
+<p>最适合看：</p>
+<ul>
+<li>某个 storage slot 有没有变化</li>
+<li>合约执行前后状态怎么变</li>
+</ul>
+<p>在看漏洞时，它适合确认：</p>
+<ul>
+<li>donate 后抵押有没有变</li>
+<li>清算后债务有没有转移</li>
+</ul>
+<h3 id="section-35">5. Fund Flow</h3><p>这是<strong>资金流页面</strong>。</p>
+<p>非常适合新手。</p>
+<p>它主要回答：</p>
+<ul>
+<li>钱从哪来</li>
+<li>钱到哪去</li>
+<li>哪个地址收到了 DAI</li>
+<li>哪个协议被抽走了流动性</li>
+</ul>
+<p>如果你对调用树看不懂，就先看 <code>Fund Flow</code>。</p>
+<h3 id="section-36">6. Gas Profiler</h3><p>这是<strong>gas 分析页</strong>。</p>
+<p>适合回答：</p>
+<ul>
+<li>这笔交易最耗 gas 的步骤在哪</li>
+<li>是 <code>flashLoan</code>、<code>liquidate</code> 还是 <code>withdraw</code> 最重</li>
+</ul>
+<p>对理解漏洞本身不是第一优先，但对性能和交易复杂度很有用。</p>
+<hr>
+<h2 id="section-37">三、Debugger 页面到底怎么看</h2><p>很多人第一次卡在这里。</p>
+<p>你可以把 Debugger 分成 4 个区域理解：</p>
+<h3 id="section-38">1. 左侧调用树（Execution）</h3><p>这是<strong>调用链目录</strong>。</p>
+<p>它回答的是：</p>
+<ul>
+<li>谁调了谁</li>
+<li>调用顺序是什么</li>
+<li>当前你点开的代码片段属于哪一层调用</li>
+</ul>
+<p>对 exploit 来说，应该顺着这条主线找：</p>
+<ol>
+<li><code>attack()</code></li>
+<li><code>flashLoan(...)</code></li>
+<li><code>executeOperation(...)</code></li>
+<li><code>leverUp / deposit / mint / repay</code></li>
+<li><code>donateToReserves(...)</code></li>
+<li><code>checkLiquidation(...)</code></li>
+<li><code>liquidate(...)</code></li>
+<li><code>withdraw(...)</code></li>
+</ol>
+<p>如果左侧只有一层普通调用，而且 gas 特别低，通常说明：</p>
+<ul>
+<li>你点错交易了</li>
+<li>或者这笔调用没有真正进入 exploit 主逻辑</li>
+</ul>
+<h3 id="section-39">2. 中间源码区</h3><p>这是<strong>当前调用对应的源码位置</strong>。</p>
+<p>如果这里显示：</p>
+<ul>
+<li><code>No source for this contract</code></li>
+</ul>
+<p>说明 Tenderly 没拿到源码。</p>
+<p>你仍然可以看 trace，但看不到高亮源码。</p>
+<h3 id="section-40">3. 底部输出区 / 变量区</h3><p>这里适合看：</p>
+<ul>
+<li>当前函数输入参数</li>
+<li>当前日志事件数据</li>
+<li>当前步骤产出的返回值</li>
+</ul>
+<p>如果你点到某条 <code>FlashLoan</code> 或 <code>Transfer</code> 事件，这里通常能直接看到金额和地址。</p>
+<h3 id="section-41">4. 左下角 Stack Trace</h3><p>这是<strong>当前步骤在整个调用链里的位置</strong>。</p>
+<p>当你看不懂左边大树时，可以看 Stack Trace 来判断：</p>
+<ul>
+<li>现在是在 Aave 内部</li>
+<li>还是已经回调到 exploit 合约</li>
+<li>还是已经进了 Euler 的模块</li>
+</ul>
+<hr>
+<h2 id="section-42">四、看一笔 exploit 交易时，建议固定顺序</h2><p>不要乱点，按下面顺序最稳：</p>
+<h3 id="section-43">第一步：先看 Summary</h3><p>确认：</p>
+<ul>
+<li>这是不是主交易</li>
+<li>gas 是否足够高</li>
+<li>from / to 是否正确</li>
+</ul>
+<h3 id="section-44">第二步：再看 Events 或 Fund Flow</h3><p>确认：</p>
+<ul>
+<li>闪电贷有没有发出</li>
+<li>DAI 有没有流入攻击合约</li>
+<li>清算和提现有没有发生</li>
+</ul>
+<h3 id="section-45">第三步：最后进 Debugger</h3><p>按调用树从外到内看：</p>
+<ul>
+<li><code>attack()</code></li>
+<li><code>flashLoan()</code></li>
+<li><code>executeOperation()</code></li>
+<li>Euler 关键调用</li>
+</ul>
+<hr>
+<h2 id="section-46">五、一个最实用的判断口诀</h2><h3 id="section-47">看交易是不是主 exploit 交易</h3><p>如果满足下面几点，通常才是：</p>
+<ul>
+<li>不是部署交易</li>
+<li>gas 很高</li>
+<li>有很多内部调用</li>
+<li>能看到 flash loan / liquidation / withdraw 之类的路径</li>
+</ul>
+<p>如果只有：</p>
+<ul>
+<li>单层调用</li>
+<li>gas 只有 <code>21160</code></li>
+<li>没有内部调用</li>
+</ul>
+<p>通常不是主 exploit 交易。</p>
+<h3 id="section-48">看不懂调用树时怎么办</h3><p>优先看：</p>
+<ol>
+<li><code>Summary</code></li>
+<li><code>Events</code></li>
+<li><code>Fund Flow</code></li>
+<li>最后才是 <code>Debugger</code></li>
+</ol>
+<p>因为对新手来说：</p>
+<ul>
+<li><code>Events</code> 告诉你有没有发生关键动作</li>
+<li><code>Fund Flow</code> 告诉你钱到底去了哪</li>
+<li><code>Debugger</code> 才是最后深入的地方</li>
+</ul>
+<hr>
+<h2 id="section-49">六、把 Tenderly 当成什么工具最容易理解</h2><p>可以这样记：</p>
+<ul>
+<li><code>Explorer</code> = 区块浏览器</li>
+<li><code>Contracts</code> = 合约通讯录</li>
+<li><code>Debugger</code> = 单步调试器</li>
+<li><code>Fund Flow</code> = 资金流向图</li>
+<li><code>Events</code> = 日志事件板</li>
+<li><code>State</code> = 存储变化板</li>
+<li><code>Gas Profiler</code> = 费用分析器</li>
+</ul>
+<p>这样你就不会把所有页面都当成“都要先看”的东西。</p>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/ERC标准/ERC-3643/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-3643</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/代理模式/UUPS_Proxy/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">UUPS_Proxy</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>forge</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-2"> <a href="#section-2">初始化一个项目</a> </li><li class="article-outline__item depth-3" data-toc-id="section-3"> <a href="#section-3">写一个合约</a> </li><li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">编译合约</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">启动本地节点</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">设置环境变量，部署合约上链</a> </li><li class="article-outline__item depth-3" data-toc-id="section-7"> <a href="#section-7">测试</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-8"> <button class="article-outline__group-link" type="button" data-group-target="section-8"> <span>cast</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">cast call 查操作（显示变量值）</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">cast send 调用操作</a> </li><li class="article-outline__item depth-3" data-toc-id="section-11"> <a href="#section-11">例子</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-12"> <button class="article-outline__group-link" type="button" data-group-target="section-12"> <span>Foundry 常用作弊码 (Cheatcodes) 指南</span>  </button>  </li><li class="article-outline__group" data-group-id="section-13"> <button class="article-outline__group-link" type="button" data-group-target="section-13"> <span>2. 基本使用方法</span>  </button>  </li><li class="article-outline__group" data-group-id="section-14"> <button class="article-outline__group-link" type="button" data-group-target="section-14"> <span>3. 常见高级命令</span>  </button>  </li><li class="article-outline__group" data-group-id="section-15"> <button class="article-outline__group-link" type="button" data-group-target="section-15"> <span>4. 如何看懂输出结果？</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-16"> <a href="#section-16">用 Tenderly 作为 fork RPC 跑测试</a> </li><li class="article-outline__item depth-3" data-toc-id="section-17"> <a href="#section-17">它和普通测试文件的区别</a> </li><li class="article-outline__item depth-3" data-toc-id="section-18"> <a href="#section-18">为什么不建议直接广播 .t.sol</a> </li><li class="article-outline__item depth-3" data-toc-id="section-19"> <a href="#section-19">一个实战判断方法</a> </li><li class="article-outline__item depth-3" data-toc-id="section-20"> <a href="#section-20">Tenderly UI 里怎么查看 exploit 交易</a> </li><li class="article-outline__item depth-3" data-toc-id="section-21"> <a href="#section-21">Tenderly 广播时为什么有时需要 --slow</a> </li><li class="article-outline__item depth-3" data-toc-id="section-22"> <a href="#section-22">Tenderly 到底怎么用（按按钮理解）</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-23"> <button class="article-outline__group-link" type="button" data-group-target="section-23"> <span>一、左边菜单分别是干什么的</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-24"> <a href="#section-24">1. Explorer</a> </li><li class="article-outline__item depth-3" data-toc-id="section-25"> <a href="#section-25">2. Contracts</a> </li><li class="article-outline__item depth-3" data-toc-id="section-26"> <a href="#section-26">3. Wallets</a> </li><li class="article-outline__item depth-3" data-toc-id="section-27"> <a href="#section-27">4. Faucet</a> </li><li class="article-outline__item depth-3" data-toc-id="section-28"> <a href="#section-28">5. JSON-RPC Calls / RPC Builder</a> </li><li class="article-outline__item depth-3" data-toc-id="section-29"> <a href="#section-29">6. Simulator</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-30"> <button class="article-outline__group-link" type="button" data-group-target="section-30"> <span>二、点开某笔交易后，上方几个标签怎么看</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-31"> <a href="#section-31">1. Summary</a> </li><li class="article-outline__item depth-3" data-toc-id="section-32"> <a href="#section-32">2. Contracts</a> </li><li class="article-outline__item depth-3" data-toc-id="section-33"> <a href="#section-33">3. Events</a> </li><li class="article-outline__item depth-3" data-toc-id="section-34"> <a href="#section-34">4. State</a> </li><li class="article-outline__item depth-3" data-toc-id="section-35"> <a href="#section-35">5. Fund Flow</a> </li><li class="article-outline__item depth-3" data-toc-id="section-36"> <a href="#section-36">6. Gas Profiler</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-37"> <button class="article-outline__group-link" type="button" data-group-target="section-37"> <span>三、Debugger 页面到底怎么看</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-38"> <a href="#section-38">1. 左侧调用树（Execution）</a> </li><li class="article-outline__item depth-3" data-toc-id="section-39"> <a href="#section-39">2. 中间源码区</a> </li><li class="article-outline__item depth-3" data-toc-id="section-40"> <a href="#section-40">3. 底部输出区 / 变量区</a> </li><li class="article-outline__item depth-3" data-toc-id="section-41"> <a href="#section-41">4. 左下角 Stack Trace</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-42"> <button class="article-outline__group-link" type="button" data-group-target="section-42"> <span>四、看一笔 exploit 交易时，建议固定顺序</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-43"> <a href="#section-43">第一步：先看 Summary</a> </li><li class="article-outline__item depth-3" data-toc-id="section-44"> <a href="#section-44">第二步：再看 Events 或 Fund Flow</a> </li><li class="article-outline__item depth-3" data-toc-id="section-45"> <a href="#section-45">第三步：最后进 Debugger</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-46"> <button class="article-outline__group-link" type="button" data-group-target="section-46"> <span>五、一个最实用的判断口诀</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-47"> <a href="#section-47">看交易是不是主 exploit 交易</a> </li><li class="article-outline__item depth-3" data-toc-id="section-48"> <a href="#section-48">看不懂调用树时怎么办</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-49"> <button class="article-outline__group-link" type="button" data-group-target="section-49"> <span>六、把 Tenderly 当成什么工具最容易理解</span>  </button>  </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+
+        if (!shell || !sidebar || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

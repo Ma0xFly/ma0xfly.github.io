@@ -1,0 +1,399 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>常用快捷键和指令 | 沉于思，录以隙</title><meta name="description" content="# glibc换源 资料：[pwn题更换libc版本 (z1r0.top)](https://www.z1r0.top/2021/09/28/pwn题更换题目libc版本/) ​ [pwn技术分享——使用patchelf和glibc-all-in-one替换程序依赖的libc文件"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.6ncck4XA.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">常用快捷键和指令</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">pwn</span>  </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>二进制</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：二进制/pwn/常用快捷键和指令.md</p> </header> <div class="article-main"> <div class="article-content"><h1>glibc换源</h1><p>资料：<a href="https://www.z1r0.top/2021/09/28/pwn%E9%A2%98%E6%9B%B4%E6%8D%A2%E9%A2%98%E7%9B%AElibc%E7%89%88%E6%9C%AC/">pwn题更换libc版本 (z1r0.top)</a></p>
+<p>​            <a href="https://www.bilibili.com/video/BV11t4y1R7dV/?spm_id_from=333.788&vd_source=733daee2000101d35efc8e8912fd575a">pwn技术分享——使用patchelf和glibc-all-in-one替换程序依赖的libc文件_哔哩哔哩_bilibili</a></p>
+<p>下载libc</p>
+<pre><code class="language-py">python3 update_list      #更新list
+./download 2.23-0ubuntu11.2_amd64        #glibc为你想要下载glibc的名字
+
+./download_old libc #list没有,可以使用./download_old libc版本号来下载
+</code></pre>
+<p>格式：</p>
+<p>./：用的当前文件夹下文件</p>
+<p>/：绝对路径</p>
+<p>1.patchelf --set-interpreter </p>
+<pre><code>patchelf --set-interpreter ./ld-目标版本 ./运行的程序
+例子
+patchelf --set-interpreter ./ld-2.23.so ./pwn
+</code></pre>
+<p>2.patchelf --replace-needed libc.so.6</p>
+<pre><code>patchelf --replace-needed libc.so.6 新libc文件路径 运行的程序
+例子
+patchelf --replace-needed libc.so.6 ./libc-2.23.so ./pwn
+</code></pre>
+<h1>vim</h1><table>
+<thead>
+<tr>
+<th>普通模式</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>G（普通模式）</td>
+<td>来的文本最下方</td>
+</tr>
+<tr>
+<td>g+g（普通模式下）</td>
+<td>回到文本的开头</td>
+</tr>
+<tr>
+<td>f+目标单词的首字母(find普通模式)</td>
+<td>移动到目标单词</td>
+</tr>
+<tr>
+<td>d（delete）</td>
+<td>删除当前行</td>
+</tr>
+<tr>
+<td>u（undo）</td>
+<td>撤销</td>
+</tr>
+<tr>
+<td>文本模式</td>
+<td></td>
+</tr>
+<tr>
+<td>I</td>
+<td>从当前行开头进行输入</td>
+</tr>
+<tr>
+<td>A</td>
+<td>当前行文末输入</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h1>ida</h1><table>
+<thead>
+<tr>
+<th>F7 s</th>
+<th>单步执行,遇到call或者函数调用就进入</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>F8 ni</td>
+<td>单步执行,遇到call或者函数调用就跳过</td>
+</tr>
+<tr>
+<td>F9  r</td>
+<td>开始运行</td>
+</tr>
+<tr>
+<td>F2 b</td>
+<td>下断点</td>
+</tr>
+<tr>
+<td>F4</td>
+<td>运行到光标初</td>
+</tr>
+<tr>
+<td>U</td>
+<td>取消函数，代码，数据的定义</td>
+</tr>
+<tr>
+<td>C</td>
+<td>把字节码翻译为汇编语句</td>
+</tr>
+<tr>
+<td>p</td>
+<td>定义函数</td>
+</tr>
+<tr>
+<td>D</td>
+<td>数据长度类型转化,1/2/4/8</td>
+</tr>
+<tr>
+<td>H</td>
+<td>数字-&gt;16进制</td>
+</tr>
+<tr>
+<td>a</td>
+<td>(数据)-&gt;字符串</td>
+</tr>
+<tr>
+<td>R</td>
+<td>数字-&gt;字符（‘120’打了单引号是个字符y，要ask码转换）</td>
+</tr>
+<tr>
+<td>y</td>
+<td>修改数据类型声明</td>
+</tr>
+<tr>
+<td>n</td>
+<td>对函数或者变量重命名（函数名为sub_234875）</td>
+</tr>
+<tr>
+<td>g</td>
+<td>去往某一个地址</td>
+</tr>
+<tr>
+<td>CTRL F7</td>
+<td>一直运行</td>
+</tr>
+<tr>
+<td>shift +f12</td>
+<td>找出所有字符串</td>
+</tr>
+<tr>
+<td>/</td>
+<td>在反汇编后界面写注释，汇编语言界面也可用</td>
+</tr>
+<tr>
+<td>ctrl+x</td>
+<td>查看函数或变量的交叉引用（通过flag.txt字符串找函数）</td>
+</tr>
+<tr>
+<td>tab</td>
+<td>汇编代码与c代码视角转换</td>
+</tr>
+<tr>
+<td>ctrl+s</td>
+<td>段表信息</td>
+</tr>
+<tr>
+<td>telescope+0x地址</td>
+<td>用stack段的形式查看内存中地址信息</td>
+</tr>
+<tr>
+<td>ctrl+t</td>
+<td>查找特定指令和字符串</td>
+</tr>
+<tr>
+<td>shift+e</td>
+<td>导出数据</td>
+</tr>
+</tbody></table>
+<h1>gdb</h1><table>
+<thead>
+<tr>
+<th>n</th>
+<th>不进入函数的单步执行</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>s</td>
+<td>进入被调用(call)函数</td>
+</tr>
+<tr>
+<td>finish</td>
+<td>s步入函数后用会执行完此函数</td>
+</tr>
+<tr>
+<td><strong>c</strong></td>
+<td>直接执行到下一个断点。</td>
+</tr>
+<tr>
+<td><strong>k（kill）</strong></td>
+<td>kill当前进程</td>
+</tr>
+<tr>
+<td>r(run)</td>
+<td>运行程序</td>
+</tr>
+<tr>
+<td>gdb+文件</td>
+<td>动态调试文件</td>
+</tr>
+<tr>
+<td>vmmap</td>
+<td>查看虚拟内存映射，包括代码段、数据段、堆、栈和共享库等区域。</td>
+</tr>
+<tr>
+<td>b *0x地址</td>
+<td>打断点</td>
+</tr>
+<tr>
+<td>ni</td>
+<td>下一条汇编指令</td>
+</tr>
+<tr>
+<td>disable b  +数字</td>
+<td>去掉第几个断点</td>
+</tr>
+<tr>
+<td>info b</td>
+<td>查看当前断点</td>
+</tr>
+<tr>
+<td><strong>bt</strong></td>
+<td>查看函数调用栈</td>
+</tr>
+<tr>
+<td><strong>info r</strong></td>
+<td>查看所有寄存器的值。</td>
+</tr>
+<tr>
+<td><strong>list</strong></td>
+<td>查看源代码。</td>
+</tr>
+<tr>
+<td>vis</td>
+<td>查看堆块</td>
+</tr>
+<tr>
+<td>tel +地址</td>
+<td>类似查看stack信息的格式</td>
+</tr>
+<tr>
+<td>x/20gx +地址</td>
+<td>x是16进制显示，w读4字节是32位程序，g是8字节对应64位，b是1字节，h2字节</td>
+</tr>
+</tbody></table>
+<h1>tmux</h1><table>
+<thead>
+<tr>
+<th>ctrl+b +c</th>
+<th>打开新窗口</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ctrl+b +%</td>
+<td>分左右屏幕</td>
+</tr>
+<tr>
+<td>ctrl+b  +“</td>
+<td>上下分屏</td>
+</tr>
+<tr>
+<td>ctrl+b  +方向</td>
+<td>换屏幕</td>
+</tr>
+<tr>
+<td>ctrl+d</td>
+<td>关屏</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h1>其他工具快捷键</h1><table>
+<thead>
+<tr>
+<th>快捷键</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ROPgadget --binary 文件  --only &#39;pop|ret&#39; | grep &#39;eax&#39;</td>
+<td>在正常终端下即可</td>
+</tr>
+<tr>
+<td>ROPgadget --binary 文件 --string &#39;/bin/sh&#39;</td>
+<td>找字符串地址</td>
+</tr>
+<tr>
+<td>ROPgadget --binary=动态链接库  --only &#39;pop|ret&#39; |grep &#39;&#39;</td>
+<td>在库中找</td>
+</tr>
+<tr>
+<td>cyclic(数字)</td>
+<td>生成垃圾数据</td>
+</tr>
+<tr>
+<td>strings 文件名 | grep 字符串</td>
+<td></td>
+</tr>
+<tr>
+<td>fmtarg   地址</td>
+<td>显示此处是格式化字符串函数的第几个参数</td>
+</tr>
+<tr>
+<td>sudo vmhgfs-fuse .host:/ /mnt/hgfs -o allow_other</td>
+<td>显示共享文件夹</td>
+</tr>
+<tr>
+<td>print(&quot;stack&quot;+hex(flg))</td>
+<td>exp脚本打印信息</td>
+</tr>
+<tr>
+<td>seccomp-tools dump ./文件名</td>
+<td>查看函数禁用</td>
+</tr>
+<tr>
+<td>gdb.attach(p,&quot;b *0x函数地址\nc&quot;)</td>
+<td>gdb直接定位在目标地址</td>
+</tr>
+<tr>
+<td>shellcode编写</td>
+<td>shellcode=shellcraft.open(&quot;./flag&quot;)<br />shellcode+=shellcraft.read(3,0xcafe0000+0x100,0x50)<br />shellcode+=shellcraft.write(1,0xcafe0000+0x100,0x50)<br />shellcode=asm(shellcode)</td>
+</tr>
+<tr>
+<td>找libc版本</td>
+<td>strings libc.so.6 | grep ubuntu</td>
+</tr>
+<tr>
+<td>echo 0 | sudo tee /proc/sys/kernel/randomize_va_space</td>
+<td>临时禁用 Linux 内核中的地址空间布局随机化</td>
+</tr>
+</tbody></table>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/二进制/iot/路由器/异架构/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">异架构</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/二进制/iot/RFID/RFID/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">RFID</h4> </a> </div> </nav> </div> </article>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  

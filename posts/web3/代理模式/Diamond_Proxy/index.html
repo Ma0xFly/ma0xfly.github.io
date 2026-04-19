@@ -1,0 +1,499 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Diamond_Proxy | 沉于思，录以隙</title><meta name="description" content="# Diamond Proxy（钻石代理 / ERC-2535） > **一句话总结**：Diamond Proxy 是一种**多面代理（Multi-Facet Proxy）**标准，将一个 Proxy 的后端拆分成多个独立的 **Facet（切面）**合约，每个 Facet 承"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.6ncck4XA.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">Diamond_Proxy</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">代理模式</span>  </div> <div class="article-meta-row"> <span>2026/3/18</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/代理模式/Diamond_Proxy.md</p> </header> <div class="article-main"> <div class="article-content"><h1>Diamond Proxy（钻石代理 / ERC-2535）</h1><blockquote>
+<p><strong>一句话总结</strong>：Diamond Proxy 是一种**多面代理（Multi-Facet Proxy）**标准，将一个 Proxy 的后端拆分成多个独立的 <strong>Facet（切面）<strong>合约，每个 Facet 承载不同的功能模块。它通过函数选择器路由表实现</strong>函数级别的精准增删替换</strong>，彻底突破了单个合约 24KB 的大小限制。</p>
+</blockquote>
+<h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><ul>
+<li><strong>关联 EIP/ERC 编号</strong>：<a href="https://eips.ethereum.org/EIPS/eip-2535">ERC-2535: Diamonds, Multi-Facet Proxy</a> | <a href="https://eips.ethereum.org/EIPS/eip-1967">EIP-1967: Standard Proxy Storage Slots</a></li>
+<li><strong>权威参考实现</strong>：<a href="https://github.com/mudgen/diamond-3-hardhat">diamond-3-hardhat (Reference Implementation)</a></li>
+<li><strong>底层基座依赖</strong>：EIP-1967 标准存储槽（可选）、ERC-165 接口自省（Loupe 部分）</li>
+</ul>
+<hr>
+<h2 id="section-2">1. 核心理念与解决的痛点 (Motivation)</h2><ul>
+<li><strong>前代模式 (Transparent / UUPS) 的缺陷</strong>：<ol>
+<li><strong>24KB 硬限制</strong>：EVM 规定单个合约最大 24KB。一旦 DeFi 协议功能爆炸式增长（如同时包含 ERC20、治理、质押、清算模块），一个 Implementation 根本装不下。</li>
+<li><strong>整体替换的暴力升级</strong>：Transparent / UUPS 升级时必须<strong>完全替换</strong>整个 Implementation，即使你只想修一个小 bug 或加一个小函数。</li>
+</ol>
+</li>
+<li><strong>破局思路</strong>：将&quot;一个巨大的后端&quot;拆分成多个小的 <strong>Facet</strong> 合约（类似微服务架构）。Diamond 主合约内部维护一张 <strong>&quot;函数选择器 → Facet 地址&quot;的路由映射表</strong>，每次调用到达 fallback 时，根据 calldata 前 4 字节去查表并 delegatecall 到对应的 Facet。</li>
+<li><strong>专属核心概念</strong>：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">术语</th>
+<th align="left">定义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Diamond</strong></td>
+<td align="left">主合约（代理），通过 <code>delegatecall</code> 调用各个 Facet 执行函数。<strong>有状态</strong>，数据存储在 Diamond 中。</td>
+</tr>
+<tr>
+<td align="left"><strong>Facet</strong></td>
+<td align="left"><strong>无状态</strong>的合约或 Solidity 库，包含外部函数。一个 Facet 可被多个 Diamond 共用。</td>
+</tr>
+<tr>
+<td align="left"><strong>DiamondCut</strong></td>
+<td align="left">添加/替换/移除函数的操作，即&quot;切割&quot;钻石。</td>
+</tr>
+<tr>
+<td align="left"><strong>Loupe</strong></td>
+<td align="left">内省（Introspection）接口，用于查询 Diamond 有哪些 Facet 和函数。</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="section-3">2. 架构与 Delegatecall 上下文 (Architecture)</h2><h3 id="section-4">A. 架构图 (ASCII Art)</h3><pre><code>                    ┌──────────────────────────┐
+                    │   Diamond (主合约)         │
+                    │                          │
+                    │   • 存储所有状态数据        │
+                    │   • fallback() 选择器路由   │
+                    │   • diamondCut() 增删改     │
+                    │   • Loupe 内省函数          │
+                    └──────┬───────────────────┘
+            ┌──────────────┼──────────────┐
+            ▼              ▼              ▼
+   ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
+   │  FacetA      │ │  FacetB      │ │  FacetC      │
+   │  (ERC20逻辑) │ │  (治理逻辑)   │ │  (质押逻辑)   │
+   │  transfer()  │ │  vote()      │ │  stake()     │
+   │  approve()   │ │  propose()   │ │  withdraw()  │
+   └─────────────┘ └─────────────┘ └─────────────┘
+</code></pre>
+<p><strong>路由机制</strong>：Diamond 的 <code>fallback()</code> 中维护了一张 <code>mapping(bytes4 =&gt; address)</code>，根据函数选择器（前 4 字节）查找对应 Facet 地址，然后 <code>delegatecall</code> 到该 Facet。</p>
+<h3 id="section-5">B. Delegatecall 执行上下文表</h3><table>
+<thead>
+<tr>
+<th align="left">属性</th>
+<th align="left">值归属</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>代码 (Code)</strong></td>
+<td align="left">来自被路由到的那个 Facet</td>
+</tr>
+<tr>
+<td align="left"><strong>存储 (Storage)</strong></td>
+<td align="left"><strong>属于 Diamond 主合约</strong></td>
+</tr>
+<tr>
+<td align="left"><strong><code>msg.sender</code></strong></td>
+<td align="left">保留原始外部调用者</td>
+</tr>
+<tr>
+<td align="left"><strong><code>msg.value</code></strong></td>
+<td align="left">透传</td>
+</tr>
+</tbody></table>
+<h3 id="section-6">C. 升级逻辑归属</h3><table>
+<thead>
+<tr>
+<th align="left">属性</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>升级函数在哪？</strong></td>
+<td align="left"><strong>Diamond 主合约自身</strong>（<code>diamondCut()</code>）</td>
+</tr>
+<tr>
+<td align="left"><strong>谁有权升级？</strong></td>
+<td align="left">取决于 <code>diamondCut()</code> 的权限控制（通常 <code>onlyOwner</code> 或 DAO）</td>
+</tr>
+<tr>
+<td align="left"><strong>升级的底层操作</strong></td>
+<td align="left">修改 Diamond 内部的选择器→Facet 路由映射表（增/删/替换条目）</td>
+</tr>
+<tr>
+<td align="left"><strong>升级粒度</strong></td>
+<td align="left"><strong>函数级别</strong>（可以只添加一个函数、只替换一个函数、只删除一个函数）</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="section-7">3. 核心接口与源码骨架 (Core Interfaces &amp; Code)</h2><h3 id="section-8">A. IDiamondCut — 切割接口</h3><pre><code class="language-solidity">interface IDiamondCut {
+    enum FacetCutAction { Add, Replace, Remove }
+    
+    struct FacetCut {
+        address facetAddress;       // Facet 合约地址
+        FacetCutAction action;      // 操作类型
+        bytes4[] functionSelectors; // 要操作的函数选择器列表
+    }
+    
+    /// @dev 批量操作：添加/替换/移除函数。可选在操作后执行初始化调用。
+    function diamondCut(
+        FacetCut[] calldata _diamondCut,
+        address _init,              // 可选：升级后执行初始化的合约
+        bytes calldata _calldata    // 可选：初始化调用数据
+    ) external;
+    
+    event DiamondCut(FacetCut[] _diamondCut, address _init, bytes _calldata);
+}
+</code></pre>
+<h3 id="section-9">B. IDiamondLoupe — 内省接口</h3><pre><code class="language-solidity">interface IDiamondLoupe {
+    struct Facet {
+        address facetAddress;
+        bytes4[] functionSelectors;
+    }
+    
+    function facets() external view returns (Facet[] memory);
+    function facetFunctionSelectors(address _facet) external view returns (bytes4[] memory);
+    function facetAddresses() external view returns (address[] memory);
+    function facetAddress(bytes4 _functionSelector) external view returns (address);
+}
+</code></pre>
+<p>Loupe 接口让任何人都可以<strong>查询 Diamond 当前有哪些 Facet 和函数</strong>，提供完全的透明性和链上可审计性。</p>
+<h3 id="section-10">C. 关键函数源码骨架</h3><h4><code>fallback()</code> — 选择器路由核心</h4><pre><code class="language-solidity">fallback() external payable {
+    // 从 Diamond Storage 中读取路由表
+    DiamondStorage storage ds = diamondStorage();
+    // 用 calldata 前 4 字节查找对应的 Facet 地址
+    address facet = ds.selectorToFacet[msg.sig];
+    require(facet != address(0), &quot;Diamond: Function does not exist&quot;);
+    // delegatecall 到对应 Facet
+    assembly {
+        calldatacopy(0, 0, calldatasize())
+        let result := delegatecall(gas(), facet, 0, calldatasize(), 0, 0)
+        returndatacopy(0, 0, returndatasize())
+        switch result
+        case 0 { revert(0, returndatasize()) }
+        default { return(0, returndatasize()) }
+    }
+}
+</code></pre>
+<p><em>与 Transparent/UUPS 的本质差异</em>：这里不是查 EIP-1967 的单一 Implementation 地址，而是查一张 <code>mapping(bytes4 =&gt; address)</code> 的路由映射表。</p>
+<hr>
+<h2 id="section-11">4. 存储管理与碰撞防御 (Storage Safety)</h2><blockquote>
+<p><strong>这是 Diamond 模式最具挑战性的部分。</strong> 由于多个 Facet 共享 Diamond 的存储空间（delegatecall 的本质），任何两个 Facet 如果不小心用了相同的 Slot，就会互相覆盖对方的数据（Storage Collision）。</p>
+</blockquote>
+<ul>
+<li><strong>采用的存储标准</strong>：<strong>Diamond Storage Pattern</strong>（EIP-1967 之外的另一种哈希隔离方案）。</li>
+<li><strong>核心思路</strong>：每个 Facet 定义自己的存储结构体，并将其锚定到一个由唯一字符串哈希生成的极远端存储槽位中。</li>
+</ul>
+<pre><code class="language-solidity">library LibMyFacet {
+    // 每个 Facet 用独特的字符串生成唯一的存储起始位置
+    bytes32 constant STORAGE_POSITION = keccak256(&quot;diamond.storage.MyFacet&quot;);
+    
+    struct Storage {
+        uint256 value;
+        mapping(address =&gt; uint256) balances;
+    }
+    
+    function getStorage() internal pure returns (Storage storage s) {
+        bytes32 position = STORAGE_POSITION;
+        assembly {
+            s.slot := position
+        }
+    }
+}
+
+// Facet 内部使用：
+function deposit() external payable {
+    LibMyFacet.Storage storage s = LibMyFacet.getStorage();
+    s.balances[msg.sender] += msg.value;
+}
+</code></pre>
+<ul>
+<li><strong>碰撞风险点</strong>：如果两个 Facet 的 Library 使用了相同的 <code>keccak256</code> 输入字符串（如都写了 <code>&quot;diamond.storage.default&quot;</code>），它们会共享同一个存储区域并互相覆盖。开发者必须确保每个 Facet 的字符串标识全局唯一。</li>
+</ul>
+<hr>
+<h2 id="section-12">5. 安全攻击面与审计要点 (Security &amp; Attack Surface)</h2><h3 id="section-13">A. 该模式的固有攻击面</h3><ul>
+<li><strong>💀 <code>diamondCut</code> 权限劫持</strong>：此函数允许通过 <code>delegatecall</code> 在 Diamond 的存储上执行<strong>任意代码</strong>（_init + _calldata 参数），必须是整个合约最高级别的权限保护对象。劫持 <code>diamondCut</code> = 完全控制合约。</li>
+<li><strong>函数选择器冲突</strong>：正确实现的 <code>diamondCut</code> 应阻止添加已存在的选择器（Add 操作时先检查该 selector 是否已被注册），杜绝同一个 selector 被映射到两个不同的 Facet。</li>
+<li><strong><code>selfdestruct</code> 灾难</strong>：在 Facet 中使用 <code>selfdestruct</code> 会<strong>毁灭整个 Diamond 主合约</strong>（因为 delegatecall 的执行上下文是 Diamond 自己）。</li>
+<li><strong>存储冲突</strong>：多个 Facet 共享存储空间时，如果 Diamond Storage 的字符串标识不唯一，会导致跨模块数据覆盖。</li>
+</ul>
+<h3 id="section-14">B. 安全最佳实践清单</h3><ol>
+<li><strong><code>diamondCut</code> 权限管控</strong>：使用多签 / DAO / 时间锁严格限制。</li>
+<li><strong>禁止 <code>selfdestruct</code></strong>：在所有 Facet 中禁用此操作码。</li>
+<li><strong>Diamond Storage 隔离</strong>：每个 Facet 的存储字符串标识必须全局唯一。</li>
+<li><strong>链上透明性</strong>：每次 Cut 操作必须发出 <code>DiamondCut</code> 事件，允许外部监控所有变更历史。</li>
+<li><strong>Loupe 自检</strong>：部署后通过 Loupe 接口验证所有 Facet 和 Selector 的注册状态。</li>
+</ol>
+<hr>
+<h2 id="section-15">6. 横向对比与适用场景 (Comparison &amp; When to Use)</h2><table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left"><strong>Diamond</strong></th>
+<th align="left"><strong>Transparent Proxy</strong></th>
+<th align="left"><strong>UUPS</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Implementation 数量</td>
+<td align="left"><strong>多个（Facet）</strong></td>
+<td align="left">1 个</td>
+<td align="left">1 个</td>
+</tr>
+<tr>
+<td align="left">合约大小限制</td>
+<td align="left"><strong>无限制</strong></td>
+<td align="left">24KB</td>
+<td align="left">24KB</td>
+</tr>
+<tr>
+<td align="left">升级粒度</td>
+<td align="left"><strong>可按函数级别添加/替换/移除</strong></td>
+<td align="left">整体替换</td>
+<td align="left">整体替换</td>
+</tr>
+<tr>
+<td align="left">Proxy 复杂度</td>
+<td align="left">高（路由表 + DiamondCut）</td>
+<td align="left">较重</td>
+<td align="left">极轻</td>
+</tr>
+<tr>
+<td align="left">存储管理</td>
+<td align="left">Diamond Storage（复杂但灵活）</td>
+<td align="left">EIP-1967</td>
+<td align="left">EIP-1967</td>
+</tr>
+<tr>
+<td align="left">适用场景</td>
+<td align="left"><strong>大型复杂系统</strong></td>
+<td align="left">安全要求极高的中型项目</td>
+<td align="left">追求省 Gas 的主流项目</td>
+</tr>
+</tbody></table>
+<h3 id="section-16">最佳适用场景</h3><ul>
+<li><strong>巨型 DeFi 协议</strong>：合约功能远超 24KB 限制（如同时包含 AMM、借贷、治理、质押子模块）。</li>
+<li><strong>模块化管理需求</strong>：不同功能模块由不同团队独立开发、独立升级，互不影响。</li>
+<li><strong>Facet 复用</strong>：已部署的 Facet 可被多个 Diamond 共用，节省部署成本。</li>
+<li><strong>可选不可变性</strong>：Diamond 可以在后期冻结 <code>diamondCut</code> 权限，变为不可升级。</li>
+</ul>
+<h3 id="section-17">不适用场景</h3><ul>
+<li>简单的中小型合约（架构过度工程化，引入不必要的复杂性）。</li>
+<li>团队不熟悉 Diamond Storage 模式（极易犯存储冲突错误）。</li>
+</ul>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/区块链技术原理/比特币基础/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">比特币基础</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/代理模式/代理模式是什么/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">代理模式是什么</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>📜 核心元数据与参阅资料 (Metadata &amp; References)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>1. 核心理念与解决的痛点 (Motivation)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>2. 架构与 Delegatecall 上下文 (Architecture)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">A. 架构图 (ASCII Art)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">B. Delegatecall 执行上下文表</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">C. 升级逻辑归属</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-7"> <button class="article-outline__group-link" type="button" data-group-target="section-7"> <span>3. 核心接口与源码骨架 (Core Interfaces &amp; Code)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-8"> <a href="#section-8">A. IDiamondCut — 切割接口</a> </li><li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">B. IDiamondLoupe — 内省接口</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">C. 关键函数源码骨架</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-11"> <button class="article-outline__group-link" type="button" data-group-target="section-11"> <span>4. 存储管理与碰撞防御 (Storage Safety)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-12"> <button class="article-outline__group-link" type="button" data-group-target="section-12"> <span>5. 安全攻击面与审计要点 (Security &amp; Attack Surface)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-13"> <a href="#section-13">A. 该模式的固有攻击面</a> </li><li class="article-outline__item depth-3" data-toc-id="section-14"> <a href="#section-14">B. 安全最佳实践清单</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-15"> <button class="article-outline__group-link" type="button" data-group-target="section-15"> <span>6. 横向对比与适用场景 (Comparison &amp; When to Use)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-16"> <a href="#section-16">最佳适用场景</a> </li><li class="article-outline__item depth-3" data-toc-id="section-17"> <a href="#section-17">不适用场景</a> </li> </ol> </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+
+        if (!shell || !sidebar || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

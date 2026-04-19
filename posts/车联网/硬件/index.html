@@ -1,0 +1,400 @@
+<!DOCTYPE html><html lang="zh-Hans"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>硬件 | 沉于思，录以隙</title><meta name="description" content="# 嵌入式系统芯片类型 ### 1. MCU（Micro Control Unit，微控制器）低配微型计算机 + **定义**： 将CPU、RAM、ROM（或Flash）、定时计数器、I/O接口（如UART、SPI、ADC）等计算机核心组件集成在单一芯片上，形成完整的微型计算机系"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("theme");
+          const theme = saved === "dark" || saved === "light"
+            ? saved
+            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script><link rel="stylesheet" href="/_astro/_folder_.6ncck4XA.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">车联网</p> <h1 class="post-cover-hero__title">硬件</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/车联网/" class="directory-link">车联网</a>   </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>车联网</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：车联网/硬件.md</p> </header> <div class="article-main"> <div class="article-content"><h1>嵌入式系统芯片类型</h1><h3 id="section-1">1. MCU（Micro Control Unit，微控制器）低配微型计算机</h3><ul>
+<li><strong>定义</strong>：<br>将CPU、RAM、ROM（或Flash）、定时计数器、I/O接口（如UART、SPI、ADC）等计算机核心组件集成在单一芯片上，形成完整的微型计算机系统 。  <strong>资源有限，适合执行逻辑简单的特定任务。</strong></li>
+<li><strong>特点</strong>：  <ul>
+<li><strong>高度集成</strong>：无需外接RAM/ROM即可运行代码，可直接通过电阻、电容等简单外围器件构建最小系统 。  </li>
+<li><strong>低功耗与低成本</strong>：采用精简指令集（RISC），主频较低（通常≤300MHz），适合嵌入式控制场景 。  </li>
+<li><strong>实时控制能力</strong>：专为控制任务设计，擅长处理多源数据（如传感器输入） 。</li>
+</ul>
+</li>
+<li><strong>典型应用</strong>：<br>家电控制（如洗衣机，空调）、工业传感器、汽车仪表等低复杂度场景 。  </li>
+<li><strong>代表芯片</strong>：<br>STM32F103（ARM Cortex-M3内核，72MHz主频）、8051、AVR系列 。</li>
+</ul>
+<p>与高性能cpu对比</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/1bebe6a3aae943a89af6f5d3e7bc4acf_MD5.png" alt=""></p>
+<ul>
+<li><strong>CPU（中央处理器）</strong>：<ul>
+<li>性能强悍，适用于高性能计算场景（如电脑、服务器等）。</li>
+<li><strong>运行依赖众多外围器件</strong>（如内存、显卡、主板芯片组等）。</li>
+<li>主流厂商为英特尔、AMD等。</li>
+<li>特点：价格较高，工作频率与功率大，存储容量大（通常以GB为单位），多为64位架构。</li>
+<li>常见通讯接口：USB等。</li>
+</ul>
+</li>
+<li><strong>单片机（MCU）</strong>：<ul>
+<li>为低性能需求场景设计（如家电、嵌入式设备等），是“迷你版计算机”。</li>
+<li>内部集成多种组件（如CPU核心、内存、I/O接口等），无需大量外围器件即可工作。</li>
+<li>生产厂商众多，选择范围广。</li>
+<li>特点：价格低廉，工作频率与功率低，存储容量小（通常以KB为单位，与CPU内存相差可达百万倍），以8位和32位架构为主。</li>
+<li>常见通讯接口：I²C等。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="section-2"><strong>2. MPU（Micro Processor Unit，微处理器）</strong></h3><ul>
+<li><strong>定义</strong>：<br>功能强大的CPU，通常不集成RAM/ROM等外围器件，需外接内存才能构成完整系统 。  </li>
+<li><strong>特点</strong>：  <ul>
+<li><strong>高性能</strong>：支持复杂计算（如64位运算），主频可达GHz级，可运行多任务操作系统（如Linux）。  </li>
+<li><strong>通用性强</strong>：未针对特定场景优化，需搭配复杂外设（如以太网、Wi-Fi模块）。  </li>
+<li><strong>接口丰富</strong>：提供高速通信接口（USB、PCIe等），扩展性强 。</li>
+</ul>
+</li>
+<li><strong>与MCU区别</strong>：<br>MCU集成外围器件，MPU需外部扩展；MCU适合单一控制回路，MPU支持多进程/线程 。  </li>
+<li><strong>典型应用</strong>：<br>个人电脑、高端工作站、服务器 。  </li>
+<li><strong>代表芯片</strong>：<br>Intel x86系列、ARM Cortex-A系列（如全志A20）。</li>
+</ul>
+<hr>
+<h3 id="section-3"><strong>3. SoC（System on Chip，片上系统）</strong></h3><ul>
+<li><strong>定义</strong>：<br>在单一芯片上集成MCU的完整性与MPU的高性能，同时包含GPU、DSP、无线模块等专用组件，形成&quot;系统级&quot;解决方案 。  可以理解为把主板上的部分功能嵌入到cup芯片上。</li>
+<li><strong>特点</strong>：  <ul>
+<li><strong>超强集成度</strong>：融合CPU+GPU+DSP+RAM/ROM+通信模块（如Wi-Fi/蓝牙），大幅减少外围电路 。  </li>
+<li><strong>支持操作系统</strong>：可运行Linux、Android等复杂系统 。  </li>
+<li><strong>能效比高</strong>：通过硬件加速模块优化特定任务（如AI计算），降低功耗 。</li>
+</ul>
+</li>
+<li><strong>与MCU/MPU关系</strong>：<br>SoC = MCU（基础控制） + MPU（高性能处理） + 专用加速单元 。  </li>
+<li><strong>典型应用</strong>：<br>智能手机（如苹果A系列芯片）、平板电脑、物联网网关 。  </li>
+<li><strong>代表芯片</strong>：<br>苹果A系列、高通骁龙、华为麒麟 。</li>
+</ul>
+<hr>
+<h3 id="section-4"><strong>4. 三者的核心区别总结</strong></h3><table>
+<thead>
+<tr>
+<th><strong>特性</strong></th>
+<th><strong>MCU</strong></th>
+<th><strong>MPU</strong></th>
+<th><strong>SoC</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>集成度</strong></td>
+<td>芯片级（CPU+RAM+ROM+I/O）</td>
+<td>仅CPU核心</td>
+<td>系统级（CPU+GPU+DSP+外设）</td>
+</tr>
+<tr>
+<td><strong>是否需要外接存储器</strong></td>
+<td>否</td>
+<td>是</td>
+<td>部分集成，可扩展</td>
+</tr>
+<tr>
+<td><strong>主频</strong></td>
+<td>低（MHz级）</td>
+<td>高（GHz级）</td>
+<td>高（GHz级）</td>
+</tr>
+<tr>
+<td><strong>操作系统支持</strong></td>
+<td>无或RTOS</td>
+<td>Linux/Windows等</td>
+<td>完整操作系统</td>
+</tr>
+<tr>
+<td><strong>典型场景</strong></td>
+<td>简单控制（家电、传感器）</td>
+<td>计算机/工作站</td>
+<td>智能终端（手机、平板）</td>
+</tr>
+<tr>
+<td><strong>成本</strong></td>
+<td>低（<img src="/__published_media/external/%E5%9B%BE%E5%BA%93/de53b432e5793924b9f59e3eeae9703e_MD5.svg" alt="">10）</td>
+<td>高</td>
+<td>中到高</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>注</strong>：随着技术发展，MCU与MPU界限模糊（如部分MCU支持Linux），而SoC已成为智能设备的主流方案 。</p>
+</blockquote>
+<hr>
+<h1>硬件串口及调试法</h1><h2 id="section-5">jtag</h2><h3 id="section-6">基础知识</h3><h4>是什么</h4><p>jtag既是一套<strong>边界扫描（Boundary-Scan）测试规范</strong>（IEEE-1149.1），又是今天几乎所有 SoC、MCU、FPGA 用来<strong>调试、烧录、测试</strong>的“万能后门”。一句话：<strong>JTAG = 芯片自带的“USB调试口 + 烧录器 + 逻辑分析仪”三合一，只是走专用 4-5 根线。“只要 4 根线、1 个状态机、32 位 IDCODE，就能把整颗 SoC 当 RAM 随意读/写/改寄存器、单步跑、烧 Flash、测引脚。”</strong></p>
+<h4>1  物理接口</h4><p>• 最简 4 线：TCK（时钟）、TMS（状态机）、TDI（数据入）、TDO（数据出）<br>• 常见 5 线：再加 TRST（低电平复位，可选）<br>• 排列：20/14/10/6/2×5 1.27 mm JTAG 头，或干脆就是 PCB 上的 5 个测试点。<br>• 电平：1.2 V-3.3 V，得先匹配目标板。</p>
+<h4>2  内部结构</h4><p>• TAP（Test Access Port）控制器<br>‑ 16 个状态的有限状态机，靠 TMS 在 TCK 上升沿改变状态。<br>• 指令寄存器 IR + 数据寄存器 DR<br>‑ IR 决定接下来 DR 的功能：IDCODE、BYPASS、EXTEST、DEBUG 等。<br>• 边界扫描单元<br>‑ 每个 IO 引脚旁边都有一个 1 bit 的移位寄存器，能“串起来”控制/观测芯片管脚。</p>
+<h4>3  三条最常用的“指令”</h4><table>
+<thead>
+<tr>
+<th>指令</th>
+<th>作用</th>
+<th>典型场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>IDCODE</td>
+<td>读出芯片 32-bit ID</td>
+<td>确认芯片型号、验证 JTAG 通路</td>
+</tr>
+<tr>
+<td>BYPASS</td>
+<td>把芯片 TDI→TDO 直连 1 bit</td>
+<td>链上多芯片时缩短移位长度</td>
+</tr>
+<tr>
+<td>DEBUG</td>
+<td>进入 CPU 的调试模块</td>
+<td>设置断点、单步、读写内存/寄存器</td>
+</tr>
+</tbody></table>
+<h4>4  调试流程（以 ARM Cortex-M 为例）</h4><ol>
+<li>连接 J-Link/OpenOCD → 发送 JTAG reset (5 个 TCK + TMS=1)。  </li>
+<li>扫描链：Shift-IR 写 IDCODE，Shift-DR 读回 0x4BA00477。  </li>
+<li>进入 DEBUG 指令 → 通过 DAP（Debug Access Port）<br>‑ 读写 AHB 总线 → 下载程序、设断点、读 RAM。  </li>
+<li>烧录 Flash：把 flashloader 下载到 SRAM，再通过 flashloader 写片内 Flash。</li>
+</ol>
+<h3 id="section-7">jtagulator探测接口</h3><h4>1. 硬件连接</h4><ul>
+<li><strong>接地连接</strong>：<br>万用表蜂鸣档找出目标板 GND，将JTAGulator的GND引脚与目标设备的接地（GND）连接，确保共地 。</li>
+<li><strong>通道连接</strong>：<br>将目标设备的可疑测试点（如PCB上的焊盘、过孔）连接到JTAGulator的CH0至CH23通道（最多24通道）。</li>
+<li><strong>电压设置</strong>：<br>用万用表测量目标设备电压，通过<code>V</code>命令设置JTAGulator的VADJ引脚电压（1.2V–3.3V），避免损坏设备</li>
+</ul>
+<h4>2. 串口配置</h4><ul>
+<li><strong>连接电脑</strong>：<br>通过USB转串口模块连接JTAGulator与电脑，使用串口终端（xshell）。</li>
+<li><strong>参数设置</strong>：<br>波特率 <strong>115200</strong>，数据位 <strong>8</strong>，停止位 <strong>1</strong>，无校验位 。</li>
+</ul>
+<h4>3. 扫描JTAG引脚</h4><ul>
+<li><strong>进入JTAG模式</strong>：<br>串口输入<code>J</code>进入JTAG操作菜单 。</li>
+<li><strong>IDCODE扫描（推荐）</strong>：<br>输入<code>I</code>启动快速扫描。JTAGulator会遍历所有引脚组合，检测是否返回有效IDCODE（非全0/全1的32位码）。若成功，输出类似：<br><code>Found! TDO: CH1, TCK: CH4, TMS: CH3</code>（引脚编号可能不同）。<ul>
+<li><strong>原理</strong>：JTAG标准要求支持IDCODE寄存器，扫描通过TDO返回设备ID 。</li>
+</ul>
+</li>
+<li><strong>BYPASS扫描（备用）</strong>：<br>若IDCODE扫描失败（目标禁用IDCODE），输入<code>B</code>启动BYPASS模式扫描。该模式检测TDI输入与TDO输出的延迟匹配（输入数据经1个时钟周期后输出）。<ul>
+<li><strong>补充TDI</strong>：扫描后若TDI未识别，输入<code>T</code>并指定已知引脚（如<code>CH1,CH4,CH3,x</code>），JTAGulator自动检测TDI 。</li>
+</ul>
+</li>
+</ul>
+<h1></h1><p>电表使用</p>
+<h2 id="section-8">找GND</h2><ol>
+<li>断电 → 蜂鸣档 → 黑笔接金属外壳/电瓶负极。  </li>
+<li>红笔挨个碰待测点，“滴”一声 &lt; 0.5 Ω → GND。</li>
+</ol>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/二进制/iot/RFID/RFID/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">RFID</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/车联网/车联网安全概述/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">车联网安全概述</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-5"> <button class="article-outline__group-link" type="button" data-group-target="section-5"> <span>jtag</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">基础知识</a> </li><li class="article-outline__item depth-3" data-toc-id="section-7"> <a href="#section-7">jtagulator探测接口</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-8"> <button class="article-outline__group-link" type="button" data-group-target="section-8"> <span>找GND</span>  </button>  </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        const bindToggle = () => {
+          const btn = document.getElementById("theme-toggle");
+          if (!btn) return;
+          const next = btn.cloneNode(true);
+          btn.replaceWith(next);
+          next.addEventListener("click", () => {
+            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+            const value = current === "dark" ? "light" : "dark";
+            root.setAttribute("data-theme", value);
+            try {
+              localStorage.setItem("theme", value);
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+        bindToggle();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+
+        if (!shell || !sidebar || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>
