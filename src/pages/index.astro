@@ -534,13 +534,29 @@ const archivePostsJson = JSON.stringify(
 
   @media (max-width: 720px) {
     .pagination {
-      grid-template-columns: 1fr;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .pagination-center {
+      width: 100%;
+      margin: 0;
+      padding: 8px 16px;
+      order: -1; /* push capsule to the top in the wrap */
     }
 
     .page-arrow {
-      width: 52px;
-      height: 52px;
-      justify-self: center;
+      width: 44px;
+      height: 44px;
+    }
+    
+    .page-jump {
+      font-size: 0.8rem;
+      gap: 4px;
+    }
+    
+    .page-jump-input {
+      width: 40px;
     }
   }
 </style>

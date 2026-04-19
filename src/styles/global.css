@@ -1296,13 +1296,22 @@ body.is-post-page .topbar {
   }
 
   .topbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
   }
 
   .topbar-inner {
     flex-direction: row;
+    overflow-x: auto;
+    white-space: nowrap;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  
+  .topbar-inner::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
   }
 
   .article-layout {
@@ -1358,7 +1367,27 @@ body.is-post-page .topbar {
   }
 
   .hero-banner__title {
-    font-size: 2rem;
+    font-size: 2.2rem;
+  }
+
+  .hero-banner__sub {
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    padding: 0 16px;
+  }
+  
+  .article-content pre {
+    padding: 2.5rem 0.8em 0.8em;
+    border-radius: var(--radius-md);
+  }
+  
+  .article-content pre::after {
+    display: none; /* Hide 'bash - terminal' text to save space */
+  }
+
+  .article-content blockquote {
+    margin: 1.5em 0;
+    padding: 0.5em 0 0.5em 1em;
   }
 }
 
