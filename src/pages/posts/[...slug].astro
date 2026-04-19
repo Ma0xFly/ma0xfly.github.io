@@ -3,8 +3,11 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import site from "../../config/site.json";
 import posts, { type GeneratedPost } from "../../utils/posts";
 import { postPath } from "../../utils/routing";
-import { marked } from "marked";
+import { Marked, Renderer } from "marked";
 import type { Tokens } from "marked";
+import { markedHighlight } from "marked-highlight";
+import markedKatex from "marked-katex-extension";
+import hljs from "highlight.js";
 
 interface OutlineItem {
   depth: 2 | 3;
@@ -16,6 +19,60 @@ interface OutlineGroup {
   text: string;
   slug: string;
   children: OutlineItem[];
+}
+
+const markdownEngine = new Marked();
+
+const languageAliases: Record<string, string> = {
+  js: "javascript",
+  ts: "typescript",
+  shell: "bash",
+  sh: "bash",
+  yml: "yaml",
+  solidity: "typescript",
+};
+
+const autoDetectSubset = ["typescript", "javascript", "json", "bash", "python", "cpp", "rust", "go"];
+
+markdownEngine.use(
+  markedHighlight({
+    langPrefix: "hljs language-",
+    highlight(code, lang) {
+      const declaredRaw = typeof lang === "string" ? lang.trim().toLowerCase() : "";
+      const declared = languageAliases[declaredRaw] ?? declaredRaw;
+
+      // highlightAuto is very expensive on large snippets; keep deterministic highlighting only.
+      if (declared && hljs.getLanguage(declared)) {
+        return hljs.highlight(code, { language: declared }).value;
+      }
+
+      if (code.length > 20000) {
+        return escapeHtml(code);
+      }
+
+      try {
+        return hljs.highlightAuto(code, autoDetectSubset).value;
+      } catch {
+        return escapeHtml(code);
+      }
+
+      return escapeHtml(code);
+    },
+  }),
+  markedKatex({
+    throwOnError: false,
+    output: "html",
+    strict: false,
+  }),
+);
+
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 export async function getStaticPaths() {
@@ -98,11 +155,11 @@ function groupOutline(items: OutlineItem[]) {
 }
 
 function renderPost(markdown: string, outlineItems: OutlineItem[]) {
-  const renderer = new marked.Renderer();
+  const renderer = new Renderer();
   let outlineIndex = 0;
 
-  renderer.heading = (token: Tokens.Heading) => {
-    const innerHtml = marked.Parser.parseInline(token.tokens);
+  renderer.heading = function (token: Tokens.Heading) {
+    const innerHtml = this.parser.parseInline(token.tokens);
 
     if (token.depth !== 2 && token.depth !== 3) {
       return `<h${token.depth}>${innerHtml}</h${token.depth}>`;
@@ -118,7 +175,7 @@ function renderPost(markdown: string, outlineItems: OutlineItem[]) {
   };
 
   return {
-    html: marked.parse(markdown, { renderer }) as string,
+    html: markdownEngine.parse(markdown, { renderer }) as string,
   };
 }
 
