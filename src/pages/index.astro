@@ -396,10 +396,9 @@ const archivePostsJson = JSON.stringify(
   }
 
   .pagination {
-    display: grid;
-    grid-template-columns: 60px 1fr 60px;
+    display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 18px;
     margin-top: 64px;
   }
 
@@ -407,44 +406,48 @@ const archivePostsJson = JSON.stringify(
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 14px;
-    flex-wrap: wrap;
+    gap: 16px;
+    padding: 8px 24px;
+    background: color-mix(in srgb, var(--panel) 15%, transparent);
+    border: 1px solid var(--line-heavy);
+    border-radius: 100px;
+    backdrop-filter: blur(12px);
+    box-shadow: inset 0 0 0 1px var(--accent-light), 0 8px 32px rgba(0,0,0,0.15);
     font-family: var(--font-mono);
+    margin: 0 16px;
   }
 
   .page-arrow {
-    width: 60px;
-    height: 60px;
-    border-radius: var(--radius-md);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
     border: 1px solid var(--accent);
-    background: color-mix(in srgb, var(--panel) 10%, transparent);
+    background: transparent;
     color: var(--accent);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    backdrop-filter: blur(8px);
   }
 
   .page-arrow:hover:not([disabled]) {
     background: var(--accent);
-    color: var(--bg);
+    color: #000;
     box-shadow: 0 0 16px var(--accent-light);
   }
 
   .page-arrow[disabled] {
     border-color: var(--line);
-    color: var(--line-heavy);
+    color: var(--muted);
     cursor: not-allowed;
   }
 
   .page-info {
-    font-size: 1.02rem;
+    font-size: 0.95rem;
     color: var(--ink);
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 500;
   }
 
   .page-jump {
@@ -453,38 +456,51 @@ const archivePostsJson = JSON.stringify(
     gap: 8px;
     color: var(--muted);
     font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
   }
 
   .page-jump-input {
-    width: 64px;
-    height: 36px;
-    padding: 0 10px;
-    border: 1px solid var(--line-heavy);
+    width: 48px;
+    height: 32px;
+    padding: 0 4px;
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
-    background: transparent;
-    color: var(--ink);
+    background: rgba(0, 0, 0, 0.4);
+    color: var(--accent);
     font-family: var(--font-mono);
     text-align: center;
+    outline: none;
+    transition: all 0.2s auto;
+    -moz-appearance: textfield;
+  }
+  
+  .page-jump-input::-webkit-outer-spin-button,
+  .page-jump-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .page-jump-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 8px var(--accent-light);
   }
 
   .page-jump-button {
-    height: 36px;
+    height: 32px;
     padding: 0 16px;
     border: 1px solid var(--accent);
     border-radius: var(--radius-md);
-    background: color-mix(in srgb, var(--panel) 10%, transparent);
+    background: transparent;
     color: var(--accent);
     cursor: pointer;
     font-family: var(--font-mono);
     text-transform: uppercase;
     transition: all 0.2s;
+    font-size: 0.85rem;
   }
 
   .page-jump-button:hover {
     background: var(--accent);
-    color: var(--bg);
+    color: #000;
   }
 
   @media (max-width: 900px) {
