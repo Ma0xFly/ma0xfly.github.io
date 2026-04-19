@@ -340,23 +340,25 @@ body.is-post-page .topbar {
 }
 
 .hero-banner__title {
-  font-family: "Playfair Display", "Noto Serif SC", serif;
-  font-size: clamp(4rem, 8vw, 6.5rem);
-  font-weight: 500;
-  margin: 0 0 12px;
-  letter-spacing: 0.03em;
-  text-shadow: 0 2px 16px rgba(0,0,0,0.4);
-  color: rgba(255, 255, 255, 0.75);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  font-size: clamp(3.5rem, 7vw, 6rem);
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin: 0 0 16px;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
 }
 
 .hero-banner__sub {
-  font-family: "Zhi Mang Xing", "Noto Serif SC", cursive;
-  font-size: clamp(1.4rem, 3.5vw, 1.8rem);
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0 0 42px;
-  line-height: 1.7;
-  letter-spacing: 0.15em;
-  text-shadow: 0 1px 6px rgba(0,0,0,0.35);
+  font-family: var(--font-mono);
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  color: rgba(200, 215, 230, 0.85);
+  margin: 0 0 48px;
+  line-height: 1.8;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
   max-width: 600px;
 }
 
@@ -601,37 +603,50 @@ body.is-post-page .topbar {
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  backdrop-filter: blur(16px);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+  position: relative;
+}
+
+.post-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 0 0 1px transparent;
+  pointer-events: none;
+  transition: box-shadow 0.25s ease;
 }
 
 .post-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.06);
+  border-color: var(--accent);
+}
+.post-card:hover::before {
+  box-shadow: inset 0 0 0 1px var(--accent-light);
 }
 
 :root[data-theme='dark'] .post-card:hover {
-  box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.4);
 }
 
 .post-card__top {
-  background: linear-gradient(135deg, rgba(2, 132, 199, 0.05), rgba(2, 132, 199, 0.15));
-  padding: 30px 24px;
-  min-height: 120px;
+  background: linear-gradient(135deg, var(--accent-light), transparent 60%);
+  padding: 24px 24px 16px;
+  min-height: 100px;
   display: flex;
   align-items: flex-start;
   border-bottom: 1px solid var(--line);
-}
-
-:root[data-theme='dark'] .post-card__top {
-  background: linear-gradient(135deg, rgba(45, 212, 191, 0.05), rgba(45, 212, 191, 0.15));
 }
 
 .post-card__title {
   margin: 0;
   font-size: 1.15rem;
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.95);
-  font-weight: 500;
+  color: var(--ink);
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .post-card__bottom {
@@ -639,7 +654,7 @@ body.is-post-page .topbar {
   display: flex;
   flex-direction: column;
   flex: 1;
-  background: var(--panel);
+  background: transparent;
 }
 
 .post-card__summary {
@@ -658,7 +673,9 @@ body.is-post-page .topbar {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
   color: var(--muted);
 }
 
@@ -671,16 +688,18 @@ body.is-post-page .topbar {
 .post-card__tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   margin-top: auto;
 }
 
 .post-card__tag {
-  font-size: 0.75rem;
-  padding: 4px 12px;
-  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 4px 10px;
+  border-radius: 4px;
   background: var(--line);
   color: var(--muted);
+  border: 1px solid var(--line);
 }
 
 /* 鈹€鈹€鈹€ Legacy post-list (keep for non-home pages) 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
@@ -755,10 +774,13 @@ body.is-post-page .topbar {
 .post-cover-hero__title {
   max-width: 17ch;
   margin: 0 auto 14px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   font-size: clamp(2rem, 4.2vw, 2.9rem);
+  font-weight: 500;
+  letter-spacing: 0.05em;
   line-height: 1.18;
   color: rgba(255, 255, 255, 0.96);
-  text-shadow: 0 12px 36px rgba(10, 12, 20, 0.34);
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
 }
 
 .article-shell {

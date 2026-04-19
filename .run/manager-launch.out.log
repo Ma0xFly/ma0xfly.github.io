@@ -1,0 +1,5 @@
+
+> personal-blog@0.1.0 manager
+> node ./scripts/publish-manager.mjs
+
+Publish manager running at http://127.0.0.1:3210/

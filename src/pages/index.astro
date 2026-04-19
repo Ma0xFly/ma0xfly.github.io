@@ -175,27 +175,40 @@ const archivePostsJson = JSON.stringify(
     const initParticles = () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-      particles = Array.from({ length: 80 }, () => ({
+      particles = Array.from({ length: 150 }, () => ({
         x: Math.random() * width,
         y: Math.random() * height,
-        r: Math.random() * 2 + 0.5,
-        vy: Math.random() * 0.8 + 0.3,
-        opacity: Math.random() * 0.8 + 0.2,
+        r: Math.random() * 1.5 + 0.2, // Smaller, subtle dust
+        vx: (Math.random() - 0.5) * 0.2, // Slow horizontal drift
+        vy: (Math.random() - 0.5) * 0.2, // Slow vertical drift
+        opacity: Math.random() * 0.5 + 0.1,
+        pulse: Math.random() * 0.02, // Twinkling effect
+        pulseDir: Math.random() > 0.5 ? 1 : -1,
       }));
     };
 
     const drawParticles = () => {
       ctx.clearRect(0, 0, width, height);
-      particles.forEach((particle) => {
-        ctx.fillStyle = `rgba(255,255,255,${particle.opacity})`;
+      particles.forEach((p) => {
+        // Twinkling logic
+        p.opacity += p.pulse * p.pulseDir;
+        if (p.opacity >= 0.7) { p.opacity = 0.7; p.pulseDir = -1; }
+        if (p.opacity <= 0.05) { p.opacity = 0.05; p.pulseDir = 1; }
+
+        ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
         ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.r, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fill();
-        particle.y += particle.vy;
-        if (particle.y > height) {
-          particle.y = -10;
-          particle.x = Math.random() * width;
-        }
+
+        // Slow drifting
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Wrap around edges to maintain constant dust
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
       });
       requestAnimationFrame(drawParticles);
     };
@@ -379,7 +392,7 @@ const archivePostsJson = JSON.stringify(
   }
 
   .search-head {
-    margin-bottom: 16px;
+    margin-bottom: 24px;
   }
 
   .search-shell {
@@ -387,19 +400,21 @@ const archivePostsJson = JSON.stringify(
     align-items: center;
     justify-content: space-between;
     gap: 18px;
-    padding: 18px 20px;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-lg);
-    background: color-mix(in srgb, var(--panel) 94%, var(--bg) 6%);
+    padding: 18px 24px;
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--panel) 15%, transparent);
+    backdrop-filter: blur(12px);
+    box-shadow: inset 0 0 0 1px var(--accent-light), 0 8px 32px rgba(0,0,0,0.15);
   }
 
   .search-box {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     flex: 1;
     min-width: 0;
-    color: var(--muted);
+    color: var(--accent);
   }
 
   .search-input {
@@ -407,24 +422,33 @@ const archivePostsJson = JSON.stringify(
     border: none;
     background: transparent;
     color: var(--ink);
-    font: inherit;
-    font-size: 1.02rem;
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
     outline: none;
   }
 
   .search-input::placeholder {
-    color: color-mix(in srgb, var(--muted) 88%, transparent 12%);
+    color: color-mix(in srgb, var(--muted) 70%, transparent 30%);
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
   }
 
   .search-meta {
     margin: 0;
     white-space: nowrap;
-    color: var(--muted);
+    color: var(--accent);
+    font-family: var(--font-mono);
     font-size: 0.92rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   .search-empty {
     grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 0;
+    color: var(--muted);
+    font-family: var(--font-mono);
   }
 
   .pagination {
@@ -432,7 +456,7 @@ const archivePostsJson = JSON.stringify(
     grid-template-columns: 60px 1fr 60px;
     align-items: center;
     gap: 18px;
-    margin-top: 50px;
+    margin-top: 64px;
   }
 
   .pagination-center {
@@ -441,37 +465,42 @@ const archivePostsJson = JSON.stringify(
     justify-content: center;
     gap: 14px;
     flex-wrap: wrap;
+    font-family: var(--font-mono);
   }
 
   .page-arrow {
     width: 60px;
     height: 60px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(110, 105, 120, 0.8);
-    color: #fff;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--accent);
+    background: color-mix(in srgb, var(--panel) 10%, transparent);
+    color: var(--accent);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background 0.2s, transform 0.2s;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(8px);
   }
 
   .page-arrow:hover:not([disabled]) {
-    background: rgba(80, 75, 90, 0.9);
-    transform: scale(1.05);
+    background: var(--accent);
+    color: var(--bg);
+    box-shadow: 0 0 16px var(--accent-light);
   }
 
   .page-arrow[disabled] {
-    background: rgba(200, 200, 200, 0.5);
-    color: rgba(255, 255, 255, 0.8);
+    border-color: var(--line);
+    color: var(--line-heavy);
     cursor: not-allowed;
   }
 
   .page-info {
     font-size: 1.02rem;
-    color: var(--muted);
-    font-weight: 500;
+    color: var(--ink);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
   }
 
   .page-jump {
@@ -479,36 +508,39 @@ const archivePostsJson = JSON.stringify(
     align-items: center;
     gap: 8px;
     color: var(--muted);
-    font-size: 0.96rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
   .page-jump-input {
-    width: 76px;
-    height: 40px;
+    width: 64px;
+    height: 36px;
     padding: 0 10px;
     border: 1px solid var(--line-heavy);
-    border-radius: 999px;
-    background: var(--panel);
+    border-radius: var(--radius-md);
+    background: transparent;
     color: var(--ink);
-    font: inherit;
+    font-family: var(--font-mono);
     text-align: center;
   }
 
   .page-jump-button {
-    height: 40px;
+    height: 36px;
     padding: 0 16px;
-    border: 1px solid var(--line-heavy);
-    border-radius: 999px;
-    background: var(--panel);
-    color: var(--ink);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--panel) 10%, transparent);
+    color: var(--accent);
     cursor: pointer;
-    font: inherit;
-    transition: border-color 0.2s, transform 0.2s;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    transition: all 0.2s;
   }
 
   .page-jump-button:hover {
-    border-color: var(--accent);
-    transform: translateY(-1px);
+    background: var(--accent);
+    color: var(--bg);
   }
 
   @media (max-width: 900px) {
