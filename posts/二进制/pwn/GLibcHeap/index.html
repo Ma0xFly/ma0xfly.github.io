@@ -1,19 +1,19 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>GLibcHeap | 沉于思，录以隙</title><meta name="description" content="本文将对 Glibc 堆上的内存管理作简要介绍，部分内容翻译自参考资料中的文章。略过了许多细节，主要是为了对新手友好。 默认读者熟悉操作系统、C 语言及其运行机制，并且对于 C 中的函数调用栈有所了解。 ## 什么是堆？ 堆是每个程序被分配到的一块内存区域，和栈的区别主要在于堆内"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">GLibcHeap</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">pwn</span>  </div> <div class="article-meta-row"> <span>2026/4/17</span> <span>二进制</span> <span>二进制 · pwn</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/二进制/" class="tag">#二进制</a><a href="/tags/pwn/" class="tag">#pwn</a> </div> <p class="source-note">来源路径：二进制/pwn/GLibcHeap.md</p> </header> <div class="article-main"> <div class="article-content"><p>本文将对 Glibc 堆上的内存管理作简要介绍，部分内容翻译自参考资料中的文章。略过了许多细节，主要是为了对新手友好。</p>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>GLibcHeap | 沉于思，录以隙</title><meta name="description" content="本文将对 Glibc 堆上的内存管理作简要介绍，部分内容翻译自参考资料中的文章。略过了许多细节，主要是为了对新手友好。 默认读者熟悉操作系统、C 语言及其运行机制，并且对于 C 中的函数调用栈有所了解。 ## 什么是堆？ 堆是每个程序被分配到的一块内存区域，和栈的区别主要在于堆内"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">GLibcHeap</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">pwn</span>  </div> <div class="article-meta-row"> <span>2026/4/17</span> <span>二进制</span> <span>二进制 · pwn</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/二进制/" class="tag">#二进制</a><a href="/tags/pwn/" class="tag">#pwn</a> </div> <p class="source-note">来源路径：二进制/pwn/GLibcHeap.md</p> </header> <div class="article-main"> <div class="article-content"><p>本文将对 Glibc 堆上的内存管理作简要介绍，部分内容翻译自参考资料中的文章。略过了许多细节，主要是为了对新手友好。</p>
 <p>默认读者熟悉操作系统、C 语言及其运行机制，并且对于 C 中的函数调用栈有所了解。</p>
 <h2 id="section-1">什么是堆？</h2><p>堆是每个程序被分配到的一块内存区域，和栈的区别主要在于堆内存是动态分配的。也就是说，程序可以从<code>heap</code>段请求一块内存，或者释放一块内存。</p>
 <p>另外，堆内存是全局的，即在程序的任意位置都可以访问到堆，并不一定要在调用<code>malloc</code>的那个函数里访问。这是因为 C 语言使用指针指向动态分配的内存。但相比访问栈上的静态局部变量，使用指针也带来了一定的开销。</p>
 <h2 id="section-2">使用动态分配的内存</h2><p>GLibc 采用 ptmalloc2 内存分配器管理堆内存，相比前身 dlmalloc，它增加了对多线程的支持。多线程的好处就不多赘述了。</p>
 <p>借助<code>stdlib.h</code>我们可以使用<code>malloc</code>和<code>free</code>函数来操作堆内存：</p>
-<pre><code class="language-c">char *buffer = (char *)malloc(10);
+<pre><code class="language-c"><span class="hljs-type">char</span> *buffer = (<span class="hljs-type">char</span> *)<span class="hljs-built_in">malloc</span>(<span class="hljs-number">10</span>);
 
-strcpy(buffer, &quot;hello&quot;);
-printf(&quot;%s\n&quot;, buffer);
+<span class="hljs-built_in">strcpy</span>(buffer, <span class="hljs-string">&quot;hello&quot;</span>);
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%s\n&quot;</span>, buffer);
 
-free(buffer);
+<span class="hljs-built_in">free</span>(buffer);
 </code></pre>
 <p>第一行分配了 10 字节给<code>buffer</code>，注意这里的强制类型转换是必须的；第 2-3 行使用了<code>buffer</code>这块内存，并在最后一行释放。</p>
 <p>下面是<code>malloc</code>和<code>free</code>函数的注释：</p>
-<pre><code class="language-c">/*
+<pre><code class="language-c"><span class="hljs-comment">/*
   malloc(size_t n)
   Returns a pointer to a newly allocated chunk of at least n bytes, or null
   if no space is available. Additionally, on failure, errno is
@@ -26,9 +26,9 @@ free(buffer);
   of space, which will often fail. The maximum supported value of n
   differs across systems, but is in all cases less than the maximum
   representable value of a size_t.
-*/
+*/</span>
 
-/*
+<span class="hljs-comment">/*
   free(void* p)
   Releases the chunk of memory pointed to by p, that had been previously
   allocated using malloc or a related routine such as realloc.
@@ -38,7 +38,7 @@ free(buffer);
   Unless disabled (using mallopt), freeing very large spaces will
   when possible, automatically trigger operations that give
   back unused memory to the system, thus reducing program footprint.
-*/
+*/</span>
 </code></pre>
 <p>注意，即使申请 0 字节内存，<code>malloc</code>依然会分配一个最小的 chunk；如果传给<code>free</code>的参数是空指针，<code>free</code>不会做任何事，而如果传入的是一个已经<code>free</code>过的指针，那么后果是不可预期的。这里尤其需要注意的是，与<code>Java</code>等语言不同，C 语言中释放掉分配到的内存的责任在于程序员，并且分配到的内存只应使用<em>一次</em>。</p>
 <p>这两个函数在更底层上是使用<code>brk()</code>和<code>mmap()</code>这两个系统调用来管理内存的。</p>
@@ -63,10 +63,10 @@ free(buffer);
 <p>注：当然了，当申请的空间大于 128KB 且<code>arena</code>中没有足够空间时，无论在哪个<code>arena</code>里都只能通过<code>mmap()</code>分配内存。</p>
 </blockquote>
 <p><code>arena</code>也不是和线程一对一的，实际上有数量限制：</p>
-<pre><code class="language-c">For 32 bit systems:
-     Number of arena = 2 * number of cores.
-For 64 bit systems:
-     Number of arena = 8 * number of cores.
+<pre><code class="language-c">For <span class="hljs-number">32</span> bit systems:
+     Number of arena = <span class="hljs-number">2</span> * number of cores.
+For <span class="hljs-number">64</span> bit systems:
+     Number of arena = <span class="hljs-number">8</span> * number of cores.
 </code></pre>
 <p>而当我们<code>free</code>一小块内存时，内存也不会直接归还给内核，而是给 ptmalloc2 让他去维护，后者会将空闲内存丢入 bin 中，或者说<code>freelist</code>中也可以。如果过了一会我们的程序又要申请内存，那么 ptmalloc2 就会从 bin 中找一块空闲的内存进行分配，找不到的话才会去问内核要内存。</p>
 <h2 id="section-7">维护多个堆</h2><p>前面提到，<code>main_arena</code>只有一个堆，并且可以灵活地放缩；<code>non_main_arena</code>则只能通过<code>mmap()</code>获得一个堆。那么如果<code>non_main_arena</code>里分配的堆内存不够了怎么办？很简单，再<code>mmap()</code>一次，创建一个新的堆。</p>
@@ -77,66 +77,66 @@ For 64 bit systems:
 <li><code>malloc_chunk</code>：每个 chunk 的头部</li>
 </ul>
 <p>具体一点，<code>heap_info</code>完整定义如下：</p>
-<pre><code class="language-c">typedef struct _heap_info
-{
-  mstate ar_ptr; /* Arena for this heap. */
-  struct _heap_info *prev; /* Previous heap. */
-  size_t size;   /* Current size in bytes. */
-  size_t mprotect_size; /* Size in bytes that has been mprotected
-                           PROT_READ|PROT_WRITE.  */
-  /* Make sure the following data is properly aligned, particularly
+<pre><code class="language-c"><span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">heap_info</span>
+{</span>
+  mstate ar_ptr; <span class="hljs-comment">/* Arena for this heap. */</span>
+  <span class="hljs-class"><span class="hljs-keyword">struct</span> _<span class="hljs-title">heap_info</span> *<span class="hljs-title">prev</span>;</span> <span class="hljs-comment">/* Previous heap. */</span>
+  <span class="hljs-type">size_t</span> size;   <span class="hljs-comment">/* Current size in bytes. */</span>
+  <span class="hljs-type">size_t</span> mprotect_size; <span class="hljs-comment">/* Size in bytes that has been mprotected
+                           PROT_READ|PROT_WRITE.  */</span>
+  <span class="hljs-comment">/* Make sure the following data is properly aligned, particularly
      that sizeof (heap_info) + 2 * SIZE_SZ is a multiple of
-     MALLOC_ALIGNMENT. */
-  char pad[-6 * SIZE_SZ &amp; MALLOC_ALIGN_MASK];
+     MALLOC_ALIGNMENT. */</span>
+  <span class="hljs-type">char</span> pad[<span class="hljs-number">-6</span> * SIZE_SZ &amp; MALLOC_ALIGN_MASK];
 } heap_info;
 </code></pre>
 <p>而<code>malloc_state</code>的完整定义如下：</p>
 <p>{% raw %}<details><summary>👇</summary>{% endraw %}</p>
-<pre><code class="language-c">struct malloc_state
-{
-  /* Serialize access.  */
-  mutex_t mutex;
+<pre><code class="language-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">malloc_state</span>
+{</span>
+  <span class="hljs-comment">/* Serialize access.  */</span>
+  <span class="hljs-type">mutex_t</span> mutex;
 
-  /* Flags (formerly in max_fast).  */
-  int flags;
+  <span class="hljs-comment">/* Flags (formerly in max_fast).  */</span>
+  <span class="hljs-type">int</span> flags;
 
-  /* Fastbins */
+  <span class="hljs-comment">/* Fastbins */</span>
   mfastbinptr fastbinsY[NFASTBINS];
 
-  /* Base of the topmost chunk -- not otherwise kept in a bin */
+  <span class="hljs-comment">/* Base of the topmost chunk -- not otherwise kept in a bin */</span>
   mchunkptr top;
 
-  /* The remainder from the most recent split of a small request */
+  <span class="hljs-comment">/* The remainder from the most recent split of a small request */</span>
   mchunkptr last_remainder;
 
-  /* Normal bins packed as described above */
-  mchunkptr bins[NBINS * 2 - 2];
+  <span class="hljs-comment">/* Normal bins packed as described above */</span>
+  mchunkptr bins[NBINS * <span class="hljs-number">2</span> - <span class="hljs-number">2</span>];
 
-  /* Bitmap of bins */
-  unsigned int binmap[BINMAPSIZE];
+  <span class="hljs-comment">/* Bitmap of bins */</span>
+  <span class="hljs-type">unsigned</span> <span class="hljs-type">int</span> binmap[BINMAPSIZE];
 
-  /* Linked list */
-  struct malloc_state *next;
+  <span class="hljs-comment">/* Linked list */</span>
+  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">malloc_state</span> *<span class="hljs-title">next</span>;</span>
 
-  /* Linked list for free arenas.  Access to this field is serialized
-     by free_list_lock in arena.c.  */
-  struct malloc_state *next_free;
+  <span class="hljs-comment">/* Linked list for free arenas.  Access to this field is serialized
+     by free_list_lock in arena.c.  */</span>
+  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">malloc_state</span> *<span class="hljs-title">next_free</span>;</span>
 
-  /* Number of threads attached to this arena.  0 if the arena is on
+  <span class="hljs-comment">/* Number of threads attached to this arena.  0 if the arena is on
      the free list.  Access to this field is serialized by
-     free_list_lock in arena.c.  */
+     free_list_lock in arena.c.  */</span>
   INTERNAL_SIZE_T attached_threads;
 
-  /* Memory allocated from the system in this arena.  */
+  <span class="hljs-comment">/* Memory allocated from the system in this arena.  */</span>
   INTERNAL_SIZE_T system_mem;
   INTERNAL_SIZE_T max_system_mem;
 };
 </code></pre>
 <p>{% raw %}</details>{% endraw %}</p>
 <p>其中<code>INTERNAL_SIZE_T</code>默认和<code>size_t</code>相同：</p>
-<pre><code class="language-c">#ifndef INTERNAL_SIZE_T
-#define INTERNAL_SIZE_T size_t
-#endif
+<pre><code class="language-c"><span class="hljs-meta">#<span class="hljs-keyword">ifndef</span> INTERNAL_SIZE_T</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> INTERNAL_SIZE_T size_t</span>
+<span class="hljs-meta">#<span class="hljs-keyword">endif</span></span>
 </code></pre>
 <p>在后面介绍 chunk 和 bin 的时候，我们会发现其中几个字段的作用，<code>malloc_chunk</code>我们也会在后面看到。</p>
 <p>对于<code>arena</code>中只有单个堆的情况：
@@ -145,17 +145,17 @@ For 64 bit systems:
 <img src="/__published_media/external/%E5%9B%BE%E5%BA%93/1688aed252afa2d90dd24c37ae6dd92f_MD5.png" alt=""></p>
 <p>注意到有多个堆的情况下，旧的堆的 Top chunk 会被认为是普通的空闲块。</p>
 <h2 id="section-8">Chunk 的结构</h2><p>通俗地说，一块由分配器分配的内存块叫做一个 chunk，包含了元数据和用户数据。具体一点，chunk 完整定义如下：</p>
-<pre><code class="language-c">struct malloc_chunk {
-  INTERNAL_SIZE_T      mchunk_prev_size;  /* Size of previous chunk (if free).  */
-  INTERNAL_SIZE_T      mchunk_size;       /* Size in bytes, including overhead. */
-  struct malloc_chunk* fd;                /* double links -- used only if free. */
-  struct malloc_chunk* bk;
-  /* Only used for large blocks: pointer to next larger size.  */
-  struct malloc_chunk* fd_nextsize; /* double links -- used only if free. */
-  struct malloc_chunk* bk_nextsize;
+<pre><code class="language-c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">malloc_chunk</span> {</span>
+  INTERNAL_SIZE_T      mchunk_prev_size;  <span class="hljs-comment">/* Size of previous chunk (if free).  */</span>
+  INTERNAL_SIZE_T      mchunk_size;       <span class="hljs-comment">/* Size in bytes, including overhead. */</span>
+  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">malloc_chunk</span>* <span class="hljs-title">fd</span>;</span>                <span class="hljs-comment">/* double links -- used only if free. */</span>
+  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">malloc_chunk</span>* <span class="hljs-title">bk</span>;</span>
+  <span class="hljs-comment">/* Only used for large blocks: pointer to next larger size.  */</span>
+  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">malloc_chunk</span>* <span class="hljs-title">fd_nextsize</span>;</span> <span class="hljs-comment">/* double links -- used only if free. */</span>
+  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">malloc_chunk</span>* <span class="hljs-title">bk_nextsize</span>;</span>
 };
 
-typedef struct malloc_chunk* mchunkptr;
+<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">malloc_chunk</span>* <span class="hljs-title">mchunkptr</span>;</span>
 </code></pre>
 <p>这里出现的6个字段均为元数据。</p>
 <p>一个 chunk 可以是以下几种类型之一：</p>
@@ -178,27 +178,27 @@ typedef struct malloc_chunk* mchunkptr;
 <li>N: <code>NON_MAIN_ARENA</code> 当前 chunk 在<code>non_main_arena</code>里则为 1</li>
 </ul>
 <p>对应源码如下：</p>
-<pre><code class="language-c">/* size field is or&#39;ed with PREV_INUSE when previous adjacent chunk in use */
-#define PREV_INUSE 0x1
+<pre><code class="language-c"><span class="hljs-comment">/* size field is or&#x27;ed with PREV_INUSE when previous adjacent chunk in use */</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> PREV_INUSE 0x1</span>
 
-/* extract inuse bit of previous chunk */
-#define prev_inuse(p)       ((p)-&gt;size &amp; PREV_INUSE)
-
-
-/* size field is or&#39;ed with IS_MMAPPED if the chunk was obtained with mmap() */
-#define IS_MMAPPED 0x2
-
-/* check for mmap()&#39;ed chunk */
-#define chunk_is_mmapped(p) ((p)-&gt;size &amp; IS_MMAPPED)
+<span class="hljs-comment">/* extract inuse bit of previous chunk */</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> prev_inuse(p)       ((p)-&gt;size &amp; PREV_INUSE)</span>
 
 
-/* size field is or&#39;ed with NON_MAIN_ARENA if the chunk was obtained
+<span class="hljs-comment">/* size field is or&#x27;ed with IS_MMAPPED if the chunk was obtained with mmap() */</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> IS_MMAPPED 0x2</span>
+
+<span class="hljs-comment">/* check for mmap()&#x27;ed chunk */</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> chunk_is_mmapped(p) ((p)-&gt;size &amp; IS_MMAPPED)</span>
+
+
+<span class="hljs-comment">/* size field is or&#x27;ed with NON_MAIN_ARENA if the chunk was obtained
    from a non-main arena.  This is only set immediately before handing
-   the chunk to the user, if necessary.  */
-#define NON_MAIN_ARENA 0x4
+   the chunk to the user, if necessary.  */</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> NON_MAIN_ARENA 0x4</span>
 
-/* check for chunk from non-main arena */
-#define chunk_non_main_arena(p) ((p)-&gt;size &amp; NON_MAIN_ARENA)
+<span class="hljs-comment">/* check for chunk from non-main arena */</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> chunk_non_main_arena(p) ((p)-&gt;size &amp; NON_MAIN_ARENA)</span>
 </code></pre>
 <p>你可能会有几个困惑：</p>
 <ol>
@@ -209,76 +209,76 @@ typedef struct malloc_chunk* mchunkptr;
 这是因为<code>malloc</code>会将用户申请的内存大小转化为实际分配的内存，以此来满足（至少）8字节对齐的要求，同时留出额外空间存放 chunk 头部。由于（至少）8字节对齐了，低3位自然就没用了。在获取真正的<code>size</code>时，会忽略低3位：</p>
 </li>
 </ol>
-<pre><code class="language-c">/*
+<pre><code class="language-c"><span class="hljs-comment">/*
    Bits to mask off when extracting size
 
    Note: IS_MMAPPED is intentionally not masked off from size field in
    macros for which mmapped chunks should never be seen. This should
    cause helpful core dumps to occur if it is tried by accident by
    people extending or adapting this malloc.
- */
-#define SIZE_BITS (PREV_INUSE | IS_MMAPPED | NON_MAIN_ARENA)
+ */</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> SIZE_BITS (PREV_INUSE | IS_MMAPPED | NON_MAIN_ARENA)</span>
 
-/* Get size, ignoring use bits */
-#define chunksize(p)         ((p)-&gt;size &amp; ~(SIZE_BITS))
+<span class="hljs-comment">/* Get size, ignoring use bits */</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> chunksize(p)         ((p)-&gt;size &amp; ~(SIZE_BITS))</span>
 </code></pre>
 <ol start="3">
 <li><code>malloc</code>是如何将申请的大小转化为实际分配的大小的呢？
 核心在于<code>request2size</code>宏：</li>
 </ol>
-<pre><code class="language-c">/* pad request bytes into a usable size -- internal version */
+<pre><code class="language-c"><span class="hljs-comment">/* pad request bytes into a usable size -- internal version */</span>
 
-#define request2size(req)                                         \
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> request2size(req)                                         \
   (((req) + SIZE_SZ + MALLOC_ALIGN_MASK &lt; MINSIZE)  ?             \
    MINSIZE :                                                      \
-   ((req) + SIZE_SZ + MALLOC_ALIGN_MASK) &amp; ~MALLOC_ALIGN_MASK)
+   ((req) + SIZE_SZ + MALLOC_ALIGN_MASK) &amp; ~MALLOC_ALIGN_MASK)</span>
 </code></pre>
 <p>其中用到的其它宏定义：</p>
-<pre><code class="language-c">#  define MALLOC_ALIGNMENT       (2 *SIZE_SZ)
+<pre><code class="language-c"><span class="hljs-meta">#  <span class="hljs-keyword">define</span> MALLOC_ALIGNMENT       (2 *SIZE_SZ)</span>
 
-/* The corresponding bit mask value */
-#define MALLOC_ALIGN_MASK      (MALLOC_ALIGNMENT - 1)
+<span class="hljs-comment">/* The corresponding bit mask value */</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> MALLOC_ALIGN_MASK      (MALLOC_ALIGNMENT - 1)</span>
 
-/* The smallest possible chunk */
-#define MIN_CHUNK_SIZE        (offsetof(struct malloc_chunk, fd_nextsize))
+<span class="hljs-comment">/* The smallest possible chunk */</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> MIN_CHUNK_SIZE        (offsetof(struct malloc_chunk, fd_nextsize))</span>
 
-/* The smallest size we can malloc is an aligned minimal chunk */
-#define MINSIZE  \
-  (unsigned long)(((MIN_CHUNK_SIZE+MALLOC_ALIGN_MASK) &amp; ~MALLOC_ALIGN_MASK))
+<span class="hljs-comment">/* The smallest size we can malloc is an aligned minimal chunk */</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> MINSIZE  \
+  (unsigned long)(((MIN_CHUNK_SIZE+MALLOC_ALIGN_MASK) &amp; ~MALLOC_ALIGN_MASK))</span>
 </code></pre>
 <ol start="4">
 <li>这里还有一个<code>mem</code>指针，是做什么用的？
 这是调用<code>malloc</code>时返回给用户的指针。实际上，真正的chunk 是从<code>chunk</code>指针开始的。</li>
 </ol>
-<pre><code class="language-c">/* The corresponding word size */
-#define SIZE_SZ                (sizeof(INTERNAL_SIZE_T))
+<pre><code class="language-c"><span class="hljs-comment">/* The corresponding word size */</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> SIZE_SZ                (sizeof(INTERNAL_SIZE_T))</span>
 
-/* conversion from malloc headers to user pointers, and back */
+<span class="hljs-comment">/* conversion from malloc headers to user pointers, and back */</span>
 
-#define chunk2mem(p)   ((void*)((char*)(p) + 2*SIZE_SZ))
-#define mem2chunk(mem) ((mchunkptr)((char*)(mem) - 2*SIZE_SZ))
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> chunk2mem(p)   ((void*)((char*)(p) + 2*SIZE_SZ))</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> mem2chunk(mem) ((mchunkptr)((char*)(mem) - 2*SIZE_SZ))</span>
 </code></pre>
 <ol start="5">
 <li>用户申请的内存大小就是用户数据可用的内存大小吗？
 不一定，原因还是字节对齐问题。要获得可用内存大小，可以用<code>malloc_usable_size()</code>获得，其核心函数是：</li>
 </ol>
-<pre><code class="language-c">static size_t
-musable (void *mem)
+<pre><code class="language-c"><span class="hljs-type">static</span> <span class="hljs-type">size_t</span>
+<span class="hljs-title function_">musable</span> <span class="hljs-params">(<span class="hljs-type">void</span> *mem)</span>
 {
   mchunkptr p;
-  if (mem != 0)
+  <span class="hljs-keyword">if</span> (mem != <span class="hljs-number">0</span>)
     {
       p = mem2chunk (mem);
 
-      if (__builtin_expect (using_malloc_checking == 1, 0))
-        return malloc_check_get_size (p);
+      <span class="hljs-keyword">if</span> (__builtin_expect (using_malloc_checking == <span class="hljs-number">1</span>, <span class="hljs-number">0</span>))
+        <span class="hljs-keyword">return</span> malloc_check_get_size (p);
 
-      if (chunk_is_mmapped (p))
-        return chunksize (p) - 2 * SIZE_SZ;
-      else if (inuse (p))
-        return chunksize (p) - SIZE_SZ;
+      <span class="hljs-keyword">if</span> (chunk_is_mmapped (p))
+        <span class="hljs-keyword">return</span> chunksize (p) - <span class="hljs-number">2</span> * SIZE_SZ;
+      <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (inuse (p))
+        <span class="hljs-keyword">return</span> chunksize (p) - SIZE_SZ;
     }
-  return 0;
+  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
 }
 </code></pre>
 <h3 id="section-10">Free chunk</h3><p><img src="C:%5CUsers%5C86198%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20240214220311611.png" alt="image-20240214220311611"></p>
@@ -320,9 +320,9 @@ musable (void *mem)
 <p>注：加入 fast bins 的 chunk，它的<code>IN_USE</code>位（准确地说，是下一个 chunk 的<code>PREV_INUSE</code>位）依然是 1。这就是为什么相邻的“空闲”chunk 不会被合并，因为它们根本不会被认为是空闲的。</p>
 </blockquote>
 <p>关于fastbin最大大小，参见宏<code>DEFAULT_MXFAST</code>：</p>
-<pre><code class="language-c">#ifndef DEFAULT_MXFAST
-#define DEFAULT_MXFAST     (64 * SIZE_SZ / 4)
-#endif
+<pre><code class="language-c"><span class="hljs-meta">#<span class="hljs-keyword">ifndef</span> DEFAULT_MXFAST</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> DEFAULT_MXFAST     (64 * SIZE_SZ / 4)</span>
+<span class="hljs-meta">#<span class="hljs-keyword">endif</span></span>
 </code></pre>
 <p>在初始化时，这个值会被赋值给全局变量<code>global_max_fast</code>。</p>
 <p>申请fast chunk时遵循<code>first fit</code>原则。释放一个fast chunk时，首先检查它的大小以及对应fastbin此时的第一个chunk <code>old</code>的大小是否合法，随后它会被插入到对应fastbin的链表头，此时其<code>fd</code>指向<code>old</code>。</p>
@@ -375,11 +375,11 @@ musable (void *mem)
 <li>将现在的chunk插入unsorted bin。</li>
 <li>若<code>size</code>超过了<code>FASTBIN_CONSOLIDATION_THRESHOLD</code>，则尽可能地合并fastbin中的chunk，放入unsorted bin。若top chunk大小超过了<code>mp_.trim_threshold</code>，则归还部分内存给OS。</li>
 </ol>
-<pre><code class="language-c">#ifndef DEFAULT_TRIM_THRESHOLD
-#define DEFAULT_TRIM_THRESHOLD (128 * 1024)
-#endif
+<pre><code class="language-c"><span class="hljs-meta">#<span class="hljs-keyword">ifndef</span> DEFAULT_TRIM_THRESHOLD</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> DEFAULT_TRIM_THRESHOLD (128 * 1024)</span>
+<span class="hljs-meta">#<span class="hljs-keyword">endif</span></span>
 
-#define FASTBIN_CONSOLIDATION_THRESHOLD  (65536UL)
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> FASTBIN_CONSOLIDATION_THRESHOLD  (65536UL)</span>
 </code></pre>
 <h3 id="section-17">large bins</h3><p>大于等于 0x200（0x400）B 的 chunk 叫做 large chunk，而 large bins 可以存放的就是这些 large chunks。</p>
 <p>large bins 是 63 个双向循环链表，插入和删除可以发生在任意位置，相邻空闲 chunk 也会被合并。chunk 大小就比较复杂了：</p>
@@ -395,22 +395,22 @@ musable (void *mem)
 <h2 id="section-18">内存分配流程</h2><p>我觉得这类复杂的流程比较需要靠流程图来理解，因此我画了一下：</p>
 <p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/734e5e85697b83e788d5dfdfc57bdf69_MD5.png" alt=""></p>
 <p>相关宏：</p>
-<pre><code class="language-c">#define NBINS             128
-#define NSMALLBINS         64
-#define SMALLBIN_WIDTH    MALLOC_ALIGNMENT
-#define SMALLBIN_CORRECTION (MALLOC_ALIGNMENT &gt; 2 * SIZE_SZ)
-#define MIN_LARGE_SIZE    ((NSMALLBINS - SMALLBIN_CORRECTION) * SMALLBIN_WIDTH)
+<pre><code class="language-c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> NBINS             128</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> NSMALLBINS         64</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> SMALLBIN_WIDTH    MALLOC_ALIGNMENT</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> SMALLBIN_CORRECTION (MALLOC_ALIGNMENT &gt; 2 * SIZE_SZ)</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> MIN_LARGE_SIZE    ((NSMALLBINS - SMALLBIN_CORRECTION) * SMALLBIN_WIDTH)</span>
 
-#define in_smallbin_range(sz)  \
-  ((unsigned long) (sz) &lt; (unsigned long) MIN_LARGE_SIZE)
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> in_smallbin_range(sz)  \
+  ((unsigned long) (sz) &lt; (unsigned long) MIN_LARGE_SIZE)</span>
 
-#ifndef DEFAULT_MMAP_THRESHOLD_MIN
-#define DEFAULT_MMAP_THRESHOLD_MIN (128 * 1024)
-#endif
+<span class="hljs-meta">#<span class="hljs-keyword">ifndef</span> DEFAULT_MMAP_THRESHOLD_MIN</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> DEFAULT_MMAP_THRESHOLD_MIN (128 * 1024)</span>
+<span class="hljs-meta">#<span class="hljs-keyword">endif</span></span>
 
-#ifndef DEFAULT_MMAP_THRESHOLD
-#define DEFAULT_MMAP_THRESHOLD DEFAULT_MMAP_THRESHOLD_MIN
-#endif
+<span class="hljs-meta">#<span class="hljs-keyword">ifndef</span> DEFAULT_MMAP_THRESHOLD</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> DEFAULT_MMAP_THRESHOLD DEFAULT_MMAP_THRESHOLD_MIN</span>
+<span class="hljs-meta">#<span class="hljs-keyword">endif</span></span>
 </code></pre>
 <h2 id="section-19">内存释放流程</h2><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/927015302cdf082035b4b4d6c6dae726_MD5.png" alt=""></p>
 <h2 id="section-20">参考资料</h2><ul>

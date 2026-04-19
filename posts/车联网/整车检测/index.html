@@ -1,67 +1,67 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>整车检测 | 沉于思，录以隙</title><meta name="description" content="# obd连接 ```bash canfd sudo ip link set can0 up type can bitrate 500000 sample-point 0.75 dbitrate 2000000 dsample-point 0.8 fd on can sudo i"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">车联网</p> <h1 class="post-cover-hero__title">整车检测</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/车联网/" class="directory-link">车联网</a>   </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>车联网</span> <span>车联网</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/车联网/" class="tag">#车联网</a> </div> <p class="source-note">来源路径：车联网/整车检测.md</p> </header> <div class="article-main"> <div class="article-content"><h1>obd连接</h1><pre><code class="language-bash">canfd
-sudo ip link set can0 up type can bitrate 500000 sample-point 0.75 dbitrate 2000000 dsample-point 0.8 fd on
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>整车检测 | 沉于思，录以隙</title><meta name="description" content="# obd连接 ```bash canfd sudo ip link set can0 up type can bitrate 500000 sample-point 0.75 dbitrate 2000000 dsample-point 0.8 fd on can sudo i"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">车联网</p> <h1 class="post-cover-hero__title">整车检测</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/车联网/" class="directory-link">车联网</a>   </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>车联网</span> <span>车联网</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/车联网/" class="tag">#车联网</a> </div> <p class="source-note">来源路径：车联网/整车检测.md</p> </header> <div class="article-main"> <div class="article-content"><h1>obd连接</h1><pre><code class="language-bash">canfd
+<span class="hljs-built_in">sudo</span> ip <span class="hljs-built_in">link</span> <span class="hljs-built_in">set</span> can0 up <span class="hljs-built_in">type</span> can bitrate 500000 sample-point 0.75 dbitrate 2000000 dsample-point 0.8 fd on
 
 can
-sudo ip link set can0 up type can bitrate 500000
+<span class="hljs-built_in">sudo</span> ip <span class="hljs-built_in">link</span> <span class="hljs-built_in">set</span> can0 up <span class="hljs-built_in">type</span> can bitrate 500000
 
 虚拟环境
-source ~/venv-can/bin/activate
+<span class="hljs-built_in">source</span> ~/venv-can/bin/activate
 </code></pre>
 <p>激活信号</p>
-<pre><code class="language-bash">while true; do                                  
+<pre><code class="language-bash"><span class="hljs-keyword">while</span> <span class="hljs-literal">true</span>; <span class="hljs-keyword">do</span>                                  
     cansend can0 477#0000000000c00000
-    sleep 0.01
-done
+    <span class="hljs-built_in">sleep</span> 0.01
+<span class="hljs-keyword">done</span>
 </code></pre>
 <h1>诊断安全检测</h1><h2 id="section-1">27服务</h2><p>主要看种子重复度</p>
 <p>groupsend (1003 2701) -n 100</p>
 <h2 id="section-2">31服务</h2><p>遍历</p>
-<pre><code class="language-bash">for i in $(seq 0 65535); do
+<pre><code class="language-bash"><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> $(<span class="hljs-built_in">seq</span> 0 65535); <span class="hljs-keyword">do</span>
   cansend can0 7ca#021001
-  cansend can0 7ca#043101$(printf &quot;%04X&quot; $i)cccccc
-  sleep 0.01
-done
+  cansend can0 7ca#043101$(<span class="hljs-built_in">printf</span> <span class="hljs-string">&quot;%04X&quot;</span> <span class="hljs-variable">$i</span>)cccccc
+  <span class="hljs-built_in">sleep</span> 0.01
+<span class="hljs-keyword">done</span>
 </code></pre>
 <h1>总线</h1><h2 id="section-3">xcp</h2><p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/0aed061de4d596b3fb0744e950591d41_MD5.png" alt=""></p>
 <h1>硬件</h1><h1>正则匹配敏感信息</h1><p>linux系统：scan脚本</p>
 <p>wireshark:</p>
 <pre><code class="language-plain">基础敏感字段关键字，适用于 HTTP / HTTPS（明文）/ JSON / Form 表单
-frame matches &quot;(?i)(username|user_name|user|usr|account|acct)&quot;
-frame matches &quot;(?i)(password|passwd|pwd|pass|psw)&quot;
-frame matches &quot;(?i)(token|access_token|auth_token|sessionid|sid|jwt)&quot;
-frame matches &quot;(?i)(idcard|id_card|identity|realname|sfzh|身份证)&quot;
-frame matches &quot;(?i)(drivinglicense|driverlicense|驾照|驾驶证)&quot;
-frame matches &quot;(?i)(phone|mobile|phonenumber|tel|联系方式)&quot;
-frame matches &quot;(?i)(location|gps|longitude|latitude|经度|纬度)&quot;
+frame matches <span class="hljs-string">&quot;(?i)(username|user_name|user|usr|account|acct)&quot;</span>
+frame matches <span class="hljs-string">&quot;(?i)(password|passwd|pwd|pass|psw)&quot;</span>
+frame matches <span class="hljs-string">&quot;(?i)(token|access_token|auth_token|sessionid|sid|jwt)&quot;</span>
+frame matches <span class="hljs-string">&quot;(?i)(idcard|id_card|identity|realname|sfzh|身份证)&quot;</span>
+frame matches <span class="hljs-string">&quot;(?i)(drivinglicense|driverlicense|驾照|驾驶证)&quot;</span>
+frame matches <span class="hljs-string">&quot;(?i)(phone|mobile|phonenumber|tel|联系方式)&quot;</span>
+frame matches <span class="hljs-string">&quot;(?i)(location|gps|longitude|latitude|经度|纬度)&quot;</span>
 
 常见用户名（数字、字母、下划线）
-frame matches &quot;(?i)(username[\&quot;&#39;=:\s]*[A-Za-z0-9_@.\-]{3,30})&quot;
+frame matches <span class="hljs-string">&quot;(?i)(username[\&quot;&#x27;=:\s]*[A-Za-z0-9_@.\-]{3,30})&quot;</span>
 
 2. 邮箱账号
-frame matches &quot;[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}&quot;
+frame matches <span class="hljs-string">&quot;[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}&quot;</span>
 
 3. 手机号（中国 11 位）
-frame matches &quot;(1[3-9][0-9]{9})&quot;
+frame matches <span class="hljs-string">&quot;(1[3-9][0-9]{9})&quot;</span>
 
 身份证号（中国）
 
 中国身份证精确正则（18 位 + 校验码）：
-frame matches &quot;([1-9]\d{5}(19\d{2}|20\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{3}[\dXx])&quot;
+frame matches <span class="hljs-string">&quot;([1-9]\d{5}(19\d{2}|20\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{3}[\dXx])&quot;</span>
 
 图片 / 视频流（MIME 头匹配）
 图片（JPEG/PNG）
-frame matches &quot;(?i)(image/jpeg|image/png|image/gif|image/webp)&quot;
+frame matches <span class="hljs-string">&quot;(?i)(image/jpeg|image/png|image/gif|image/webp)&quot;</span>
 
 
 或文件头 signature：
-frame matches &quot;(ff d8 ff)&quot;       # JPEG
-frame matches &quot;(89 50 4e 47)&quot;   # PNG
+frame matches <span class="hljs-string">&quot;(ff d8 ff)&quot;</span>       <span class="hljs-comment"># JPEG</span>
+frame matches <span class="hljs-string">&quot;(89 50 4e 47)&quot;</span>   <span class="hljs-comment"># PNG</span>
 
 视频（MP4/AVI/FLV）
-frame matches &quot;(?i)(video/mp4|video/x-msvideo|video/x-flv|video/avi)&quot;
+frame matches <span class="hljs-string">&quot;(?i)(video/mp4|video/x-msvideo|video/x-flv|video/avi)&quot;</span>
 
 MP4 文件头：
-frame matches &quot;00 00 00 .. 66 74 79 70&quot;   # ftyp
+frame matches <span class="hljs-string">&quot;00 00 00 .. 66 74 79 70&quot;</span>   <span class="hljs-comment"># ftyp</span>
 
 </code></pre>
 <p>notepad++:东风tcu报告</p>
@@ -141,7 +141,7 @@ suid和内核提权
 <h3 id="section-12">查看连接信息</h3><p>show_values</p>
 <h3>扫ecu的诊断id</h3><pre><code class="language-go">udsid
 可选指定范围
-udsid -b 700 -e 710
+udsid -b <span class="hljs-number">700</span> -e <span class="hljs-number">710</span>
 </code></pre>
 <h3>扫诊断服务</h3><p>scan</p>
 <p>scan service</p>
@@ -173,9 +173,9 @@ ID，想要获取这些诊断ID的DID就用该模式
 <h3 id="section-14">参数</h3><ul>
 <li><strong>主机发现</strong>：扫描网段内存活主机</li>
 </ul>
-<pre><code class="language-bash">nmap -sn 192.168.1.0/24    # 仅探测存活主机，不扫描端口[[8, 10]]
-#-sn：Ping 扫描（不做端口扫描，只检测主机是否在线）。
-#192.168.1.0/24：扫整个网段，从 192.168.1.1 到 192.168.1.254。
+<pre><code class="language-bash">nmap -sn 192.168.1.0/24    <span class="hljs-comment"># 仅探测存活主机，不扫描端口[[8, 10]]</span>
+<span class="hljs-comment">#-sn：Ping 扫描（不做端口扫描，只检测主机是否在线）。</span>
+<span class="hljs-comment">#192.168.1.0/24：扫整个网段，从 192.168.1.1 到 192.168.1.254。</span>
 </code></pre>
 <ul>
 <li><strong>扫描</strong>：</li>
@@ -193,26 +193,26 @@ ID，想要获取这些诊断ID的DID就用该模式
 <p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/7c973c7a1ca3d76bdeaec359c5d0ea3f_MD5.png" alt=""></p>
 <pre><code>- TCP SYN半开扫描（快速且隐蔽）：  
 </code></pre>
-<pre><code class="language-bash">nmap -sS 目标IP          # 默认扫描1000个常用端口[[3, 6, 18]]
+<pre><code class="language-bash">nmap -sS 目标IP          <span class="hljs-comment"># 默认扫描1000个常用端口[[3, 6, 18]]</span>
 </code></pre>
 <pre><code>- 指定端口范围：  
 </code></pre>
-<pre><code class="language-bash">nmap -p 80,443,1-1000 目标IP   # 扫描指定端口[[6, 10]]
+<pre><code class="language-bash">nmap -p 80,443,1-1000 目标IP   <span class="hljs-comment"># 扫描指定端口[[6, 10]]</span>
 </code></pre>
 <ul>
 <li><strong>服务与系统识别</strong>：</li>
 </ul>
-<pre><code class="language-bash">nmap -sV -O 目标IP         # 检测服务版本和操作系统[[3, 5, 8]]
+<pre><code class="language-bash">nmap -sV -O 目标IP         <span class="hljs-comment"># 检测服务版本和操作系统[[3, 5, 8]]</span>
 </code></pre>
 <ul>
 <li><strong>全面扫描</strong>：</li>
 </ul>
-<pre><code class="language-bash">nmap -A 目标IP             # 启用OS检测、版本检测、脚本扫描等[[8, 18]]
+<pre><code class="language-bash">nmap -A 目标IP             <span class="hljs-comment"># 启用OS检测、版本检测、脚本扫描等[[8, 18]]</span>
 </code></pre>
 <ul>
 <li><strong>脚本引擎（NSE）</strong>：</li>
 </ul>
-<pre><code class="language-bash">nmap --script=vuln 目标IP  # 使用漏洞检测脚本[[3, 5, 18]]
+<pre><code class="language-bash">nmap --script=vuln 目标IP  <span class="hljs-comment"># 使用漏洞检测脚本[[3, 5, 18]]</span>
 </code></pre>
 <p><strong>高级选项</strong>：  </p>
 <ul>
@@ -241,17 +241,17 @@ ID，想要获取这些诊断ID的DID就用该模式
 <h3 id="section-16">使用方法</h3><ul>
 <li><strong>基础扫描</strong>：</li>
 </ul>
-<pre><code class="language-bash">fscan -h 192.168.1.1       # 扫描单个IP
+<pre><code class="language-bash">fscan -h 192.168.1.1       <span class="hljs-comment"># 扫描单个IP</span>
 </code></pre>
 <ul>
 <li><strong>网段扫描</strong>：</li>
 </ul>
-<pre><code class="language-bash">fscan -h 192.168.1.1/24    # 扫描C段所有IP
+<pre><code class="language-bash">fscan -h 192.168.1.1/24    <span class="hljs-comment"># 扫描C段所有IP</span>
 </code></pre>
 <ul>
 <li><strong>指定漏洞检测</strong>：</li>
 </ul>
-<pre><code class="language-bash">fscan -h 目标IP -p 21,445 -vuln  # 检测FTP/SMB漏洞
+<pre><code class="language-bash">fscan -h 目标IP -p 21,445 -vuln  <span class="hljs-comment"># 检测FTP/SMB漏洞</span>
 </code></pre>
 <h3 id="section-17">工具对比与协作场景</h3><ul>
 <li><strong>nmap</strong>：功能最全、脚本最多，但得自己“拼乐高”。只扫端口</li>
@@ -268,7 +268,7 @@ ID，想要获取这些诊断ID的DID就用该模式
 <pre><code class="language-plain">scp 本地文件 root@192.168.69.31:/tmp
 </code></pre>
 <p>下载：</p>
-<pre><code class="language-plain">scp root@192.168.69.31:/tmp/file ./
+<pre><code class="language-plain">scp root@<span class="hljs-number">192.168</span><span class="hljs-number">.69</span><span class="hljs-number">.31</span>:<span class="hljs-regexp">/tmp/</span>file ./
 </code></pre>
 <h2>hping3（ddos）</h2><p>hping3 是一款开源的命令行网络数据包构造与发送工具，常被称为“增强版 ping”。它工作在 TCP/IP 协议栈层面，可自定义并发送基于 ICMP、TCP、UDP、RAW-IP 等多种协议的探测或攻击数据包</p>
 <h3 id="section-19">洪水攻击</h3><ul>
@@ -320,16 +320,16 @@ ID，想要获取这些诊断ID的DID就用该模式
 <h2 id="section-23">aircrack-ng</h2><p>破解WiFi密码</p>
 <p>监听网卡–&gt;搜索wifi–&gt;查看wifi用户–&gt;发大量数据包迫使用户其下线–&gt;用户重登录抓取密码数据包–&gt;字典爆破</p>
 <p>aircrack 是一个比较出名的用于破解 WEP 和 WPA 加密的无线网络的一款工具,由 6 个不同的部分组成:<br>1.aircrack-ng用于破解 WEP 以及 WPA-PSK 密钥。一旦 aircrack-ng 工具收集了足够的信息,aircrack-ng 将会分析这些数据,并试图确定使用中的密钥。<br>2.airdecap-ng 解读被破解的网络数据包<br>3.airmon-ng 为使用整个 aircrack-ng 套件配置一个网卡<br>4.aireplay-ng 在无线网络中产生可能在恢复中的 WEP 密钥所需的流量<br>5.airodump-ng 捕获被 aircrack-ng 用于破解 WEP 密钥的 802.11 帧<br>6.tools 为微调提供分类工具箱</p>
-<h3 id="section-24">运行环境准备</h3><pre><code class="language-bash">sudo airmon-ng check kill #开启前执行，自动检查冲突程序并强制关闭
+<h3 id="section-24">运行环境准备</h3><pre><code class="language-bash"><span class="hljs-built_in">sudo</span> airmon-ng check <span class="hljs-built_in">kill</span> <span class="hljs-comment">#开启前执行，自动检查冲突程序并强制关闭</span>
 
-#airmon-ng start wlan0
-#要想关掉的话
-#airmon-ng stop wlan0mon
+<span class="hljs-comment">#airmon-ng start wlan0</span>
+<span class="hljs-comment">#要想关掉的话</span>
+<span class="hljs-comment">#airmon-ng stop wlan0mon</span>
 
-sudo ip link set wlan0 down
-sudo iw reg set CN
-sudo iw dev wlan0 set type monitor
-sudo ip link set wlan0 up
+<span class="hljs-built_in">sudo</span> ip <span class="hljs-built_in">link</span> <span class="hljs-built_in">set</span> wlan0 down
+<span class="hljs-built_in">sudo</span> iw reg <span class="hljs-built_in">set</span> CN
+<span class="hljs-built_in">sudo</span> iw dev wlan0 <span class="hljs-built_in">set</span> <span class="hljs-built_in">type</span> monitor
+<span class="hljs-built_in">sudo</span> ip <span class="hljs-built_in">link</span> <span class="hljs-built_in">set</span> wlan0 up
 </code></pre>
 <h3 id="section-25">扫描WiFi设备</h3><p>sudo airodump-ng wlan0 </p>
 <pre><code class="language-bash">BSSID(Basic Service SetIdentifier): AP 的 MAC 地址。
@@ -339,9 +339,9 @@ PWR(Power): 信号强度。
 Beacons: AP 发出的通告编号,每个接入点(AP)在最低速率(1M)时差不
 多每秒会发送 10 个左右的 beacon,所以它们能在很远的地方就被发现。
 
-#Data:当前数据传输量。
+<span class="hljs-comment">#Data:当前数据传输量。</span>
 
-#/s:过去 10 秒钟内每秒捕获数据分组的数量。
+<span class="hljs-comment">#/s:过去 10 秒钟内每秒捕获数据分组的数量。</span>
 
 CH(Channel): AP 所在的频道。
 

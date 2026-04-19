@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ERC-1363 | 沉于思，录以隙</title><meta name="description" content="# ERC-1363: 可支付型代币扩展 (Payable Token) > **一句话总结**：ERC-1363 是对 ERC-20 标准最安全、最成功的演进补丁。它吸取了前辈们的教训，用标准化的 `TransferAndCall` 解决了双重审批（Approve + Exec"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">ERC-1363</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <div class="article-meta-row"> <span>2026/3/6</span> <span>web3</span> <span>web3 · ERC标准</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/ERC标准/" class="tag">#ERC标准</a> </div> <p class="source-note">来源路径：web3/ERC标准/ERC-1363.md</p> </header> <div class="article-main"> <div class="article-content"><h1>ERC-1363: 可支付型代币扩展 (Payable Token)</h1><blockquote>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ERC-1363 | 沉于思，录以隙</title><meta name="description" content="# ERC-1363: 可支付型代币扩展 (Payable Token) > **一句话总结**：ERC-1363 是对 ERC-20 标准最安全、最成功的演进补丁。它吸取了前辈们的教训，用标准化的 `TransferAndCall` 解决了双重审批（Approve + Exec"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">ERC-1363</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <div class="article-meta-row"> <span>2026/3/6</span> <span>web3</span> <span>web3 · ERC标准</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/ERC标准/" class="tag">#ERC标准</a> </div> <p class="source-note">来源路径：web3/ERC标准/ERC-1363.md</p> </header> <div class="article-main"> <div class="article-content"><h1>ERC-1363: 可支付型代币扩展 (Payable Token)</h1><blockquote>
 <p><strong>一句话总结</strong>：ERC-1363 是对 ERC-20 标准最安全、最成功的演进补丁。它吸取了前辈们的教训，用标准化的 <code>TransferAndCall</code> 解决了双重审批（Approve + Execute）的痛点，允许用户在一笔交易中完成代币转移和调用外部合约逻辑。</p>
 </blockquote>
 <h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><blockquote>
@@ -19,30 +19,30 @@
 <h2 id="section-3">2. 核心接口与数据结构 (Core Interfaces)</h2><blockquote>
 <p>该标准完全复用了 ERC-20 的 <code>_balances</code> 余额体系，它并未创造新的账本类型，而是从执行流入手，开辟了附带回调提醒的高铁直达专线。</p>
 </blockquote>
-<h3 id="section-4">A. 核心状态结构 (State Variables)</h3><pre><code class="language-solidity">// 无任何新增映射，完全共享原生 ERC-20 的底层防篡改记账池：
-mapping(address =&gt; uint256) private _balances;
-mapping(address =&gt; mapping(address =&gt; uint256)) private _allowances;
+<h3 id="section-4">A. 核心状态结构 (State Variables)</h3><pre><code class="language-solidity"><span class="hljs-comment">// 无任何新增映射，完全共享原生 ERC-20 的底层防篡改记账池：</span>
+<span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">address</span> =&gt;</span> uint256) <span class="hljs-keyword">private</span> _balances;
+<span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">address</span> =&gt;</span> <span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">address</span> =&gt;</span> uint256)) <span class="hljs-keyword">private</span> _allowances;
 </code></pre>
 <h3 id="section-5">B. 关键机制与底层逻辑 (Core Functions)</h3><h4>1. <code>transferAndCall(to, value, data)</code> (转账并强制敲门)</h4><p>一站式划转资金并触发业务的灵魂函数。</p>
 <ul>
 <li><strong>白话逻辑解析</strong>：底层依旧走 <code>_balances</code> 的减发加收，钱结清后的一瞬间，该代币合约化身顺丰快递员，拿着 <code>data</code>（附言包裹）去猛按目标 <code>to</code> 地址门上固定的 <code>onTransferReceived</code> 门铃。如果对方不开门（没实现该收款函数或执行报错），那么钱将原路全额退还，交易连坐取消。</li>
-<li><strong>核心源码骨架</strong>：<pre><code class="language-solidity">function transferAndCall(address to, uint256 value, bytes calldata data) public returns (bool) {
-    // 1. 先把底层原生的转账账本平平稳稳地结清
-    transfer(to, value); 
+<li><strong>核心源码骨架</strong>：<pre><code class="language-solidity"><span class="hljs-keyword">function</span> <span class="hljs-title function_">transferAndCall</span>(<span class="hljs-params">address to, uint256 value, bytes calldata data</span>) <span class="hljs-keyword">public</span> <span class="hljs-title function_">returns</span> (bool) {
+    <span class="hljs-comment">// 1. 先把底层原生的转账账本平平稳稳地结清</span>
+    <span class="hljs-title function_">transfer</span>(to, value); 
     
-    // 2. 强制触发目标的专属接客回调门铃！(彻底堵死 827 那个危险的底层裸 call)
-    require(
-        _checkAndCallTransfer(msg.sender, to, value, data),
-        &quot;ERC1363: _checkAndCallTransfer reverts&quot;
+    <span class="hljs-comment">// 2. 强制触发目标的专属接客回调门铃！(彻底堵死 827 那个危险的底层裸 call)</span>
+    <span class="hljs-built_in">require</span>(
+        <span class="hljs-title function_">_checkAndCallTransfer</span>(msg.<span class="hljs-property">sender</span>, to, value, data),
+        <span class="hljs-string">&quot;ERC1363: _checkAndCallTransfer reverts&quot;</span>
     );
-    return true;
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
 }
 
-function _checkAndCallTransfer(address from, address to, uint256 value, bytes memory data) internal returns (bool) {
-    if (!to.isContract()) return false; 
-    // 必须安全、受限地调用标准写死的 onTransferReceived 对接接口
-    bytes4 retval = IERC1363Receiver(to).onTransferReceived(msg.sender, from, value, data);
-    return (retval == IERC1363Receiver.onTransferReceived.selector);
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">_checkAndCallTransfer</span>(<span class="hljs-params">address <span class="hljs-keyword">from</span>, address to, uint256 value, bytes memory data</span>) internal <span class="hljs-title function_">returns</span> (bool) {
+    <span class="hljs-keyword">if</span> (!to.<span class="hljs-title function_">isContract</span>()) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>; 
+    <span class="hljs-comment">// 必须安全、受限地调用标准写死的 onTransferReceived 对接接口</span>
+    bytes4 retval = <span class="hljs-title class_">IERC1363Receiver</span>(to).<span class="hljs-title function_">onTransferReceived</span>(msg.<span class="hljs-property">sender</span>, <span class="hljs-keyword">from</span>, value, data);
+    <span class="hljs-keyword">return</span> (retval == <span class="hljs-title class_">IERC1363Receiver</span>.<span class="hljs-property">onTransferReceived</span>.<span class="hljs-property">selector</span>);
 }
 </code></pre>
 </li>
@@ -65,17 +65,17 @@ function _checkAndCallTransfer(address from, address to, uint256 value, bytes me
 </blockquote>
 <h3 id="section-9">A. 核心难点一：如何避免重走 827 借刀杀人的老路？</h3><ul>
 <li><strong>原理讲解</strong>：为了防止黑客利用代币合约的无上权限去执行恶意提款命令。ERC-1363 在底层代码里<strong>彻底封死了 <code>call</code> 任意函数的自由度</strong>。它强制使用接口调用。</li>
-<li><strong>核心逻辑代码 (Solidity)</strong>：<pre><code class="language-solidity">// 在 transferAndCall 的最后一步，有一段极其严格的回调验证
-function _checkOnTransferReceived(address from, address to, uint256 value, bytes memory data) private returns (bool) {
-    if (to.code.length == 0) {
-        return false; // 不是合约，就不敲门了，兼容普通人转账
+<li><strong>核心逻辑代码 (Solidity)</strong>：<pre><code class="language-solidity"><span class="hljs-comment">// 在 transferAndCall 的最后一步，有一段极其严格的回调验证</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">_checkOnTransferReceived</span>(<span class="hljs-params">address <span class="hljs-keyword">from</span>, address to, uint256 value, bytes memory data</span>) <span class="hljs-keyword">private</span> <span class="hljs-title function_">returns</span> (bool) {
+    <span class="hljs-keyword">if</span> (to.<span class="hljs-property">code</span>.<span class="hljs-property">length</span> == <span class="hljs-number">0</span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>; <span class="hljs-comment">// 不是合约，就不敲门了，兼容普通人转账</span>
     }
-    try IERC1363Receiver(to).onTransferReceived(msg.sender, from, value, data) returns (bytes4 retval) {
-        // 这里的逻辑直接照抄了极度成熟安全的 ERC-721 防呆敲门机制
-        return retval == IERC1363Receiver.onTransferReceived.selector;
-    } catch (bytes memory reason) {
-        // 不懂规矩的接收方，直接拉黑全盘回滚
-        revert(&quot;ERC1363: transfer to non ERC1363Receiver implementer&quot;);
+    <span class="hljs-keyword">try</span> <span class="hljs-title class_">IERC1363Receiver</span>(to).<span class="hljs-title function_">onTransferReceived</span>(msg.<span class="hljs-property">sender</span>, <span class="hljs-keyword">from</span>, value, data) <span class="hljs-title function_">returns</span> (bytes4 retval) {
+        <span class="hljs-comment">// 这里的逻辑直接照抄了极度成熟安全的 ERC-721 防呆敲门机制</span>
+        <span class="hljs-keyword">return</span> retval == <span class="hljs-title class_">IERC1363Receiver</span>.<span class="hljs-property">onTransferReceived</span>.<span class="hljs-property">selector</span>;
+    } <span class="hljs-keyword">catch</span> (bytes memory reason) {
+        <span class="hljs-comment">// 不懂规矩的接收方，直接拉黑全盘回滚</span>
+        <span class="hljs-title function_">revert</span>(<span class="hljs-string">&quot;ERC1363: transfer to non ERC1363Receiver implementer&quot;</span>);
     }
 }
 </code></pre>

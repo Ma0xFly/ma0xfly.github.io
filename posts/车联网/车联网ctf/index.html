@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>车联网ctf | 沉于思，录以隙</title><meta name="description" content="# CAN总线通信 ## 为什么选can通信而不是以太网 在汽车领域，CAN（含CAN-FD）之所以能在绝大多数“车内控制域”里长期压倒以太网，除了低延迟外，还有 7 个与整车电子电气架构、可靠性、成本、生态强耦合的优势。下面按权重从高到低逐一拆解，并给出与车载以太网的直接对比。"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">车联网</p> <h1 class="post-cover-hero__title">车联网ctf</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/车联网/" class="directory-link">车联网</a>   </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>车联网</span> <span>车联网</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/车联网/" class="tag">#车联网</a> </div> <p class="source-note">来源路径：车联网/车联网ctf.md</p> </header> <div class="article-main"> <div class="article-content"><h1>CAN总线通信</h1><h2 id="section-1">为什么选can通信而不是以太网</h2><p>在汽车领域，CAN（含CAN-FD）之所以能在绝大多数“车内控制域”里长期压倒以太网，除了低延迟外，还有 7 个与整车电子电气架构、可靠性、成本、生态强耦合的优势。下面按权重从高到低逐一拆解，并给出与车载以太网的直接对比。</p>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>车联网ctf | 沉于思，录以隙</title><meta name="description" content="# CAN总线通信 ## 为什么选can通信而不是以太网 在汽车领域，CAN（含CAN-FD）之所以能在绝大多数“车内控制域”里长期压倒以太网，除了低延迟外，还有 7 个与整车电子电气架构、可靠性、成本、生态强耦合的优势。下面按权重从高到低逐一拆解，并给出与车载以太网的直接对比。"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">车联网</p> <h1 class="post-cover-hero__title">车联网ctf</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/车联网/" class="directory-link">车联网</a>   </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>车联网</span> <span>车联网</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/车联网/" class="tag">#车联网</a> </div> <p class="source-note">来源路径：车联网/车联网ctf.md</p> </header> <div class="article-main"> <div class="article-content"><h1>CAN总线通信</h1><h2 id="section-1">为什么选can通信而不是以太网</h2><p>在汽车领域，CAN（含CAN-FD）之所以能在绝大多数“车内控制域”里长期压倒以太网，除了低延迟外，还有 7 个与整车电子电气架构、可靠性、成本、生态强耦合的优势。下面按权重从高到低逐一拆解，并给出与车载以太网的直接对比。</p>
 <table>
 <thead>
 <tr>
@@ -660,16 +660,16 @@
 <pre><code class="language-plain">创建一个新的虚拟环境，并在其中安装模块运行：
 python3 -m venv myenv
 激活
-source myenv/bin/activate
+<span class="hljs-built_in">source</span> myenv/bin/activate
 pip install python-can
 python3 ex.py
 </code></pre>
 <h2 id="section-28">特殊仲裁ID</h2><h3 id="section-29">0x7DF</h3><p>在汽车 OBD-II（On-Board Diagnostics）协议中，<code>0x7DF</code> 是一个功能寻址（Functional Addressing）的 ID，表示请求发送给总线上的所有 ECUs（Electronic Control Units，电子控制单元）。</p>
 <p>这是一个广播请求，所有设备都会监听该 ID。</p>
-<h2 id="section-30"><strong>Can you find the interface?</strong></h2><pre><code class="language-plain">题目描述：This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E UDS Challenge Simulation, then launch the terminal.What is the name of the CAN interface available on the virtual terminal?翻译：此挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E UDS 挑战模拟，然后启动终端。虚拟终端上可用的 CAN 接口名称是什么？
+<h2 id="section-30"><strong>Can you find the interface?</strong></h2><pre><code class="language-plain">题目描述：This challenge is within the Harborbay vehicle simulator on VSEC. <span class="hljs-built_in">From</span> the home page, enter HarborBay. Select the Mach-E UDS Challenge Simulation, then launch the terminal.What is the name of the CAN interface available on the <span class="hljs-keyword">virtual</span> terminal?翻译：此挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E UDS 挑战模拟，然后启动终端。虚拟终端上可用的 CAN 接口名称是什么？
 </code></pre>
 <p>想要看 CAN 接口名称可以在终端输入 ifconfig 或者 ip link，得到 flag：vcan0</p>
-<h2 id="section-31"><strong>Arbitration</strong></h2><pre><code class="language-plain">题目描述：This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E UDS Challenge Simulation, then launch the terminal.What is the Arbitration ID of the CAN frame being sent periodically on the CAN interface?翻译：本次挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E UDS 挑战模拟，然后启动终端。在 CAN 接口上定期发送的 CAN 帧的仲裁 ID 是什么？
+<h2 id="section-31"><strong>Arbitration</strong></h2><pre><code class="language-plain">题目描述：<span class="hljs-title class_">This</span> challenge is within the <span class="hljs-title class_">Harborbay</span> vehicle simulator on <span class="hljs-variable constant_">VSEC</span>. <span class="hljs-title class_">From</span> the home page, enter <span class="hljs-title class_">HarborBay</span>. <span class="hljs-title class_">Select</span> the <span class="hljs-title class_">Mach</span>-E <span class="hljs-variable constant_">UDS</span> <span class="hljs-title class_">Challenge</span> <span class="hljs-title class_">Simulation</span>, then launch the terminal.<span class="hljs-property">What</span> is the <span class="hljs-title class_">Arbitration</span> <span class="hljs-variable constant_">ID</span> <span class="hljs-keyword">of</span> the <span class="hljs-variable constant_">CAN</span> frame being sent periodically on the <span class="hljs-variable constant_">CAN</span> <span class="hljs-keyword">interface</span>?翻译：本次挑战在 VSEC 上的 <span class="hljs-title class_">Harborbay</span> 车辆模拟器中进行。从主页进入 <span class="hljs-title class_">HarborBay</span>。选择 <span class="hljs-title class_">Mach</span>-E UDS 挑战模拟，然后启动终端。在 CAN 接口上定期发送的 CAN 帧的仲裁 ID 是什么？
 </code></pre>
 <p>想要看 CAN 总线上发的什么可以使用 candump 指定特定的 CAN 接口，监听 CAN 总线上的数据，可以看到定期发送的 CAN 数据，ID 为 59E，因此 flag 为 59E</p>
 <p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/16272cdd3d0c89234b4754f05658c2e6_MD5.png" alt=""></p>
@@ -682,50 +682,50 @@ python3 ex.py
 <li><strong>数据内容</strong> (<code>9E 10</code>): 消息的实际数据内容，每个字节以十六进制显示。在该示例中，数据为 <code>9E 10</code>。</li>
 </ul>
 <p>总结来说，这些 <code>candump</code> 的输出展示了多条在 <code>vcan0</code> 接口上传输的相同CAN消息，CAN ID 为 <code>59E</code>，数据长度为2字节，数据内容为 <code>9E 10</code>。这些信息通常用于调试或分析CAN总线的传输数据。</p>
-<h2 id="section-32"><strong>Data Field 1</strong></h2><pre><code class="language-plain">题目描述：This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E UDS Challenge Simulation, then launch the terminal.How many bytes of data are in the data field of the CAN frame being sent periodically on the CAN interface?翻译：此挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E UDS 挑战模拟，然后启动终端。在 CAN 接口上定期发送的 CAN 帧的数据字段中有多少字节数据？
+<h2 id="section-32"><strong>Data Field 1</strong></h2><pre><code class="language-plain">题目描述：<span class="hljs-title class_">This</span> challenge is within the <span class="hljs-title class_">Harborbay</span> vehicle simulator on <span class="hljs-variable constant_">VSEC</span>. <span class="hljs-title class_">From</span> the home page, enter <span class="hljs-title class_">HarborBay</span>. <span class="hljs-title class_">Select</span> the <span class="hljs-title class_">Mach</span>-E <span class="hljs-variable constant_">UDS</span> <span class="hljs-title class_">Challenge</span> <span class="hljs-title class_">Simulation</span>, then launch the terminal.<span class="hljs-property">How</span> many bytes <span class="hljs-keyword">of</span> data are <span class="hljs-keyword">in</span> the data field <span class="hljs-keyword">of</span> the <span class="hljs-variable constant_">CAN</span> frame being sent periodically on the <span class="hljs-variable constant_">CAN</span> <span class="hljs-keyword">interface</span>?翻译：此挑战在 VSEC 上的 <span class="hljs-title class_">Harborbay</span> 车辆模拟器中进行。从主页进入 <span class="hljs-title class_">HarborBay</span>。选择 <span class="hljs-title class_">Mach</span>-E UDS 挑战模拟，然后启动终端。在 CAN 接口上定期发送的 CAN 帧的数据字段中有多少字节数据？
 </code></pre>
 <p>问你定期发送 CAN 帧的 DLC（Data Length Code）是多少，也就是 数据的长度，同样使用 candump vcan0 可以得到答案为 2</p>
-<h2 id="section-33"><strong>Data Field 2</strong></h2><pre><code class="language-plain">题目描述：This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E UDS Challenge Simulation, then launch the terminal.What is the value of the data field of the CAN frame being sent periodically on the CAN interface? Format: XXYY翻译：此挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E UDS 挑战模拟，然后启动终端。在 CAN 接口上定期发送的 CAN 帧的数据字段的值是多少？格式：XXYY
+<h2 id="section-33"><strong>Data Field 2</strong></h2><pre><code class="language-plain">题目描述：<span class="hljs-title class_">This</span> challenge is within the <span class="hljs-title class_">Harborbay</span> vehicle simulator on <span class="hljs-variable constant_">VSEC</span>. <span class="hljs-title class_">From</span> the home page, enter <span class="hljs-title class_">HarborBay</span>. <span class="hljs-title class_">Select</span> the <span class="hljs-title class_">Mach</span>-E <span class="hljs-variable constant_">UDS</span> <span class="hljs-title class_">Challenge</span> <span class="hljs-title class_">Simulation</span>, then launch the terminal.<span class="hljs-property">What</span> is the value <span class="hljs-keyword">of</span> the data field <span class="hljs-keyword">of</span> the <span class="hljs-variable constant_">CAN</span> frame being sent periodically on the <span class="hljs-variable constant_">CAN</span> <span class="hljs-keyword">interface</span>? <span class="hljs-title class_">Format</span>: XXYY翻译：此挑战在 VSEC 上的 <span class="hljs-title class_">Harborbay</span> 车辆模拟器中进行。从主页进入 <span class="hljs-title class_">HarborBay</span>。选择 <span class="hljs-title class_">Mach</span>-E UDS 挑战模拟，然后启动终端。在 CAN 接口上定期发送的 CAN 帧的数据字段的值是多少？格式：XXYY
 </code></pre>
 <p>数据就是 9E10</p>
-<h2 id="section-34"><strong>Message Frequency</strong></h2><pre><code class="language-plain">题目描述：This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E UDS Challenge Simulation, then launch the terminal.What is the frequency that the periodic CAN frame is transmit at? (in Hz)翻译：此挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E UDS 挑战模拟，然后启动终端。周期性 CAN 帧的传输频率是多少？（单位为 Hz）
+<h2 id="section-34"><strong>Message Frequency</strong></h2><pre><code class="language-plain">题目描述：This challenge is within the Harborbay vehicle simulator on VSEC. <span class="hljs-built_in">From</span> the home page, enter HarborBay. Select the Mach-E UDS Challenge Simulation, then launch the terminal.What is the frequency that the periodic CAN frame is transmit at? (<span class="hljs-keyword">in</span> Hz)翻译：此挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E UDS 挑战模拟，然后启动终端。周期性 CAN 帧的传输频率是多少？（单位为 Hz）
 </code></pre>
 <p>使用 candump -l vcan0 可以将 CAN 总线数据捕获为一个 log 文件，cat 该 log 文件会有每条 CAN 数据记录的时间，题目问周期性 CAN 帧的传输频率，感觉不可能算的多精确，看上去基本就是一秒一个，所以试了一下答案就是 1..</p>
 <p>左到右，时间戳，</p>
 <p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/ca6356dd16a75ce59630a2c20b3584ac_MD5.png" alt=""></p>
-<h2 id="section-35"><strong>Simulation VIN</strong></h2><pre><code class="language-plain">题目描述：This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E UDS Challenge Simulation, then launch the terminal.Retrieve the VIN of the simulation using UDS.翻译：此挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E UDS 挑战模拟，然后启动终端。使用 UDS 检索模拟的 VIN。
+<h2 id="section-35"><strong>Simulation VIN</strong></h2><pre><code class="language-plain">题目描述：<span class="hljs-title class_">This</span> challenge is within the <span class="hljs-title class_">Harborbay</span> vehicle simulator on <span class="hljs-variable constant_">VSEC</span>. <span class="hljs-title class_">From</span> the home page, enter <span class="hljs-title class_">HarborBay</span>. <span class="hljs-title class_">Select</span> the <span class="hljs-title class_">Mach</span>-E <span class="hljs-variable constant_">UDS</span> <span class="hljs-title class_">Challenge</span> <span class="hljs-title class_">Simulation</span>, then launch the terminal.<span class="hljs-property">Retrieve</span> the <span class="hljs-variable constant_">VIN</span> <span class="hljs-keyword">of</span> the simulation <span class="hljs-keyword">using</span> <span class="hljs-variable constant_">UDS</span>.翻译：此挑战在 <span class="hljs-variable constant_">VSEC</span> 上的 <span class="hljs-title class_">Harborbay</span> 车辆模拟器中进行。从主页进入 <span class="hljs-title class_">HarborBay</span>。选择 <span class="hljs-title class_">Mach</span>-E <span class="hljs-variable constant_">UDS</span> 挑战模拟，然后启动终端。使用 <span class="hljs-variable constant_">UDS</span> 检索模拟的 <span class="hljs-variable constant_">VIN</span>。
 </code></pre>
 <p>读取VIN码使用22服务(通过标识符读取数据), <code>0xF190</code> 代表 VIN 码请求，22为SID(服务号),f190为DID(数据标识符)</p>
 <p>VIN码较长,需要多帧发送接收,所以需要使用流控帧(FC)和连续帧(CF)</p>
 <p>payload</p>
-<pre><code class="language-plain">cansend vcan0 7df#0322f190 &amp;&amp; cansend vcan0 7e0#3000000000000000
+<pre><code class="language-plain">cansend vcan0 7df<span class="hljs-comment">#0322f190 &amp;&amp; cansend vcan0 7e0#3000000000000000</span>
 </code></pre>
 <p>报文</p>
 <p>在 UDS over CAN 中，请求 ID 和响应 ID 是成对出现的。请求 ID 通常是 <code>0x7E0</code>（表示诊断仪发送给 ECU），对应的响应 ID 是 <code>0x7E8</code>（ECU 回复诊断仪），这个 <code>+0x08</code> 的关系符合 ISO 15765 协议规范。</p>
-<pre><code class="language-python">  vcan0  7DF   [4]  03 22 F1 90 #7DF：OBD-II 的广播地址，表示请求会发送给所有的 ECU
-  vcan0  7E8   [8]  10 14 62 F1 90 66 6C 61#0x1是首帧标志，0x014是大小,0x62是肯定响应sid+0x40，f190子功能id。7E8：响应的 ECU 地址，表示 ECU 的 ID
-  vcan0  7E0   [8]  30 00 00 00 00 00 00 00#0x30流控帧标识，发送后显示剩余连续帧。id:7e0因为要回复7e8，所以流控帧就发送到0x7e0。7E0：流控帧的发送 ECU 地址。
-  vcan0  7E8   [8]  21 67 7B 76 31 6E 5F 42 #连续帧1，0x21。7E8：响应的 ECU 地址。
-  vcan0  7E8   [8]  22 48 6D 61 63 68 33 7D #连续帧2，7E8：响应的 ECU 地址。
+<pre><code class="language-python">  vcan0  7DF   [<span class="hljs-number">4</span>]  03 <span class="hljs-number">22</span> F1 <span class="hljs-number">90</span> <span class="hljs-comment">#7DF：OBD-II 的广播地址，表示请求会发送给所有的 ECU</span>
+  vcan0  <span class="hljs-number">7E8</span>   [<span class="hljs-number">8</span>]  <span class="hljs-number">10</span> <span class="hljs-number">14</span> <span class="hljs-number">62</span> F1 <span class="hljs-number">90</span> <span class="hljs-number">66</span> 6C <span class="hljs-number">61</span><span class="hljs-comment">#0x1是首帧标志，0x014是大小,0x62是肯定响应sid+0x40，f190子功能id。7E8：响应的 ECU 地址，表示 ECU 的 ID</span>
+  vcan0  <span class="hljs-number">7E0</span>   [<span class="hljs-number">8</span>]  <span class="hljs-number">30</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span><span class="hljs-comment">#0x30流控帧标识，发送后显示剩余连续帧。id:7e0因为要回复7e8，所以流控帧就发送到0x7e0。7E0：流控帧的发送 ECU 地址。</span>
+  vcan0  <span class="hljs-number">7E8</span>   [<span class="hljs-number">8</span>]  <span class="hljs-number">21</span> <span class="hljs-number">67</span> 7B <span class="hljs-number">76</span> <span class="hljs-number">31</span> 6E 5F <span class="hljs-number">42</span> <span class="hljs-comment">#连续帧1，0x21。7E8：响应的 ECU 地址。</span>
+  vcan0  <span class="hljs-number">7E8</span>   [<span class="hljs-number">8</span>]  <span class="hljs-number">22</span> <span class="hljs-number">48</span> 6D <span class="hljs-number">61</span> <span class="hljs-number">63</span> <span class="hljs-number">68</span> <span class="hljs-number">33</span> 7D <span class="hljs-comment">#连续帧2，7E8：响应的 ECU 地址。</span>
 </code></pre>
 <p>VIN 码后转为 ASCII 得到 flag：flag{v1n_BHmach3}</p>
-<h2 id="section-36"><strong>Startup Message</strong></h2><pre><code class="language-plain">题目描述：This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E UDS Challenge Simulation, then launch the terminal.It seems the simulation broadcasts some diagnostic information on arbitration ID 0x7DF when booting up, what does this message say? (in ASCII)HINT: How can you get an ECU to restart?
-翻译：此挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E UDS 挑战模拟，然后启动终端。似乎模拟在启动时广播了一些有关仲裁 ID 0x7DF 的诊断信息，这条消息说了什么？（ASCII 格式）提示：如何让 ECU 重新启动？
+<h2 id="section-36"><strong>Startup Message</strong></h2><pre><code class="language-plain">题目描述：<span class="hljs-title class_">This</span> challenge is within the <span class="hljs-title class_">Harborbay</span> vehicle simulator on <span class="hljs-variable constant_">VSEC</span>. <span class="hljs-title class_">From</span> the home page, enter <span class="hljs-title class_">HarborBay</span>. <span class="hljs-title class_">Select</span> the <span class="hljs-title class_">Mach</span>-E <span class="hljs-variable constant_">UDS</span> <span class="hljs-title class_">Challenge</span> <span class="hljs-title class_">Simulation</span>, then launch the terminal.<span class="hljs-property">It</span> seems the simulation broadcasts some diagnostic information on arbitration <span class="hljs-variable constant_">ID</span> <span class="hljs-number">0x7DF</span> when booting up, what does <span class="hljs-variable language_">this</span> message say? (<span class="hljs-keyword">in</span> <span class="hljs-variable constant_">ASCII</span>)<span class="hljs-attr">HINT</span>: <span class="hljs-title class_">How</span> can you get an <span class="hljs-variable constant_">ECU</span> to restart?
+翻译：此挑战在 <span class="hljs-variable constant_">VSEC</span> 上的 <span class="hljs-title class_">Harborbay</span> 车辆模拟器中进行。从主页进入 <span class="hljs-title class_">HarborBay</span>。选择 <span class="hljs-title class_">Mach</span>-E <span class="hljs-variable constant_">UDS</span> 挑战模拟，然后启动终端。似乎模拟在启动时广播了一些有关仲裁 <span class="hljs-variable constant_">ID</span> <span class="hljs-number">0x7DF</span> 的诊断信息，这条消息说了什么？（<span class="hljs-variable constant_">ASCII</span> 格式）提示：如何让 <span class="hljs-variable constant_">ECU</span> 重新启动？
 </code></pre>
-<pre><code class="language-python">cansend vcan0 7df#021101    #用11服务的重启子服务
+<pre><code class="language-python">cansend vcan0 7df<span class="hljs-comment">#021101    #用11服务的重启子服务</span>
 </code></pre>
-<pre><code class="language-python"> vcan0  7DF   [3]  02 11 01 #01硬复位
- vcan0  7E8   [8]  02 51 01 00 00 00 00 00 #响应帧，确认硬复位
- vcan0  59E   [2]  9E 10 
- vcan0  7DF   [8]  07 67 30 47 72 65 33 6E
+<pre><code class="language-python"> vcan0  7DF   [<span class="hljs-number">3</span>]  02 <span class="hljs-number">11</span> 01 <span class="hljs-comment">#01硬复位</span>
+ vcan0  <span class="hljs-number">7E8</span>   [<span class="hljs-number">8</span>]  02 <span class="hljs-number">51</span> 01 <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-number">00</span> <span class="hljs-comment">#响应帧，确认硬复位</span>
+ vcan0  59E   [<span class="hljs-number">2</span>]  9E <span class="hljs-number">10</span> 
+ vcan0  7DF   [<span class="hljs-number">8</span>]  07 <span class="hljs-number">67</span> <span class="hljs-number">30</span> <span class="hljs-number">47</span> <span class="hljs-number">72</span> <span class="hljs-number">65</span> <span class="hljs-number">33</span> 6E
 </code></pre>
 <p>答案 67 30 47 72 65 33 6E---&gt;g0Gre3n</p>
-<h2 id="section-37"><strong>Engine Trouble?</strong></h2><pre><code class="language-plain">题目描述：This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E UDS Challenge Simulation, then launch the terminal.The simulation&#39;s engine light is on, can you read the diagnostic code?Check out our youtube walkthrough if you get stuck: https://www.youtube.com/watch?v=IaUL0dA4Z_YThe format of the DTC is Pxxxx-xx. Example answer: P1234-01翻译：此挑战在 VSEC 上的 Harborbay 车辆模拟器内进行。从主页进入 HarborBay。选择 Mach-E UDS 挑战模拟，然后启动终端。模拟的发动机灯亮了，你能读出诊断代码吗？如果你遇到困难，请查看我们的 YouTube 演示：https://www.youtube.com/watch?v=IaUL0dA4Z_YDTC 的格式为 Pxxxx-xx。示例答案：P1234-01
+<h2 id="section-37"><strong>Engine Trouble?</strong></h2><pre><code class="language-plain">题目描述：This challenge is within the Harborbay vehicle simulator on VSEC. <span class="hljs-built_in">From</span> the home page, enter HarborBay. Select the Mach-E UDS Challenge Simulation, then launch the terminal.The simulation<span class="hljs-symbol">&#x27;s</span> engine light is on, can you read the diagnostic code?Check out our youtube walkthrough <span class="hljs-keyword">if</span> you get stuck: https:<span class="hljs-comment">//www.youtube.com/watch?v=IaUL0dA4Z_YThe format of the DTC is Pxxxx-xx. Example answer: P1234-01翻译：此挑战在 VSEC 上的 Harborbay 车辆模拟器内进行。从主页进入 HarborBay。选择 Mach-E UDS 挑战模拟，然后启动终端。模拟的发动机灯亮了，你能读出诊断代码吗？如果你遇到困难，请查看我们的 YouTube 演示：https://www.youtube.com/watch?v=IaUL0dA4Z_YDTC 的格式为 Pxxxx-xx。示例答案：P1234-01</span>
 </code></pre>
 <p>这次来使用状态掩码读取 DTC，也就是 02 子服务，但掩码是啥呢，定义如下，我们来读 confirmedDTC，也就是 bit3 为 1，其余为 0，0000 1000 =&gt; 08</p>
 <p>DTC 状态掩码（过滤条件，0x08 表示查询“当前确认的故障”）</p>
-<pre><code class="language-plain">cansend vcan0 7DF#03190208
-收到：7E8#075902083E9F01AB
+<pre><code class="language-plain">cansend vcan0 7DF<span class="hljs-comment">#03190208</span>
+收到：<span class="hljs-number">7E8</span><span class="hljs-comment">#075902083E9F01AB</span>
 </code></pre>
 <p>对收到的数据 3E9F01AB 进行解析，前两位有一个对应关系</p>
 <table>
@@ -750,80 +750,80 @@ python3 ex.py
 </tbody></table>
 <p><a href="https://www.cnblogs.com/cokefentas/p/17514220.html">DTC标准故障码格式解析 - 可乐芬达 - 博客园</a></p>
 <p>答案：P3E9F-01</p>
-<h2 id="section-38"><strong>Secrets in Memory?</strong></h2><pre><code class="language-plain">It seems the simulation allows access to only some off-chip sections of memory, are there any secrets in the visible memory?
+<h2 id="section-38"><strong>Secrets in Memory?</strong></h2><pre><code class="language-plain"><span class="hljs-title class_">It</span> seems the simulation allows access to only some off-chip sections <span class="hljs-keyword">of</span> memory, are there <span class="hljs-built_in">any</span> secrets <span class="hljs-keyword">in</span> the visible memory?
 看来模拟只允许访问一些片外内存部分，可见内存中有什么秘密吗？
 
-The memory region starts at 0xC3F80000 and the flag is in the format flag{...}.
-内存区域从 0xC3F80000 开始，标志的格式为 flag{...}。
+<span class="hljs-title class_">The</span> memory region starts at <span class="hljs-number">0xC3F80000</span> and the flag is <span class="hljs-keyword">in</span> the format flag{...}.
+内存区域从 <span class="hljs-number">0xC3F80000</span> 开始，标志的格式为 flag{...}。
 </code></pre>
 <p>23服务读内存</p>
 <p>e.py</p>
-<pre><code class="language-python">import can
-import time
-import binascii
+<pre><code class="language-python"><span class="hljs-keyword">import</span> can
+<span class="hljs-keyword">import</span> time
+<span class="hljs-keyword">import</span> binascii
 
-# 初始化 CAN 总线
-# 使用 socketcan 接口和 vcan0 云中 CAN 模拟通道
-bus = can.Bus(interface=&#39;socketcan&#39;, channel=&#39;vcan0&#39;)
-# 可选缓满过滤器，限制接收特定 ID 的 CAN 消息
-# bus.set_filters([{&quot;can_id&quot;: 0x7E8, &quot;can_mask&quot;: 0xFFF, &quot;extended&quot;: False}])
+<span class="hljs-comment"># 初始化 CAN 总线</span>
+<span class="hljs-comment"># 使用 socketcan 接口和 vcan0 云中 CAN 模拟通道</span>
+bus = can.Bus(interface=<span class="hljs-string">&#x27;socketcan&#x27;</span>, channel=<span class="hljs-string">&#x27;vcan0&#x27;</span>)
+<span class="hljs-comment"># 可选缓满过滤器，限制接收特定 ID 的 CAN 消息</span>
+<span class="hljs-comment"># bus.set_filters([{&quot;can_id&quot;: 0x7E8, &quot;can_mask&quot;: 0xFFF, &quot;extended&quot;: False}])</span>
 
-# 用于累积接收的数据
-recvdata = &quot;[DATA]:&quot;
+<span class="hljs-comment"># 用于累积接收的数据</span>
+recvdata = <span class="hljs-string">&quot;[DATA]:&quot;</span>
 
-# 进行地址进一步测试，地址范围：0xC3F83000 - 0xC3F865FF,步长为0xff
-for hex_value in range(0xC3F83000, 0xC3F865ff, 0xFF):
-    # 将地址分解为 4 个字节
-    byte1 = (hex_value &gt;&gt; 24) &amp; 0xFF  # 高位字节
-    byte2 = (hex_value &gt;&gt; 16) &amp; 0xFF
-    byte3 = (hex_value &gt;&gt; 8) &amp; 0xFF
-    byte4 = hex_value &amp; 0xFF  # 位字节
+<span class="hljs-comment"># 进行地址进一步测试，地址范围：0xC3F83000 - 0xC3F865FF,步长为0xff</span>
+<span class="hljs-keyword">for</span> hex_value <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0xC3F83000</span>, <span class="hljs-number">0xC3F865ff</span>, <span class="hljs-number">0xFF</span>):
+    <span class="hljs-comment"># 将地址分解为 4 个字节</span>
+    byte1 = (hex_value &gt;&gt; <span class="hljs-number">24</span>) &amp; <span class="hljs-number">0xFF</span>  <span class="hljs-comment"># 高位字节</span>
+    byte2 = (hex_value &gt;&gt; <span class="hljs-number">16</span>) &amp; <span class="hljs-number">0xFF</span>
+    byte3 = (hex_value &gt;&gt; <span class="hljs-number">8</span>) &amp; <span class="hljs-number">0xFF</span>
+    byte4 = hex_value &amp; <span class="hljs-number">0xFF</span>  <span class="hljs-comment"># 位字节</span>
 
-    # 构造发送数据消息，其中：
-    # 0x07: 指定消息长度，0x23 和 0x14 为协议服务标识符
-    # byte1-byte4: 代表地址转换字节
-    # 0xFF: 补充位
-    candata = [0x07, 0x23, 0x14, byte1, byte2, byte3, byte4, 0xFF]
-    #查看此地址后0xff内内存中的值
+    <span class="hljs-comment"># 构造发送数据消息，其中：</span>
+    <span class="hljs-comment"># 0x07: 指定消息长度，0x23 和 0x14 为协议服务标识符</span>
+    <span class="hljs-comment"># byte1-byte4: 代表地址转换字节</span>
+    <span class="hljs-comment"># 0xFF: 补充位</span>
+    candata = [<span class="hljs-number">0x07</span>, <span class="hljs-number">0x23</span>, <span class="hljs-number">0x14</span>, byte1, byte2, byte3, byte4, <span class="hljs-number">0xFF</span>]
+    <span class="hljs-comment">#查看此地址后0xff内内存中的值</span>
     
-    # 构造一条 CAN 消息：
-    # arbitration_id=0x7DF 表示功能定向请求，送致所有 ECU
-    # is_extended_id=False 表示标准格式使用 11 位 ID
-    # dlc=8 表示数据部分长度为 8 字节
-    message = can.Message(arbitration_id=0x7DF, is_extended_id=False, dlc=8, data=candata)
+    <span class="hljs-comment"># 构造一条 CAN 消息：</span>
+    <span class="hljs-comment"># arbitration_id=0x7DF 表示功能定向请求，送致所有 ECU</span>
+    <span class="hljs-comment"># is_extended_id=False 表示标准格式使用 11 位 ID</span>
+    <span class="hljs-comment"># dlc=8 表示数据部分长度为 8 字节</span>
+    message = can.Message(arbitration_id=<span class="hljs-number">0x7DF</span>, is_extended_id=<span class="hljs-literal">False</span>, dlc=<span class="hljs-number">8</span>, data=candata)
     
-    # 发送消息
-    bus.send(message, timeout=0.2)
+    <span class="hljs-comment"># 发送消息</span>
+    bus.send(message, timeout=<span class="hljs-number">0.2</span>)
     
-    # 接收 CAN 消息
+    <span class="hljs-comment"># 接收 CAN 消息</span>
     msg = bus.recv()
-    print(&quot;orgin:\n&quot;, msg)  # 展示原始消息
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;orgin:\n&quot;</span>, msg)  <span class="hljs-comment"># 展示原始消息</span>
     
-    # 如果接收到消息，将其数据转换为十六进制字符串，并累积到 recvdata
-    if msg is not None:
-        recvdata += binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)[6:]#回复帧6位也就是3字节后才是有效数据
+    <span class="hljs-comment"># 如果接收到消息，将其数据转换为十六进制字符串，并累积到 recvdata</span>
+    <span class="hljs-keyword">if</span> msg <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:
+        recvdata += binascii.hexlify(msg.data).decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>)[<span class="hljs-number">6</span>:]<span class="hljs-comment">#回复帧6位也就是3字节后才是有效数据</span>
 
-    # 发送流控制框（Flow Control Frame），指示 ECU 可以继续发送数据
-    message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
-    bus.send(message, timeout=0.2)
+    <span class="hljs-comment"># 发送流控制框（Flow Control Frame），指示 ECU 可以继续发送数据</span>
+    message = can.Message(arbitration_id=<span class="hljs-number">0x7E0</span>, is_extended_id=<span class="hljs-literal">False</span>, dlc=<span class="hljs-number">8</span>, data=[<span class="hljs-number">0x30</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>])
+    bus.send(message, timeout=<span class="hljs-number">0.2</span>)
 
-    # 继续接收 ECU 的响应，最多 36 条消息，36*7+4=256=0xff
-    temp = 0
-    while temp &lt; 36:
+    <span class="hljs-comment"># 继续接收 ECU 的响应，最多 36 条消息，36*7+4=256=0xff</span>
+    temp = <span class="hljs-number">0</span>
+    <span class="hljs-keyword">while</span> temp &lt; <span class="hljs-number">36</span>:
         msg = bus.recv()
-        if msg is not None:
-            # 将消息数据转换为十六进制，并删除前 1个字节，只看后面的数据
-            tempdata = binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)[2:]
-            if tempdata != &quot;00000000000000&quot;:
-                recvdata += tempdata  # 累积有效数据
-        temp += 1
+        <span class="hljs-keyword">if</span> msg <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:
+            <span class="hljs-comment"># 将消息数据转换为十六进制，并删除前 1个字节，只看后面的数据</span>
+            tempdata = binascii.hexlify(msg.data).decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>)[<span class="hljs-number">2</span>:]
+            <span class="hljs-keyword">if</span> tempdata != <span class="hljs-string">&quot;00000000000000&quot;</span>:
+                recvdata += tempdata  <span class="hljs-comment"># 累积有效数据</span>
+        temp += <span class="hljs-number">1</span>
 
-# 显示最终接收到的全部数据
-print(&quot;\n========== READMEM ==========&quot;)
-print(recvdata)
-print(&quot;========== READMEM ==========&quot;)
+<span class="hljs-comment"># 显示最终接收到的全部数据</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;\n========== READMEM ==========&quot;</span>)
+<span class="hljs-built_in">print</span>(recvdata)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;========== READMEM ==========&quot;</span>)
 
-# 关闭 CAN 总线，释放资源
+<span class="hljs-comment"># 关闭 CAN 总线，释放资源</span>
 bus.shutdown()
 </code></pre>
 <pre><code class="language-plain">========== READMEM ==========
@@ -831,138 +831,138 @@ bus.shutdown()
 ========== READMEM ==========
 </code></pre>
 <p>f666c61677b6d656d2b723334647d--&gt;&gt;flag{mem+r34d}</p>
-<h2 id="section-39"><strong>Security Access Level 3</strong></h2><pre><code class="language-plain">The simulation is implementing service 0x27 Security Access Level 3 using MAAATH. Can you find the key and break in?
-模拟正在使用 MAAATH 实现服务 0x27 安全访问级别 3。您能找到密钥并闯入吗？
+<h2 id="section-39"><strong>Security Access Level 3</strong></h2><pre><code class="language-plain"><span class="hljs-title class_">The</span> simulation is implementing service <span class="hljs-number">0x27</span> <span class="hljs-title class_">Security</span> <span class="hljs-title class_">Access</span> <span class="hljs-title class_">Level</span> <span class="hljs-number">3</span> <span class="hljs-keyword">using</span> <span class="hljs-variable constant_">MAAATH</span>. <span class="hljs-title class_">Can</span> you find the key and <span class="hljs-keyword">break</span> <span class="hljs-keyword">in</span>?
+模拟正在使用 <span class="hljs-variable constant_">MAAATH</span> 实现服务 <span class="hljs-number">0x27</span> 安全访问级别 <span class="hljs-number">3</span>。您能找到密钥并闯入吗？
 
-The flag is the key to unlock with seed 1337 in hex (example a5a5)
-标志是使用十六进制种子 1337 解锁的密钥（例如 a5a5）
+<span class="hljs-title class_">The</span> flag is the key to unlock <span class="hljs-keyword">with</span> seed <span class="hljs-number">1337</span> <span class="hljs-keyword">in</span> <span class="hljs-title function_">hex</span> (example a5a5)
+标志是使用十六进制种子 <span class="hljs-number">1337</span> 解锁的密钥（例如 a5a5）
 </code></pre>
 <p>不用进terminal操作，将0x1337按位取反即可，得到 <code>0xecc8</code></p>
-<h2 id="section-40"><strong>Security Access Level 1</strong></h2><pre><code class="language-plain">Level 3 provides access to a new diagnostic session and some new memory at 0x1A000, but we still don&#39;t have full control of the module. Can you provide a valid key for security access level 1?
-级别 3 允许访问新的诊断会话和位于 0x1A000 的一些新内存，但我们仍然无法完全控制该模块。您能否提供安全访问级别 1 的有效密钥？
+<h2 id="section-40"><strong>Security Access Level 1</strong></h2><pre><code class="language-plain">Level <span class="hljs-number">3</span> provides access to a new diagnostic session and some new memory at <span class="hljs-number">0x1A000</span>, but we still don<span class="hljs-symbol">&#x27;t</span> have full control of the module. Can you provide a valid key <span class="hljs-keyword">for</span> <span class="hljs-title class_">security</span> access level <span class="hljs-number">1</span>?
+级别 <span class="hljs-number">3</span> 允许访问新的诊断会话和位于 <span class="hljs-number">0x1A000</span> 的一些新内存，但我们仍然无法完全控制该模块。您能否提供安全访问级别 <span class="hljs-number">1</span> 的有效密钥？
 
-The flag is the key to unlock with seed 7D0E1A5C in hex (example 12345678)
-该标志是使用十六进制种子 7D0E1A5C（例如 12345678）解锁的密钥
+The flag is the key to unlock with seed <span class="hljs-number">7</span>D0E1A5C <span class="hljs-keyword">in</span> <span class="hljs-title function_ invoke__">hex</span> (example <span class="hljs-number">12345678</span>)
+该标志是使用十六进制种子 <span class="hljs-number">7</span>D0E1A5C（例如 <span class="hljs-number">12345678</span>）解锁的密钥
 
-cansend vcan0 7e0#0210030000000000 通过0x10服务，进入0x03诊断会话
-cansend vcan0 7e0#0227030000000000 对安全等级为3进行0x27安全访问
-cansend vcan0 7e0#0427047088000000 通过返回的种子算出key值，发送进行解锁
-cansend vcan0 7e0#0227010000000000 对安全等级为1进行0x27安全访问
-通过0x10服务，进入0x03诊断会话，然后使用0x27服务对安全等级1进行安全访问，最后通过返回的种子算出key值，发送进行解锁
+cansend vcan0 <span class="hljs-number">7e0</span>#<span class="hljs-number">0210030000000000</span> 通过<span class="hljs-number">0x10</span>服务，进入<span class="hljs-number">0x03</span>诊断会话
+cansend vcan0 <span class="hljs-number">7e0</span>#<span class="hljs-number">0227030000000000</span> 对安全等级为<span class="hljs-number">3</span>进行<span class="hljs-number">0x27</span>安全访问
+cansend vcan0 <span class="hljs-number">7e0</span>#<span class="hljs-number">0427047088000000</span> 通过返回的种子算出key值，发送进行解锁
+cansend vcan0 <span class="hljs-number">7e0</span>#<span class="hljs-number">0227010000000000</span> 对安全等级为<span class="hljs-number">1</span>进行<span class="hljs-number">0x27</span>安全访问
+通过<span class="hljs-number">0x10</span>服务，进入<span class="hljs-number">0x03</span>诊断会话，然后使用<span class="hljs-number">0x27</span>服务对安全等级<span class="hljs-number">1</span>进行安全访问，最后通过返回的种子算出key值，发送进行解锁
 </code></pre>
 <p>unlock.py</p>
-<pre><code class="language-python">import can
-import time
-import binascii
+<pre><code class="language-python"><span class="hljs-keyword">import</span> can
+<span class="hljs-keyword">import</span> time
+<span class="hljs-keyword">import</span> binascii
 
-# 初始化CAN总线
-bus = can.Bus(interface=&#39;socketcan&#39;, channel=&#39;vcan0&#39;)
+<span class="hljs-comment"># 初始化CAN总线</span>
+bus = can.Bus(interface=<span class="hljs-string">&#x27;socketcan&#x27;</span>, channel=<span class="hljs-string">&#x27;vcan0&#x27;</span>)
 
-# 进入扩展诊断会话
-print(&quot;Entering diagnostic session...&quot;)
-message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x02, 0x10, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00])
-bus.send(message, timeout=0.2)
+<span class="hljs-comment"># 进入扩展诊断会话</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Entering diagnostic session...&quot;</span>)
+message = can.Message(arbitration_id=<span class="hljs-number">0x7E0</span>, is_extended_id=<span class="hljs-literal">False</span>, dlc=<span class="hljs-number">8</span>, data=[<span class="hljs-number">0x02</span>, <span class="hljs-number">0x10</span>, <span class="hljs-number">0x03</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>])
+bus.send(message, timeout=<span class="hljs-number">0.2</span>)
 msg = bus.recv()
-print(f&quot;Diagnostic session response: {binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)}&quot;)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Diagnostic session response: <span class="hljs-subst">{binascii.hexlify(msg.data).decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>)}</span>&quot;</span>)
 
-# 安全访问安全等级为3的会话
-print(&quot;Accessing security level 3...&quot;)
-message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x02, 0x27, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00])
-bus.send(message, timeout=0.2)
+<span class="hljs-comment"># 安全访问安全等级为3的会话</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Accessing security level 3...&quot;</span>)
+message = can.Message(arbitration_id=<span class="hljs-number">0x7E0</span>, is_extended_id=<span class="hljs-literal">False</span>, dlc=<span class="hljs-number">8</span>, data=[<span class="hljs-number">0x02</span>, <span class="hljs-number">0x27</span>, <span class="hljs-number">0x03</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>])
+bus.send(message, timeout=<span class="hljs-number">0.2</span>)
 msg = bus.recv()
-seed = binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)[6:10]
-print(f&quot;Seed received: {seed}&quot;)
+seed = binascii.hexlify(msg.data).decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>)[<span class="hljs-number">6</span>:<span class="hljs-number">10</span>]
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Seed received: <span class="hljs-subst">{seed}</span>&quot;</span>)
 
-# 计算 key
-key = f&quot;{~int(seed, 16) &amp; 0xFFFF:04X}&quot;
+<span class="hljs-comment"># 计算 key</span>
+key = <span class="hljs-string">f&quot;<span class="hljs-subst">{~<span class="hljs-built_in">int</span>(seed, <span class="hljs-number">16</span>) &amp; <span class="hljs-number">0xFFFF</span>:04X}</span>&quot;</span>
 ; 解释：
-; int(seed, 16)：
+; <span class="hljs-built_in">int</span>(seed, <span class="hljs-number">16</span>)：
 ; 将 seed 从十六进制字符串转换为整数类型。
-; ~int(seed, 16)：
+; ~<span class="hljs-built_in">int</span>(seed, <span class="hljs-number">16</span>)：
 ; 对整数取按位反（补码运算）。
-; &amp; 0xFFFF：
-; 仅保留结果的低16位，避免超出Key的范围。
+; &amp; <span class="hljs-number">0xFFFF</span>：
+; 仅保留结果的低<span class="hljs-number">16</span>位，避免超出Key的范围。
 ; :04X：
-; 将结果格式化为4位十六进制字符串（大写）。
-print(f&quot;Calculated key: {key}&quot;)
+; 将结果格式化为<span class="hljs-number">4</span>位十六进制字符串（大写）。
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Calculated key: <span class="hljs-subst">{key}</span>&quot;</span>)
 
-# 解锁
-print(&quot;Unlocking access...&quot;)
-message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x04, 0x27, 0x04, int(key[0:2], 16), int(key[2:4], 16), 0x00, 0x00, 0x00])
-#0x04：子功能，表示发送Key。
-bus.send(message, timeout=0.2)
+<span class="hljs-comment"># 解锁</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Unlocking access...&quot;</span>)
+message = can.Message(arbitration_id=<span class="hljs-number">0x7E0</span>, is_extended_id=<span class="hljs-literal">False</span>, dlc=<span class="hljs-number">8</span>, data=[<span class="hljs-number">0x04</span>, <span class="hljs-number">0x27</span>, <span class="hljs-number">0x04</span>, <span class="hljs-built_in">int</span>(key[<span class="hljs-number">0</span>:<span class="hljs-number">2</span>], <span class="hljs-number">16</span>), <span class="hljs-built_in">int</span>(key[<span class="hljs-number">2</span>:<span class="hljs-number">4</span>], <span class="hljs-number">16</span>), <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>])
+<span class="hljs-comment">#0x04：子功能，表示发送Key。</span>
+bus.send(message, timeout=<span class="hljs-number">0.2</span>)
 msg = bus.recv()
-print(f&quot;Unlock response: {binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)}&quot;)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Unlock response: <span class="hljs-subst">{binascii.hexlify(msg.data).decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>)}</span>&quot;</span>)
 
-# 关闭CAN总线
+<span class="hljs-comment"># 关闭CAN总线</span>
 bus.shutdown()
 </code></pre>
 <p>ex.py</p>
-<pre><code class="language-python">import can
-import time
-import binascii
+<pre><code class="language-python"><span class="hljs-keyword">import</span> can
+<span class="hljs-keyword">import</span> time
+<span class="hljs-keyword">import</span> binascii
 
-# 初始化CAN总线
-bus = can.Bus(interface=&#39;socketcan&#39;, channel=&#39;vcan0&#39;)
+<span class="hljs-comment"># 初始化CAN总线</span>
+bus = can.Bus(interface=<span class="hljs-string">&#x27;socketcan&#x27;</span>, channel=<span class="hljs-string">&#x27;vcan0&#x27;</span>)
 
-# 进入编程诊断会话，03扩展会话不支持23服务的请求
-print(&quot;Entering diagnostic session...&quot;)
-message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x02, 0x10, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00])
-bus.send(message, timeout=0.2)
+<span class="hljs-comment"># 进入编程诊断会话，03扩展会话不支持23服务的请求</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Entering diagnostic session...&quot;</span>)
+message = can.Message(arbitration_id=<span class="hljs-number">0x7E0</span>, is_extended_id=<span class="hljs-literal">False</span>, dlc=<span class="hljs-number">8</span>, data=[<span class="hljs-number">0x02</span>, <span class="hljs-number">0x10</span>, <span class="hljs-number">0x02</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>])
+bus.send(message, timeout=<span class="hljs-number">0.2</span>)
 msg = bus.recv()
 
-# 安全访问安全等级为1的会话
-print(&quot;Accessing security level 1...&quot;)
-message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x02, 0x27, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00])
-bus.send(message, timeout=0.2)
+<span class="hljs-comment"># 安全访问安全等级为1的会话</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Accessing security level 1...&quot;</span>)
+message = can.Message(arbitration_id=<span class="hljs-number">0x7E0</span>, is_extended_id=<span class="hljs-literal">False</span>, dlc=<span class="hljs-number">8</span>, data=[<span class="hljs-number">0x02</span>, <span class="hljs-number">0x27</span>, <span class="hljs-number">0x01</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>])
+bus.send(message, timeout=<span class="hljs-number">0.2</span>)
 msg = bus.recv()
-seed = binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)[6:10]
+seed = binascii.hexlify(msg.data).decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>)[<span class="hljs-number">6</span>:<span class="hljs-number">10</span>]
 
 
-# 计算 key
-key = f&quot;{~int(seed, 16) &amp; 0xFFFF:04X}&quot;
+<span class="hljs-comment"># 计算 key</span>
+key = <span class="hljs-string">f&quot;<span class="hljs-subst">{~<span class="hljs-built_in">int</span>(seed, <span class="hljs-number">16</span>) &amp; <span class="hljs-number">0xFFFF</span>:04X}</span>&quot;</span>
 
-# 解锁
-print(&quot;Unlocking access...&quot;)
-message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x04, 0x27, 0x04, int(key[0:2], 16), int(key[2:4], 16), 0x00, 0x00, 0x00])
-#0x04：子功能，表示发送Key。
-bus.send(message, timeout=0.2)
+<span class="hljs-comment"># 解锁</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Unlocking access...&quot;</span>)
+message = can.Message(arbitration_id=<span class="hljs-number">0x7E0</span>, is_extended_id=<span class="hljs-literal">False</span>, dlc=<span class="hljs-number">8</span>, data=[<span class="hljs-number">0x04</span>, <span class="hljs-number">0x27</span>, <span class="hljs-number">0x04</span>, <span class="hljs-built_in">int</span>(key[<span class="hljs-number">0</span>:<span class="hljs-number">2</span>], <span class="hljs-number">16</span>), <span class="hljs-built_in">int</span>(key[<span class="hljs-number">2</span>:<span class="hljs-number">4</span>], <span class="hljs-number">16</span>), <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>])
+<span class="hljs-comment">#0x04：子功能，表示发送Key。</span>
+bus.send(message, timeout=<span class="hljs-number">0.2</span>)
 msg = bus.recv()
-print(f&quot;Unlock response: {binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)}&quot;)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;Unlock response: <span class="hljs-subst">{binascii.hexlify(msg.data).decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>)}</span>&quot;</span>)
 
-recvdata = &quot;[DATA]:&quot;
-for hex_value in range(0x1a000, 0x1b000, 0xFF):
+recvdata = <span class="hljs-string">&quot;[DATA]:&quot;</span>
+<span class="hljs-keyword">for</span> hex_value <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0x1a000</span>, <span class="hljs-number">0x1b000</span>, <span class="hljs-number">0xFF</span>):
     
-    # 将地址分解为 4 个字节
-    byte1 = (hex_value &gt;&gt; 24) &amp; 0xFF  # 高位字节
-    byte2 = (hex_value &gt;&gt; 16) &amp; 0xFF
-    byte3 = (hex_value &gt;&gt; 8) &amp; 0xFF
-    byte4 = hex_value &amp; 0xFF  
+    <span class="hljs-comment"># 将地址分解为 4 个字节</span>
+    byte1 = (hex_value &gt;&gt; <span class="hljs-number">24</span>) &amp; <span class="hljs-number">0xFF</span>  <span class="hljs-comment"># 高位字节</span>
+    byte2 = (hex_value &gt;&gt; <span class="hljs-number">16</span>) &amp; <span class="hljs-number">0xFF</span>
+    byte3 = (hex_value &gt;&gt; <span class="hljs-number">8</span>) &amp; <span class="hljs-number">0xFF</span>
+    byte4 = hex_value &amp; <span class="hljs-number">0xFF</span>  
 
-    candata = [0x07, 0x23, 0x14, byte1, byte2, byte3, byte4, 0xFF]
-    message = can.Message(arbitration_id=0x7DF, is_extended_id=False, dlc=8, data=candata)
-    bus.send(message, timeout=0.2)
+    candata = [<span class="hljs-number">0x07</span>, <span class="hljs-number">0x23</span>, <span class="hljs-number">0x14</span>, byte1, byte2, byte3, byte4, <span class="hljs-number">0xFF</span>]
+    message = can.Message(arbitration_id=<span class="hljs-number">0x7DF</span>, is_extended_id=<span class="hljs-literal">False</span>, dlc=<span class="hljs-number">8</span>, data=candata)
+    bus.send(message, timeout=<span class="hljs-number">0.2</span>)
     msg = bus.recv()
 
-    recvdata += binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)[6:]#回复帧6位也就是3字节后才是有效数据
+    recvdata += binascii.hexlify(msg.data).decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>)[<span class="hljs-number">6</span>:]<span class="hljs-comment">#回复帧6位也就是3字节后才是有效数据</span>
 
-    # 发送流控制框（Flow Control Frame），指示 ECU 可以继续发送数据
-    message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
-    bus.send(message, timeout=0.2)
+    <span class="hljs-comment"># 发送流控制框（Flow Control Frame），指示 ECU 可以继续发送数据</span>
+    message = can.Message(arbitration_id=<span class="hljs-number">0x7E0</span>, is_extended_id=<span class="hljs-literal">False</span>, dlc=<span class="hljs-number">8</span>, data=[<span class="hljs-number">0x30</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>])
+    bus.send(message, timeout=<span class="hljs-number">0.2</span>)
 
-    # 继续接收 ECU 的响应，最多 36 条消息，36*7+4=256=0xff
-    temp = 0
-    while temp &lt; 36:
+    <span class="hljs-comment"># 继续接收 ECU 的响应，最多 36 条消息，36*7+4=256=0xff</span>
+    temp = <span class="hljs-number">0</span>
+    <span class="hljs-keyword">while</span> temp &lt; <span class="hljs-number">36</span>:
         msg = bus.recv()
-        tempdata = binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)[2:]
-        if tempdata != &quot;00000000000000&quot;:
-            recvdata += tempdata  # 累积有效数据
-        temp += 1
+        tempdata = binascii.hexlify(msg.data).decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>)[<span class="hljs-number">2</span>:]
+        <span class="hljs-keyword">if</span> tempdata != <span class="hljs-string">&quot;00000000000000&quot;</span>:
+            recvdata += tempdata  <span class="hljs-comment"># 累积有效数据</span>
+        temp += <span class="hljs-number">1</span>
 
 
-print(&quot;\n========== READMEM ==========&quot;)
-print(recvdata)
-print(&quot;========== READMEM ==========&quot;)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;\n========== READMEM ==========&quot;</span>)
+<span class="hljs-built_in">print</span>(recvdata)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;========== READMEM ==========&quot;</span>)
 
 bus.shutdown()
 </code></pre>
@@ -980,32 +980,32 @@ bus.shutdown()
 </code></pre>
 <p>在后面会记录请求的种子，跟在种子后面还有一串值，长度和种子一样的</p>
 <p>找规律，发现两个异或结果始终为：0x5539aa17，因此猜测该算法是使用种子异或 0x5539aa17</p>
-<h2 id="section-41"><strong>Read Data By Identifier</strong></h2><pre><code class="language-plain">This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E User Space Diagnostics Challenge Simulation, then launch the terminal.
+<h2 id="section-41"><strong>Read Data By Identifier</strong></h2><pre><code class="language-plain">This challenge is within the Harborbay vehicle simulator on VSEC. <span class="hljs-built_in">From</span> the home page, enter HarborBay. Select the Mach-E User Space Diagnostics Challenge Simulation, then launch the terminal.
 这项挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E 用户空间诊断挑战模拟，然后启动终端。
 
 Can you identify the data?
 您能识别数据吗？
 </code></pre>
 <p>爆破DID</p>
-<pre><code class="language-python">import can
-import time
-import binascii
+<pre><code class="language-python"><span class="hljs-keyword">import</span> can
+<span class="hljs-keyword">import</span> time
+<span class="hljs-keyword">import</span> binascii
 
-bus =  can.Bus(interface=&#39;socketcan&#39;, channel=&#39;vcan0&#39;)
+bus =  can.Bus(interface=<span class="hljs-string">&#x27;socketcan&#x27;</span>, channel=<span class="hljs-string">&#x27;vcan0&#x27;</span>)
 
-for i in range(0,0xFF):
-    for j in range(0,0xFF):
-        message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x03, 0x22, i, j, 0x00, 0x00, 0x00, 0x00])
-        bus.send(message, timeout=0.2)
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>,<span class="hljs-number">0xFF</span>):
+    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>,<span class="hljs-number">0xFF</span>):
+        message = can.Message(arbitration_id=<span class="hljs-number">0x7E0</span>, is_extended_id=<span class="hljs-literal">False</span>, dlc=<span class="hljs-number">8</span>, data=[<span class="hljs-number">0x03</span>, <span class="hljs-number">0x22</span>, i, j, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>])
+        bus.send(message, timeout=<span class="hljs-number">0.2</span>)
         msg = bus.recv()
 
 bus.shutdown()
 </code></pre>
 <p>当DID发到 0008 的时候就正常读取到了信息</p>
-<pre><code class="language-plain">cansend vcan0 7E0#03220008 &amp;&amp; cansend vcan0 7E0#3000000000000000
+<pre><code class="language-plain">cansend vcan0 <span class="hljs-number">7E0</span><span class="hljs-comment">#03220008 &amp;&amp; cansend vcan0 7E0#3000000000000000</span>
 </code></pre>
 <p>得到flag为<code>bh{identified_by_what???}</code></p>
-<h2 id="section-42"><strong>Routine Control</strong></h2><pre><code class="language-plain">This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E User Space Diagnostics Challenge Simulation, then launch the terminal.
+<h2 id="section-42"><strong>Routine Control</strong></h2><pre><code class="language-plain">This challenge <span class="hljs-keyword">is</span> within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E User Space Diagnostics Challenge Simulation, then launch the terminal.
 这项挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E 用户空间诊断挑战模拟，然后启动终端。
 
 I hear routine control has a lot of fun features.
@@ -1014,30 +1014,30 @@ I hear routine control has a lot of fun features.
 <p>使用 Routine Control 服务来执行已定义的步骤序列并获取任何相关结果，服务 ID 是 0x31</p>
 <p>子功能也比较简单，开始（01）、停止（02）、获取结果（03）</p>
 <p>那先试试开始执行吧，简单试了试都是否定响应，估计也得爆破</p>
-<pre><code class="language-python">import can
-import time
-import binascii
+<pre><code class="language-python"><span class="hljs-keyword">import</span> can
+<span class="hljs-keyword">import</span> time
+<span class="hljs-keyword">import</span> binascii
 
-bus =  can.Bus(interface=&#39;socketcan&#39;, channel=&#39;vcan0&#39;)
+bus =  can.Bus(interface=<span class="hljs-string">&#x27;socketcan&#x27;</span>, channel=<span class="hljs-string">&#x27;vcan0&#x27;</span>)
 
-for i in range(0,0xFF):
-    for j in range(0,0xFF):
-        message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x04, 0x31, 0x01, i, j, 0x00, 0x00, 0x00])
-        bus.send(message, timeout=0.2)
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>,<span class="hljs-number">0xFF</span>):
+    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>,<span class="hljs-number">0xFF</span>):
+        message = can.Message(arbitration_id=<span class="hljs-number">0x7E0</span>, is_extended_id=<span class="hljs-literal">False</span>, dlc=<span class="hljs-number">8</span>, data=[<span class="hljs-number">0x04</span>, <span class="hljs-number">0x31</span>, <span class="hljs-number">0x01</span>, i, j, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>])
+        bus.send(message, timeout=<span class="hljs-number">0.2</span>)
         msg = bus.recv()
-        result = binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)
-        if result == &quot;037f3131&quot;:
-            pass
-        else:
-            print(&quot;i: &quot;,hex(i),&quot;   j: &quot;,hex(j))
+        result = binascii.hexlify(msg.data).decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>)
+        <span class="hljs-keyword">if</span> result == <span class="hljs-string">&quot;037f3131&quot;</span>:
+            <span class="hljs-keyword">pass</span>
+        <span class="hljs-keyword">else</span>:
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;i: &quot;</span>,<span class="hljs-built_in">hex</span>(i),<span class="hljs-string">&quot;   j: &quot;</span>,<span class="hljs-built_in">hex</span>(j))
 
 bus.shutdown()
 </code></pre>
 <p>跑了一段时间发现 1337 是响应的，因此先执行 1337 然后再获取结果</p>
-<pre><code class="language-plain">cansend vcan0 7E0#0431011337000000 &amp;&amp; cansend vcan0 7E0#0431031337000000 &amp;&amp; cansend vcan0 7E0#3000000000000000
+<pre><code class="language-plain">cansend vcan0 <span class="hljs-number">7E0</span><span class="hljs-comment">#0431011337000000 &amp;&amp; cansend vcan0 7E0#0431031337000000 &amp;&amp; cansend vcan0 7E0#3000000000000000</span>
 </code></pre>
 <p>得到flag为<code>bh{c0ntroll1ng_th3_r0ut1nes}</code></p>
-<h2 id="section-43"><strong>Security Access Level 1</strong></h2><pre><code class="language-plain">This challenge is within the Harborbay vehicle simulator on VSEC. From the home page, enter HarborBay. Select the Mach-E User Space Diagnostics Challenge Simulation, then launch the terminal.
+<h2 id="section-43"><strong>Security Access Level 1</strong></h2><pre><code class="language-plain">This challenge is within the Harborbay vehicle simulator on VSEC. <span class="hljs-built_in">From</span> the home page, enter HarborBay. Select the Mach-E User Space Diagnostics Challenge Simulation, then launch the terminal.
 此挑战在 VSEC 上的 Harborbay 车辆模拟器中进行。从主页进入 HarborBay。选择 Mach-E 用户空间诊断挑战模拟，然后启动终端。
 
 I hear single byte XOR keys are a great security measure, can you prove me wrong?
@@ -1045,61 +1045,61 @@ I hear single byte XOR keys are a great security measure, can you prove me wrong
 </code></pre>
 <p>进行安全访问时，会先返回一个随机数，key应该就是对这个随机数的每一个字节进行一个异或，异或的值直接爆破</p>
 <p>key.py</p>
-<pre><code class="language-python">import can
-import time
-import binascii
+<pre><code class="language-python"><span class="hljs-keyword">import</span> can
+<span class="hljs-keyword">import</span> time
+<span class="hljs-keyword">import</span> binascii
 
-bus =  can.Bus(interface=&#39;socketcan&#39;, channel=&#39;vcan0&#39;)
+bus =  can.Bus(interface=<span class="hljs-string">&#x27;socketcan&#x27;</span>, channel=<span class="hljs-string">&#x27;vcan0&#x27;</span>)
 
-for key in range(0,0xFF):
-    message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x02, 0x27, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00])
-    bus.send(message, timeout=0.2)
+<span class="hljs-keyword">for</span> key <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>,<span class="hljs-number">0xFF</span>):
+    message = can.Message(arbitration_id=<span class="hljs-number">0x7E0</span>, is_extended_id=<span class="hljs-literal">False</span>, dlc=<span class="hljs-number">8</span>, data=[<span class="hljs-number">0x02</span>, <span class="hljs-number">0x27</span>, <span class="hljs-number">0x01</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>])
+    bus.send(message, timeout=<span class="hljs-number">0.2</span>)
     msg = bus.recv()    
 
-    result = binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)
-    seed = result[6:14]
+    result = binascii.hexlify(msg.data).decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>)
+    seed = result[<span class="hljs-number">6</span>:<span class="hljs-number">14</span>]
 
-    key1 = int(seed[:2],16) ^ key
-    key2 = int(seed[2:4],16) ^ key
-    key3 = int(seed[4:6],16) ^ key
-    key4 = int(seed[6:8],16) ^ key
+    key1 = <span class="hljs-built_in">int</span>(seed[:<span class="hljs-number">2</span>],<span class="hljs-number">16</span>) ^ key
+    key2 = <span class="hljs-built_in">int</span>(seed[<span class="hljs-number">2</span>:<span class="hljs-number">4</span>],<span class="hljs-number">16</span>) ^ key
+    key3 = <span class="hljs-built_in">int</span>(seed[<span class="hljs-number">4</span>:<span class="hljs-number">6</span>],<span class="hljs-number">16</span>) ^ key
+    key4 = <span class="hljs-built_in">int</span>(seed[<span class="hljs-number">6</span>:<span class="hljs-number">8</span>],<span class="hljs-number">16</span>) ^ key
     
-    message=can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x06, 0x27, 0x02, key1, key2, key3, key4, 0x00])
-    bus.send(message, timeout=0.2)
+    message=can.Message(arbitration_id=<span class="hljs-number">0x7E0</span>, is_extended_id=<span class="hljs-literal">False</span>, dlc=<span class="hljs-number">8</span>, data=[<span class="hljs-number">0x06</span>, <span class="hljs-number">0x27</span>, <span class="hljs-number">0x02</span>, key1, key2, key3, key4, <span class="hljs-number">0x00</span>])
+    bus.send(message, timeout=<span class="hljs-number">0.2</span>)
     msg = bus.recv()
-    result = binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)
-    if result == &quot;037f2735&quot;:
-        pass
-    else:
-        print(&quot;key is &quot;,hex(key))
+    result = binascii.hexlify(msg.data).decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>)
+    <span class="hljs-keyword">if</span> result == <span class="hljs-string">&quot;037f2735&quot;</span>:
+        <span class="hljs-keyword">pass</span>
+    <span class="hljs-keyword">else</span>:
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;key is &quot;</span>,<span class="hljs-built_in">hex</span>(key))
 
 bus.shutdown()
 </code></pre>
 <p>最后得到key为0x20</p>
 <p>写脚本访问成功后，发送流控制帧获取flag</p>
-<pre><code class="language-python">import can
-import time
-import binascii
+<pre><code class="language-python"><span class="hljs-keyword">import</span> can
+<span class="hljs-keyword">import</span> time
+<span class="hljs-keyword">import</span> binascii
 
-bus =  can.Bus(interface=&#39;socketcan&#39;, channel=&#39;vcan0&#39;)
+bus =  can.Bus(interface=<span class="hljs-string">&#x27;socketcan&#x27;</span>, channel=<span class="hljs-string">&#x27;vcan0&#x27;</span>)
 
-message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x02, 0x27, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00])
-bus.send(message, timeout=0.2)
+message = can.Message(arbitration_id=<span class="hljs-number">0x7E0</span>, is_extended_id=<span class="hljs-literal">False</span>, dlc=<span class="hljs-number">8</span>, data=[<span class="hljs-number">0x02</span>, <span class="hljs-number">0x27</span>, <span class="hljs-number">0x01</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>])
+bus.send(message, timeout=<span class="hljs-number">0.2</span>)
 msg = bus.recv()
 
-result = binascii.hexlify(msg.data).decode(&#39;utf-8&#39;)
-seed = result[6:14]
-key=0x20
-key1 = int(seed[:2],16) ^ key
-key2 = int(seed[2:4],16) ^ key
-key3 = int(seed[4:6],16) ^ key
-key4 = int(seed[6:8],16) ^ key
-message = can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x06, 0x27, 0x02, key1, key2, key3, key4, 0x00])
-bus.send(message, timeout=0.2)
+result = binascii.hexlify(msg.data).decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>)
+seed = result[<span class="hljs-number">6</span>:<span class="hljs-number">14</span>]
+key=<span class="hljs-number">0x20</span>
+key1 = <span class="hljs-built_in">int</span>(seed[:<span class="hljs-number">2</span>],<span class="hljs-number">16</span>) ^ key
+key2 = <span class="hljs-built_in">int</span>(seed[<span class="hljs-number">2</span>:<span class="hljs-number">4</span>],<span class="hljs-number">16</span>) ^ key
+key3 = <span class="hljs-built_in">int</span>(seed[<span class="hljs-number">4</span>:<span class="hljs-number">6</span>],<span class="hljs-number">16</span>) ^ key
+key4 = <span class="hljs-built_in">int</span>(seed[<span class="hljs-number">6</span>:<span class="hljs-number">8</span>],<span class="hljs-number">16</span>) ^ key
+message = can.Message(arbitration_id=<span class="hljs-number">0x7E0</span>, is_extended_id=<span class="hljs-literal">False</span>, dlc=<span class="hljs-number">8</span>, data=[<span class="hljs-number">0x06</span>, <span class="hljs-number">0x27</span>, <span class="hljs-number">0x02</span>, key1, key2, key3, key4, <span class="hljs-number">0x00</span>])
+bus.send(message, timeout=<span class="hljs-number">0.2</span>)
 msg = bus.recv()
 
-message=can.Message(arbitration_id=0x7E0, is_extended_id=False, dlc=8, data=[0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
-bus.send(message,timeout=0.2)
+message=can.Message(arbitration_id=<span class="hljs-number">0x7E0</span>, is_extended_id=<span class="hljs-literal">False</span>, dlc=<span class="hljs-number">8</span>, data=[<span class="hljs-number">0x30</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>, <span class="hljs-number">0x00</span>])
+bus.send(message,timeout=<span class="hljs-number">0.2</span>)
 msg=bus.recv()
 bus.shutdown()
 </code></pre>

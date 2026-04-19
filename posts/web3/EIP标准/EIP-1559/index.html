@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>EIP-1559 | 沉于思，录以隙</title><meta name="description" content="# EIP-1559: 费用市场改革 (Fee market change for ETH 1.0 chain) > **一句话总结**：EIP-1559 彻底重构了以太坊的交易费用定价机制——从原来的&#34;盲目竞价拍卖&#34;（First-Price Auction）改为由**协议自动计"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">EIP-1559</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">EIP标准</span>  </div> <div class="article-meta-row"> <span>2026/3/24</span> <span>web3</span> <span>web3 · EIP标准</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/EIP标准/" class="tag">#EIP标准</a> </div> <p class="source-note">来源路径：web3/EIP标准/EIP-1559.md</p> </header> <div class="article-main"> <div class="article-content"><h1>EIP-1559: 费用市场改革 (Fee market change for ETH 1.0 chain)</h1><blockquote>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>EIP-1559 | 沉于思，录以隙</title><meta name="description" content="# EIP-1559: 费用市场改革 (Fee market change for ETH 1.0 chain) > **一句话总结**：EIP-1559 彻底重构了以太坊的交易费用定价机制——从原来的&#34;盲目竞价拍卖&#34;（First-Price Auction）改为由**协议自动计"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">EIP-1559</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">EIP标准</span>  </div> <div class="article-meta-row"> <span>2026/3/24</span> <span>web3</span> <span>web3 · EIP标准</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/EIP标准/" class="tag">#EIP标准</a> </div> <p class="source-note">来源路径：web3/EIP标准/EIP-1559.md</p> </header> <div class="article-main"> <div class="article-content"><h1>EIP-1559: 费用市场改革 (Fee market change for ETH 1.0 chain)</h1><blockquote>
 <p><strong>一句话总结</strong>：EIP-1559 彻底重构了以太坊的交易费用定价机制——从原来的&quot;盲目竞价拍卖&quot;（First-Price Auction）改为由<strong>协议自动计算基础费 (Base Fee) + 用户自选小费 (Priority Fee / Tip)</strong> 的双层模型。Base Fee 会根据上一个区块的拥堵程度像弹簧一样自动调节，并且被<strong>永久销毁 (Burn)</strong>，使得 ETH 从纯通胀资产变为可能通缩的&quot;超声波货币 (Ultrasound Money)&quot;。</p>
 </blockquote>
 <h2 id="section-1">📜 核心元数据 (Metadata)</h2><blockquote>
@@ -32,10 +32,10 @@
 </li>
 </ul>
 <hr>
-<h2 id="section-3">2. 核心架构与底层修改细节 (Core Specification)</h2><h3 id="section-4">A. 全局参数 / 常量变动 (Parameters)</h3><pre><code class="language-python"># EIP-1559 核心常量
-INITIAL_BASE_FEE = 1_000_000_000   # 创世 Base Fee = 1 Gwei
-BASE_FEE_MAX_CHANGE_DENOMINATOR = 8  # 每个区块 Base Fee 最大变化率 = 12.5%
-ELASTICITY_MULTIPLIER = 2            # 弹性系数：区块最大容量 = 2 × 目标容量
+<h2 id="section-3">2. 核心架构与底层修改细节 (Core Specification)</h2><h3 id="section-4">A. 全局参数 / 常量变动 (Parameters)</h3><pre><code class="language-python"><span class="hljs-comment"># EIP-1559 核心常量</span>
+INITIAL_BASE_FEE = <span class="hljs-number">1_000_000_000</span>   <span class="hljs-comment"># 创世 Base Fee = 1 Gwei</span>
+BASE_FEE_MAX_CHANGE_DENOMINATOR = <span class="hljs-number">8</span>  <span class="hljs-comment"># 每个区块 Base Fee 最大变化率 = 12.5%</span>
+ELASTICITY_MULTIPLIER = <span class="hljs-number">2</span>            <span class="hljs-comment"># 弹性系数：区块最大容量 = 2 × 目标容量</span>
 </code></pre>
 <ul>
 <li><strong>配置解读</strong>：<ul>
@@ -54,13 +54,13 @@ ELASTICITY_MULTIPLIER = 2            # 弹性系数：区块最大容量 = 2 × 
 <pre><code>TransactionPayload = 0x02 || rlp([
     chain_id,
     nonce,
-    max_priority_fee_per_gas,   # 用户愿给验证者的最大小费
-    max_fee_per_gas,             # 用户愿意支付的每 Gas 绝对上限
+    max_priority_fee_per_gas,   <span class="hljs-comment"># 用户愿给验证者的最大小费</span>
+    max_fee_per_gas,             <span class="hljs-comment"># 用户愿意支付的每 Gas 绝对上限</span>
     gas_limit,
     destination,
     amount,
     data,
-    access_list,                 # EIP-2930 访问列表
+    access_list,                 <span class="hljs-comment"># EIP-2930 访问列表</span>
     signature_y_parity,
     signature_r,
     signature_s
@@ -96,34 +96,34 @@ ELASTICITY_MULTIPLIER = 2            # 弹性系数：区块最大容量 = 2 × 
 <li><strong>数学公式</strong>：
 $$\text{BaseFee}_{n+1} = \text{BaseFee}_n \times \left(1 + \frac{1}{d} \times \frac{\text{GasUsed}_n - \text{TargetGas}}{\text{TargetGas}} \right)$$</li>
 </ul>
-<p>其中 $d$ = <code>BASE_FEE_MAX_CHANGE_DENOMINATOR</code> = 8。</p>
+<p>其中 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> = <code>BASE_FEE_MAX_CHANGE_DENOMINATOR</code> = 8。</p>
 <ul>
 <li><p><strong>拆解</strong>：</p>
 <ul>
 <li>当区块<strong>恰好半满</strong> ($\text{GasUsed} = \text{TargetGas}$)：分子为 0 → Base Fee <strong>不变</strong>。</li>
-<li>当区块<strong>完全填满</strong> ($\text{GasUsed} = 2 \times \text{TargetGas}$)：变化率 = $1/8 \times 1 = 12.5%$ → Base Fee <strong>上涨 12.5%</strong>。</li>
-<li>当区块<strong>完全为空</strong> ($\text{GasUsed} = 0$)：变化率 = $1/8 \times (-1) = -12.5%$ → Base Fee <strong>下降 12.5%</strong>。</li>
+<li>当区块<strong>完全填满</strong> ($\text{GasUsed} = 2 \times \text{TargetGas}$)：变化率 = <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">1/8</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8056em;vertical-align:-0.0556em;"></span><span class="mord">12.5%</span></span></span></span> → Base Fee <strong>上涨 12.5%</strong>。</li>
+<li>当区块<strong>完全为空</strong> ($\text{GasUsed} = 0<span class="katex-error" title="ParseError: KaTeX parse error: Can&#x27;t use function &#x27;$&#x27; in math mode at position 9: )：变化率 = $̲1/8 \times (-1)…" style="color:#cc0000">)：变化率 = $1/8 \times (-1) = -12.5\%</span> → Base Fee <strong>下降 12.5%</strong>。</li>
 </ul>
 </li>
 <li><p><strong>客户端伪代码 (Python)</strong>：</p>
 </li>
 </ul>
-<pre><code class="language-python">def calc_base_fee(parent_gas_used, parent_gas_target, parent_base_fee):
-    if parent_gas_used == parent_gas_target:
-        return parent_base_fee  # 半满 → 不变
-    elif parent_gas_used &gt; parent_gas_target:
-        # 超载 → 涨价
+<pre><code class="language-python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">calc_base_fee</span>(<span class="hljs-params">parent_gas_used, parent_gas_target, parent_base_fee</span>):
+    <span class="hljs-keyword">if</span> parent_gas_used == parent_gas_target:
+        <span class="hljs-keyword">return</span> parent_base_fee  <span class="hljs-comment"># 半满 → 不变</span>
+    <span class="hljs-keyword">elif</span> parent_gas_used &gt; parent_gas_target:
+        <span class="hljs-comment"># 超载 → 涨价</span>
         gas_used_delta = parent_gas_used - parent_gas_target
-        fee_delta = max(
-            parent_base_fee * gas_used_delta // parent_gas_target // 8,
-            1  # 至少涨 1 wei，防止 Base Fee 永远卡在 0
+        fee_delta = <span class="hljs-built_in">max</span>(
+            parent_base_fee * gas_used_delta // parent_gas_target // <span class="hljs-number">8</span>,
+            <span class="hljs-number">1</span>  <span class="hljs-comment"># 至少涨 1 wei，防止 Base Fee 永远卡在 0</span>
         )
-        return parent_base_fee + fee_delta
-    else:
-        # 空闲 → 降价
+        <span class="hljs-keyword">return</span> parent_base_fee + fee_delta
+    <span class="hljs-keyword">else</span>:
+        <span class="hljs-comment"># 空闲 → 降价</span>
         gas_used_delta = parent_gas_target - parent_gas_used
-        fee_delta = parent_base_fee * gas_used_delta // parent_gas_target // 8
-        return parent_base_fee - fee_delta
+        fee_delta = parent_base_fee * gas_used_delta // parent_gas_target // <span class="hljs-number">8</span>
+        <span class="hljs-keyword">return</span> parent_base_fee - fee_delta
 </code></pre>
 <p><em>代码拆解</em>：<code>// 8</code> 就是除以 <code>BASE_FEE_MAX_CHANGE_DENOMINATOR</code>，确保每个区块的 Base Fee 变化不超过 12.5%。注意在涨价路径中有个 <code>max(..., 1)</code> 的保底措施，防止 Base Fee 因为整数除法归零后永远卡死。</p>
 <h3 id="section-10">B. 核心难点：为什么要销毁 Base Fee 而不是给区块生产者？</h3><p>如果 Base Fee 也给区块生产者，他们就会有更强的经济动机去<strong>人为制造或维持拥堵</strong>，例如通过选择性打包交易、延缓低费交易进入区块，甚至在极端分析里用自发交易填充区块，来推动后续区块的 Base Fee 上升并从中获利。销毁机制的关键作用，就是把这部分“基础费上涨带来的额外收入”从区块生产者手里拿走。这样一来，验证者仍然可以从 Tip 和 MEV 中获利，但至少不会因为 Base Fee 升高而直接受益，因此其操纵基础费的经济动机被显著削弱，而不是被绝对意义上彻底消灭。</p>

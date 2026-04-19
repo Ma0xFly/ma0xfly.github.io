@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Delegatecall调用陷阱漏洞 | 沉于思，录以隙</title><meta name="description" content="# Delegatecall 调用陷阱 (Delegatecall Context Trap) > **标签:** #漏洞类型/底层机制与状态混乱 | #协议类型/代理合约/多签/模块化架构 | #严重程度/Critical ## 📌 1. TL;DR (一句话快速回顾) * "><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">Delegatecall调用陷阱漏洞</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">漏洞笔记</span>  </div> <div class="article-meta-row"> <span>2026/3/6</span> <span>web3</span> <span>web3 · 漏洞笔记</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/漏洞笔记/" class="tag">#漏洞笔记</a> </div> <p class="source-note">来源路径：web3/漏洞笔记/Delegatecall调用陷阱漏洞.md</p> </header> <div class="article-main"> <div class="article-content"><h1>Delegatecall 调用陷阱 (Delegatecall Context Trap)</h1><blockquote>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Delegatecall调用陷阱漏洞 | 沉于思，录以隙</title><meta name="description" content="# Delegatecall 调用陷阱 (Delegatecall Context Trap) > **标签:** #漏洞类型/底层机制与状态混乱 | #协议类型/代理合约/多签/模块化架构 | #严重程度/Critical ## 📌 1. TL;DR (一句话快速回顾) * "><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">Delegatecall调用陷阱漏洞</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">漏洞笔记</span>  </div> <div class="article-meta-row"> <span>2026/3/6</span> <span>web3</span> <span>web3 · 漏洞笔记</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/漏洞笔记/" class="tag">#漏洞笔记</a> </div> <p class="source-note">来源路径：web3/漏洞笔记/Delegatecall调用陷阱漏洞.md</p> </header> <div class="article-main"> <div class="article-content"><h1>Delegatecall 调用陷阱 (Delegatecall Context Trap)</h1><blockquote>
 <p><strong>标签:</strong> #漏洞类型/底层机制与状态混乱 | #协议类型/代理合约/多签/模块化架构 | #严重程度/Critical</p>
 </blockquote>
 <h2 id="section-1">📌 1. TL;DR (一句话快速回顾)</h2><ul>
@@ -33,34 +33,34 @@
 <li><strong>[获利退场]</strong>: 漏洞合约傻乎乎地去“借用”了攻击者合约的代码。结果在自己的内存（Storage）里，自己的 <code>owner</code> 变量被改成了攻击者。攻击者随后以主人的名义卷走所有资金。</li>
 </ol>
 <hr>
-<h2 id="section-6">💻 4. 关键代码示例 (Snippets)</h2><h3 id="section-7">漏洞代码 (Vulnerable Code)</h3><pre><code class="language-solidity">contract ProxyVault {
-    address public owner; // 躺在 0 号插槽
+<h2 id="section-6">💻 4. 关键代码示例 (Snippets)</h2><h3 id="section-7">漏洞代码 (Vulnerable Code)</h3><pre><code class="language-solidity">contract <span class="hljs-title class_">ProxyVault</span> {
+    address <span class="hljs-keyword">public</span> owner; <span class="hljs-comment">// 躺在 0 号插槽</span>
     
-    constructor() {
-        owner = msg.sender;
+    <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) {
+        owner = msg.<span class="hljs-property">sender</span>;
     }
 
-    // 致命点：极度疯狂的送命题！任意用户可以控制去 delegatecall 谁！
-    function executeAction(address _target, bytes memory _data) public {
-        // 它甚至不检查 target 是不是自己人
-        (bool success, ) = _target.delegatecall(_data);
-        require(success, &quot;Call failed&quot;);
+    <span class="hljs-comment">// 致命点：极度疯狂的送命题！任意用户可以控制去 delegatecall 谁！</span>
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">executeAction</span>(<span class="hljs-params">address _target, bytes memory _data</span>) <span class="hljs-keyword">public</span> {
+        <span class="hljs-comment">// 它甚至不检查 target 是不是自己人</span>
+        (bool success, ) = _target.<span class="hljs-title function_">delegatecall</span>(_data);
+        <span class="hljs-built_in">require</span>(success, <span class="hljs-string">&quot;Call failed&quot;</span>);
     }
 }
 </code></pre>
-<h3 id="section-8">攻击核心逻辑 (Attack Logic)</h3><pre><code class="language-solidity">contract AttackContract {
-    address public owner; // 为了槽位对齐，必须在 0 号插槽也放一个同类型的变量
+<h3 id="section-8">攻击核心逻辑 (Attack Logic)</h3><pre><code class="language-solidity">contract <span class="hljs-title class_">AttackContract</span> {
+    address <span class="hljs-keyword">public</span> owner; <span class="hljs-comment">// 为了槽位对齐，必须在 0 号插槽也放一个同类型的变量</span>
 
-    // 攻击核心：这行代码如果被别人 delegatecall，就会修改别人的 0 号插槽！
-    function pwn() public {
-        owner = msg.sender; 
+    <span class="hljs-comment">// 攻击核心：这行代码如果被别人 delegatecall，就会修改别人的 0 号插槽！</span>
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">pwn</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> {
+        owner = msg.<span class="hljs-property">sender</span>; 
     }
 }
 
-// 攻击流程：
-// vault.executeAction(address(attackContract), abi.encodeWithSignature(&quot;pwn()&quot;))
-// 此时对于 vault 来说，它的 msg.sender 是攻击者，并且执行了修改 0 号插槽的方法。
-// Vault 换了主人。
+<span class="hljs-comment">// 攻击流程：</span>
+<span class="hljs-comment">// vault.executeAction(address(attackContract), abi.encodeWithSignature(&quot;pwn()&quot;))</span>
+<span class="hljs-comment">// 此时对于 vault 来说，它的 msg.sender 是攻击者，并且执行了修改 0 号插槽的方法。</span>
+<span class="hljs-comment">// Vault 换了主人。</span>
 </code></pre>
 <hr>
 <h2 id="section-9">🛡️ 5. 修复与防范方案 (Mitigations)</h2><ul>

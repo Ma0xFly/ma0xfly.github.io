@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ERC-165 | 沉于思，录以隙</title><meta name="description" content="# ERC-165: 接口检测标准 (Standard Interface Detection) > **一句话总结**：ERC-165 是智能合约界发明的“自省（Introspection）”功能。它强制要求智能合约挂出一块招牌，告诉外界自己到底实现了哪些标准接口，是防呆机制和"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">ERC-165</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <div class="article-meta-row"> <span>2026/3/6</span> <span>web3</span> <span>web3 · ERC标准</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/ERC标准/" class="tag">#ERC标准</a> </div> <p class="source-note">来源路径：web3/ERC标准/ERC-165.md</p> </header> <div class="article-main"> <div class="article-content"><h1>ERC-165: 接口检测标准 (Standard Interface Detection)</h1><blockquote>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ERC-165 | 沉于思，录以隙</title><meta name="description" content="# ERC-165: 接口检测标准 (Standard Interface Detection) > **一句话总结**：ERC-165 是智能合约界发明的“自省（Introspection）”功能。它强制要求智能合约挂出一块招牌，告诉外界自己到底实现了哪些标准接口，是防呆机制和"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">ERC-165</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <div class="article-meta-row"> <span>2026/3/6</span> <span>web3</span> <span>web3 · ERC标准</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/ERC标准/" class="tag">#ERC标准</a> </div> <p class="source-note">来源路径：web3/ERC标准/ERC-165.md</p> </header> <div class="article-main"> <div class="article-content"><h1>ERC-165: 接口检测标准 (Standard Interface Detection)</h1><blockquote>
 <p><strong>一句话总结</strong>：ERC-165 是智能合约界发明的“自省（Introspection）”功能。它强制要求智能合约挂出一块招牌，告诉外界自己到底实现了哪些标准接口，是防呆机制和高阶路由交互的基础。</p>
 </blockquote>
 <h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><blockquote>
@@ -19,22 +19,22 @@
 <h2 id="section-3">2. 核心接口与数据结构 (Core Interfaces)</h2><blockquote>
 <p>结构极其简单，整个标准的核心在于一个基于字典哈希映射的身材自检功能。</p>
 </blockquote>
-<h3 id="section-4">A. 核心状态结构 (State Variables)</h3><pre><code class="language-solidity">// 一个用来记录本项目到底宣称支持了哪些“标准身份证(InterfaceId)”的查证字典
-mapping(bytes4 =&gt; bool) private _supportedInterfaces;
+<h3 id="section-4">A. 核心状态结构 (State Variables)</h3><pre><code class="language-solidity"><span class="hljs-comment">// 一个用来记录本项目到底宣称支持了哪些“标准身份证(InterfaceId)”的查证字典</span>
+<span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">bytes4</span> =&gt;</span> bool) <span class="hljs-keyword">private</span> _supportedInterfaces;
 </code></pre>
 <h3 id="section-5">B. 关键机制与底层逻辑 (Core Functions)</h3><h4>1. <code>supportsInterface</code> (身份验明正身)</h4><p>这是外界探测该合约真实面目的唯一触角。</p>
 <ul>
 <li><strong>白话逻辑解析</strong>：外部智能合约或平台输入一串由四个字节构成的 16 进制标识符（比如代表 ERC-721 的 <code>0x80ac58cd</code>），如果当前合约内部字典记载了该标识符为真，则向全网广播 <code>true</code>，证明自己支持接盘或该功能。</li>
-<li><strong>核心源码骨架</strong>：<pre><code class="language-solidity">// 对外公开的探测雷达
-function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
-    // 必须无条件首先支持 ERC-165 本身的根骨标识符 0x01ffc9a7
-    return interfaceId == type(IERC165).interfaceId || _supportedInterfaces[interfaceId];
+<li><strong>核心源码骨架</strong>：<pre><code class="language-solidity"><span class="hljs-comment">// 对外公开的探测雷达</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">supportsInterface</span>(<span class="hljs-params">bytes4 interfaceId</span>) <span class="hljs-keyword">public</span> view virtual <span class="hljs-title function_">returns</span> (bool) {
+    <span class="hljs-comment">// 必须无条件首先支持 ERC-165 本身的根骨标识符 0x01ffc9a7</span>
+    <span class="hljs-keyword">return</span> interfaceId == <span class="hljs-title function_">type</span>(<span class="hljs-title class_">IERC165</span>).<span class="hljs-property">interfaceId</span> || _supportedInterfaces[interfaceId];
 }
 
-// 内部注册函数（项目方通常在 constructor 铸造时调用，为自己贴标签）
-function _registerInterface(bytes4 interfaceId) internal virtual {
-    require(interfaceId != 0xffffffff, &quot;ERC165: invalid interface id&quot;);
-    _supportedInterfaces[interfaceId] = true;
+<span class="hljs-comment">// 内部注册函数（项目方通常在 constructor 铸造时调用，为自己贴标签）</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">_registerInterface</span>(<span class="hljs-params">bytes4 interfaceId</span>) internal virtual {
+    <span class="hljs-built_in">require</span>(interfaceId != <span class="hljs-number">0xffffffff</span>, <span class="hljs-string">&quot;ERC165: invalid interface id&quot;</span>);
+    _supportedInterfaces[interfaceId] = <span class="hljs-literal">true</span>;
 }
 </code></pre>
 </li>
@@ -56,15 +56,15 @@ function _registerInterface(bytes4 interfaceId) internal virtual {
 <li><strong>数学推导/公式</strong>：
 $$InterfaceId = \text{selector}(function1) \oplus \text{selector}(function2) \dots$$
 比如 ERC-165 本身的接口包含了 <code>supportsInterface(bytes4)</code> 这唯一一个函数，由于它的 selector 是 <code>0x01ffc9a7</code>，所以 ERC-165 自己证明自己身份的指纹必须也是 <code>0x01ffc9a7</code>。</li>
-<li><strong>核心逻辑代码 (Solidity)</strong>：<pre><code class="language-solidity">// 一个部署了 ERC721 NFT 逻辑的智能合约必须这样宣告自己的身份
-function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
-    return
-        // 首先得证明自己懂 ERC165 这个暗号系统
-        interfaceId == type(IERC165).interfaceId || 
-        // 其次证明自己拥有 ERC721 这个门派的全部功法
-        interfaceId == type(IERC721).interfaceId || 
-        // 再次证明自己允许查看 MetaData 数据（可选扩展）
-        interfaceId == type(IERC721Metadata).interfaceId;
+<li><strong>核心逻辑代码 (Solidity)</strong>：<pre><code class="language-solidity"><span class="hljs-comment">// 一个部署了 ERC721 NFT 逻辑的智能合约必须这样宣告自己的身份</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">supportsInterface</span>(<span class="hljs-params">bytes4 interfaceId</span>) <span class="hljs-keyword">public</span> view virtual <span class="hljs-keyword">override</span> <span class="hljs-title function_">returns</span> (bool) {
+    <span class="hljs-keyword">return</span>
+        <span class="hljs-comment">// 首先得证明自己懂 ERC165 这个暗号系统</span>
+        interfaceId == <span class="hljs-title function_">type</span>(<span class="hljs-title class_">IERC165</span>).<span class="hljs-property">interfaceId</span> || 
+        <span class="hljs-comment">// 其次证明自己拥有 ERC721 这个门派的全部功法</span>
+        interfaceId == <span class="hljs-title function_">type</span>(<span class="hljs-title class_">IERC721</span>).<span class="hljs-property">interfaceId</span> || 
+        <span class="hljs-comment">// 再次证明自己允许查看 MetaData 数据（可选扩展）</span>
+        interfaceId == <span class="hljs-title function_">type</span>(<span class="hljs-title class_">IERC721Metadata</span>).<span class="hljs-property">interfaceId</span>;
 }
 </code></pre>
 <em>代码拆解</em>：注意它非常死板的判断逻辑。如果传来的是上述那三组由业界权威 EIP 组织计算好、死死写在白皮书上的 <code>bytes4</code> 魔法字符串之一，就统统放行返回 <code>true</code>。它就是一张贴在餐厅门外写有“支持微信、支持支付宝”极其显眼的标识牌。</li>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>iot_ctf | 沉于思，录以隙</title><meta name="description" content="# 题目说明 有以下四个方向的题目，方向间题目并行，方向内题目采取闯关模式串行。但由于配置冲突，采用跳帽来切换题目方向： - 跳帽连接GND与23号引脚：硬件、网络、蓝牙 - 拔掉GND与23号引脚跳帽：MQTT 硬件： - task1: 将GPIO18抬高，持续3s即可获得fl"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">iot_ctf</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">iot</span>  </div> <div class="article-meta-row"> <span>2025/6/7</span> <span>二进制</span> <span>二进制 · iot</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/二进制/" class="tag">#二进制</a><a href="/tags/iot/" class="tag">#iot</a> </div> <p class="source-note">来源路径：二进制/iot/iot_ctf.md</p> </header> <div class="article-main"> <div class="article-content"><h1>题目说明</h1><p>有以下四个方向的题目，方向间题目并行，方向内题目采取闯关模式串行。但由于配置冲突，采用跳帽来切换题目方向：</p>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>iot_ctf | 沉于思，录以隙</title><meta name="description" content="# 题目说明 有以下四个方向的题目，方向间题目并行，方向内题目采取闯关模式串行。但由于配置冲突，采用跳帽来切换题目方向： - 跳帽连接GND与23号引脚：硬件、网络、蓝牙 - 拔掉GND与23号引脚跳帽：MQTT 硬件： - task1: 将GPIO18抬高，持续3s即可获得fl"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">iot_ctf</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">iot</span>  </div> <div class="article-meta-row"> <span>2025/6/7</span> <span>二进制</span> <span>二进制 · iot</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/二进制/" class="tag">#二进制</a><a href="/tags/iot/" class="tag">#iot</a> </div> <p class="source-note">来源路径：二进制/iot/iot_ctf.md</p> </header> <div class="article-main"> <div class="article-content"><h1>题目说明</h1><p>有以下四个方向的题目，方向间题目并行，方向内题目采取闯关模式串行。但由于配置冲突，采用跳帽来切换题目方向：</p>
 <ul>
 <li>跳帽连接GND与23号引脚：硬件、网络、蓝牙</li>
 <li>拔掉GND与23号引脚跳帽：MQTT</li>
@@ -28,136 +28,136 @@
 <li>task3: 这是个内存破坏的前戏</li>
 </ul>
 <h1>硬件</h1><h2 id="section-1">task1</h2><p>将GPIO18抬高，持续3s即可获得flag,</p>
-<pre><code class="language-c">#define GPIO_INPUT_IO_0     18
+<pre><code class="language-c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> GPIO_INPUT_IO_0     18</span>
 ....
-void hardware_task1(){
-    int hit = 0;
-    while(1) {
-        printf(&quot;[+] hardware task I : hit %d\n&quot;,hit);
-        if(gpio_get_level(GPIO_INPUT_IO_0)){   //gpio_get_level是获取GPIO电平值，低电平是0，高电平是1
+<span class="hljs-type">void</span> <span class="hljs-title function_">hardware_task1</span><span class="hljs-params">()</span>{
+    <span class="hljs-type">int</span> hit = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">while</span>(<span class="hljs-number">1</span>) {
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;[+] hardware task I : hit %d\n&quot;</span>,hit);
+        <span class="hljs-keyword">if</span>(gpio_get_level(GPIO_INPUT_IO_0)){   <span class="hljs-comment">//gpio_get_level是获取GPIO电平值，低电平是0，高电平是1</span>
             hit ++ ;
-        }else{
-            hit = 0;
+        }<span class="hljs-keyword">else</span>{
+            hit = <span class="hljs-number">0</span>;
         }
-        if(hit&gt;3){
-            printf(&quot;[+] hardware task I : %s\n&quot;,hardware_flag_1);
-            break;
+        <span class="hljs-keyword">if</span>(hit&gt;<span class="hljs-number">3</span>){
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;[+] hardware task I : %s\n&quot;</span>,hardware_flag_1);
+            <span class="hljs-keyword">break</span>;
         }
-        vTaskDelay(1000 / portTICK_RATE_MS);
+        vTaskDelay(<span class="hljs-number">1000</span> / portTICK_RATE_MS);
     }
 }
 </code></pre>
 <p>用杜邦线将GPIO18与3.3v或5v相接,抬高电压即可</p>
 <h2 id="section-2">task2</h2><p>在GPIO18处构造出1w个上升沿（电平从0变为1的瞬间）</p>
-<pre><code class="language-c">#define GPIO_INPUT_IO_0     18
-#define GPIO_INPUT_PIN_SEL  ((1ULL&lt;&lt;GPIO_INPUT_IO_0) )
-#define ESP_INTR_FLAG_DEFAULT 0
+<pre><code class="language-c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> GPIO_INPUT_IO_0     18</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> GPIO_INPUT_PIN_SEL  ((1ULL&lt;&lt;GPIO_INPUT_IO_0) )</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> ESP_INTR_FLAG_DEFAULT 0</span>
 
-static void IRAM_ATTR gpio_isr_handler(void* arg){  //GPIO中断处理程序，中断了就执行这个
+<span class="hljs-type">static</span> <span class="hljs-type">void</span> IRAM_ATTR <span class="hljs-title function_">gpio_isr_handler</span><span class="hljs-params">(<span class="hljs-type">void</span>* arg)</span>{  <span class="hljs-comment">//GPIO中断处理程序，中断了就执行这个</span>
     trigger++;
 }
 
-void hardware_gpio_setup(){
-    gpio_config_t io_conf;  //GPIO的配置参数
-    io_conf.pin_bit_mask = GPIO_INPUT_PIN_SEL; //要配置的GPIO引脚
-    io_conf.mode = GPIO_MODE_INPUT;   //仅输入
-    io_conf.intr_type = GPIO_INTR_POSEDGE;  //GPIO中断类型，上升沿
-    io_conf.pull_up_en = 0;  //禁止上拉使能
+<span class="hljs-type">void</span> <span class="hljs-title function_">hardware_gpio_setup</span><span class="hljs-params">()</span>{
+    <span class="hljs-type">gpio_config_t</span> io_conf;  <span class="hljs-comment">//GPIO的配置参数</span>
+    io_conf.pin_bit_mask = GPIO_INPUT_PIN_SEL; <span class="hljs-comment">//要配置的GPIO引脚</span>
+    io_conf.mode = GPIO_MODE_INPUT;   <span class="hljs-comment">//仅输入</span>
+    io_conf.intr_type = GPIO_INTR_POSEDGE;  <span class="hljs-comment">//GPIO中断类型，上升沿</span>
+    io_conf.pull_up_en = <span class="hljs-number">0</span>;  <span class="hljs-comment">//禁止上拉使能</span>
     gpio_config(&amp;io_conf);
     gpio_install_isr_service(ESP_INTR_FLAG_DEFAULT);
-    gpio_isr_handler_add(GPIO_INPUT_IO_0, gpio_isr_handler, (void*) GPIO_INPUT_IO_0);  //注册GPIO_INPUT_IO_0，也就是GPIO18中断处理程序
+    gpio_isr_handler_add(GPIO_INPUT_IO_0, gpio_isr_handler, (<span class="hljs-type">void</span>*) GPIO_INPUT_IO_0);  <span class="hljs-comment">//注册GPIO_INPUT_IO_0，也就是GPIO18中断处理程序</span>
 }
 
-void hardware_task2(){
-    trigger = 0;
-    while(1){
-        printf(&quot;[+] hardware task II : trigger %d\n&quot;,trigger);
-        if(trigger &gt; 10000){
-            printf(&quot;[+] hardware task II : %s\n&quot;,hardware_flag_2);
-            break;
+<span class="hljs-type">void</span> <span class="hljs-title function_">hardware_task2</span><span class="hljs-params">()</span>{
+    trigger = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">while</span>(<span class="hljs-number">1</span>){
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;[+] hardware task II : trigger %d\n&quot;</span>,trigger);
+        <span class="hljs-keyword">if</span>(trigger &gt; <span class="hljs-number">10000</span>){
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;[+] hardware task II : %s\n&quot;</span>,hardware_flag_2);
+            <span class="hljs-keyword">break</span>;
         }
-        vTaskDelay(1000 / portTICK_RATE_MS);
+        vTaskDelay(<span class="hljs-number">1000</span> / portTICK_RATE_MS);
     }
 }
 </code></pre>
 <p>法1（手动构造）：连gpio18，另一端不断插拔其他接口</p>
 <p>法2：用杜邦线将GPIO18与板子的TX相接，利用串口一直有数据输出，自动构造上升沿：因为TX接口默认用于串口调试输出，串口调试时交互的内容转化为电平形式的01011，在此ctf因为一直有内容输出，所以不断有01电平变化。</p>
 <h2 id="section-3">task3</h2><p>在另一个串口寻找第三个flag</p>
-<pre><code class="language-c">#define ECHO_TEST_TXD  (GPIO_NUM_4)
-#define ECHO_TEST_RXD  (GPIO_NUM_5)
-#define ECHO_TEST_RTS  (UART_PIN_NO_CHANGE)
-#define ECHO_TEST_CTS  (UART_PIN_NO_CHANGE)
+<pre><code class="language-c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> ECHO_TEST_TXD  (GPIO_NUM_4)</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> ECHO_TEST_RXD  (GPIO_NUM_5)</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> ECHO_TEST_RTS  (UART_PIN_NO_CHANGE)</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> ECHO_TEST_CTS  (UART_PIN_NO_CHANGE)</span>
 
-void hardware_uart_setup(){
-    uart_config_t uart_config = {
-        .baud_rate = 115200,
+<span class="hljs-type">void</span> <span class="hljs-title function_">hardware_uart_setup</span><span class="hljs-params">()</span>{
+    <span class="hljs-type">uart_config_t</span> uart_config = {
+        .baud_rate = <span class="hljs-number">115200</span>,
         .data_bits = UART_DATA_8_BITS,
         .parity    = UART_PARITY_DISABLE,
         .stop_bits = UART_STOP_BITS_1,
         .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
         .source_clk = UART_SCLK_APB,
     };
-    uart_driver_install(UART_NUM_1, 1024 * 2, 0, 0, NULL, 0);
+    uart_driver_install(UART_NUM_1, <span class="hljs-number">1024</span> * <span class="hljs-number">2</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">NULL</span>, <span class="hljs-number">0</span>);
     uart_param_config(UART_NUM_1, &amp;uart_config);
     uart_set_pin(UART_NUM_1, ECHO_TEST_TXD, ECHO_TEST_RXD, ECHO_TEST_RTS, ECHO_TEST_CTS);
 }
 
-void hardware_task3(){
-    printf(&quot;[+] hardware task III : find the third flag in another UART\n&quot;);
-    while (1) {
-        uart_write_bytes(UART_NUM_1, hardware_flag_3, strlen(hardware_flag_3));
-        vTaskDelay(1000 / portTICK_RATE_MS);
+<span class="hljs-type">void</span> <span class="hljs-title function_">hardware_task3</span><span class="hljs-params">()</span>{
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;[+] hardware task III : find the third flag in another UART\n&quot;</span>);
+    <span class="hljs-keyword">while</span> (<span class="hljs-number">1</span>) {
+        uart_write_bytes(UART_NUM_1, hardware_flag_3, <span class="hljs-built_in">strlen</span>(hardware_flag_3));
+        vTaskDelay(<span class="hljs-number">1000</span> / portTICK_RATE_MS);
     }
 }
 </code></pre>
 <h1>网络</h1><h2 id="section-4">task1</h2><p>连接板子目标端口，尝试获得flag</p>
-<pre><code class="language-c">void network_init(){
-    char ssid[0x10] = {0};
-    char pass[0x10] = {0};
-    get_random(ssid,6);
-    get_random(pass,8);
-    printf(&quot;[+] network task I: I will connect a wifi -&gt; ssid: %s , password %s \n&quot;,ssid,pass);
+<pre><code class="language-c"><span class="hljs-type">void</span> <span class="hljs-title function_">network_init</span><span class="hljs-params">()</span>{
+    <span class="hljs-type">char</span> ssid[<span class="hljs-number">0x10</span>] = {<span class="hljs-number">0</span>};
+    <span class="hljs-type">char</span> pass[<span class="hljs-number">0x10</span>] = {<span class="hljs-number">0</span>};
+    get_random(ssid,<span class="hljs-number">6</span>);
+    get_random(pass,<span class="hljs-number">8</span>);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;[+] network task I: I will connect a wifi -&gt; ssid: %s , password %s \n&quot;</span>,ssid,pass);
     connect_wifi(ssid,pass);
 }
 
-static void network_tcp()
+<span class="hljs-type">static</span> <span class="hljs-type">void</span> <span class="hljs-title function_">network_tcp</span><span class="hljs-params">()</span>
 {
 
-    char addr_str[128];
-    struct sockaddr_in dest_addr;
+    <span class="hljs-type">char</span> addr_str[<span class="hljs-number">128</span>];
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sockaddr_in</span> <span class="hljs-title">dest_addr</span>;</span>
 
     dest_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     dest_addr.sin_family = AF_INET;
-    dest_addr.sin_port = htons(3333);
+    dest_addr.sin_port = htons(<span class="hljs-number">3333</span>);
 
-    int listen_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
+    <span class="hljs-type">int</span> listen_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_IP);
 
-    ESP_LOGI(TAG, &quot;Socket created&quot;);
+    ESP_LOGI(TAG, <span class="hljs-string">&quot;Socket created&quot;</span>);
 
-    bind(listen_sock, (struct sockaddr *)&amp;dest_addr, sizeof(dest_addr));
-    ESP_LOGI(TAG, &quot;Socket bound, port %d&quot;, 3333);
+    bind(listen_sock, (<span class="hljs-keyword">struct</span> sockaddr *)&amp;dest_addr, <span class="hljs-keyword">sizeof</span>(dest_addr));
+    ESP_LOGI(TAG, <span class="hljs-string">&quot;Socket bound, port %d&quot;</span>, <span class="hljs-number">3333</span>);
 
-    listen(listen_sock, 1);
-    while (1) {
+    listen(listen_sock, <span class="hljs-number">1</span>);
+    <span class="hljs-keyword">while</span> (<span class="hljs-number">1</span>) {
 
-        ESP_LOGI(TAG, &quot;Socket listening&quot;);
-        struct sockaddr_storage source_addr;
-        socklen_t addr_len = sizeof(source_addr);
-        int sock = accept(listen_sock, (struct sockaddr *)&amp;source_addr, &amp;addr_len);
-        inet_ntoa_r(((struct sockaddr_in *)&amp;source_addr)-&gt;sin_addr, addr_str, sizeof(addr_str) - 1);
-        ESP_LOGI(TAG, &quot;Socket accepted ip address: %s&quot;, addr_str);
-        char buffer[100];
-        while(recv(sock,buffer,0x10,0)){
-            if(strstr(buffer,&quot;getflag&quot;)){
-                send(sock, network_flag_1, strlen(network_flag_1), 0);
-                break;
-            }else{
-                send(sock, &quot;error\n&quot;, strlen(&quot;error\n&quot;), 0);
+        ESP_LOGI(TAG, <span class="hljs-string">&quot;Socket listening&quot;</span>);
+        <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">sockaddr_storage</span> <span class="hljs-title">source_addr</span>;</span>
+        <span class="hljs-type">socklen_t</span> addr_len = <span class="hljs-keyword">sizeof</span>(source_addr);
+        <span class="hljs-type">int</span> sock = accept(listen_sock, (<span class="hljs-keyword">struct</span> sockaddr *)&amp;source_addr, &amp;addr_len);
+        inet_ntoa_r(((<span class="hljs-keyword">struct</span> sockaddr_in *)&amp;source_addr)-&gt;sin_addr, addr_str, <span class="hljs-keyword">sizeof</span>(addr_str) - <span class="hljs-number">1</span>);
+        ESP_LOGI(TAG, <span class="hljs-string">&quot;Socket accepted ip address: %s&quot;</span>, addr_str);
+        <span class="hljs-type">char</span> buffer[<span class="hljs-number">100</span>];
+        <span class="hljs-keyword">while</span>(recv(sock,buffer,<span class="hljs-number">0x10</span>,<span class="hljs-number">0</span>)){
+            <span class="hljs-keyword">if</span>(<span class="hljs-built_in">strstr</span>(buffer,<span class="hljs-string">&quot;getflag&quot;</span>)){
+                send(sock, network_flag_1, <span class="hljs-built_in">strlen</span>(network_flag_1), <span class="hljs-number">0</span>);
+                <span class="hljs-keyword">break</span>;
+            }<span class="hljs-keyword">else</span>{
+                send(sock, <span class="hljs-string">&quot;error\n&quot;</span>, <span class="hljs-built_in">strlen</span>(<span class="hljs-string">&quot;error\n&quot;</span>), <span class="hljs-number">0</span>);
             }
-            vTaskDelay(1000 / portTICK_RATE_MS);
+            vTaskDelay(<span class="hljs-number">1000</span> / portTICK_RATE_MS);
         }
-        open_next_tasks = 1;
-        shutdown(sock, 0);
+        open_next_tasks = <span class="hljs-number">1</span>;
+        shutdown(sock, <span class="hljs-number">0</span>);
         close(sock);
     }
 }

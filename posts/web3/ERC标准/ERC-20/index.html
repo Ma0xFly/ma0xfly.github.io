@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ERC-20 | 沉于思，录以隙</title><meta name="description" content="# ERC-20: 同质化代币通用标准 > **一句话总结**：ERC-20 是以太坊上最早、最普及的“同质化代币（Fungible Token）”智能合约记账标准。它统一了全网所有代币的授权、转账接口，是 DeFi 和整个 Web3 金融大厦的基础地砖。 ## 📜 核心元数据"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">ERC-20</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <div class="article-meta-row"> <span>2026/3/6</span> <span>web3</span> <span>web3 · ERC标准</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/ERC标准/" class="tag">#ERC标准</a> </div> <p class="source-note">来源路径：web3/ERC标准/ERC-20.md</p> </header> <div class="article-main"> <div class="article-content"><h1>ERC-20: 同质化代币通用标准</h1><blockquote>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ERC-20 | 沉于思，录以隙</title><meta name="description" content="# ERC-20: 同质化代币通用标准 > **一句话总结**：ERC-20 是以太坊上最早、最普及的“同质化代币（Fungible Token）”智能合约记账标准。它统一了全网所有代币的授权、转账接口，是 DeFi 和整个 Web3 金融大厦的基础地砖。 ## 📜 核心元数据"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">ERC-20</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <div class="article-meta-row"> <span>2026/3/6</span> <span>web3</span> <span>web3 · ERC标准</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/ERC标准/" class="tag">#ERC标准</a> </div> <p class="source-note">来源路径：web3/ERC标准/ERC-20.md</p> </header> <div class="article-main"> <div class="article-content"><h1>ERC-20: 同质化代币通用标准</h1><blockquote>
 <p><strong>一句话总结</strong>：ERC-20 是以太坊上最早、最普及的“同质化代币（Fungible Token）”智能合约记账标准。它统一了全网所有代币的授权、转账接口，是 DeFi 和整个 Web3 金融大厦的基础地砖。</p>
 </blockquote>
 <h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><blockquote>
@@ -23,73 +23,73 @@
 <h2 id="section-3">2. 核心接口与数据结构 (Core Interfaces)</h2><blockquote>
 <p>ERC-20 的本质是<strong>账本</strong>。任何复杂的业务逻辑最终都是在修改以下两个底层 <code>mapping</code>。</p>
 </blockquote>
-<h3 id="section-4">A. 核心状态结构 (State Variables)</h3><pre><code class="language-solidity">// 1. 余额账本：记录每个地址持有的真金白银数量
-mapping(address =&gt; uint256) private _balances;
+<h3 id="section-4">A. 核心状态结构 (State Variables)</h3><pre><code class="language-solidity"><span class="hljs-comment">// 1. 余额账本：记录每个地址持有的真金白银数量</span>
+<span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">address</span> =&gt;</span> uint256) <span class="hljs-keyword">private</span> _balances;
 
-// 2. 授权账本：记录 授权人(owner) -&gt; 被授权人(spender) -&gt; 额度(amount)
-mapping(address =&gt; mapping(address =&gt; uint256)) private _allowances;
+<span class="hljs-comment">// 2. 授权账本：记录 授权人(owner) -&gt; 被授权人(spender) -&gt; 额度(amount)</span>
+<span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">address</span> =&gt;</span> <span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">address</span> =&gt;</span> uint256)) <span class="hljs-keyword">private</span> _allowances;
 
-// 3. 代币元数据
-uint256 private _totalSupply; // 总供应量
-string private _name;         // 代币名称 (如 &quot;Tether USD&quot;)
-string private _symbol;       // 代币符号 (如 &quot;USDT&quot;)
+<span class="hljs-comment">// 3. 代币元数据</span>
+uint256 <span class="hljs-keyword">private</span> _totalSupply; <span class="hljs-comment">// 总供应量</span>
+<span class="hljs-built_in">string</span> <span class="hljs-keyword">private</span> _name;         <span class="hljs-comment">// 代币名称 (如 &quot;Tether USD&quot;)</span>
+<span class="hljs-built_in">string</span> <span class="hljs-keyword">private</span> _symbol;       <span class="hljs-comment">// 代币符号 (如 &quot;USDT&quot;)</span>
 </code></pre>
 <h3 id="section-5">B. 关键机制与底层逻辑 (Core Functions)</h3><h4>1. <code>_mint</code> (底层铸造) 与 <code>_burn</code> (底层销毁)</h4><p>这是代币诞生和消亡的唯一途径，通常只由特定身份（如矿池合约、项目方）调用。</p>
 <ul>
 <li><strong>核心逻辑</strong>：不仅修改 <code>_totalSupply</code> 和指定地址的 <code>_balances</code>，<strong>核心规矩是无论印钞还是销毁，都必须强制触发 <code>Transfer</code> 事件，借用 <code>0x0</code> 原生黑洞地址来充当对手方</strong>。</li>
-<li><strong>核心源码骨架</strong>：<pre><code class="language-solidity">// 铸造示例
+<li><strong>核心源码骨架</strong>：<pre><code class="language-solidity"><span class="hljs-comment">// 铸造示例</span>
 _totalSupply += amount;
 _balances[account] += amount;
-emit Transfer(address(0), account, amount); // 从 0x0 凭空变出钱
+emit <span class="hljs-title class_">Transfer</span>(<span class="hljs-title function_">address</span>(<span class="hljs-number">0</span>), account, amount); <span class="hljs-comment">// 从 0x0 凭空变出钱</span>
 
-// 销毁示例
+<span class="hljs-comment">// 销毁示例</span>
 _balances[account] -= amount;
 _totalSupply -= amount;
-emit Transfer(account, address(0), amount); // 把钱打入 0x0 销毁
+emit <span class="hljs-title class_">Transfer</span>(account, <span class="hljs-title function_">address</span>(<span class="hljs-number">0</span>), amount); <span class="hljs-comment">// 把钱打入 0x0 销毁</span>
 </code></pre>
 </li>
 </ul>
 <h4>2. <code>transfer</code> (直接转账)</h4><p>最基础的“推 (Push)”模式。你主动把自己的钱推给别人。</p>
 <ul>
-<li><strong>核心源码骨架</strong>：<pre><code class="language-solidity">function transfer(address to, uint256 amount) public returns (bool) {
-    uint256 fromBalance = _balances[msg.sender];
-    require(fromBalance &gt;= amount, &quot;ERC20: transfer amount exceeds balance&quot;);
+<li><strong>核心源码骨架</strong>：<pre><code class="language-solidity"><span class="hljs-keyword">function</span> <span class="hljs-title function_">transfer</span>(<span class="hljs-params">address to, uint256 amount</span>) <span class="hljs-keyword">public</span> <span class="hljs-title function_">returns</span> (bool) {
+    uint256 fromBalance = _balances[msg.<span class="hljs-property">sender</span>];
+    <span class="hljs-built_in">require</span>(fromBalance &gt;= amount, <span class="hljs-string">&quot;ERC20: transfer amount exceeds balance&quot;</span>);
     
-    // 修改底层状态变量（最纯粹的加减法）
-    unchecked { _balances[msg.sender] = fromBalance - amount; }
+    <span class="hljs-comment">// 修改底层状态变量（最纯粹的加减法）</span>
+    unchecked { _balances[msg.<span class="hljs-property">sender</span>] = fromBalance - amount; }
     _balances[to] += amount;
 
-    emit Transfer(msg.sender, to, amount);
-    return true;
+    emit <span class="hljs-title class_">Transfer</span>(msg.<span class="hljs-property">sender</span>, to, amount);
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
 }
 </code></pre>
 </li>
 </ul>
 <h4>3. <code>approve</code> (授权) 与 <code>transferFrom</code> (代为拉取)</h4><p>DeFi 大厦的基石接口。允许第三方（如 Uniswap Router）以“拉 (Pull)”模式从你账上提款。</p>
 <ul>
-<li><strong>核心源码骨架</strong>：<pre><code class="language-solidity">// 你在前端点击“授权”：给第三方签发一张额度支票
-function approve(address spender, uint256 amount) public returns (bool) {
-    // 直指核心账本：我(msg.sender)允许那个合约(spender)花 amount 这么多钱
-    _allowances[msg.sender][spender] = amount;
-    emit Approval(msg.sender, spender, amount);
-    return true;
+<li><strong>核心源码骨架</strong>：<pre><code class="language-solidity"><span class="hljs-comment">// 你在前端点击“授权”：给第三方签发一张额度支票</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">approve</span>(<span class="hljs-params">address spender, uint256 amount</span>) <span class="hljs-keyword">public</span> <span class="hljs-title function_">returns</span> (bool) {
+    <span class="hljs-comment">// 直指核心账本：我(msg.sender)允许那个合约(spender)花 amount 这么多钱</span>
+    _allowances[msg.<span class="hljs-property">sender</span>][spender] = amount;
+    emit <span class="hljs-title class_">Approval</span>(msg.<span class="hljs-property">sender</span>, spender, amount);
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
 }
 
-// 第三方拿着支票来提钱：检查支票额度，扣减支票，最后再进行底层转账
-function transferFrom(address from, address to, uint256 amount) public returns (bool) {
-    // 这里的 msg.sender 是那个第三方合约
-    uint256 currentAllowance = _allowances[from][msg.sender];
-    if (currentAllowance != type(uint256).max) { // 无限授权免扣额度的 Gas 优化
-        require(currentAllowance &gt;= amount, &quot;ERC20: insufficient allowance&quot;);
-        unchecked { _allowances[from][msg.sender] = currentAllowance - amount; }
+<span class="hljs-comment">// 第三方拿着支票来提钱：检查支票额度，扣减支票，最后再进行底层转账</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">transferFrom</span>(<span class="hljs-params">address <span class="hljs-keyword">from</span>, address to, uint256 amount</span>) <span class="hljs-keyword">public</span> <span class="hljs-title function_">returns</span> (bool) {
+    <span class="hljs-comment">// 这里的 msg.sender 是那个第三方合约</span>
+    uint256 currentAllowance = _allowances[<span class="hljs-keyword">from</span>][msg.<span class="hljs-property">sender</span>];
+    <span class="hljs-keyword">if</span> (currentAllowance != <span class="hljs-title function_">type</span>(uint256).<span class="hljs-property">max</span>) { <span class="hljs-comment">// 无限授权免扣额度的 Gas 优化</span>
+        <span class="hljs-built_in">require</span>(currentAllowance &gt;= amount, <span class="hljs-string">&quot;ERC20: insufficient allowance&quot;</span>);
+        unchecked { _allowances[<span class="hljs-keyword">from</span>][msg.<span class="hljs-property">sender</span>] = currentAllowance - amount; }
     }
     
-    // 复用底层的 transfer 转账账本加减法逻辑
-    _balances[from] -= amount;
+    <span class="hljs-comment">// 复用底层的 transfer 转账账本加减法逻辑</span>
+    _balances[<span class="hljs-keyword">from</span>] -= amount;
     _balances[to] += amount;
-    emit Transfer(from, to, amount);
+    emit <span class="hljs-title class_">Transfer</span>(<span class="hljs-keyword">from</span>, to, amount);
 
-    return true;
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
 }
 </code></pre>
 </li>
@@ -112,13 +112,13 @@ function transferFrom(address from, address to, uint256 amount) public returns (
 </blockquote>
 <h3 id="section-9">A. 核心难点一：授权踩踏漏洞（Approve Race Condition / Front-running）</h3><ul>
 <li><strong>原理讲解</strong>：这是一个极其经典的**条件竞争（抢跑）**陷阱。假设你先授权了 Alice 100 额度（<code>approve(Alice, 100)</code>）。几天后你反悔了，想把额度改成 50，于是你提交了一笔 <code>approve(Alice, 50)</code> 的交易。恶意节点 Alice 在内存池（Mempool）中看到了你这笔要把额度降为 50 的交易。她立刻支付极高的 Gas 费，抢在你的交易确认前，先执行 <code>transferFrom</code> 把原来的 100 额度全部提走。紧接着你的 <code>approve(50)</code> 交易确认，Alice 的账本又刷新出了 50 的额度，她再次提走。最终你本意是想降额到 50，却一共损失了 150！</li>
-<li><strong>数学推导/公式</strong>：$\text{损失总量} = \text{旧的Approve额度} + \text{新的Approve额度}$</li>
-<li><strong>核心逻辑代码 (Solidity)</strong>：<pre><code class="language-solidity">// 导致漏洞的原始 ERC-20 approve 实现方式（直接覆盖变量）
-function approve(address spender, uint256 amount) public returns (bool) {
-    // 漏洞根源：无论之前额度是多少，直接暴力覆盖赋值
-    allowance[msg.sender][spender] = amount; 
-    emit Approval(msg.sender, spender, amount);
-    return true;
+<li><strong>数学推导/公式</strong>：<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">损失总量</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord cjk_fallback">旧的</span><span class="mord">Approve</span><span class="mord cjk_fallback">额度</span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord text"><span class="mord cjk_fallback">新的</span><span class="mord">Approve</span><span class="mord cjk_fallback">额度</span></span></span></span></span></li>
+<li><strong>核心逻辑代码 (Solidity)</strong>：<pre><code class="language-solidity"><span class="hljs-comment">// 导致漏洞的原始 ERC-20 approve 实现方式（直接覆盖变量）</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">approve</span>(<span class="hljs-params">address spender, uint256 amount</span>) <span class="hljs-keyword">public</span> <span class="hljs-title function_">returns</span> (bool) {
+    <span class="hljs-comment">// 漏洞根源：无论之前额度是多少，直接暴力覆盖赋值</span>
+    allowance[msg.<span class="hljs-property">sender</span>][spender] = amount; 
+    emit <span class="hljs-title class_">Approval</span>(msg.<span class="hljs-property">sender</span>, spender, amount);
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
 }
 </code></pre>
 <em>代码拆解</em>：因为使用了 <code>=</code> 直接覆盖，导致攻击者可以在覆盖生效前耗尽旧值。业界通用的解决方案是：在重置额度前，<strong>强制要求先将其归零 <code>approve(spender, 0)</code></strong>（早期的 USDT 就是这么强烈限制的），或者使用 OpenZeppelin 后续补充的安全扩展库工具 <code>safeIncreaseAllowance</code> 和 <code>safeDecreaseAllowance</code> 来做加减法而不是直接覆盖。</li>

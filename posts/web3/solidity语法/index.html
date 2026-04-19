@@ -1,15 +1,15 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>solidity语法 | 沉于思，录以隙</title><meta name="description" content="1 ether = 1 000 000 000 gwei （10⁹ gwei -- 1e9） = 1 000 000 000 000 000 000 wei （10¹⁸ wei -- 1e18） # 数据类型和结构 address：地址 uint256[] a, bytes[] "><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">solidity语法</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   </div> <div class="article-meta-row"> <span>2026/4/19</span> <span>web3</span> <span>web3</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a> </div> <p class="source-note">来源路径：web3/solidity语法.md</p> </header> <div class="article-main"> <div class="article-content"><p>1 ether<br>= 1 000 000 000 gwei  （10⁹ gwei -- 1e9）
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>solidity语法 | 沉于思，录以隙</title><meta name="description" content="1 ether = 1 000 000 000 gwei （10⁹ gwei -- 1e9） = 1 000 000 000 000 000 000 wei （10¹⁸ wei -- 1e18） # 数据类型和结构 address：地址 uint256[] a, bytes[] "><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">solidity语法</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   </div> <div class="article-meta-row"> <span>2026/4/19</span> <span>web3</span> <span>web3</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a> </div> <p class="source-note">来源路径：web3/solidity语法.md</p> </header> <div class="article-main"> <div class="article-content"><p>1 ether<br>= 1 000 000 000 gwei  （10⁹ gwei -- 1e9）
 = 1 000 000 000 000 000 000 wei （10¹⁸ wei -- 1e18）</p>
 <h1>数据类型和结构</h1><p>address：地址</p>
 <p>uint256[] a, bytes[] b;数组</p>
 <h3 id="section-1">bytes:</h3><p>bytes  是 Solidity 的定长字节数组类型，默认 32 字节（= 256 位），长度不可高于32字节，内容可读可写。</p>
-<h3 id="section-2">结构体：</h3><pre><code class="language-solidity">  struct Person { //定义结构体
+<h3 id="section-2">结构体：</h3><pre><code class="language-solidity">  struct <span class="hljs-title class_">Person</span> { <span class="hljs-comment">//定义结构体</span>
        uint256 my_favorite_number;
-      string name;
+      <span class="hljs-built_in">string</span> name;
   }
 
-  Person public friend = Person(7, &#39;Pat&#39;);
-//等于 Person public friend = Person({my_favorite_number:7, name:&#39;Pat&#39;});
+  <span class="hljs-title class_">Person</span> <span class="hljs-keyword">public</span> friend = <span class="hljs-title class_">Person</span>(<span class="hljs-number">7</span>, <span class="hljs-string">&#x27;Pat&#x27;</span>);
+<span class="hljs-comment">//等于 Person public friend = Person({my_favorite_number:7, name:&#x27;Pat&#x27;});</span>
 </code></pre>
 <h3 id="section-3">contract:</h3><p>定义合约，可以理解为结构体，这个合同就是一个新的结构，可以定义变量。</p>
 <h3 id="section-4">event</h3><ul>
@@ -64,7 +64,7 @@
 </ul>
 </li>
 </ul>
-<h3 id="section-6">Mappings (映射)：</h3><pre><code class="language-solidity">mapping (string =&gt; uint256) public nameToFavoriteNumber;
+<h3 id="section-6">Mappings (映射)：</h3><pre><code class="language-solidity"><span class="hljs-title function_">mapping</span> (<span class="hljs-function"><span class="hljs-params">string</span> =&gt;</span> uint256) <span class="hljs-keyword">public</span> nameToFavoriteNumber;
 </code></pre>
 <p>mapping 是键到值的一一对应关系，所有键默认存在且初始值为零值，无法遍历、无法删除整个映射，存储在 storage 中。</p>
 <p><strong>为什么用</strong></p>
@@ -81,15 +81,15 @@
 <ul>
 <li><p><strong>使用数组遍历</strong>：</p>
 <p>  你需要执行 1000 次 <code>SLOAD</code> 来把数据读出来比对。</p>
-<p>  Gas $\approx 1000 \times 2100 = 2,100,000$ Gas。</p>
+<p>  Gas <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4831em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1000</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2100</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">2</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">100</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">000</span></span></span></span> Gas。</p>
 <p>  <em>(注：这已经接近或超过单笔交易的常规限制，且极易导致 Out of Gas)</em>。</p>
 </li>
 <li><p><strong>使用映射</strong>：</p>
 <p>  1 次哈希计算 + 1 次 <code>SLOAD</code>（直接去目标位置读）。</p>
-<p>  Gas $\approx 30 + 2100 = 2,130$ Gas。</p>
+<p>  Gas <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4831em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">30</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">2100</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8389em;vertical-align:-0.1944em;"></span><span class="mord">2</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">130</span></span></span></span> Gas。</p>
 </li>
 </ul>
-<p><strong>这就是为什么说映射“不昂贵”——因为它消除了 $n-1$ 次多余的 SLOAD 操作。</strong></p>
+<p><strong>这就是为什么说映射“不昂贵”——因为它消除了 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span> 次多余的 SLOAD 操作。</strong></p>
 <h1>环境变量与上下文</h1><p>这些变量由 EVM 在每次交易或函数调用时自动注入，用于获取当前运行环境的信息。</p>
 <h3 id="section-7">1. 身份验证：<code>msg.sender</code> vs <code>tx.origin</code></h3><table>
 <thead>
@@ -113,7 +113,7 @@
 <td>❌ <strong>高危</strong>。严禁用于鉴权，易遭钓鱼攻击。</td>
 </tr>
 </tbody></table>
-<h4>🕵️‍♂️ 场景深度解析</h4><p>假设调用链为：<strong>用户 (User) $\rightarrow$ 攻击者合约 (Malicious) $\rightarrow$ 受害者合约 (Target)</strong></p>
+<h4>🕵️‍♂️ 场景深度解析</h4><p>假设调用链为：<strong>用户 (User) <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 攻击者合约 (Malicious) <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 受害者合约 (Target)</strong></p>
 <ul>
 <li><p><strong>对于 Malicious 合约</strong>：</p>
 <ul>
@@ -133,15 +133,15 @@
 </li>
 </ul>
 <h4>🛡️ 安全审计警示：<code>tx.origin</code> 钓鱼攻击</h4><p>如果 <code>Target</code> 合约写了这样的代码：</p>
-<pre><code class="language-solidity">// ❌ 错误写法：极度危险！
-function withdraw() public {
-    require(tx.origin == owner, &quot;Not owner&quot;);
-    payable(msg.sender).transfer(address(this).balance);
+<pre><code class="language-solidity"><span class="hljs-comment">// ❌ 错误写法：极度危险！</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">withdraw</span>(<span class="hljs-params"></span>) <span class="hljs-keyword">public</span> {
+    <span class="hljs-built_in">require</span>(tx.<span class="hljs-property">origin</span> == owner, <span class="hljs-string">&quot;Not owner&quot;</span>);
+    <span class="hljs-title function_">payable</span>(msg.<span class="hljs-property">sender</span>).<span class="hljs-title function_">transfer</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>).<span class="hljs-property">balance</span>);
 }
 </code></pre>
 <p><strong>攻击手法</strong>：攻击者诱骗 <code>owner</code> 点击一个钓鱼链接（该链接会<strong>触发一笔交易去调用攻击者合约</strong>）。攻击者合约再调用 <code>Target.withdraw()</code>。此时 <code>tx.origin</code> 确实是 <code>owner</code>，检查通过，但钱转给了 <code>msg.sender</code>（攻击者合约）。</p>
 <p><strong>唯一合法用途</strong>：检查调用者是否为合约（防止闪电贷攻击或限制合约交互）。</p>
-<pre><code class="language-solidity">require(msg.sender == tx.origin, &quot;No contracts allowed&quot;);
+<pre><code class="language-solidity"><span class="hljs-built_in">require</span>(msg.<span class="hljs-property">sender</span> == tx.<span class="hljs-property">origin</span>, <span class="hljs-string">&quot;No contracts allowed&quot;</span>);
 </code></pre>
 <hr>
 <h3 id="section-8">2. 资金上下文：<code>msg.value</code></h3><ul>
@@ -154,11 +154,11 @@ function withdraw() public {
 </ul>
 <h4>🛡️ 安全审计警示：循环中的陷阱</h4><p><code>msg.value</code> 是全局上下文，在 <code>delegatecall</code> 或循环中容易被误用。</p>
 <p><strong>错误示例（批量充值）</strong>：</p>
-<pre><code class="language-solidity">function batchDeposit(address[] calldata users) external payable {
-    for (uint i = 0; i &lt; users.length; i++) {
-        // ❌ 严重逻辑错误：msg.value 是恒定的！
-        // 如果用户发了 10 ETH，循环 5 次，合约会误以为总共存了 50 ETH。
-        balances[users[i]] += msg.value; 
+<pre><code class="language-solidity"><span class="hljs-keyword">function</span> <span class="hljs-title function_">batchDeposit</span>(<span class="hljs-params">address[] calldata users</span>) external payable {
+    <span class="hljs-keyword">for</span> (uint i = <span class="hljs-number">0</span>; i &lt; users.<span class="hljs-property">length</span>; i++) {
+        <span class="hljs-comment">// ❌ 严重逻辑错误：msg.value 是恒定的！</span>
+        <span class="hljs-comment">// 如果用户发了 10 ETH，循环 5 次，合约会误以为总共存了 50 ETH。</span>
+        balances[users[i]] += msg.<span class="hljs-property">value</span>; 
     }
 }
 </code></pre>
@@ -201,10 +201,10 @@ function withdraw() public {
 <h4>block.timestamp</h4><p>block.timestamp 表示：当前区块被挖出的时间戳，单位是秒（不是毫秒！）</p>
 <p><strong>举例说明</strong>
 假设现在是 2026-02-01 18:39:19：</p>
-<pre><code class="language-solidity">block.timestamp = 1738408759 // 这是一个很大的数字（秒）
+<pre><code class="language-solidity">block.<span class="hljs-property">timestamp</span> = <span class="hljs-number">1738408759</span> <span class="hljs-comment">// 这是一个很大的数字（秒）</span>
 </code></pre>
 <p>当你写 deadline = block.timestamp + 10; 时：意思是：部署合约的时刻 + 10秒 = 截止时间</p>
-<h1>EVM 指令集（字节码操作）</h1><p>EVM (Ethereum Virtual Machine) 是一个基于栈（Stack-based）的虚拟机，它的设计极简且专门针对智能合约进行了高度定制。所有的指令执行都在模 $2^{256}$ 的上下文中进行，操作数通常取自栈顶，结果重新压回栈顶。</p>
+<h1>EVM 指令集（字节码操作）</h1><p>EVM (Ethereum Virtual Machine) 是一个基于栈（Stack-based）的虚拟机，它的设计极简且专门针对智能合约进行了高度定制。所有的指令执行都在模 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">256</span></span></span></span></span></span></span></span></span></span></span></span> 的上下文中进行，操作数通常取自栈顶，结果重新压回栈顶。</p>
 <h2 id="section-10">1. 核心指令集分类与特性</h2><p>我们可以将 EVM 的操作码（Opcodes）按功能抽象为以下几大类。</p>
 <h3 id="section-11">🧮 算术与逻辑运算 (Arithmetic &amp; Logic)</h3><table>
 <thead>
@@ -422,14 +422,14 @@ function withdraw() public {
 <li><p><strong>限制：</strong> EVM 的栈深度最多只有 1024 层，且每个元素大小为 32 字节。这也是为什么如果函数内定义了过多的局部变量，编译器会报 <code>Stack too deep</code> 错误的原因。</p>
 </li>
 </ul>
-<pre><code class="language-solidity">contract StorageExample {
-    uint256 public count; // 默认为 storage，占用 Slot 0
+<pre><code class="language-solidity">contract <span class="hljs-title class_">StorageExample</span> {
+    uint256 <span class="hljs-keyword">public</span> count; <span class="hljs-comment">// 默认为 storage，占用 Slot 0</span>
 
-    function update() external {
-        // 建议：在 memory 中计算完再一次性写入 storage，节省 Gas
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">update</span>(<span class="hljs-params"></span>) external {
+        <span class="hljs-comment">// 建议：在 memory 中计算完再一次性写入 storage，节省 Gas</span>
         uint256 temp = count; 
-        temp += 1;
-        count = temp; // 发生 SSTORE
+        temp += <span class="hljs-number">1</span>;
+        count = temp; <span class="hljs-comment">// 发生 SSTORE</span>
     }
 }
 </code></pre>
@@ -441,9 +441,9 @@ function withdraw() public {
 <li><p><strong>引用机制</strong>：在赋值给另一个 memory 变量时，传递的是<strong>引用</strong>（Reference），修改新变量会影响原变量。</p>
 </li>
 </ul>
-<pre><code class="language-solidity">function processMemory(string memory s) public pure {
-    // 这里的 s 是 calldata 的拷贝，修改它不会影响原始交易数据
-    string memory strCopy = s; 
+<pre><code class="language-solidity"><span class="hljs-keyword">function</span> <span class="hljs-title function_">processMemory</span>(<span class="hljs-params"><span class="hljs-built_in">string</span> memory s</span>) <span class="hljs-keyword">public</span> pure {
+    <span class="hljs-comment">// 这里的 s 是 calldata 的拷贝，修改它不会影响原始交易数据</span>
+    <span class="hljs-built_in">string</span> memory strCopy = s; 
 }
 </code></pre>
 <h3 id="section-21">Calldata - 交易的“原始数据流”</h3><ul>
@@ -472,19 +472,19 @@ function withdraw() public {
 </li>
 </ol>
 <p>示例：Slot 分配与打包</p>
-<pre><code class="language-solidity">contract SlotLayout {
-    // Slot 0: 只有它自己，占满 32 字节
-    uint256 public a; 
+<pre><code class="language-solidity">contract <span class="hljs-title class_">SlotLayout</span> {
+    <span class="hljs-comment">// Slot 0: 只有它自己，占满 32 字节</span>
+    uint256 <span class="hljs-keyword">public</span> a; 
     
-    // Slot 1: 发生打包 (Packing)
-    // address(20 bytes) + uint64(8 bytes) + bool(1 byte) = 29 bytes
-    // 它们共享 Slot 1，大大节省 Gas（读取只需一次 SLOAD）
-    address public b; 
-    uint64 public c;
-    bool public d;
+    <span class="hljs-comment">// Slot 1: 发生打包 (Packing)</span>
+    <span class="hljs-comment">// address(20 bytes) + uint64(8 bytes) + bool(1 byte) = 29 bytes</span>
+    <span class="hljs-comment">// 它们共享 Slot 1，大大节省 Gas（读取只需一次 SLOAD）</span>
+    address <span class="hljs-keyword">public</span> b; 
+    uint64 <span class="hljs-keyword">public</span> c;
+    bool <span class="hljs-keyword">public</span> d;
     
-    // Slot 2: 开启新槽位
-    uint256 public e;
+    <span class="hljs-comment">// Slot 2: 开启新槽位</span>
+    uint256 <span class="hljs-keyword">public</span> e;
 }
 </code></pre>
 <h3 id="section-24">紧凑打包的底层 Opcode 原理</h3><p>因为 EVM 的 <code>SLOAD</code> 和 <code>SSTORE</code> <strong>每次只能操作完整的 32 字节（256 位）</strong>。当我们在 Solidity 中读取或写入被“打包”在同一个 Slot 里的变量（比如上面的 <code>c</code> 或 <code>d</code>）时，EVM 必须在底层施加额外的“位掩码运算”（Bitwise Operations）来隔离数据。</p>
@@ -532,7 +532,7 @@ function withdraw() public {
 真正存放数组元素的地方，是在遥远的哈希槽位空间：</p>
 <ul>
 <li><strong>元素的存放起始地址</strong> = <code>keccak256(p)</code></li>
-<li><strong>第 $i$ 个元素的具体槽位</strong> = <code>keccak256(p) + [i * 每个元素占用的Slot数量]</code></li>
+<li><strong>第 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6595em;"></span><span class="mord mathnormal">i</span></span></span></span> 个元素的具体槽位</strong> = <code>keccak256(p) + [i * 每个元素占用的Slot数量]</code></li>
 </ul>
 <p><em>(注意：如果数组元素是可以打包的类型，它们在被分派到的槽位群落中，依然遵循紧凑打包规则。)</em></p>
 <p><strong>B. 映射 (Mapping) 如 <code>mapping(address =&gt; uint256) public balances</code></strong>
@@ -552,35 +552,35 @@ function withdraw() public {
 <blockquote>
 <p>也就是说，EVM 把<strong>键的实际内容 (key)</strong> 与<strong>该映射声明时的原始槽位编号 (p)</strong> 一起拼接打包做哈希运算，算出了一个极其随机且唯一的位置。即使另一个地址（不同的 key），或者另一个 mapping（不同的 p），经过哈希后的位置也会天差地别。</p>
 </blockquote>
-<h4>💥 何谓“存储碰撞 (Storage Collision)”？</h4><p>EVM 有 $2^{256}$ 个插槽，这是一个什么概念？
-$2^{256}$ 大约等于 $1.15 \times 10^{77}$。这不仅是个“天文数字”，它甚至接近<strong>整个可观测宇宙中所有原子的总和</strong>（约 $10^{80}$ 个）。
+<h4>💥 何谓“存储碰撞 (Storage Collision)”？</h4><p>EVM 有 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">256</span></span></span></span></span></span></span></span></span></span></span></span> 个插槽，这是一个什么概念？
+<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">256</span></span></span></span></span></span></span></span></span></span></span></span> 大约等于 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1.15</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">77</span></span></span></span></span></span></span></span></span></span></span></span>。这不仅是个“天文数字”，它甚至接近<strong>整个可观测宇宙中所有原子的总和</strong>（约 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord">1</span><span class="mord"><span class="mord">0</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">80</span></span></span></span></span></span></span></span></span></span></span></span> 个）。
 在这个无垠荒野中，即使地球上每台电脑每秒进行上亿次哈希去寻找，直到太阳系毁灭，找到两个相同槽位（哈希碰撞）的概率也无限趋近于 <strong>0</strong>。这正是 Mapping “算出一个极其随机的位置”而永远不用担心撞车（哈希冲突）的底气所在。</p>
 <p>但是，导致碰撞的往往是<strong>人为设计缺陷</strong>，其中最典型的重灾区是<strong>代理合约模式 (Proxy Pattern)</strong>！</p>
 <p><strong>案例剖析：Proxy 透传存储碰撞</strong></p>
 <p>由于代理合约仅用于 <code>Delegatecall</code> 转交执行逻辑，真正的数据都保存在 Proxy 的 Storage 中。</p>
-<pre><code class="language-solidity">// Proxy.sol (代理合约)
-contract Proxy {
-    // 代理合约自己占用了 Slot 0
-    address public implementation; 
+<pre><code class="language-solidity"><span class="hljs-comment">// Proxy.sol (代理合约)</span>
+contract <span class="hljs-title class_">Proxy</span> {
+    <span class="hljs-comment">// 代理合约自己占用了 Slot 0</span>
+    address <span class="hljs-keyword">public</span> implementation; 
 
-    // 退一步逻辑，通过 delegatecall 把 call 送给 implementation
-    fallback() external {
+    <span class="hljs-comment">// 退一步逻辑，通过 delegatecall 把 call 送给 implementation</span>
+    <span class="hljs-title function_">fallback</span>() external {
         address _impl = implementation;
         assembly {
-            calldatacopy(0, 0, calldatasize())
-            let result := delegatecall(gas(), _impl, 0, calldatasize(), 0, 0)
-            // ... (省略返回逻辑)
+            <span class="hljs-title function_">calldatacopy</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-title function_">calldatasize</span>())
+            <span class="hljs-keyword">let</span> result := <span class="hljs-title function_">delegatecall</span>(<span class="hljs-title function_">gas</span>(), _impl, <span class="hljs-number">0</span>, <span class="hljs-title function_">calldatasize</span>(), <span class="hljs-number">0</span>, <span class="hljs-number">0</span>)
+            <span class="hljs-comment">// ... (省略返回逻辑)</span>
         }
     }
 }
 
-// LogicV1.sol (逻辑合约)
-contract LogicV1 {
-    // 💥 致命错误！逻辑合约的设计者把第一个变量声明成这样：
-    address public owner; // 它也会被分配在 Slot 0
+<span class="hljs-comment">// LogicV1.sol (逻辑合约)</span>
+contract <span class="hljs-title class_">LogicV1</span> {
+    <span class="hljs-comment">// 💥 致命错误！逻辑合约的设计者把第一个变量声明成这样：</span>
+    address <span class="hljs-keyword">public</span> owner; <span class="hljs-comment">// 它也会被分配在 Slot 0</span>
 
-    function initialize() external {
-        owner = msg.sender;
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">initialize</span>(<span class="hljs-params"></span>) external {
+        owner = msg.<span class="hljs-property">sender</span>;
     }
 }
 </code></pre>
@@ -597,8 +597,8 @@ contract LogicV1 {
 <code>StorageSlot_Implementation = keccak256(&quot;eip1967.proxy.implementation&quot;) - 1;</code></p>
 <hr>
 <h3 id="section-26">调试工具</h3><p>使用 web3.js 或 foundry 查看链上 Slot 数据（通过这些指令你能亲自验证哈希落点）：</p>
-<pre><code class="language-javascript">// 读取合约地址 atAddress 在 Slot position 的 32字节数据
-await web3.eth.getStorageAt(&quot;0xAddress...&quot;, 0); 
+<pre><code class="language-javascript"><span class="hljs-comment">// 读取合约地址 atAddress 在 Slot position 的 32字节数据</span>
+<span class="hljs-keyword">await</span> web3.<span class="hljs-property">eth</span>.<span class="hljs-title function_">getStorageAt</span>(<span class="hljs-string">&quot;0xAddress...&quot;</span>, <span class="hljs-number">0</span>); 
 </code></pre>
 <p>或者使用 Foundry (对于 Mapping，你需要用 cast 组合运算找到具体位置):</p>
 <pre><code class="language-bash">cast storage 0xAddress... 0
@@ -608,54 +608,54 @@ await web3.eth.getStorageAt(&quot;0xAddress...&quot;, 0);
 <p>当你调用 <code>myFunction(5, 9)</code> 时，发送的数据实际上是一串十六进制编码。</p>
 <p><strong>编码结构：</strong> <code>[4字节 函数选择器]</code> + <code>[32字节 参数1]</code> + <code>[32字节 参数2]</code> ...</p>
 <p>函数选择器（function selector）是函数签名经过 <code>keccak256</code> 哈希取前 4 字节：<code>bytes4(keccak256(&quot;myFunction(uint256,uint256)&quot;));</code> 这 4 个字节明确告诉 EVM 要调用哪个函数。后面的参数数据是每个参数的 32 字节 ABI 编码值（数字右对齐）。</p>
-<pre><code class="language-solidity">myFunction(5, 9)
+<pre><code class="language-solidity"><span class="hljs-title function_">myFunction</span>(<span class="hljs-number">5</span>, <span class="hljs-number">9</span>)
 会被编码为：
-| 函数选择器（4 字节） | 参数1（32 字节） | 参数2（32 字节） |
+| 函数选择器（<span class="hljs-number">4</span> 字节） | 参数<span class="hljs-number">1</span>（<span class="hljs-number">32</span> 字节） | 参数<span class="hljs-number">2</span>（<span class="hljs-number">32</span> 字节） |
 
-后面的参数数据是每个参数的 32 字节 ABI 编码值（数字右对齐、数组/字符串有额外偏移等）。
-0x3c6bb436 0000000000000000000000000000000000000000000000000000000000000005
-0000000000000000000000000000000000000000000000000000000000000009
+后面的参数数据是每个参数的 <span class="hljs-number">32</span> 字节 <span class="hljs-variable constant_">ABI</span> 编码值（数字右对齐、数组/字符串有额外偏移等）。
+<span class="hljs-number">0x3c6bb436</span> <span class="hljs-number">0000000000000000000000000000000000000000000000000000000000000005</span>
+<span class="hljs-number">0000000000000000000000000000000000000000000000000000000000000009</span>
 </code></pre>
 <h3 id="section-29">动态类型（Dynamic Types）的编码</h3><p>上面的例子参数是 <code>uint256</code> 等<strong>定长（静态）类型</strong>。但如果函数参数里有 <code>bytes</code>, <code>string</code> 或者数组（如 <code>uint256[]</code>）这类<strong>动态类型</strong>，ABI 编码的规则就会发生巨大变化。这正是 ABI 编码攻击的温床。</p>
 <p>对于动态类型，EVM 无法预先知道它有多长。因此 ABI 规范引入了 <strong>指针（Offset）</strong> 的概念。</p>
 <p><strong>动态类型的编码结构变成这样：</strong> 
 <code>[4字节 选择器]</code> + <code>[32字节 静态参数/动态类型的头部指针]</code> + <code>[32字节 动态数据长度 Length]</code> + <code>[实际动态数据 Content]</code></p>
 <p>举个例子，假设你要调用：</p>
-<pre><code class="language-solidity">// 包含一个动态类型 bytes
+<pre><code class="language-solidity"><span class="hljs-comment">// 包含一个动态类型 bytes</span>
 
-function execute(address target, bytes calldata actionData)
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">execute</span>(<span class="hljs-params">address target, bytes calldata actionData</span>)
 </code></pre>
 <p>当我们传入 <code>target = 0xAA...AA</code>，<code>actionData = 0x85fb...</code> 时，它的 Calldata 内存排布如下：</p>
-<pre><code class="language-solidity">位置(Offset)  内容(32字节块)                             说明
+<pre><code class="language-solidity">位置(<span class="hljs-title class_">Offset</span>)  内容(<span class="hljs-number">32</span>字节块)                             说明
 -----------------------------------------------------------------------------------------
-0x00        [0x1cff79cd]                               // execute 函数选择器 (前 4 字节)
-0x04        [0000..00AAD9...地址]                      // 参数1: target (静态类型，直接存值)
-0x24        [0000...00000000000000000000000000000060]  // 参数2: actionData 的【指针】！(值为十进制 96，即 0x60)
+<span class="hljs-number">0x00</span>        [<span class="hljs-number">0x1cff79cd</span>]                               <span class="hljs-comment">// execute 函数选择器 (前 4 字节)</span>
+<span class="hljs-number">0x04</span>        [<span class="hljs-number">0000</span>..00AAD9...地址]                      <span class="hljs-comment">// 参数1: target (静态类型，直接存值)</span>
+<span class="hljs-number">0x24</span>        [<span class="hljs-number">0000</span>...<span class="hljs-number">00000000000000000000000000000060</span>]  <span class="hljs-comment">// 参数2: actionData 的【指针】！(值为十进制 96，即 0x60)</span>
 ---- 这里是参数头部的结束，下面是根据指针找过来的动态数据实体 ----
-0x44        [0000...00000000000000000000000000000044]  // (跟随指针 0x60 + 0x04 = 0x64 位置) actionData 的真实【长度】
-0x64        [0x85fb709d...真实数据内容...]              // actionData 的真实【内容】
+<span class="hljs-number">0x44</span>        [<span class="hljs-number">0000</span>...<span class="hljs-number">00000000000000000000000000000044</span>]  <span class="hljs-comment">// (跟随指针 0x60 + 0x04 = 0x64 位置) actionData 的真实【长度】</span>
+<span class="hljs-number">0x64</span>        [<span class="hljs-number">0x85fb709d</span>...真实数据内容...]              <span class="hljs-comment">// actionData 的真实【内容】</span>
 </code></pre>
 <h4>致命的误解（漏洞根源）</h4><p><strong>初级开发者往往会这样想：</strong> 因为 <code>target</code> 占了 32 字节，<code>actionData的指针</code> 占了 32 字节，<code>actionData的长度</code> 占了 32 字节。加上开头的 4 字节选择器。 那么 <code>actionData</code> 的真实内容<strong>永远、绝对</strong>是从第 100 个字节（<code>4 + 32 + 32 + 32 = 100</code>，即 0x64）开始的。</p>
 <p>于是，他们用内联汇编写下了这样“自作聪明”的优化代码：</p>
-<pre><code class="language-solidity">uint256 calldataOffset = 4 + 32 * 3; // 4 + 96 = 100
+<pre><code class="language-solidity">uint256 calldataOffset = <span class="hljs-number">4</span> + <span class="hljs-number">32</span> * <span class="hljs-number">3</span>; <span class="hljs-comment">// 4 + 96 = 100</span>
 assembly {
-    selector := calldataload(calldataOffset)
+    selector := <span class="hljs-title function_">calldataload</span>(calldataOffset)
 }
 </code></pre>
 <h4>黑客的魔法（ABI Smuggling）</h4><p>ABI 规范中，<strong>参数 2 的指针（Offset）是可以由调用者随便填的！</strong> 它不要求紧紧挨在后面。</p>
 <p>黑客如果把这一段 Calldata 结构手动篡改，将指针指得远远的：</p>
 <pre><code class="language-solidity">位置        装填的内容（黑客伪造视角）                     实际用途
 -----------------------------------------------------------------------------------------
-0x00        [0x1cff79cd]                              // execute 选择器
-0x04        [0000..00Vault地址]                       // 参数1: target
-0x24        [0000...00000000000000000000000000000080] // 【注意】参数2的指针！我改成了 0x80 (128)，指向后面
+<span class="hljs-number">0x00</span>        [<span class="hljs-number">0x1cff79cd</span>]                              <span class="hljs-comment">// execute 选择器</span>
+<span class="hljs-number">0x04</span>        [<span class="hljs-number">0000</span>..00Vault地址]                       <span class="hljs-comment">// 参数1: target</span>
+<span class="hljs-number">0x24</span>        [<span class="hljs-number">0000</span>...<span class="hljs-number">00000000000000000000000000000080</span>] <span class="hljs-comment">// 【注意】参数2的指针！我改成了 0x80 (128)，指向后面</span>
 ---- 原本该放长度的地方 (此时被跳过了) ----
-0x44        [空或者垃圾数据]                              
----- 第 100 字节，原本该放真实内容的地方 ----
-0x64        [0xd9caed12....(withdraw选择器)]           // 【狸猫换太子】用来骗取上方内联汇编的权限检查！
----- 这里才是指针 0x80 真正指向的地方 ----
-0x84        [真正负载的长度]
-0x104       [0x85fb709d....(sweepFunds选择器)]         // 【杀招】底层 functionCall 只认指针，它会执行这段代码！
+<span class="hljs-number">0x44</span>        [空或者垃圾数据]                              
+---- 第 <span class="hljs-number">100</span> 字节，原本该放真实内容的地方 ----
+<span class="hljs-number">0x64</span>        [<span class="hljs-number">0xd9caed12</span>....(withdraw选择器)]           <span class="hljs-comment">// 【狸猫换太子】用来骗取上方内联汇编的权限检查！</span>
+---- 这里才是指针 <span class="hljs-number">0x80</span> 真正指向的地方 ----
+<span class="hljs-number">0x84</span>        [真正负载的长度]
+<span class="hljs-number">0x104</span>       [<span class="hljs-number">0x85fb709d</span>....(sweepFunds选择器)]         <span class="hljs-comment">// 【杀招】底层 functionCall 只认指针，它会执行这段代码！</span>
 </code></pre>
 <p>通过修改一段 Calldata 里的 Offset 指针，黑客成功在第 <code>0x64</code>（100 字节）的位置留下了一具替身（合法权限签章）供保安检查；而把真正的炸弹（越权执行逻辑）藏在了 Calldata 的末尾，并把合法的通行指针（Offset）塞给了底层的执行器。</p>
 <hr>
@@ -767,8 +767,8 @@ assembly {
 </ul>
 <hr>
 <h2 id="section-35">合约创建 (new)</h2><p><code>new</code> 关键字用于在代码中动态部署新合约。这不仅仅是实例化，而是一次<strong>完整的部署交易</strong>。</p>
-<pre><code class="language-solidity">// 语法：new 合约名{选项}(构造函数参数)
-ContractName instance = new ContractName{value: 1 ether, salt: bytes32(0)}(arg1, arg2);
+<pre><code class="language-solidity"><span class="hljs-comment">// 语法：new 合约名{选项}(构造函数参数)</span>
+<span class="hljs-title class_">ContractName</span> instance = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ContractName</span>{<span class="hljs-attr">value</span>: <span class="hljs-number">1</span> ether, <span class="hljs-attr">salt</span>: <span class="hljs-title function_">bytes32</span>(<span class="hljs-number">0</span>)}(arg1, arg2);
 </code></pre>
 <h3 id="section-36">关键参数</h3><ul>
 <li><strong><code>value</code> (可选)</strong>: 部署的同时向新合约转入 ETH（前提是新合约的 <code>constructor</code> 是 <code>payable</code> 的）。</li>
@@ -784,11 +784,11 @@ ContractName instance = new ContractName{value: 1 ether, salt: bytes32(0)}(arg1,
 </ul>
 <hr>
 <h2 id="section-38">事件日志 (emit)</h2><p><code>emit</code> 用于触发 <code>event</code>，将数据写入交易回执的日志（Logs）区域。</p>
-<pre><code class="language-solidity">// 定义事件
-event Transfer(address indexed from, address indexed to, uint256 value);
+<pre><code class="language-solidity"><span class="hljs-comment">// 定义事件</span>
+event <span class="hljs-title class_">Transfer</span>(address indexed <span class="hljs-keyword">from</span>, address indexed to, uint256 value);
 
-// 触发事件
-emit Transfer(msg.sender, _to, _amount);
+<span class="hljs-comment">// 触发事件</span>
+emit <span class="hljs-title class_">Transfer</span>(msg.<span class="hljs-property">sender</span>, _to, _amount);
 </code></pre>
 <h3 id="section-39">核心特性</h3><ol>
 <li><strong>Gas 廉价</strong>: 存储数据在 Logs 比存储在 Storage (<code>SSTORE</code>) 便宜得多（约 1/10 成本）。</li>
@@ -856,9 +856,9 @@ emit Transfer(msg.sender, _to, _amount);
 <li><p><strong>String</strong>：不支持动态参数，拼接变量极其困难且昂贵。</p>
 </li>
 <li><p><strong>Custom Error</strong>：原生支持参数传递，方便前端或浏览器解析具体数值。</p>
-<pre><code class="language-Solidity">// 定义: error TooEarly(uint256 expected, uint256 actual);
-revert TooEarly(deadline, block.timestamp); 
-// 前端直接获取对象: { expected: 180000, actual: 170000 }
+<pre><code class="language-Solidity"><span class="hljs-comment">// 定义: error TooEarly(uint256 expected, uint256 actual);</span>
+revert <span class="hljs-title class_">TooEarly</span>(deadline, block.<span class="hljs-property">timestamp</span>); 
+<span class="hljs-comment">// 前端直接获取对象: { expected: 180000, actual: 170000 }</span>
 </code></pre>
 </li>
 </ul>
@@ -976,13 +976,13 @@ revert TooEarly(deadline, block.timestamp);
 </li>
 </ol>
 <h1>继承性</h1><h3 id="section-49">继承</h3><p>is关键字表示继承，并将父合约<code>SimpleStorage</code>与其子合约<code>AddFiveStorage</code>关联起来。</p>
-<pre><code class="language-solidity">import {SimpleStorage} from&quot;./SimpleStorage.sol&quot;;
+<pre><code class="language-solidity"><span class="hljs-keyword">import</span> {<span class="hljs-title class_">SimpleStorage</span>} <span class="hljs-keyword">from</span><span class="hljs-string">&quot;./SimpleStorage.sol&quot;</span>;
 
-contract AddFiveStorage is SimpleStorage {}
+contract <span class="hljs-title class_">AddFiveStorage</span> is <span class="hljs-title class_">SimpleStorage</span> {}
 </code></pre>
 <h3 id="section-50">Override and virtual 重写和虚拟</h3><p>通过使用override关键字来修改SimpleStorage中的现有函数。假设我们想要修改store函数，在要存储的喜好数字上加上“5”。</p>
 <p>如果我们复制<code>store</code>函数的确切签名，将会出现错误：重写函数缺少“override”说明符，尝试重写一个非虚函数。所以加上这些关键字</p>
-<pre><code class="language-solidity">function store(uint256 favNumber) public virtual{}
+<pre><code class="language-solidity"><span class="hljs-keyword">function</span> <span class="hljs-title function_">store</span>(<span class="hljs-params">uint256 favNumber</span>) <span class="hljs-keyword">public</span> virtual{}
 </code></pre>
 <p>}最后，我们可以将新功能添加到<code>AddFiveStorage</code>中的<code>store</code>函数，使其能够在存储的<code>favoriteNumber</code>上加上“5”：</p>
 <h1>常用函数与库</h1><h3 id="section-51">接收 ETH：<code>receive</code> 与 <code>fallback</code></h3><p>这两个函数决定了合约如何“被动”接收 ETH 或处理未知调用。</p>
@@ -990,29 +990,29 @@ contract AddFiveStorage is SimpleStorage {}
 <ol>
 <li><p><strong>是否有数据 (<code>msg.data</code>)?</strong></p>
 <ul>
-<li><p><strong>否 (Empty)</strong> $\rightarrow$ 检查是否有 <code>receive()</code>?</p>
+<li><p><strong>否 (Empty)</strong> <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 检查是否有 <code>receive()</code>?</p>
 <ul>
-<li><p>有 $\rightarrow$ <strong>执行 <code>receive()</code></strong></p>
+<li><p>有 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> <strong>执行 <code>receive()</code></strong></p>
 </li>
-<li><p>无 $\rightarrow$ 检查是否有 <code>payable fallback()</code>?</p>
+<li><p>无 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 检查是否有 <code>payable fallback()</code>?</p>
 <ul>
-<li><p>有 $\rightarrow$ <strong>执行 <code>fallback()</code></strong></p>
+<li><p>有 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> <strong>执行 <code>fallback()</code></strong></p>
 </li>
-<li><p>无 $\rightarrow$ <strong>Revert (拒收 ETH)</strong></p>
+<li><p>无 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> <strong>Revert (拒收 ETH)</strong></p>
 </li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><strong>是 (Not Empty)</strong> $\rightarrow$ 检查 <code>msg.data</code> 前4字节是否匹配某个函数签名?</p>
+<li><p><strong>是 (Not Empty)</strong> <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 检查 <code>msg.data</code> 前4字节是否匹配某个函数签名?</p>
 <ul>
-<li><p>匹配 $\rightarrow$ <strong>执行对应函数</strong></p>
+<li><p>匹配 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> <strong>执行对应函数</strong></p>
 </li>
-<li><p>不匹配 $\rightarrow$ 检查是否有 <code>fallback()</code>?</p>
+<li><p>不匹配 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> 检查是否有 <code>fallback()</code>?</p>
 <ul>
-<li><p>有 $\rightarrow$ <strong>执行 <code>fallback()</code></strong></p>
+<li><p>有 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> <strong>执行 <code>fallback()</code></strong></p>
 </li>
-<li><p>无 $\rightarrow$ <strong>Revert</strong></p>
+<li><p>无 <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.3669em;"></span><span class="mrel">→</span></span></span></span> <strong>Revert</strong></p>
 </li>
 </ul>
 </li>
@@ -1085,14 +1085,14 @@ contract AddFiveStorage is SimpleStorage {}
 </ul>
 </li>
 </ol>
-<pre><code class="language-solidity">// ✅ 正确范例
-// 1. Checks
-require(balances[msg.sender] &gt;= amount);
-// 2. Effects (先扣钱)
-balances[msg.sender] -= amount;
-// 3. Interactions (再转账)
-(bool success, ) = payable(msg.sender).call{value: amount}(&quot;&quot;);
-require(success, &quot;Transfer failed&quot;);
+<pre><code class="language-solidity"><span class="hljs-comment">// ✅ 正确范例</span>
+<span class="hljs-comment">// 1. Checks</span>
+<span class="hljs-built_in">require</span>(balances[msg.<span class="hljs-property">sender</span>] &gt;= amount);
+<span class="hljs-comment">// 2. Effects (先扣钱)</span>
+balances[msg.<span class="hljs-property">sender</span>] -= amount;
+<span class="hljs-comment">// 3. Interactions (再转账)</span>
+(bool success, ) = <span class="hljs-title function_">payable</span>(msg.<span class="hljs-property">sender</span>).<span class="hljs-property">call</span>{<span class="hljs-attr">value</span>: amount}(<span class="hljs-string">&quot;&quot;</span>);
+<span class="hljs-built_in">require</span>(success, <span class="hljs-string">&quot;Transfer failed&quot;</span>);
 </code></pre>
 <hr>
 <h3 id="section-53">数学安全：<code>SafeMath</code> 与 <code>unchecked</code></h3><h4>历史背景</h4><ul>
@@ -1115,13 +1115,13 @@ require(success, &quot;Transfer failed&quot;);
 </ul>
 <h4><code>unchecked</code> 代码块</h4><p> <code>unchecked</code>，是为了 <strong>Gas 优化</strong>。</p>
 <p>如果开发者<strong>确定</strong>数学计算绝对不会溢出（例如循环计数器），可以手动关闭编译器的检查以节省 Gas。</p>
-<pre><code class="language-solidity">// Gas 优化示例
-function loop(uint256[] memory arr) external pure {
-    // i++ 在旧版本或默认模式下会检查溢出，消耗额外 Gas
-    for (uint256 i = 0; i &lt; arr.length; ) {
-        // 业务逻辑...
+<pre><code class="language-solidity"><span class="hljs-comment">// Gas 优化示例</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">loop</span>(<span class="hljs-params">uint256[] memory arr</span>) external pure {
+    <span class="hljs-comment">// i++ 在旧版本或默认模式下会检查溢出，消耗额外 Gas</span>
+    <span class="hljs-keyword">for</span> (uint256 i = <span class="hljs-number">0</span>; i &lt; arr.<span class="hljs-property">length</span>; ) {
+        <span class="hljs-comment">// 业务逻辑...</span>
         
-        // 放在 unchecked 块中，因为 i 不可能超过数组长度（而数组长度受内存限制远小于 uint256）
+        <span class="hljs-comment">// 放在 unchecked 块中，因为 i 不可能超过数组长度（而数组长度受内存限制远小于 uint256）</span>
         unchecked { 
             i++; 
         }
@@ -1145,12 +1145,12 @@ function loop(uint256[] memory arr) external pure {
 <li><p><strong>安全点</strong>：因为有填充，它不会发生哈希碰撞。</p>
 </li>
 </ul>
-<pre><code class="language-solidity">// 输入: (uint8(1), uint8(2))
-// 结果: 
-// 0x00...01 (32字节)
-// 0x00...02 (32字节)
-// 总长: 64字节
-bytes memory data = abi.encode(1, 2); 
+<pre><code class="language-solidity"><span class="hljs-comment">// 输入: (uint8(1), uint8(2))</span>
+<span class="hljs-comment">// 结果: </span>
+<span class="hljs-comment">// 0x00...01 (32字节)</span>
+<span class="hljs-comment">// 0x00...02 (32字节)</span>
+<span class="hljs-comment">// 总长: 64字节</span>
+bytes memory data = abi.<span class="hljs-title function_">encode</span>(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>); 
 </code></pre>
 <h4>2. <code>abi.encodePacked</code> (紧凑编码)</h4><ul>
 <li><p><strong>特性</strong>：<strong>无填充</strong>。直接把数据拼接在一起，节省空间。</p>
@@ -1159,12 +1159,12 @@ bytes memory data = abi.encode(1, 2);
 </li>
 <li><p>⚠️ 高危审计点：哈希碰撞 (Hash Collision)</p>
 <p>  当使用两个动态类型参数（如 string 或 bytes）相邻时，如果使用 encodePacked，不同的输入可能产生相同的输出。</p>
-<pre><code class="language-Solidity">// 场景：验证签名或白名单
-// 输入 A: (&quot;aaa&quot;, &quot;bbb&quot;) -&gt; 结果: &quot;aaabbb&quot;
-// 输入 B: (&quot;aa&quot;, &quot;abbb&quot;) -&gt; 结果: &quot;aaabbb&quot;
+<pre><code class="language-Solidity"><span class="hljs-comment">// 场景：验证签名或白名单</span>
+<span class="hljs-comment">// 输入 A: (&quot;aaa&quot;, &quot;bbb&quot;) -&gt; 结果: &quot;aaabbb&quot;</span>
+<span class="hljs-comment">// 输入 B: (&quot;aa&quot;, &quot;abbb&quot;) -&gt; 结果: &quot;aaabbb&quot;</span>
 
-// 漏洞：攻击者可以通过调整参数 B 来伪造参数 A 的哈希，绕过签名检查。
-keccak256(abi.encodePacked(a, b)); 
+<span class="hljs-comment">// 漏洞：攻击者可以通过调整参数 B 来伪造参数 A 的哈希，绕过签名检查。</span>
+<span class="hljs-title function_">keccak256</span>(abi.<span class="hljs-title function_">encodePacked</span>(a, b)); 
 </code></pre>
 <p>  <strong>防御</strong>：在两个动态参数之间加一个固定参数（如 <code>uint</code>），或者改用 <code>abi.encode</code>。</p>
 </li>
@@ -1204,14 +1204,14 @@ keccak256(abi.encodePacked(a, b));
 </tbody></table>
 <p><strong>代码对比</strong>：</p>
 <pre><code class="language-solidity">
-// 1. 推荐：写错了编译器直接报错
-abi.encodeCall(token.transfer, (to, amount));
+<span class="hljs-comment">// 1. 推荐：写错了编译器直接报错</span>
+abi.<span class="hljs-title function_">encodeCall</span>(token.<span class="hljs-property">transfer</span>, (to, amount));
 
-// 2. 危险：如果写成 &quot;transfer(address, uint)&quot; (少个256)，生成的 Selector 是错的
-abi.encodeWithSignature(&quot;transfer(address,uint256)&quot;, to, amount);
+<span class="hljs-comment">// 2. 危险：如果写成 &quot;transfer(address, uint)&quot; (少个256)，生成的 Selector 是错的</span>
+abi.<span class="hljs-title function_">encodeWithSignature</span>(<span class="hljs-string">&quot;transfer(address,uint256)&quot;</span>, to, amount);
 
-// 3. 灵活：用于代理合约或动态调用
-abi.encodeWithSelector(IERC20.transfer.selector, to, amount);
+<span class="hljs-comment">// 3. 灵活：用于代理合约或动态调用</span>
+abi.<span class="hljs-title function_">encodeWithSelector</span>(<span class="hljs-title class_">IERC20</span>.<span class="hljs-property">transfer</span>.<span class="hljs-property">selector</span>, to, amount);
 </code></pre>
 <h4>4. <code>abi.decode</code> (解码)</h4><p>将二进制数据还原为 Solidity 变量。</p>
 <ul>
@@ -1220,8 +1220,8 @@ abi.encodeWithSelector(IERC20.transfer.selector, to, amount);
 <li><p><strong>限制</strong>：只能解码由 <code>abi.encode</code> 生成的数据。<strong>无法</strong>解码 <code>abi.encodePacked</code> 的数据（因为没有填充，机器不知道哪里是切分点）。</p>
 </li>
 </ul>
-<pre><code class="language-solidity">// 假设 data 是由 abi.encode(1, 2) 生成的
-(uint256 a, uint256 b) = abi.decode(data, (uint256, uint256));
+<pre><code class="language-solidity"><span class="hljs-comment">// 假设 data 是由 abi.encode(1, 2) 生成的</span>
+(uint256 a, uint256 b) = abi.<span class="hljs-title function_">decode</span>(data, (uint256, uint256));
 </code></pre>
 <hr>
 <h3 id="section-55">OpenZeppelin <code>Address</code> 库</h3><p>通常通过 <code>using Address for address;</code> 引入。它为 <code>address</code> 类型提供了一系列“增强版”的低级操作函数。</p>
@@ -1234,13 +1234,13 @@ abi.encodeWithSelector(IERC20.transfer.selector, to, amount);
 </li>
 </ol>
 <p><strong>底层逻辑（心智模型）</strong>：</p>
-<pre><code class="language-solidity">function functionCall(address target, bytes memory data) internal {
-    require(isContract(target), &quot;Call to non-contract&quot;);
-    (bool success, bytes memory returndata) = target.call(data);
-    if (!success) {
-        // 自动帮你 revert，不再需要手动 check success
-        if (returndata.length &gt; 0) revert(string(returndata));
-        else revert(&quot;Low-level call failed&quot;);
+<pre><code class="language-solidity"><span class="hljs-keyword">function</span> <span class="hljs-title function_">functionCall</span>(<span class="hljs-params">address target, bytes memory data</span>) internal {
+    <span class="hljs-built_in">require</span>(<span class="hljs-title function_">isContract</span>(target), <span class="hljs-string">&quot;Call to non-contract&quot;</span>);
+    (bool success, bytes memory returndata) = target.<span class="hljs-title function_">call</span>(data);
+    <span class="hljs-keyword">if</span> (!success) {
+        <span class="hljs-comment">// 自动帮你 revert，不再需要手动 check success</span>
+        <span class="hljs-keyword">if</span> (returndata.<span class="hljs-property">length</span> &gt; <span class="hljs-number">0</span>) <span class="hljs-title function_">revert</span>(<span class="hljs-title function_">string</span>(returndata));
+        <span class="hljs-keyword">else</span> <span class="hljs-title function_">revert</span>(<span class="hljs-string">&quot;Low-level call failed&quot;</span>);
     }
 }
 </code></pre>
@@ -1270,10 +1270,10 @@ abi.encodeWithSelector(IERC20.transfer.selector, to, amount);
 <p>它是 address.transfer 的现代替代品。它使用底层的 .call{value: amount}(&quot;&quot;)，但自动检查返回值。</p>
 <p><strong>底层逻辑</strong>：</p>
 <p>Solidity</p>
-<pre><code>function sendValue(address payable recipient, uint256 amount) internal {
-    require(address(this).balance &gt;= amount, &quot;Insufficient balance&quot;);
-    (bool success, ) = recipient.call{value: amount}(&quot;&quot;);
-    require(success, &quot;ETH transfer failed&quot;); // 自动 revert
+<pre><code><span class="hljs-keyword">function</span> <span class="hljs-title function_">sendValue</span>(<span class="hljs-params">address payable recipient, uint256 amount</span>) internal {
+    <span class="hljs-built_in">require</span>(<span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>).<span class="hljs-property">balance</span> &gt;= amount, <span class="hljs-string">&quot;Insufficient balance&quot;</span>);
+    (bool success, ) = recipient.<span class="hljs-property">call</span>{<span class="hljs-attr">value</span>: amount}(<span class="hljs-string">&quot;&quot;</span>);
+    <span class="hljs-built_in">require</span>(success, <span class="hljs-string">&quot;ETH transfer failed&quot;</span>); <span class="hljs-comment">// 自动 revert</span>
 }
 </code></pre>
 <p>🛡️ <strong>安全审计警示</strong></p>
@@ -1378,31 +1378,31 @@ abi.encodeWithSelector(IERC20.transfer.selector, to, amount);
 </tr>
 </tbody></table>
 <hr>
-<h3 id="section-59">3. 代码实战对比</h3><h4>方式一：OpenZeppelin (标准流)</h4><pre><code class="language-solidity">import {SafeERC20} from &quot;@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol&quot;;
-import {IERC20} from &quot;@openzeppelin/contracts/token/ERC20/IERC20.sol&quot;;
+<h3 id="section-59">3. 代码实战对比</h3><h4>方式一：OpenZeppelin (标准流)</h4><pre><code class="language-solidity"><span class="hljs-keyword">import</span> {<span class="hljs-title class_">SafeERC20</span>} <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol&quot;</span>;
+<span class="hljs-keyword">import</span> {<span class="hljs-title class_">IERC20</span>} <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;@openzeppelin/contracts/token/ERC20/IERC20.sol&quot;</span>;
 
-contract StandardDeFi {
-    using SafeERC20 for IERC20; // ⚠️ 绑定在接口上
+contract <span class="hljs-title class_">StandardDeFi</span> {
+    <span class="hljs-keyword">using</span> <span class="hljs-title class_">SafeERC20</span> <span class="hljs-keyword">for</span> <span class="hljs-title class_">IERC20</span>; <span class="hljs-comment">// ⚠️ 绑定在接口上</span>
 
-    function deposit(IERC20 token, uint256 amount) external {
-        // 自动处理 USDT 兼容性，失败自动 Revert
-        token.safeTransferFrom(msg.sender, address(this), amount);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">deposit</span>(<span class="hljs-params"><span class="hljs-title class_">IERC20</span> token, uint256 amount</span>) external {
+        <span class="hljs-comment">// 自动处理 USDT 兼容性，失败自动 Revert</span>
+        token.<span class="hljs-title function_">safeTransferFrom</span>(msg.<span class="hljs-property">sender</span>, <span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>), amount);
     }
 }
 </code></pre>
-<h4>方式二：Solady (极客流)</h4><pre><code class="language-solidity">import {SafeTransferLib} from &quot;solady/utils/SafeTransferLib.sol&quot;;
+<h4>方式二：Solady (极客流)</h4><pre><code class="language-solidity"><span class="hljs-keyword">import</span> {<span class="hljs-title class_">SafeTransferLib</span>} <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;solady/utils/SafeTransferLib.sol&quot;</span>;
 
-contract OptimizedDeFi {
-    using SafeTransferLib for address; // ⚠️ 绑定在 address 上
+contract <span class="hljs-title class_">OptimizedDeFi</span> {
+    <span class="hljs-keyword">using</span> <span class="hljs-title class_">SafeTransferLib</span> <span class="hljs-keyword">for</span> address; <span class="hljs-comment">// ⚠️ 绑定在 address 上</span>
 
-    function deposit(address token, uint256 amount) external {
-        // 纯汇编执行，省 Gas
-        token.safeTransferFrom(msg.sender, address(this), amount);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">deposit</span>(<span class="hljs-params">address token, uint256 amount</span>) external {
+        <span class="hljs-comment">// 纯汇编执行，省 Gas</span>
+        token.<span class="hljs-title function_">safeTransferFrom</span>(msg.<span class="hljs-property">sender</span>, <span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>), amount);
     }
     
-    function sendEth(address to, uint256 amount) external {
-        // Solady 独有：安全发送 ETH
-        to.safeTransferETH(amount);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">sendEth</span>(<span class="hljs-params">address to, uint256 amount</span>) external {
+        <span class="hljs-comment">// Solady 独有：安全发送 ETH</span>
+        to.<span class="hljs-title function_">safeTransferETH</span>(amount);
     }
 }
 </code></pre>
@@ -1434,8 +1434,8 @@ contract OptimizedDeFi {
 </li>
 </ul>
 <h3 id="section-62">代码里的数学逻辑</h3><h4>定位坐标</h4><p>在合约代码中，你看到了这两行：</p>
-<pre><code class="language-solidity">uint256 wordPosition = inputClaim.batchNumber / 256; 
-uint256 bitPosition = inputClaim.batchNumber % 256;
+<pre><code class="language-solidity">uint256 wordPosition = inputClaim.<span class="hljs-property">batchNumber</span> / <span class="hljs-number">256</span>; 
+uint256 bitPosition = inputClaim.<span class="hljs-property">batchNumber</span> % <span class="hljs-number">256</span>;
 </code></pre>
 <p>这是在定位“坐标”。想象你有一个巨大的仓库，里面全是柜子（Word），每个柜子有 256 个抽屉（Bit）。</p>
 <ul>
@@ -1458,13 +1458,13 @@ uint256 bitPosition = inputClaim.batchNumber % 256;
 </ul>
 <h4>设置状态</h4><p>写入状态 (OR 运算)
 使用 <code>|</code> (OR) 操作符，因为 <code>x | 1 = 1</code>，<code>x | 0 = x</code>。</p>
-<pre><code class="language-solidity">// 将第 bitPosition 位置为 1
-storage[wordPosition] = storage[wordPosition] | (1 &lt;&lt; bitPosition);
+<pre><code class="language-solidity"><span class="hljs-comment">// 将第 bitPosition 位置为 1</span>
+storage[wordPosition] = storage[wordPosition] | (<span class="hljs-number">1</span> &lt;&lt; bitPosition);
 </code></pre>
 <p>读取状态 (AND 运算)
 使用 <code>&amp;</code> (AND) 操作符检查特定位是否为 1。</p>
-<pre><code class="language-solidity">// 检查第 bitPosition 位是否为 1
-bool isClaimed = (storage[wordPosition] &amp; (1 &lt;&lt; bitPosition)) != 0;
+<pre><code class="language-solidity"><span class="hljs-comment">// 检查第 bitPosition 位是否为 1</span>
+bool isClaimed = (storage[wordPosition] &amp; (<span class="hljs-number">1</span> &lt;&lt; bitPosition)) != <span class="hljs-number">0</span>;
 </code></pre>
 <hr>
 <h2 id="section-63">默克尔证明 (Merkle Proof)：零知识验证的鼻祖</h2><p>如果说位图是为了省<strong>状态存储</strong>，那么默克尔树就是为了省<strong>名单存储</strong>。</p>

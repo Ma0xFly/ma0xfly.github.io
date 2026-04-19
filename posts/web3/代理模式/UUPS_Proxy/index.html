@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>UUPS_Proxy | 沉于思，录以隙</title><meta name="description" content="# UUPS Proxy（通用可升级代理标准） > **一句话总结**：UUPS（Universal Upgradeable Proxy Standard）将升级逻辑从 Proxy 搬到了 **Implementation 合约自身**中，使得 Proxy 退化成一个极简的纯转发"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">UUPS_Proxy</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">代理模式</span>  </div> <div class="article-meta-row"> <span>2026/4/16</span> <span>web3</span> <span>web3 · 代理模式</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/代理模式/" class="tag">#代理模式</a> </div> <p class="source-note">来源路径：web3/代理模式/UUPS_Proxy.md</p> </header> <div class="article-main"> <div class="article-content"><h1>UUPS Proxy（通用可升级代理标准）</h1><blockquote>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>UUPS_Proxy | 沉于思，录以隙</title><meta name="description" content="# UUPS Proxy（通用可升级代理标准） > **一句话总结**：UUPS（Universal Upgradeable Proxy Standard）将升级逻辑从 Proxy 搬到了 **Implementation 合约自身**中，使得 Proxy 退化成一个极简的纯转发"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">UUPS_Proxy</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">代理模式</span>  </div> <div class="article-meta-row"> <span>2026/4/16</span> <span>web3</span> <span>web3 · 代理模式</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/代理模式/" class="tag">#代理模式</a> </div> <p class="source-note">来源路径：web3/代理模式/UUPS_Proxy.md</p> </header> <div class="article-main"> <div class="article-content"><h1>UUPS Proxy（通用可升级代理标准）</h1><blockquote>
 <p><strong>一句话总结</strong>：UUPS（Universal Upgradeable Proxy Standard）将升级逻辑从 Proxy 搬到了 <strong>Implementation 合约自身</strong>中，使得 Proxy 退化成一个极简的纯转发器（近乎零开销），但代价是——如果新版 Implementation 忘了继承 <code>upgradeTo</code> 函数，合约将<strong>永久变砖</strong>，无法再次升级。</p>
 </blockquote>
 <h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><ul>
@@ -77,19 +77,19 @@
 <h3 id="section-7">D. 关键疑问：升级逻辑在 Implementation 里，Proxy 怎么知道 Implementation 在哪？</h3><p>这涉及到 UUPS 的<strong>引导问题（Bootstrap Problem）</strong>。答案分两个阶段理解：</p>
 <p><strong>阶段一：部署时（第一次绑定）</strong></p>
 <p>Proxy 的 <code>constructor</code> 里会接收初始 Implementation 地址作为参数，并<strong>在构造函数中一次性把它写入 EIP-1967 的 <code>IMPLEMENTATION_SLOT</code></strong>。这是 Proxy 自身唯一需要&quot;知道&quot; Implementation 的一刻：</p>
-<pre><code class="language-solidity">// OpenZeppelin 的 ERC1967Proxy 构造函数（精简版）
-constructor(address _logic, bytes memory _data) {
-    // 把初始 Implementation 地址写入 EIP-1967 槽位
+<pre><code class="language-solidity"><span class="hljs-comment">// OpenZeppelin 的 ERC1967Proxy 构造函数（精简版）</span>
+<span class="hljs-title function_">constructor</span>(<span class="hljs-params">address _logic, bytes memory _data</span>) {
+    <span class="hljs-comment">// 把初始 Implementation 地址写入 EIP-1967 槽位</span>
     assembly {
-        sstore(
-            0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc, // IMPLEMENTATION_SLOT
+        <span class="hljs-title function_">sstore</span>(
+            <span class="hljs-number">0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc</span>, <span class="hljs-comment">// IMPLEMENTATION_SLOT</span>
             _logic
         )
     }
-    // 可选：delegatecall 到 _logic 执行 initialize(_data)
-    if (_data.length &gt; 0) {
-        (bool success, ) = _logic.delegatecall(_data);
-        require(success);
+    <span class="hljs-comment">// 可选：delegatecall 到 _logic 执行 initialize(_data)</span>
+    <span class="hljs-keyword">if</span> (_data.<span class="hljs-property">length</span> &gt; <span class="hljs-number">0</span>) {
+        (bool success, ) = _logic.<span class="hljs-title function_">delegatecall</span>(_data);
+        <span class="hljs-built_in">require</span>(success);
     }
 }
 </code></pre>
@@ -101,59 +101,59 @@ constructor(address _logic, bytes memory _data) {
 <li>向该地址发起 <code>delegatecall</code>，把所有 calldata 原封不动转发过去。</li>
 </ol>
 <p>当用户调用 <code>upgradeTo(newImpl)</code> 时，这个调用首先到达 Proxy 的 fallback，被转发到当前 Implementation 内部执行。由于 delegatecall 的本质是**&quot;借别人的代码，在我自己的账本上执行&quot;**，Implementation 内部的 <code>upgradeTo</code> 代码写入 <code>IMPLEMENTATION_SLOT</code> 时，实际修改的是 <strong>Proxy 的 Storage</strong>！</p>
-<pre><code>用户调用 proxy.upgradeTo(V2地址)
+<pre><code>用户调用 proxy.<span class="hljs-title function_">upgradeTo</span>(<span class="hljs-variable constant_">V2</span>地址)
         │
         ▼
-Proxy fallback() → SLOAD 读出当前 V1 地址 → delegatecall V1
+<span class="hljs-title class_">Proxy</span> <span class="hljs-title function_">fallback</span>() → <span class="hljs-variable constant_">SLOAD</span> 读出当前 <span class="hljs-variable constant_">V1</span> 地址 → delegatecall <span class="hljs-variable constant_">V1</span>
         │
-        ▼  (此时执行上下文 = Proxy 的 Storage)
-V1.upgradeTo() → sstore(IMPLEMENTATION_SLOT, V2地址) → 写入的是 Proxy 的槽位！
+        ▼  (此时执行上下文 = <span class="hljs-title class_">Proxy</span> 的 <span class="hljs-title class_">Storage</span>)
+<span class="hljs-variable constant_">V1</span>.<span class="hljs-title function_">upgradeTo</span>() → <span class="hljs-title function_">sstore</span>(<span class="hljs-variable constant_">IMPLEMENTATION_SLOT</span>, <span class="hljs-variable constant_">V2</span>地址) → 写入的是 <span class="hljs-title class_">Proxy</span> 的槽位！
         │
         ▼
-从此以后 Proxy 的 IMPLEMENTATION_SLOT 存的就是 V2 地址了
-下一次任何调用到达时，fallback 读出来的就是 V2
+从此以后 <span class="hljs-title class_">Proxy</span> 的 <span class="hljs-variable constant_">IMPLEMENTATION_SLOT</span> 存的就是 <span class="hljs-variable constant_">V2</span> 地址了
+下一次任何调用到达时，fallback 读出来的就是 <span class="hljs-variable constant_">V2</span>
 </code></pre>
 <blockquote>
 <p><strong>本质总结</strong>：Proxy 自己<strong>永远不需要知道升级逻辑</strong>。它只需要知道一个常量：<strong>去哪个固定的物理坐标（EIP-1967 Slot）读地址</strong>。至于&quot;改写这个坐标里的值&quot;这件事，由 Implementation 内部的 <code>upgradeTo</code> 代码通过 delegatecall 越俎代庖地帮 Proxy 完成了。</p>
 </blockquote>
-<h2 id="section-8">3. 核心接口与源码骨架 (Core Interfaces &amp; Code)</h2><h3 id="section-9">A. UUPS 核心接口 (ERC-1822)</h3><pre><code class="language-solidity">interface IERC1822Proxiable {
-    /// @dev 返回自身依赖的 Implementation Slot 标识，用于升级前自检。
-    function proxiableUUID() external view returns (bytes32);
+<h2 id="section-8">3. 核心接口与源码骨架 (Core Interfaces &amp; Code)</h2><h3 id="section-9">A. UUPS 核心接口 (ERC-1822)</h3><pre><code class="language-solidity"><span class="hljs-keyword">interface</span> <span class="hljs-title class_">IERC1822Proxiable</span> {
+    <span class="hljs-comment">/// @dev 返回自身依赖的 Implementation Slot 标识，用于升级前自检。</span>
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">proxiableUUID</span>(<span class="hljs-params"></span>) external view <span class="hljs-title function_">returns</span> (bytes32);
 }
 </code></pre>
-<h3 id="section-10">B. 关键函数源码骨架</h3><h4><code>fallback()</code> — 极简无条件转发（与 Transparent 的最大差异）</h4><pre><code class="language-solidity">// UUPS 的 Proxy 极其精简，没有任何 if-else 路由
-fallback() external payable {
-    address impl = _getImplementation(); // 从 EIP-1967 槽位读取
+<h3 id="section-10">B. 关键函数源码骨架</h3><h4><code>fallback()</code> — 极简无条件转发（与 Transparent 的最大差异）</h4><pre><code class="language-solidity"><span class="hljs-comment">// UUPS 的 Proxy 极其精简，没有任何 if-else 路由</span>
+<span class="hljs-title function_">fallback</span>() external payable {
+    address impl = <span class="hljs-title function_">_getImplementation</span>(); <span class="hljs-comment">// 从 EIP-1967 槽位读取</span>
     assembly {
-        calldatacopy(0, 0, calldatasize())
-        let result := delegatecall(gas(), impl, 0, calldatasize(), 0, 0)
-        returndatacopy(0, 0, returndatasize())
-        switch result
-        case 0 { revert(0, returndatasize()) }
-        default { return(0, returndatasize()) }
+        <span class="hljs-title function_">calldatacopy</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-title function_">calldatasize</span>())
+        <span class="hljs-keyword">let</span> result := <span class="hljs-title function_">delegatecall</span>(<span class="hljs-title function_">gas</span>(), impl, <span class="hljs-number">0</span>, <span class="hljs-title function_">calldatasize</span>(), <span class="hljs-number">0</span>, <span class="hljs-number">0</span>)
+        <span class="hljs-title function_">returndatacopy</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-title function_">returndatasize</span>())
+        <span class="hljs-keyword">switch</span> result
+        <span class="hljs-keyword">case</span> <span class="hljs-number">0</span> { <span class="hljs-title function_">revert</span>(<span class="hljs-number">0</span>, <span class="hljs-title function_">returndatasize</span>()) }
+        <span class="hljs-keyword">default</span> { <span class="hljs-keyword">return</span>(<span class="hljs-number">0</span>, <span class="hljs-title function_">returndatasize</span>()) }
     }
 }
 </code></pre>
-<h4><code>upgradeTo(address)</code> — 存在于 Implementation 内部</h4><pre><code class="language-solidity">function upgradeTo(address newImplementation) public virtual onlyProxy {
-    _authorizeUpgrade(newImplementation);  // 先过安全门卫
-    _upgradeToAndCallUUPS(newImplementation, new bytes(0), false);
+<h4><code>upgradeTo(address)</code> — 存在于 Implementation 内部</h4><pre><code class="language-solidity"><span class="hljs-keyword">function</span> <span class="hljs-title function_">upgradeTo</span>(<span class="hljs-params">address newImplementation</span>) <span class="hljs-keyword">public</span> virtual onlyProxy {
+    <span class="hljs-title function_">_authorizeUpgrade</span>(newImplementation);  <span class="hljs-comment">// 先过安全门卫</span>
+    <span class="hljs-title function_">_upgradeToAndCallUUPS</span>(newImplementation, <span class="hljs-keyword">new</span> <span class="hljs-title function_">bytes</span>(<span class="hljs-number">0</span>), <span class="hljs-literal">false</span>);
 }
 
-/// @dev 开发者必须重写此函数并施加权限控制！
-function _authorizeUpgrade(address newImplementation) internal virtual;
+<span class="hljs-comment">/// @dev 开发者必须重写此函数并施加权限控制！</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">_authorizeUpgrade</span>(<span class="hljs-params">address newImplementation</span>) internal virtual;
 </code></pre>
-<h3 id="section-11">C. 实际使用示例</h3><pre><code class="language-solidity">contract MyVault is Initializable, OwnableUpgradeable, UUPSUpgradeable {
-    uint256 public totalDeposits;
+<h3 id="section-11">C. 实际使用示例</h3><pre><code class="language-solidity">contract <span class="hljs-title class_">MyVault</span> is <span class="hljs-title class_">Initializable</span>, <span class="hljs-title class_">OwnableUpgradeable</span>, <span class="hljs-title class_">UUPSUpgradeable</span> {
+    uint256 <span class="hljs-keyword">public</span> totalDeposits;
 
-    function initialize(address admin) external initializer {
-        __Ownable_init(admin);
-        __UUPSUpgradeable_init();
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">initialize</span>(<span class="hljs-params">address admin</span>) external initializer {
+        <span class="hljs-title function_">__Ownable_init</span>(admin);
+        <span class="hljs-title function_">__UUPSUpgradeable_init</span>();
     }
 
-    // 守门函数 — 只有 owner 才能通过
-    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
+    <span class="hljs-comment">// 守门函数 — 只有 owner 才能通过</span>
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">_authorizeUpgrade</span>(<span class="hljs-params">address newImplementation</span>) internal <span class="hljs-keyword">override</span> onlyOwner {}
 
-    // ... 业务逻辑
+    <span class="hljs-comment">// ... 业务逻辑</span>
 }
 </code></pre>
 <hr>
@@ -169,33 +169,33 @@ function _authorizeUpgrade(address newImplementation) internal virtual;
 <li><strong>未初始化漏洞</strong>：如果 Implementation 裸合约未调用 <code>_disableInitializers()</code>，攻击者可以在 Implementation 本身（而非通过 Proxy）上调用 <code>initialize</code>，拿到 <strong>Implementation 本体上的 owner / upgrader 身份</strong>。这<strong>不等于直接拿到 Proxy 的 owner，也不会直接改掉 Proxy 的 implementation 指针</strong>；真正的风险是：在<strong>旧版 UUPS 漏洞路径</strong>或<strong>错误自定义实现</strong>里，攻击者可以把 Implementation 本体当成攻击跳板，进一步破坏这份“被 Proxy 指向的逻辑代码载体”，从而影响所有挂在它上面的 Proxy。</li>
 </ul>
 <h4>未初始化漏洞的具体攻击例子</h4><p>假设有这样一个 UUPS 实现合约：</p>
-<pre><code class="language-solidity">contract VaultV1 is Initializable, OwnableUpgradeable, UUPSUpgradeable {
-    function initialize(address admin) external initializer {
-        __Ownable_init(admin);
-        __UUPSUpgradeable_init();
+<pre><code class="language-solidity">contract <span class="hljs-title class_">VaultV1</span> is <span class="hljs-title class_">Initializable</span>, <span class="hljs-title class_">OwnableUpgradeable</span>, <span class="hljs-title class_">UUPSUpgradeable</span> {
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">initialize</span>(<span class="hljs-params">address admin</span>) external initializer {
+        <span class="hljs-title function_">__Ownable_init</span>(admin);
+        <span class="hljs-title function_">__UUPSUpgradeable_init</span>();
     }
 
-    function _authorizeUpgrade(address newImplementation)
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">_authorizeUpgrade</span>(<span class="hljs-params">address newImplementation</span>)
         internal
-        override
+        <span class="hljs-keyword">override</span>
         onlyOwner
     {}
 }
 </code></pre>
 <p>如果部署后开发者忘了在 Implementation 构造阶段执行 <code>_disableInitializers()</code>，历史上的经典攻击路径可以是：</p>
-<pre><code>攻击者发现 Implementation 地址可被直接调用
+<pre><code>攻击者发现 <span class="hljs-title class_">Implementation</span> 地址可被直接调用
         ↓
-直接调用 Implementation.initialize(attacker)
+直接调用 <span class="hljs-title class_">Implementation</span>.<span class="hljs-title function_">initialize</span>(attacker)
         ↓
-攻击者成为 Implementation 本体上的 owner
+攻击者成为 <span class="hljs-title class_">Implementation</span> 本体上的 owner
         ↓
-在旧版 UUPS 场景下，攻击者继续直接调用 Implementation.upgradeToAndCall(...)
+在旧版 <span class="hljs-variable constant_">UUPS</span> 场景下，攻击者继续直接调用 <span class="hljs-title class_">Implementation</span>.<span class="hljs-title function_">upgradeToAndCall</span>(...)
         ↓
 升级流程中的 delegatecall 进入恶意合约逻辑
         ↓
-恶意逻辑对 caller（也就是 Implementation 本体）执行 SELFDESTRUCT
+恶意逻辑对 caller（也就是 <span class="hljs-title class_">Implementation</span> 本体）执行 <span class="hljs-variable constant_">SELFDESTRUCT</span>
         ↓
-所有指向该 Implementation 的 Proxy 仍然指向原地址，但该地址上的代码已被破坏，于是出现整批变砖风险
+所有指向该 <span class="hljs-title class_">Implementation</span> 的 <span class="hljs-title class_">Proxy</span> 仍然指向原地址，但该地址上的代码已被破坏，于是出现整批变砖风险
 </code></pre>
 <p><strong>要点</strong>：</p>
 <ul>

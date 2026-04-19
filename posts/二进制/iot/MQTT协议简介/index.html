@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>MQTT协议简介 | 沉于思，录以隙</title><meta name="description" content="### **一、MQTT协议基础** #### 1. **定义与历史背景** - **基本定义**：MQTT（Message Queuing Telemetry Transport）是一种基于**发布/订阅模式**的轻量级消息传输协议，构建于TCP/IP之上，专为低带宽、高延迟或"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">MQTT协议简介</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">iot</span>  </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>二进制</span> <span>二进制 · iot</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/二进制/" class="tag">#二进制</a><a href="/tags/iot/" class="tag">#iot</a> </div> <p class="source-note">来源路径：二进制/iot/MQTT协议简介.md</p> </header> <div class="article-main"> <div class="article-content"><h3 id="section-1"><strong>一、MQTT协议基础</strong></h3><h4>1. <strong>定义与历史背景</strong></h4><ul>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>MQTT协议简介 | 沉于思，录以隙</title><meta name="description" content="### **一、MQTT协议基础** #### 1. **定义与历史背景** - **基本定义**：MQTT（Message Queuing Telemetry Transport）是一种基于**发布/订阅模式**的轻量级消息传输协议，构建于TCP/IP之上，专为低带宽、高延迟或"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">MQTT协议简介</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">iot</span>  </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>二进制</span> <span>二进制 · iot</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/二进制/" class="tag">#二进制</a><a href="/tags/iot/" class="tag">#iot</a> </div> <p class="source-note">来源路径：二进制/iot/MQTT协议简介.md</p> </header> <div class="article-main"> <div class="article-content"><h3 id="section-1"><strong>一、MQTT协议基础</strong></h3><h4>1. <strong>定义与历史背景</strong></h4><ul>
 <li><strong>基本定义</strong>：MQTT（Message Queuing Telemetry Transport）是一种基于<strong>发布/订阅模式</strong>的轻量级消息传输协议，构建于TCP/IP之上，专为低带宽、高延迟或不稳定网络环境设计，适用于物联网（IoT）、移动设备等资源受限场景 。</li>
 </ul>
 <h4>2. <strong>核心设计目标</strong></h4><ul>
@@ -171,12 +171,12 @@
 </tr>
 </tbody></table>
 <pre><code class="language-mermaid">graph TB
-    A[智能锁] --&gt;|MQTT over TCP| B[[Broker集群]]
-    B --&gt;|主题路由| C[云端控制平台]
-    D[用户APP] --&gt;|HTTP/API| C
-    C --&gt;|MQTT指令| B
-    B --&gt;|MQTT推送| A
-    C --&gt;|短信/推送| E[用户通知]
+    A[智能锁] -<span class="hljs-punctuation">-&gt;</span>|MQTT over TCP| B[[Broker集群]]
+    B -<span class="hljs-punctuation">-&gt;</span>|主题路由| C[云端控制平台]
+    D[用户APP] -<span class="hljs-punctuation">-&gt;</span>|HTTP/API| C
+    C -<span class="hljs-punctuation">-&gt;</span>|MQTT指令| B
+    B -<span class="hljs-punctuation">-&gt;</span>|MQTT推送| A
+    C -<span class="hljs-punctuation">-&gt;</span>|短信/推送| E[用户通知]
 </code></pre>
 <blockquote>
 <p><strong>设计特点</strong>：  </p>
@@ -239,10 +239,10 @@
 <li><strong>保留消息（Retained）</strong>：<br>Broker保存单车最后位置（主题<code>/bike/{bike_id}/gps</code>），新运维人员订阅立即获取</li>
 </ul>
 <hr>
-<h3 id="section-8">三、MQTT协议特性在共享单车的深度应用</h3><h4>1. <strong>主题（Topic）设计优化</strong></h4><pre><code class="language-python"># 层级化主题树示例
-/bike/{city_code}/{zone_id}/{bike_id}/gps    # GPS数据
-/bike/{city_code}/{zone_id}/{bike_id}/battery # 电量
-/bike/{city_code}/{zone_id}/{bike_id}/cmd    # 控制指令
+<h3 id="section-8">三、MQTT协议特性在共享单车的深度应用</h3><h4>1. <strong>主题（Topic）设计优化</strong></h4><pre><code class="language-python"><span class="hljs-comment"># 层级化主题树示例</span>
+/bike/{city_code}/{zone_id}/{bike_id}/gps    <span class="hljs-comment"># GPS数据</span>
+/bike/{city_code}/{zone_id}/{bike_id}/battery <span class="hljs-comment"># 电量</span>
+/bike/{city_code}/{zone_id}/{bike_id}/cmd    <span class="hljs-comment"># 控制指令</span>
 </code></pre>
 <ul>
 <li><strong>通配符订阅</strong>：运维平台用<code>/bike/shanghai/#</code>监控全市单车  </li>
@@ -390,34 +390,34 @@
 </tr>
 </tbody></table>
 <pre><code class="language-mermaid">graph LR
-    A[充电桩传感器] --发布数据--&gt; B[[MQTT Broker]]
-    B --转发状态--&gt; C[云端监控中心]
-    C --发送指令--&gt; B
-    B --推送指令--&gt; A
-    D[用户APP] --支付指令--&gt; B
-    B --订单验证--&gt; E[支付系统]
+    A[充电桩传感器] --发布数据-<span class="hljs-punctuation">-&gt;</span> B[[MQTT Broker]]
+    B --转发状态-<span class="hljs-punctuation">-&gt;</span> C[云端监控中心]
+    C --发送指令-<span class="hljs-punctuation">-&gt;</span> B
+    B --推送指令-<span class="hljs-punctuation">-&gt;</span> A
+    D[用户APP] --支付指令-<span class="hljs-punctuation">-&gt;</span> B
+    B --订单验证-<span class="hljs-punctuation">-&gt;</span> E[支付系统]
 </code></pre>
 <h4><strong>2. 关键通信流程（以用户启动充电为例）</strong></h4><p><strong>步骤1：用户发起请求</strong>  </p>
 <ul>
-<li>用户扫码后，APP发布消息到主题 <code>/charge/start/ORDER_20250701120000</code>，消息体含桩ID与支付凭证 ：<pre><code class="language-json">{&quot;pile_id&quot;: &quot;CZ-109&quot;, &quot;payment_token&quot;: &quot;xxxxx&quot;}
+<li>用户扫码后，APP发布消息到主题 <code>/charge/start/ORDER_20250701120000</code>，消息体含桩ID与支付凭证 ：<pre><code class="language-json"><span class="hljs-punctuation">{</span><span class="hljs-attr">&quot;pile_id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;CZ-109&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;payment_token&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;xxxxx&quot;</span><span class="hljs-punctuation">}</span>
 </code></pre>
 </li>
 </ul>
 <p><strong>步骤2：云端验证与指令下发</strong>  </p>
 <ul>
-<li>云端订阅支付主题，验证凭证后发布<strong>QoS 1指令</strong>（确保必达）到充电桩专属主题 <code>/charge/command/CZ-109</code> ：<pre><code class="language-json">{&quot;action&quot;: &quot;start&quot;, &quot;duration&quot;: 60, &quot;power_limit&quot;: 7.5}
+<li>云端订阅支付主题，验证凭证后发布<strong>QoS 1指令</strong>（确保必达）到充电桩专属主题 <code>/charge/command/CZ-109</code> ：<pre><code class="language-json"><span class="hljs-punctuation">{</span><span class="hljs-attr">&quot;action&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;start&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;duration&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">60</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;power_limit&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">7.5</span><span class="hljs-punctuation">}</span>
 </code></pre>
 </li>
 </ul>
 <p><strong>步骤3：充电桩执行与反馈</strong>  </p>
 <ul>
-<li>充电桩订阅自身控制主题，收到指令后启动充电，并每秒发布<strong>QoS 0实时数据</strong>（高频低重要性）：<pre><code class="language-json">{&quot;voltage&quot;: 220.5, &quot;current&quot;: 32.1, &quot;temp&quot;: 42.3, &quot;kwh&quot;: 0.25}
+<li>充电桩订阅自身控制主题，收到指令后启动充电，并每秒发布<strong>QoS 0实时数据</strong>（高频低重要性）：<pre><code class="language-json"><span class="hljs-punctuation">{</span><span class="hljs-attr">&quot;voltage&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">220.5</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;current&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">32.1</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;temp&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">42.3</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;kwh&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0.25</span><span class="hljs-punctuation">}</span>
 </code></pre>
 </li>
 </ul>
 <p><strong>步骤4：异常处理机制</strong>  </p>
 <ul>
-<li>若温度超过65°C（检测到<code>temp</code>异常），充电桩立即发布<strong>遗嘱消息</strong>到 <code>/charge/alert/CZ-109</code>，触发云端停机指令 ：<pre><code class="language-json">{&quot;error_code&quot;: &quot;OVERHEAT&quot;, &quot;timestamp&quot;: &quot;2025-06-28T14:23:05Z&quot;}
+<li>若温度超过65°C（检测到<code>temp</code>异常），充电桩立即发布<strong>遗嘱消息</strong>到 <code>/charge/alert/CZ-109</code>，触发云端停机指令 ：<pre><code class="language-json"><span class="hljs-punctuation">{</span><span class="hljs-attr">&quot;error_code&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;OVERHEAT&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;timestamp&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2025-06-28T14:23:05Z&quot;</span><span class="hljs-punctuation">}</span>
 </code></pre>
 </li>
 </ul>

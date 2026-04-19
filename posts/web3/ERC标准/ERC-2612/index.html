@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ERC-2612 | 沉于思，录以隙</title><meta name="description" content="# ERC-2612: Permit 扩展标准 > **一句话总结**：通过 EIP-712 签名机制替代传统 `approve` 交易，实现链下授权链上执行，节省一笔交易并提升用户体验。 ## 📜 核心元数据与参阅资料 (Metadata &#38; References) > **"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">ERC-2612</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <div class="article-meta-row"> <span>2026/3/11</span> <span>web3</span> <span>web3 · ERC标准</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/ERC标准/" class="tag">#ERC标准</a> </div> <p class="source-note">来源路径：web3/ERC标准/ERC-2612.md</p> </header> <div class="article-main"> <div class="article-content"><h1>ERC-2612: Permit 扩展标准</h1><blockquote>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ERC-2612 | 沉于思，录以隙</title><meta name="description" content="# ERC-2612: Permit 扩展标准 > **一句话总结**：通过 EIP-712 签名机制替代传统 `approve` 交易，实现链下授权链上执行，节省一笔交易并提升用户体验。 ## 📜 核心元数据与参阅资料 (Metadata &#38; References) > **"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">ERC-2612</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <div class="article-meta-row"> <span>2026/3/11</span> <span>web3</span> <span>web3 · ERC标准</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/ERC标准/" class="tag">#ERC标准</a> </div> <p class="source-note">来源路径：web3/ERC标准/ERC-2612.md</p> </header> <div class="article-main"> <div class="article-content"><h1>ERC-2612: Permit 扩展标准</h1><blockquote>
 <p><strong>一句话总结</strong>：通过 EIP-712 签名机制替代传统 <code>approve</code> 交易，实现链下授权链上执行，节省一笔交易并提升用户体验。</p>
 </blockquote>
 <h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><blockquote>
@@ -25,13 +25,13 @@
 <h2 id="section-3">2. 核心接口与数据结构 (Core Interfaces)</h2><blockquote>
 <p><strong>极度重要</strong>：必须在这里贴出协议最本质的<strong>状态变量（State Variables）</strong>，因为任何智能合约的本质都是对底层哈希账本（<code>mapping</code>）的读写。核心函数的解释也必须发掘到源码，附带<strong>最核心的 Solidity 代码骨架</strong>（剥离安全防呆校验后的纯净业务逻辑）。</p>
 </blockquote>
-<h3 id="section-4">A. 核心状态结构 (State Variables)</h3><pre><code class="language-solidity">mapping(address =&gt; uint256) private _nonces;
+<h3 id="section-4">A. 核心状态结构 (State Variables)</h3><pre><code class="language-solidity"><span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">address</span> =&gt;</span> uint256) <span class="hljs-keyword">private</span> _nonces;
 
-bytes32 private constant _PERMIT_TYPEHASH = keccak256(
-    &quot;Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)&quot;
+bytes32 <span class="hljs-keyword">private</span> constant _PERMIT_TYPEHASH = <span class="hljs-title function_">keccak256</span>(
+    <span class="hljs-string">&quot;Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)&quot;</span>
 );
 
-bytes32 private _DOMAIN_SEPARATOR;
+bytes32 <span class="hljs-keyword">private</span> _DOMAIN_SEPARATOR;
 </code></pre>
 <ul>
 <li><strong>_nonces</strong>：记录每个地址的签名使用次数，防止重放攻击</li>
@@ -43,7 +43,7 @@ bytes32 private _DOMAIN_SEPARATOR;
 </blockquote>
 <h4><code>permit(owner, spender, value, deadline, v, r, s)</code> (通过签名授权)</h4><ul>
 <li><strong>白话逻辑解析</strong>：验证签名合法性后，直接修改 <code>_allowances</code> 账本，相当于链下签名链上生效。推模式（用户主动授权）。</li>
-<li><strong>核心源码骨架 (Solidity)</strong>：<pre><code class="language-solidity">function permit(
+<li><strong>核心源码骨架 (Solidity)</strong>：<pre><code class="language-solidity"><span class="hljs-keyword">function</span> <span class="hljs-title function_">permit</span>(<span class="hljs-params">
     address owner,
     address spender,
     uint256 value,
@@ -51,10 +51,10 @@ bytes32 private _DOMAIN_SEPARATOR;
     uint8 v,
     bytes32 r,
     bytes32 s
-) public {
-    require(block.timestamp &lt;= deadline, &quot;Permit expired&quot;);
+</span>) <span class="hljs-keyword">public</span> {
+    <span class="hljs-built_in">require</span>(block.<span class="hljs-property">timestamp</span> &lt;= deadline, <span class="hljs-string">&quot;Permit expired&quot;</span>);
     
-    bytes32 structHash = keccak256(abi.encode(
+    bytes32 structHash = <span class="hljs-title function_">keccak256</span>(abi.<span class="hljs-title function_">encode</span>(
         _PERMIT_TYPEHASH,
         owner,
         spender,
@@ -63,26 +63,26 @@ bytes32 private _DOMAIN_SEPARATOR;
         deadline
     ));
     
-    bytes32 digest = keccak256(abi.encodePacked(
-        &quot;\x19\x01&quot;,
+    bytes32 digest = <span class="hljs-title function_">keccak256</span>(abi.<span class="hljs-title function_">encodePacked</span>(
+        <span class="hljs-string">&quot;\x19\x01&quot;</span>,
         _DOMAIN_SEPARATOR,
         structHash
     ));
     
-    address signer = ecrecover(digest, v, r, s);
-    require(signer == owner, &quot;Invalid signature&quot;);
+    address signer = <span class="hljs-title function_">ecrecover</span>(digest, v, r, s);
+    <span class="hljs-built_in">require</span>(signer == owner, <span class="hljs-string">&quot;Invalid signature&quot;</span>);
     
     _allowances[owner][spender] = value;
     
-    emit Approval(owner, spender, value);
+    emit <span class="hljs-title class_">Approval</span>(owner, spender, value);
 }
 </code></pre>
 </li>
 </ul>
 <h4><code>nonces(owner)</code> (查询当前 nonce 值)</h4><ul>
 <li><strong>白话逻辑解析</strong>：返回地址当前的 nonce，用于链下构建正确的签名。</li>
-<li><strong>核心源码骨架 (Solidity)</strong>：<pre><code class="language-solidity">function nonces(address owner) public view returns (uint256) {
-    return _nonces[owner];
+<li><strong>核心源码骨架 (Solidity)</strong>：<pre><code class="language-solidity"><span class="hljs-keyword">function</span> <span class="hljs-title function_">nonces</span>(<span class="hljs-params">address owner</span>) <span class="hljs-keyword">public</span> view <span class="hljs-title function_">returns</span> (uint256) {
+    <span class="hljs-keyword">return</span> _nonces[owner];
 }
 </code></pre>
 </li>
@@ -112,18 +112,18 @@ $$\text{digest} = \text{keccak256}(&quot;\x19\x01&quot; || \text{DOMAIN_SEPARATO
 $$\text{structHash} = \text{keccak256}(\text{encode}(\text{TYPEHASH}, \text{owner}, \text{spender}, \text{value}, \text{nonce}, \text{deadline}))$$</p>
 </li>
 <li><p><strong>核心逻辑代码 (Solidity)</strong>：</p>
-<pre><code class="language-solidity">// 提取出协议中最能体现该机制的 5-10 行核心、去除了防呆修饰符的伪代码/源码。
-function _hashTypedDataV4(bytes32 structHash) internal view returns (bytes32) {
-    return keccak256(abi.encodePacked(&quot;\x19\x01&quot;, _DOMAIN_SEPARATOR, structHash));
+<pre><code class="language-solidity"><span class="hljs-comment">// 提取出协议中最能体现该机制的 5-10 行核心、去除了防呆修饰符的伪代码/源码。</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">_hashTypedDataV4</span>(<span class="hljs-params">bytes32 structHash</span>) internal view <span class="hljs-title function_">returns</span> (bytes32) {
+    <span class="hljs-keyword">return</span> <span class="hljs-title function_">keccak256</span>(abi.<span class="hljs-title function_">encodePacked</span>(<span class="hljs-string">&quot;\x19\x01&quot;</span>, _DOMAIN_SEPARATOR, structHash));
 }
 
-// _DOMAIN_SEPARATOR 构建
-bytes32 _DOMAIN_SEPARATOR = keccak256(abi.encode(
-    keccak256(&quot;EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)&quot;),
-    keccak256(bytes(name)),
-    keccak256(bytes(version)),
-    block.chainid,
-    address(this)
+<span class="hljs-comment">// _DOMAIN_SEPARATOR 构建</span>
+bytes32 _DOMAIN_SEPARATOR = <span class="hljs-title function_">keccak256</span>(abi.<span class="hljs-title function_">encode</span>(
+    <span class="hljs-title function_">keccak256</span>(<span class="hljs-string">&quot;EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)&quot;</span>),
+    <span class="hljs-title function_">keccak256</span>(<span class="hljs-title function_">bytes</span>(name)),
+    <span class="hljs-title function_">keccak256</span>(<span class="hljs-title function_">bytes</span>(version)),
+    block.<span class="hljs-property">chainid</span>,
+    <span class="hljs-title function_">address</span>(<span class="hljs-variable language_">this</span>)
 ));
 </code></pre>
 <p><em>代码拆解</em>：<code>&quot;\x19\x01&quot;</code> 是 EIP-191 的版本标识，<code>_DOMAIN_SEPARATOR</code> 绑定了合约名、版本、链 ID 和合约地址，确保不同链/合约的签名互不通用。<code>structHash</code> 对用户输入的参数进行哈希，保证签名的唯一性。</p>

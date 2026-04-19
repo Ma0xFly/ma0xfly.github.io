@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ERC-1155 | 沉于思，录以隙</title><meta name="description" content="# ERC-1155: 多代币标准 (Multi-Token Standard) > **一句话总结**：ERC-1155 是链游和复杂衍生品体系的超级大本营。它打破了“发一个币就得建一个新合约”的铁律，允许在一个独立的智能合约中同时管理无数种真金白银（ERC-20）和独一无二的"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">ERC-1155</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <div class="article-meta-row"> <span>2026/3/6</span> <span>web3</span> <span>web3 · ERC标准</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/ERC标准/" class="tag">#ERC标准</a> </div> <p class="source-note">来源路径：web3/ERC标准/ERC-1155.md</p> </header> <div class="article-main"> <div class="article-content"><h1>ERC-1155: 多代币标准 (Multi-Token Standard)</h1><blockquote>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ERC-1155 | 沉于思，录以隙</title><meta name="description" content="# ERC-1155: 多代币标准 (Multi-Token Standard) > **一句话总结**：ERC-1155 是链游和复杂衍生品体系的超级大本营。它打破了“发一个币就得建一个新合约”的铁律，允许在一个独立的智能合约中同时管理无数种真金白银（ERC-20）和独一无二的"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">ERC-1155</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <div class="article-meta-row"> <span>2026/3/6</span> <span>web3</span> <span>web3 · ERC标准</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/ERC标准/" class="tag">#ERC标准</a> </div> <p class="source-note">来源路径：web3/ERC标准/ERC-1155.md</p> </header> <div class="article-main"> <div class="article-content"><h1>ERC-1155: 多代币标准 (Multi-Token Standard)</h1><blockquote>
 <p><strong>一句话总结</strong>：ERC-1155 是链游和复杂衍生品体系的超级大本营。它打破了“发一个币就得建一个新合约”的铁律，允许在一个独立的智能合约中同时管理无数种真金白银（ERC-20）和独一无二的稀有装备（ERC-721），并引入了史诗级的<strong>批量转账 (Batch Transfer)</strong> 功能。</p>
 </blockquote>
 <h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><blockquote>
@@ -23,29 +23,29 @@
 <h2 id="section-3">2. 核心接口与数据结构 (Core Interfaces)</h2><blockquote>
 <p>相比 ERC-20 的一维哈希表，和 ERC-721 的所有权查寝表，ERC-1155 有着极其雄心勃勃的<strong>二维账本</strong>结构。</p>
 </blockquote>
-<h3 id="section-4">A. 核心状态结构 (State Variables)</h3><pre><code class="language-solidity">// 1. 终极二维账本：查库房。
-// 输入 物品分类编号(id) 和 玩家地址(account)，精准返回这个玩家在这个分类下的物资数量（amount）。
-mapping(uint256 =&gt; mapping(address =&gt; uint256)) private _balances;
+<h3 id="section-4">A. 核心状态结构 (State Variables)</h3><pre><code class="language-solidity"><span class="hljs-comment">// 1. 终极二维账本：查库房。</span>
+<span class="hljs-comment">// 输入 物品分类编号(id) 和 玩家地址(account)，精准返回这个玩家在这个分类下的物资数量（amount）。</span>
+<span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">uint256</span> =&gt;</span> <span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">address</span> =&gt;</span> uint256)) <span class="hljs-keyword">private</span> _balances;
 
-// 2. 全局授权账本：和 ERC-721 一样，谁能全权代理我名下所有的资产？（注意 1155 没有单品授权）
-mapping(address =&gt; mapping(address =&gt; bool)) private _operatorApprovals;
+<span class="hljs-comment">// 2. 全局授权账本：和 ERC-721 一样，谁能全权代理我名下所有的资产？（注意 1155 没有单品授权）</span>
+<span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">address</span> =&gt;</span> <span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">address</span> =&gt;</span> bool)) <span class="hljs-keyword">private</span> _operatorApprovals;
 </code></pre>
 <h3 id="section-5">B. 关键机制与底层逻辑 (Core Functions)</h3><h4>1. <code>safeTransferFrom</code> (单品过户)</h4><p>将指定分类（ID）的代币进行转移。</p>
 <ul>
 <li><strong>白话逻辑解析</strong>：底层就是纯粹的二维账本加减法。并在末尾附带了类似 ERC-721 的防呆敲门机制 <code>onERC1155Received</code>。</li>
-<li><strong>核心源码骨架</strong>：<pre><code class="language-solidity">function safeTransferFrom(address from, address to, uint256 id, uint256 amount) public {
-    require(from == msg.sender || _operatorApprovals[from][msg.sender], &quot;NOT_AUTHORIZED&quot;);
+<li><strong>核心源码骨架</strong>：<pre><code class="language-solidity"><span class="hljs-keyword">function</span> <span class="hljs-title function_">safeTransferFrom</span>(<span class="hljs-params">address <span class="hljs-keyword">from</span>, address to, uint256 id, uint256 amount</span>) <span class="hljs-keyword">public</span> {
+    <span class="hljs-built_in">require</span>(<span class="hljs-keyword">from</span> == msg.<span class="hljs-property">sender</span> || _operatorApprovals[<span class="hljs-keyword">from</span>][msg.<span class="hljs-property">sender</span>], <span class="hljs-string">&quot;NOT_AUTHORIZED&quot;</span>);
 
-    // 纯粹的二维账本平账逻辑
-    uint256 fromBalance = _balances[id][from];
-    require(fromBalance &gt;= amount, &quot;INSUFFICIENT_BALANCE&quot;);
-    unchecked { _balances[id][from] = fromBalance - amount; }
+    <span class="hljs-comment">// 纯粹的二维账本平账逻辑</span>
+    uint256 fromBalance = _balances[id][<span class="hljs-keyword">from</span>];
+    <span class="hljs-built_in">require</span>(fromBalance &gt;= amount, <span class="hljs-string">&quot;INSUFFICIENT_BALANCE&quot;</span>);
+    unchecked { _balances[id][<span class="hljs-keyword">from</span>] = fromBalance - amount; }
     
     _balances[id][to] += amount;
 
-    emit TransferSingle(msg.sender, from, to, id, amount);
+    emit <span class="hljs-title class_">TransferSingle</span>(msg.<span class="hljs-property">sender</span>, <span class="hljs-keyword">from</span>, to, id, amount);
     
-    // ...这里省略了安全敲门机制...
+    <span class="hljs-comment">// ...这里省略了安全敲门机制...</span>
 }
 </code></pre>
 </li>
@@ -53,23 +53,23 @@ mapping(address =&gt; mapping(address =&gt; bool)) private _operatorApprovals;
 <h4>2. <code>safeBatchTransferFrom</code> (打包批量过户)</h4><p>1155 的杀手级绝对核心：将一大批不同的药水、宝剑打包在一个包裹里发给对方，省去十几次独立转账的 Gas 费。</p>
 <ul>
 <li><strong>白话逻辑解析</strong>：用数组将多个物品 ID 和各自对应的数量传进去，在合约内部只做一次非常紧凑的 <code>for</code> 循环扣款。</li>
-<li><strong>核心源码骨架</strong>：<pre><code class="language-solidity">function safeBatchTransferFrom(address from, address to, uint256[] memory ids, uint256[] memory amounts) public {
-    require(ids.length == amounts.length, &quot;LENGTH_MISMATCH&quot;);
-    require(from == msg.sender || _operatorApprovals[from][msg.sender], &quot;NOT_AUTHORIZED&quot;);
+<li><strong>核心源码骨架</strong>：<pre><code class="language-solidity"><span class="hljs-keyword">function</span> <span class="hljs-title function_">safeBatchTransferFrom</span>(<span class="hljs-params">address <span class="hljs-keyword">from</span>, address to, uint256[] memory ids, uint256[] memory amounts</span>) <span class="hljs-keyword">public</span> {
+    <span class="hljs-built_in">require</span>(ids.<span class="hljs-property">length</span> == amounts.<span class="hljs-property">length</span>, <span class="hljs-string">&quot;LENGTH_MISMATCH&quot;</span>);
+    <span class="hljs-built_in">require</span>(<span class="hljs-keyword">from</span> == msg.<span class="hljs-property">sender</span> || _operatorApprovals[<span class="hljs-keyword">from</span>][msg.<span class="hljs-property">sender</span>], <span class="hljs-string">&quot;NOT_AUTHORIZED&quot;</span>);
 
-    // 最硬核的部分：在一次交易内疯狂循环平账所有物资
-    for (uint256 i = 0; i &lt; ids.length; ++i) {
+    <span class="hljs-comment">// 最硬核的部分：在一次交易内疯狂循环平账所有物资</span>
+    <span class="hljs-keyword">for</span> (uint256 i = <span class="hljs-number">0</span>; i &lt; ids.<span class="hljs-property">length</span>; ++i) {
         uint256 id = ids[i];
         uint256 amount = amounts[i];
 
-        uint256 fromBalance = _balances[id][from];
-        require(fromBalance &gt;= amount, &quot;INSUFFICIENT_BALANCE&quot;);
-        unchecked { _balances[id][from] = fromBalance - amount; }
+        uint256 fromBalance = _balances[id][<span class="hljs-keyword">from</span>];
+        <span class="hljs-built_in">require</span>(fromBalance &gt;= amount, <span class="hljs-string">&quot;INSUFFICIENT_BALANCE&quot;</span>);
+        unchecked { _balances[id][<span class="hljs-keyword">from</span>] = fromBalance - amount; }
         _balances[id][to] += amount;
     }
 
-    emit TransferBatch(msg.sender, from, to, ids, amounts);
-    // ...这里省略了批量的安全敲门机制...
+    emit <span class="hljs-title class_">TransferBatch</span>(msg.<span class="hljs-property">sender</span>, <span class="hljs-keyword">from</span>, to, ids, amounts);
+    <span class="hljs-comment">// ...这里省略了批量的安全敲门机制...</span>
 }
 </code></pre>
 </li>
@@ -99,18 +99,18 @@ $$FT \iff TotalSupply(ID) &gt; 1$$</li>
 <h3 id="section-10">B. 核心难点二：成倍暴击的“批量接收”重入攻击</h3><ul>
 <li><strong>原理讲解</strong>：刚才在 ERC-721 里讲过，如果目标是合约，我们要去敲门（触发接收方的 <code>onERC721Received</code> 回调）。ERC-1155 为了打包传输，更是直接开创了宏伟的 <code>onERC1155BatchReceived</code> 钩子。
 这极度危险！在执行 <code>safeBatchTransferFrom</code> 时，黑客如果在这个批量的钩子中写上恶意的再入攻击代码，相当于他拿着一把无数次触发回调的机关枪，可以在你一笔交易未落账的极短缝隙里，把你上亿价值的资产全数转移。</li>
-<li><strong>核心逻辑代码 (Solidity)</strong>：<pre><code class="language-solidity">// 在打包转移函数的极度危险地带
-function safeBatchTransferFrom(address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data) public virtual override {
-    // 永远记住：先把自己的内帐平掉（Checks &amp; Effects）
-    for (uint256 i = 0; i &lt; ids.length; ++i) {
+<li><strong>核心逻辑代码 (Solidity)</strong>：<pre><code class="language-solidity"><span class="hljs-comment">// 在打包转移函数的极度危险地带</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">safeBatchTransferFrom</span>(<span class="hljs-params">address <span class="hljs-keyword">from</span>, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data</span>) <span class="hljs-keyword">public</span> virtual <span class="hljs-keyword">override</span> {
+    <span class="hljs-comment">// 永远记住：先把自己的内帐平掉（Checks &amp; Effects）</span>
+    <span class="hljs-keyword">for</span> (uint256 i = <span class="hljs-number">0</span>; i &lt; ids.<span class="hljs-property">length</span>; ++i) {
         uint256 id = ids[i];
         uint256 amount = amounts[i];
-        // 如果这里没扣款就先去调下面那个敲门函数，金库瞬间搬空
-        _balances[id][from] -= amount; 
+        <span class="hljs-comment">// 如果这里没扣款就先去调下面那个敲门函数，金库瞬间搬空</span>
+        _balances[id][<span class="hljs-keyword">from</span>] -= amount; 
         _balances[id][to] += amount;
     }
-    // 所有账本全部扣死锁定了，再去敲那些图谋不轨的黑客合约的门（Interactions）
-    _doSafeBatchTransferAcceptanceCheck(operator, from, to, ids, amounts, data);
+    <span class="hljs-comment">// 所有账本全部扣死锁定了，再去敲那些图谋不轨的黑客合约的门（Interactions）</span>
+    <span class="hljs-title function_">_doSafeBatchTransferAcceptanceCheck</span>(operator, <span class="hljs-keyword">from</span>, to, ids, amounts, data);
 }
 </code></pre>
 <em>代码拆解</em>：注意 <code>_doSafeBatchTransferAcceptanceCheck</code> 永远被放在那个计算余额的 <code>for</code> 循环<strong>之后</strong>。这是 EVM 世界的生存底线。如果把顺序写反，黑客在回调里反复调用 <code>safeBatchTransferFrom</code>，而旧余额却还没被减去，等于无损刷钱机。</li>

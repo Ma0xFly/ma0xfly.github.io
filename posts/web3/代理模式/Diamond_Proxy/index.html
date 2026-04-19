@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Diamond_Proxy | 沉于思，录以隙</title><meta name="description" content="# Diamond Proxy（钻石代理 / ERC-2535） > **一句话总结**：Diamond Proxy 是一种**多面代理（Multi-Facet Proxy）**标准，将一个 Proxy 的后端拆分成多个独立的 **Facet（切面）**合约，每个 Facet 承"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">Diamond_Proxy</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">代理模式</span>  </div> <div class="article-meta-row"> <span>2026/3/18</span> <span>web3</span> <span>web3 · 代理模式</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/代理模式/" class="tag">#代理模式</a> </div> <p class="source-note">来源路径：web3/代理模式/Diamond_Proxy.md</p> </header> <div class="article-main"> <div class="article-content"><h1>Diamond Proxy（钻石代理 / ERC-2535）</h1><blockquote>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Diamond_Proxy | 沉于思，录以隙</title><meta name="description" content="# Diamond Proxy（钻石代理 / ERC-2535） > **一句话总结**：Diamond Proxy 是一种**多面代理（Multi-Facet Proxy）**标准，将一个 Proxy 的后端拆分成多个独立的 **Facet（切面）**合约，每个 Facet 承"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">Diamond_Proxy</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">代理模式</span>  </div> <div class="article-meta-row"> <span>2026/3/18</span> <span>web3</span> <span>web3 · 代理模式</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/代理模式/" class="tag">#代理模式</a> </div> <p class="source-note">来源路径：web3/代理模式/Diamond_Proxy.md</p> </header> <div class="article-main"> <div class="article-content"><h1>Diamond Proxy（钻石代理 / ERC-2535）</h1><blockquote>
 <p><strong>一句话总结</strong>：Diamond Proxy 是一种**多面代理（Multi-Facet Proxy）**标准，将一个 Proxy 的后端拆分成多个独立的 <strong>Facet（切面）<strong>合约，每个 Facet 承载不同的功能模块。它通过函数选择器路由表实现</strong>函数级别的精准增删替换</strong>，彻底突破了单个合约 24KB 的大小限制。</p>
 </blockquote>
 <h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><ul>
@@ -108,52 +108,52 @@
 </tr>
 </tbody></table>
 <hr>
-<h2 id="section-7">3. 核心接口与源码骨架 (Core Interfaces &amp; Code)</h2><h3 id="section-8">A. IDiamondCut — 切割接口</h3><pre><code class="language-solidity">interface IDiamondCut {
-    enum FacetCutAction { Add, Replace, Remove }
+<h2 id="section-7">3. 核心接口与源码骨架 (Core Interfaces &amp; Code)</h2><h3 id="section-8">A. IDiamondCut — 切割接口</h3><pre><code class="language-solidity"><span class="hljs-keyword">interface</span> <span class="hljs-title class_">IDiamondCut</span> {
+    <span class="hljs-keyword">enum</span> <span class="hljs-title class_">FacetCutAction</span> { <span class="hljs-title class_">Add</span>, <span class="hljs-title class_">Replace</span>, <span class="hljs-title class_">Remove</span> }
     
-    struct FacetCut {
-        address facetAddress;       // Facet 合约地址
-        FacetCutAction action;      // 操作类型
-        bytes4[] functionSelectors; // 要操作的函数选择器列表
+    struct <span class="hljs-title class_">FacetCut</span> {
+        address facetAddress;       <span class="hljs-comment">// Facet 合约地址</span>
+        <span class="hljs-title class_">FacetCutAction</span> action;      <span class="hljs-comment">// 操作类型</span>
+        bytes4[] functionSelectors; <span class="hljs-comment">// 要操作的函数选择器列表</span>
     }
     
-    /// @dev 批量操作：添加/替换/移除函数。可选在操作后执行初始化调用。
-    function diamondCut(
-        FacetCut[] calldata _diamondCut,
-        address _init,              // 可选：升级后执行初始化的合约
-        bytes calldata _calldata    // 可选：初始化调用数据
-    ) external;
+    <span class="hljs-comment">/// @dev 批量操作：添加/替换/移除函数。可选在操作后执行初始化调用。</span>
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">diamondCut</span>(<span class="hljs-params">
+        <span class="hljs-title class_">FacetCut</span>[] calldata _diamondCut,
+        address _init,              <span class="hljs-comment">// 可选：升级后执行初始化的合约</span>
+        bytes calldata _calldata    <span class="hljs-comment">// 可选：初始化调用数据</span>
+    </span>) external;
     
-    event DiamondCut(FacetCut[] _diamondCut, address _init, bytes _calldata);
+    event <span class="hljs-title class_">DiamondCut</span>(<span class="hljs-title class_">FacetCut</span>[] _diamondCut, address _init, bytes _calldata);
 }
 </code></pre>
-<h3 id="section-9">B. IDiamondLoupe — 内省接口</h3><pre><code class="language-solidity">interface IDiamondLoupe {
-    struct Facet {
+<h3 id="section-9">B. IDiamondLoupe — 内省接口</h3><pre><code class="language-solidity"><span class="hljs-keyword">interface</span> <span class="hljs-title class_">IDiamondLoupe</span> {
+    struct <span class="hljs-title class_">Facet</span> {
         address facetAddress;
         bytes4[] functionSelectors;
     }
     
-    function facets() external view returns (Facet[] memory);
-    function facetFunctionSelectors(address _facet) external view returns (bytes4[] memory);
-    function facetAddresses() external view returns (address[] memory);
-    function facetAddress(bytes4 _functionSelector) external view returns (address);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">facets</span>(<span class="hljs-params"></span>) external view <span class="hljs-title function_">returns</span> (<span class="hljs-title class_">Facet</span>[] memory);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">facetFunctionSelectors</span>(<span class="hljs-params">address _facet</span>) external view <span class="hljs-title function_">returns</span> (bytes4[] memory);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">facetAddresses</span>(<span class="hljs-params"></span>) external view <span class="hljs-title function_">returns</span> (address[] memory);
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">facetAddress</span>(<span class="hljs-params">bytes4 _functionSelector</span>) external view <span class="hljs-title function_">returns</span> (address);
 }
 </code></pre>
 <p>Loupe 接口让任何人都可以<strong>查询 Diamond 当前有哪些 Facet 和函数</strong>，提供完全的透明性和链上可审计性。</p>
-<h3 id="section-10">C. 关键函数源码骨架</h3><h4><code>fallback()</code> — 选择器路由核心</h4><pre><code class="language-solidity">fallback() external payable {
-    // 从 Diamond Storage 中读取路由表
-    DiamondStorage storage ds = diamondStorage();
-    // 用 calldata 前 4 字节查找对应的 Facet 地址
-    address facet = ds.selectorToFacet[msg.sig];
-    require(facet != address(0), &quot;Diamond: Function does not exist&quot;);
-    // delegatecall 到对应 Facet
+<h3 id="section-10">C. 关键函数源码骨架</h3><h4><code>fallback()</code> — 选择器路由核心</h4><pre><code class="language-solidity"><span class="hljs-title function_">fallback</span>() external payable {
+    <span class="hljs-comment">// 从 Diamond Storage 中读取路由表</span>
+    <span class="hljs-title class_">DiamondStorage</span> storage ds = <span class="hljs-title function_">diamondStorage</span>();
+    <span class="hljs-comment">// 用 calldata 前 4 字节查找对应的 Facet 地址</span>
+    address facet = ds.<span class="hljs-property">selectorToFacet</span>[msg.<span class="hljs-property">sig</span>];
+    <span class="hljs-built_in">require</span>(facet != <span class="hljs-title function_">address</span>(<span class="hljs-number">0</span>), <span class="hljs-string">&quot;Diamond: Function does not exist&quot;</span>);
+    <span class="hljs-comment">// delegatecall 到对应 Facet</span>
     assembly {
-        calldatacopy(0, 0, calldatasize())
-        let result := delegatecall(gas(), facet, 0, calldatasize(), 0, 0)
-        returndatacopy(0, 0, returndatasize())
-        switch result
-        case 0 { revert(0, returndatasize()) }
-        default { return(0, returndatasize()) }
+        <span class="hljs-title function_">calldatacopy</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-title function_">calldatasize</span>())
+        <span class="hljs-keyword">let</span> result := <span class="hljs-title function_">delegatecall</span>(<span class="hljs-title function_">gas</span>(), facet, <span class="hljs-number">0</span>, <span class="hljs-title function_">calldatasize</span>(), <span class="hljs-number">0</span>, <span class="hljs-number">0</span>)
+        <span class="hljs-title function_">returndatacopy</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-title function_">returndatasize</span>())
+        <span class="hljs-keyword">switch</span> result
+        <span class="hljs-keyword">case</span> <span class="hljs-number">0</span> { <span class="hljs-title function_">revert</span>(<span class="hljs-number">0</span>, <span class="hljs-title function_">returndatasize</span>()) }
+        <span class="hljs-keyword">default</span> { <span class="hljs-keyword">return</span>(<span class="hljs-number">0</span>, <span class="hljs-title function_">returndatasize</span>()) }
     }
 }
 </code></pre>
@@ -166,27 +166,27 @@
 <li><strong>采用的存储标准</strong>：<strong>Diamond Storage Pattern</strong>（EIP-1967 之外的另一种哈希隔离方案）。</li>
 <li><strong>核心思路</strong>：每个 Facet 定义自己的存储结构体，并将其锚定到一个由唯一字符串哈希生成的极远端存储槽位中。</li>
 </ul>
-<pre><code class="language-solidity">library LibMyFacet {
-    // 每个 Facet 用独特的字符串生成唯一的存储起始位置
-    bytes32 constant STORAGE_POSITION = keccak256(&quot;diamond.storage.MyFacet&quot;);
+<pre><code class="language-solidity">library <span class="hljs-title class_">LibMyFacet</span> {
+    <span class="hljs-comment">// 每个 Facet 用独特的字符串生成唯一的存储起始位置</span>
+    bytes32 constant <span class="hljs-variable constant_">STORAGE_POSITION</span> = <span class="hljs-title function_">keccak256</span>(<span class="hljs-string">&quot;diamond.storage.MyFacet&quot;</span>);
     
-    struct Storage {
+    struct <span class="hljs-title class_">Storage</span> {
         uint256 value;
-        mapping(address =&gt; uint256) balances;
+        <span class="hljs-title function_">mapping</span>(<span class="hljs-function"><span class="hljs-params">address</span> =&gt;</span> uint256) balances;
     }
     
-    function getStorage() internal pure returns (Storage storage s) {
-        bytes32 position = STORAGE_POSITION;
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">getStorage</span>(<span class="hljs-params"></span>) internal pure <span class="hljs-title function_">returns</span> (<span class="hljs-title class_">Storage</span> storage s) {
+        bytes32 position = <span class="hljs-variable constant_">STORAGE_POSITION</span>;
         assembly {
-            s.slot := position
+            s.<span class="hljs-property">slot</span> := position
         }
     }
 }
 
-// Facet 内部使用：
-function deposit() external payable {
-    LibMyFacet.Storage storage s = LibMyFacet.getStorage();
-    s.balances[msg.sender] += msg.value;
+<span class="hljs-comment">// Facet 内部使用：</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">deposit</span>(<span class="hljs-params"></span>) external payable {
+    <span class="hljs-title class_">LibMyFacet</span>.<span class="hljs-property">Storage</span> storage s = <span class="hljs-title class_">LibMyFacet</span>.<span class="hljs-title function_">getStorage</span>();
+    s.<span class="hljs-property">balances</span>[msg.<span class="hljs-property">sender</span>] += msg.<span class="hljs-property">value</span>;
 }
 </code></pre>
 <ul>

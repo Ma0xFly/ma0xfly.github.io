@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>WSL_PWN环境搭建 | 沉于思，录以隙</title><meta name="description" content="## 安装wsl WSL简介 WSL（Windows Subsystem for Linux，Windows 下的 Linux 子系统）是微软在 Windows 10 和 Windows 11 中推出的一项功能，允许用户在 Windows 系统中运行完整的 Linux 环境，而无"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">WSL_PWN环境搭建</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">pwn</span>  </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>二进制</span> <span>二进制 · pwn</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/二进制/" class="tag">#二进制</a><a href="/tags/pwn/" class="tag">#pwn</a> </div> <p class="source-note">来源路径：二进制/pwn/WSL_PWN环境搭建 .md</p> </header> <div class="article-main"> <div class="article-content"><h2 id="section-1">安装wsl</h2><p>WSL简介</p>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>WSL_PWN环境搭建 | 沉于思，录以隙</title><meta name="description" content="## 安装wsl WSL简介 WSL（Windows Subsystem for Linux，Windows 下的 Linux 子系统）是微软在 Windows 10 和 Windows 11 中推出的一项功能，允许用户在 Windows 系统中运行完整的 Linux 环境，而无"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">WSL_PWN环境搭建</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">pwn</span>  </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>二进制</span> <span>二进制 · pwn</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/二进制/" class="tag">#二进制</a><a href="/tags/pwn/" class="tag">#pwn</a> </div> <p class="source-note">来源路径：二进制/pwn/WSL_PWN环境搭建 .md</p> </header> <div class="article-main"> <div class="article-content"><h2 id="section-1">安装wsl</h2><p>WSL简介</p>
 <p>WSL（Windows Subsystem for Linux，Windows 下的 Linux 子系统）是微软在 Windows 10 和 Windows 11 中推出的一项功能，允许用户在 Windows 系统中运行完整的 Linux 环境，而无需安装虚拟机或双系统。</p>
 <h3 id="section-2">管理员身份打开cmd</h3><p>输入以下命令来启用 WSL 和虚拟机平台：</p>
 <pre><code class="language-plain">wsl --install
@@ -12,97 +12,97 @@
 <p>2.Win+Q，搜索“Windows 安全中心”，-&gt;设备安全性-&gt;内核隔离关闭</p>
 <p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/8f49fbaf752ee24619499e5639e6018f_MD5.webp" alt=""></p>
 <h3 id="section-4">下载虚拟机</h3><p>微软商店下载，然后搜索Ubuntu安装，(仅这一项不要校园网，不要vpn)</p>
-<h3 id="section-5">安装vim</h3><pre><code class="language-bash">sudo apt upgrade
-sudo apt install vim
+<h3 id="section-5">安装vim</h3><pre><code class="language-bash"><span class="hljs-built_in">sudo</span> apt upgrade
+<span class="hljs-built_in">sudo</span> apt install vim
 </code></pre>
-<h3 id="section-6">更新升级软件包列表</h3><pre><code class="language-plain">sudo apt update
-sudo apt upgrade
+<h3 id="section-6">更新升级软件包列表</h3><pre><code class="language-plain"><span class="hljs-built_in">sudo</span> apt update
+<span class="hljs-built_in">sudo</span> apt upgrade
 </code></pre>
 <h3 id="section-7">安装基础环境</h3><p>将以下内容写入一个<code>sh</code>脚本文件中，为<code>chmod 777 xxx.sh</code>文件赋权限后直接<code>./xxx.sh</code>运行脚本，中途会出现<code>Do you want to continue? [Y/n]</code>输入<code>y</code></p>
-<pre><code>#!/bin/bash
-cd ~
-sudo apt install tzdata
-sudo apt install vim
-sudo apt install libxml2-dev
-sudo apt install libxslt-dev
-sudo apt install libmysqlclient-dev
-sudo apt install libsqlite3-dev
-sudo apt install zlib1g-dev
-sudo apt install python2-dev
-sudo apt install python3-pip
-sudo apt install libffi-dev
-sudo apt install libssl-dev
-sudo apt install wget
-sudo apt install curl
-sudo apt install gcc
-sudo apt install clang
-sudo apt install make
-sudo apt install zip
-sudo apt install build-essential
-sudo apt install libncursesw5-dev libgdbm-dev libc6-dev
-sudo apt install tk-dev
-sudo apt install openssl
-sudo apt install virtualenv
-sudo apt install git
-sudo apt install proxychains4
-sudo apt install ruby-dev
+<pre><code><span class="hljs-meta">#!/bin/bash</span>
+<span class="hljs-built_in">cd</span> ~
+<span class="hljs-built_in">sudo</span> apt install tzdata
+<span class="hljs-built_in">sudo</span> apt install vim
+<span class="hljs-built_in">sudo</span> apt install libxml2-dev
+<span class="hljs-built_in">sudo</span> apt install libxslt-dev
+<span class="hljs-built_in">sudo</span> apt install libmysqlclient-dev
+<span class="hljs-built_in">sudo</span> apt install libsqlite3-dev
+<span class="hljs-built_in">sudo</span> apt install zlib1g-dev
+<span class="hljs-built_in">sudo</span> apt install python2-dev
+<span class="hljs-built_in">sudo</span> apt install python3-pip
+<span class="hljs-built_in">sudo</span> apt install libffi-dev
+<span class="hljs-built_in">sudo</span> apt install libssl-dev
+<span class="hljs-built_in">sudo</span> apt install wget
+<span class="hljs-built_in">sudo</span> apt install curl
+<span class="hljs-built_in">sudo</span> apt install gcc
+<span class="hljs-built_in">sudo</span> apt install clang
+<span class="hljs-built_in">sudo</span> apt install make
+<span class="hljs-built_in">sudo</span> apt install zip
+<span class="hljs-built_in">sudo</span> apt install build-essential
+<span class="hljs-built_in">sudo</span> apt install libncursesw5-dev libgdbm-dev libc6-dev
+<span class="hljs-built_in">sudo</span> apt install tk-dev
+<span class="hljs-built_in">sudo</span> apt install openssl
+<span class="hljs-built_in">sudo</span> apt install virtualenv
+<span class="hljs-built_in">sudo</span> apt install git
+<span class="hljs-built_in">sudo</span> apt install proxychains4
+<span class="hljs-built_in">sudo</span> apt install ruby-dev
 
-#setuptools 36.6.1 -&gt; python2
+<span class="hljs-comment">#setuptools 36.6.1 -&gt; python2</span>
 wget https://mirrors.aliyun.com/pypi/packages/56/a0/4dfcc515b1b993286a64b9ab62562f09e6ed2d09288909aee1efdb9dde16/setuptools-36.6.1.zip
 unzip setuptools-36.6.1.zip
-cd setuptools-36.6.1
-sudo python2 setup.py install
-cd ../
-sudo rm -rf setuptools-36.6.1 setuptools-36.6.1.zip
+<span class="hljs-built_in">cd</span> setuptools-36.6.1
+<span class="hljs-built_in">sudo</span> python2 setup.py install
+<span class="hljs-built_in">cd</span> ../
+<span class="hljs-built_in">sudo</span> <span class="hljs-built_in">rm</span> -rf setuptools-36.6.1 setuptools-36.6.1.zip
 
-#setuptools 65.4.1 -&gt; python3
+<span class="hljs-comment">#setuptools 65.4.1 -&gt; python3</span>
 wget https://mirrors.aliyun.com/pypi/packages/03/c9/7b050ea4cc4144d0328f15e0b43c839e759c6c639370a3b932ecf4c6358f/setuptools-65.4.1.tar.gz
 tar -zxvf setuptools-65.4.1.tar.gz
-cd setuptools-65.4.1
-sudo python3 setup.py install
-cd ../
-sudo rm -rf setuptools-65.4.1 setuptools-65.4.1.tar.gz
+<span class="hljs-built_in">cd</span> setuptools-65.4.1
+<span class="hljs-built_in">sudo</span> python3 setup.py install
+<span class="hljs-built_in">cd</span> ../
+<span class="hljs-built_in">sudo</span> <span class="hljs-built_in">rm</span> -rf setuptools-65.4.1 setuptools-65.4.1.tar.gz
 
-#pip
+<span class="hljs-comment">#pip</span>
 wget https://mirrors.aliyun.com/pypi/packages/53/7f/55721ad0501a9076dbc354cc8c63ffc2d6f1ef360f49ad0fbcce19d68538/pip-20.3.4.tar.gz
 tar -zxvf pip-20.3.4.tar.gz
-cd pip-20.3.4
-sudo python2 setup.py install
-sudo python3 setup.py install
-cd ../
-sudo rm -rf pip-20.3.4 pip-20.3.4.tar.gz
+<span class="hljs-built_in">cd</span> pip-20.3.4
+<span class="hljs-built_in">sudo</span> python2 setup.py install
+<span class="hljs-built_in">sudo</span> python3 setup.py install
+<span class="hljs-built_in">cd</span> ../
+<span class="hljs-built_in">sudo</span> <span class="hljs-built_in">rm</span> -rf pip-20.3.4 pip-20.3.4.tar.gz
 
-sudo pip2 config set global.index-url https://mirrors.aliyun.com/pypi/simple
-sudo pip3 config set global.index-url https://mirrors.aliyun.com/pypi/simple
+<span class="hljs-built_in">sudo</span> pip2 config <span class="hljs-built_in">set</span> global.index-url https://mirrors.aliyun.com/pypi/simple
+<span class="hljs-built_in">sudo</span> pip3 config <span class="hljs-built_in">set</span> global.index-url https://mirrors.aliyun.com/pypi/simple
 
-sudo python2 -m pip install --upgrade pip
-sudo python3 -m pip install --upgrade pip
+<span class="hljs-built_in">sudo</span> python2 -m pip install --upgrade pip
+<span class="hljs-built_in">sudo</span> python3 -m pip install --upgrade pip
 
 pip3 install --upgrade pip
-sudo pip2 install pathlib2
+<span class="hljs-built_in">sudo</span> pip2 install pathlib2
 </code></pre>
-<h2 id="section-8">pwn环境</h2><h3 id="section-9">安装 32位支持库</h3><pre><code class="language-plain">sudo dpkg --add-architecture i386
-sudo apt-get update
-sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386
+<h2 id="section-8">pwn环境</h2><h3 id="section-9">安装 32位支持库</h3><pre><code class="language-plain"><span class="hljs-built_in">sudo</span> dpkg --add-architecture i386
+<span class="hljs-built_in">sudo</span> apt-get update
+<span class="hljs-built_in">sudo</span> apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386
 </code></pre>
-<h3 id="section-10">安装gdb</h3><pre><code class="language-bash">sudo apt install gdb
+<h3 id="section-10">安装gdb</h3><pre><code class="language-bash"><span class="hljs-built_in">sudo</span> apt install gdb
 </code></pre>
 <h3 id="section-11">安装 pwndbg + pwngdb 联合调试环境</h3><p>pwngdb</p>
-<pre><code class="language-plain">cd ~/
-sudo git clone https://github.com/scwuaptx/Pwngdb.git 
-cp ~/Pwngdb/.gdbinit ~/
+<pre><code class="language-plain"><span class="hljs-built_in">cd</span> ~/
+<span class="hljs-built_in">sudo</span> git <span class="hljs-built_in">clone</span> https://github.com/scwuaptx/Pwngdb.git 
+<span class="hljs-built_in">cp</span> ~/Pwngdb/.gdbinit ~/
 </code></pre>
 <p>pwndbg</p>
-<pre><code class="language-plain">sudo git clone https://github.com/pwndbg/pwndbg
-cd pwndbg
-sudo ./setup.sh
+<pre><code class="language-plain"><span class="hljs-built_in">sudo</span> git <span class="hljs-built_in">clone</span> https://github.com/pwndbg/pwndbg
+<span class="hljs-built_in">cd</span> pwndbg
+<span class="hljs-built_in">sudo</span> ./setup.sh
 </code></pre>
 <p>编辑 <code>.gdbinit</code> 文件以联合使用</p>
 <p>vim ~/.gdbinit</p>
 <p>写入以下内容</p>
-<pre><code class="language-plain">source ~/pwndbg/gdbinit.py
-source ~/Pwngdb/pwngdb.py
-source ~/Pwngdb/angelheap/gdbinit.py
+<pre><code class="language-plain"><span class="hljs-built_in">source</span> ~/pwndbg/gdbinit.py
+<span class="hljs-built_in">source</span> ~/Pwngdb/pwngdb.py
+<span class="hljs-built_in">source</span> ~/Pwngdb/angelheap/gdbinit.py
 
 define hook-run
 python
@@ -111,29 +111,29 @@ angelheap.init_angelheap()
 end
 end
 </code></pre>
-<h3 id="section-12">安装pwntools</h3><pre><code class="language-plain">sudo python3 -m pip install --upgrade pwntools
+<h3 id="section-12">安装pwntools</h3><pre><code class="language-plain"><span class="hljs-built_in">sudo</span> python3 -m pip install --upgrade pwntools
 </code></pre>
-<h3 id="section-13">patchelf</h3><pre><code class="language-bash">sudo apt install patchelf
+<h3 id="section-13">patchelf</h3><pre><code class="language-bash"><span class="hljs-built_in">sudo</span> apt install patchelf
 </code></pre>
-<h3 id="section-14">Ropgadget</h3><pre><code class="language-plain">sudo -H python3 -m pip install ROPgadget
+<h3 id="section-14">Ropgadget</h3><pre><code class="language-plain"><span class="hljs-built_in">sudo</span> -H python3 -m pip install ROPgadget
 </code></pre>
-<h3 id="section-15">安装seccomp-tools，one_gadget</h3><pre><code class="language-plain">sudo gem install one_gadget
-sudo gem install seccomp-tools
+<h3 id="section-15">安装seccomp-tools，one_gadget</h3><pre><code class="language-plain"><span class="hljs-built_in">sudo</span> gem install one_gadget
+<span class="hljs-built_in">sudo</span> gem install seccomp-tools
 </code></pre>
-<h3 id="section-16">glibc-all-in-one</h3><pre><code class="language-bash">git clone https://github.com/matrix1001/glibc-all-in-one.git
-cd glibc-all-in-one
+<h3 id="section-16">glibc-all-in-one</h3><pre><code class="language-bash">git <span class="hljs-built_in">clone</span> https://github.com/matrix1001/glibc-all-in-one.git
+<span class="hljs-built_in">cd</span> glibc-all-in-one
 python3 update_list
-cat list
+<span class="hljs-built_in">cat</span> list
 </code></pre>
-<h3 id="section-17">安装LibcSearcher</h3><pre><code class="language-plain">sudo pip3 install LibcSearcher
-sudo pip3 install -U LibcSearcher
+<h3 id="section-17">安装LibcSearcher</h3><pre><code class="language-plain"><span class="hljs-built_in">sudo</span> pip3 install LibcSearcher
+<span class="hljs-built_in">sudo</span> pip3 install -U LibcSearcher
 </code></pre>
-<h3 id="section-18">配置AE64</h3><pre><code class="language-plain">git clone https://github.com/veritas501/ae64.git --depth 1
-cd ae64
-sudo python3 setup.py install
+<h3 id="section-18">配置AE64</h3><pre><code class="language-plain">git <span class="hljs-built_in">clone</span> https://github.com/veritas501/ae64.git --depth 1
+<span class="hljs-built_in">cd</span> ae64
+<span class="hljs-built_in">sudo</span> python3 setup.py install
 </code></pre>
-<h3 id="section-19">调试终端gnome</h3><pre><code>sudo apt install gnome-terminal  
-sudo update-alternatives --config x-terminal-emulator #选择终端gnome
+<h3 id="section-19">调试终端gnome</h3><pre><code><span class="hljs-built_in">sudo</span> apt install gnome-terminal  
+<span class="hljs-built_in">sudo</span> update-alternatives --config x-terminal-emulator <span class="hljs-comment">#选择终端gnome</span>
 </code></pre>
 </div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/二进制/pwn/高版本libc堆fd指针绕过/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">高版本libc堆fd指针绕过</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/二进制/pwn/栈漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">栈漏洞</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>安装wsl</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-2"> <a href="#section-2">管理员身份打开cmd</a> </li><li class="article-outline__item depth-3" data-toc-id="section-3"> <a href="#section-3">设置</a> </li><li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">下载虚拟机</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">安装vim</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">更新升级软件包列表</a> </li><li class="article-outline__item depth-3" data-toc-id="section-7"> <a href="#section-7">安装基础环境</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-8"> <button class="article-outline__group-link" type="button" data-group-target="section-8"> <span>pwn环境</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">安装 32位支持库</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">安装gdb</a> </li><li class="article-outline__item depth-3" data-toc-id="section-11"> <a href="#section-11">安装 pwndbg + pwngdb 联合调试环境</a> </li><li class="article-outline__item depth-3" data-toc-id="section-12"> <a href="#section-12">安装pwntools</a> </li><li class="article-outline__item depth-3" data-toc-id="section-13"> <a href="#section-13">patchelf</a> </li><li class="article-outline__item depth-3" data-toc-id="section-14"> <a href="#section-14">Ropgadget</a> </li><li class="article-outline__item depth-3" data-toc-id="section-15"> <a href="#section-15">安装seccomp-tools，onegadget</a> </li><li class="article-outline__item depth-3" data-toc-id="section-16"> <a href="#section-16">glibc-all-in-one</a> </li><li class="article-outline__item depth-3" data-toc-id="section-17"> <a href="#section-17">安装LibcSearcher</a> </li><li class="article-outline__item depth-3" data-toc-id="section-18"> <a href="#section-18">配置AE64</a> </li><li class="article-outline__item depth-3" data-toc-id="section-19"> <a href="#section-19">调试终端gnome</a> </li> </ol> </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
       (() => {

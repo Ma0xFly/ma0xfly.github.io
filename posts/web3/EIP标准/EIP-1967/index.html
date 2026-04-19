@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>EIP-1967 | 沉于思，录以隙</title><meta name="description" content="# EIP-1967: 标准代理存储插槽 (Standard Proxy Storage Slots) > **一句话总结**：EIP-1967 规定了智能合约代理（Proxy）存放逻辑合约地址（Implementation）、管理员地址（Admin）以及信标地址（Beacon）"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">EIP-1967</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">EIP标准</span>  </div> <div class="article-meta-row"> <span>2026/3/17</span> <span>web3</span> <span>web3 · EIP标准</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/EIP标准/" class="tag">#EIP标准</a> </div> <p class="source-note">来源路径：web3/EIP标准/EIP-1967.md</p> </header> <div class="article-main"> <div class="article-content"><h1>EIP-1967: 标准代理存储插槽 (Standard Proxy Storage Slots)</h1><blockquote>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>EIP-1967 | 沉于思，录以隙</title><meta name="description" content="# EIP-1967: 标准代理存储插槽 (Standard Proxy Storage Slots) > **一句话总结**：EIP-1967 规定了智能合约代理（Proxy）存放逻辑合约地址（Implementation）、管理员地址（Admin）以及信标地址（Beacon）"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">EIP-1967</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">EIP标准</span>  </div> <div class="article-meta-row"> <span>2026/3/17</span> <span>web3</span> <span>web3 · EIP标准</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/EIP标准/" class="tag">#EIP标准</a> </div> <p class="source-note">来源路径：web3/EIP标准/EIP-1967.md</p> </header> <div class="article-main"> <div class="article-content"><h1>EIP-1967: 标准代理存储插槽 (Standard Proxy Storage Slots)</h1><blockquote>
 <p><strong>一句话总结</strong>：EIP-1967 规定了智能合约代理（Proxy）存放逻辑合约地址（Implementation）、管理员地址（Admin）以及信标地址（Beacon）的特定、极远端哈希存储槽位，彻底解决了代理合约和逻辑合约之间的存储碰撞（Storage Collision）问题，并为区块链浏览器（如 Etherscan）提供了统一的解析标准。</p>
 </blockquote>
 <h2 id="section-1">📜 核心元数据 (Metadata)</h2><blockquote>
@@ -30,10 +30,10 @@
 <h2 id="section-3">2. 核心架构与底层修改细节 (Core Specification)</h2><blockquote>
 <p><strong>极度重要</strong>：EIP-1967 不修改以太坊节点执行层（EVM），而是利用内联汇编统一了 Solidity 在 EVM Storage 物理内存布局中的寻址规范。</p>
 </blockquote>
-<h3 id="section-4">A. 全局参数 / 常量变动 (Parameters)</h3><pre><code class="language-solidity">// EIP-1967 定义的三个全局神圣槽位 (Slots)
-bytes32 constant IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
-bytes32 constant ADMIN_SLOT = 0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103;
-bytes32 constant BEACON_SLOT = 0xa3f0ad74e5423aebfd80d3ef4346578335a9a72aeaee59ff6cb3582b35133d50;
+<h3 id="section-4">A. 全局参数 / 常量变动 (Parameters)</h3><pre><code class="language-solidity"><span class="hljs-comment">// EIP-1967 定义的三个全局神圣槽位 (Slots)</span>
+bytes32 constant <span class="hljs-variable constant_">IMPLEMENTATION_SLOT</span> = <span class="hljs-number">0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc</span>;
+bytes32 constant <span class="hljs-variable constant_">ADMIN_SLOT</span> = <span class="hljs-number">0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103</span>;
+bytes32 constant <span class="hljs-variable constant_">BEACON_SLOT</span> = <span class="hljs-number">0xa3f0ad74e5423aebfd80d3ef4346578335a9a72aeaee59ff6cb3582b35133d50</span>;
 </code></pre>
 <ul>
 <li><strong>配置解读</strong>：代理合约在读取或更改升级逻辑时，被强行要求绝不使用高级语言常规变量声明，而是利用 Yul 汇编直接无视变量名约束，向上述 256 位常量指定的绝对物理地址强行写入和读取数据。</li>
@@ -64,11 +64,11 @@ $$ \text{Beacon Slot} = \text{uint256}(\text{keccak256}(\text{&quot;eip1967.prox
 <h4>推演：Implementation Slot 是怎么算出来的？</h4><p>整个过程只有 <strong>两步</strong>，拿 Implementation Slot 做完整演示：</p>
 <p><strong>Step 1：对一串人类可读的英文字符串做 Keccak256 哈希</strong></p>
 <p>输入就是一段你我都能看懂的普通英文字符串（不是地址、不是数字，就是纯文本）：</p>
-<pre><code>&quot;eip1967.proxy.implementation&quot;
+<pre><code><span class="hljs-string">&quot;eip1967.proxy.implementation&quot;</span>
 </code></pre>
 <p>把它丢进 Keccak256 哈希函数，出来的结果是一个 <strong>256 位（32 字节）的十六进制数</strong>：</p>
-<pre><code>keccak256(&quot;eip1967.proxy.implementation&quot;)
-= 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbd
+<pre><code><span class="hljs-title function_">keccak256</span>(<span class="hljs-string">&quot;eip1967.proxy.implementation&quot;</span>)
+= <span class="hljs-number">0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbd</span>
                                                                   ^^^
                                                               注意最后是 d
 </code></pre>
@@ -81,34 +81,34 @@ $$ \text{Beacon Slot} = \text{uint256}(\text{keccak256}(\text{&quot;eip1967.prox
                                                     最末位 d → c，完成！
 </code></pre>
 <p><strong>最终结果</strong>就是你在代码中看到的那串常量：</p>
-<pre><code class="language-solidity">bytes32 constant IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
+<pre><code class="language-solidity">bytes32 constant <span class="hljs-variable constant_">IMPLEMENTATION_SLOT</span> = <span class="hljs-number">0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc</span>;
 </code></pre>
 <blockquote>
 <p><strong>就是这么简单</strong>：一段英文 → 哈希 → 减 1 → 得到一个宇宙级别的随机坑位编号。Admin Slot 和 Beacon Slot 的过程完全一样，只是换了输入字符串（<code>&quot;eip1967.proxy.admin&quot;</code> 和 <code>&quot;eip1967.proxy.beacon&quot;</code>）。</p>
 </blockquote>
 <p><strong>你可以用 Foundry 亲自验证：</strong></p>
-<pre><code class="language-bash">cast keccak &quot;eip1967.proxy.implementation&quot;
-# 输出: 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbd
+<pre><code class="language-bash">cast keccak <span class="hljs-string">&quot;eip1967.proxy.implementation&quot;</span>
+<span class="hljs-comment"># 输出: 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbd</span>
 
-# 减 1 就是最终的 IMPLEMENTATION_SLOT
+<span class="hljs-comment"># 减 1 就是最终的 IMPLEMENTATION_SLOT</span>
 </code></pre>
 <p>或者在 Solidity 中验证：</p>
-<pre><code class="language-solidity">bytes32 slot = bytes32(uint256(keccak256(&quot;eip1967.proxy.implementation&quot;)) - 1);
-// slot == 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc ✅
+<pre><code class="language-solidity">bytes32 slot = <span class="hljs-title function_">bytes32</span>(<span class="hljs-title function_">uint256</span>(<span class="hljs-title function_">keccak256</span>(<span class="hljs-string">&quot;eip1967.proxy.implementation&quot;</span>)) - <span class="hljs-number">1</span>);
+<span class="hljs-comment">// slot == 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc ✅</span>
 </code></pre>
 <ul>
-<li><strong>实现架构伪代码 (Solidity Assembly)</strong>：<pre><code class="language-solidity">// 获取底层的实现地址
-function _getImplementation() internal view returns (address impl) {
-    // 必须通过 Yul 内联汇编精准穿透读取 1967 插槽
+<li><strong>实现架构伪代码 (Solidity Assembly)</strong>：<pre><code class="language-solidity"><span class="hljs-comment">// 获取底层的实现地址</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">_getImplementation</span>(<span class="hljs-params"></span>) internal view <span class="hljs-title function_">returns</span> (address impl) {
+    <span class="hljs-comment">// 必须通过 Yul 内联汇编精准穿透读取 1967 插槽</span>
     assembly {
-        impl := sload(0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc)
+        impl := <span class="hljs-title function_">sload</span>(<span class="hljs-number">0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc</span>)
     }
 }
 
-// 覆写底层实现地址 (升级)
-function _setImplementation(address newImpl) private {
+<span class="hljs-comment">// 覆写底层实现地址 (升级)</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">_setImplementation</span>(<span class="hljs-params">address newImpl</span>) <span class="hljs-keyword">private</span> {
     assembly {
-        sstore(0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc, newImpl)
+        <span class="hljs-title function_">sstore</span>(<span class="hljs-number">0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc</span>, newImpl)
     }
 }
 </code></pre>

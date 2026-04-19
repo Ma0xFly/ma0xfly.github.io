@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>闪电贷攻击 | 沉于思，录以隙</title><meta name="description" content="# 闪电贷攻击 (Flash Loan Attack) > **标签:** #漏洞类型/资本操纵 | #协议类型/DeFi/借贷/DEX | #严重程度/High ## 📌 1. TL;DR (一句话快速回顾) * **本质成因**：DeFi 协议在设计时假设了市场流动性分布和"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">闪电贷攻击</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">漏洞笔记</span>  </div> <div class="article-meta-row"> <span>2026/3/6</span> <span>web3</span> <span>web3 · 漏洞笔记</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/漏洞笔记/" class="tag">#漏洞笔记</a> </div> <p class="source-note">来源路径：web3/漏洞笔记/闪电贷攻击.md</p> </header> <div class="article-main"> <div class="article-content"><h1>闪电贷攻击 (Flash Loan Attack)</h1><blockquote>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>闪电贷攻击 | 沉于思，录以隙</title><meta name="description" content="# 闪电贷攻击 (Flash Loan Attack) > **标签:** #漏洞类型/资本操纵 | #协议类型/DeFi/借贷/DEX | #严重程度/High ## 📌 1. TL;DR (一句话快速回顾) * **本质成因**：DeFi 协议在设计时假设了市场流动性分布和"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">闪电贷攻击</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">漏洞笔记</span>  </div> <div class="article-meta-row"> <span>2026/3/6</span> <span>web3</span> <span>web3 · 漏洞笔记</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/web3/" class="tag">#web3</a><a href="/tags/漏洞笔记/" class="tag">#漏洞笔记</a> </div> <p class="source-note">来源路径：web3/漏洞笔记/闪电贷攻击.md</p> </header> <div class="article-main"> <div class="article-content"><h1>闪电贷攻击 (Flash Loan Attack)</h1><blockquote>
 <p><strong>标签:</strong> #漏洞类型/资本操纵 | #协议类型/DeFi/借贷/DEX | #严重程度/High</p>
 </blockquote>
 <h2 id="section-1">📌 1. TL;DR (一句话快速回顾)</h2><ul>
@@ -29,35 +29,35 @@
 <li><strong>[获利退场]</strong>: 此时在 DEX 中反向操作（可做可不做，看成本），攻击者结清闪电贷本息归还给 Aave。剩下的从借贷协议“骗”出的巨额资产即为净利润。留下一地鸡毛的借贷协议面临巨额坏账。</li>
 </ol>
 <hr>
-<h2 id="section-6">💻 4. 关键代码示例 (Snippets)</h2><h3 id="section-7">漏洞代码 (Vulnerable Code)</h3><pre><code class="language-solidity">// 一个严重依赖单一 AMM 即时余额作为现价预言机的脆弱协议
-contract VulnerableLending {
-    function getPriceOfToken(address token) public view returns (uint256) {
-        // 致命点：直接取当前区块某一个池子的瞬时比例作为价格！这极容易被闪电贷一波流冲垮。
-        uint256 reserveA = IERC20(token).balanceOf(uniswapPool);
-        uint256 reserveETH = address(uniswapPool).balance;
-        return reserveETH / reserveA; 
+<h2 id="section-6">💻 4. 关键代码示例 (Snippets)</h2><h3 id="section-7">漏洞代码 (Vulnerable Code)</h3><pre><code class="language-solidity"><span class="hljs-comment">// 一个严重依赖单一 AMM 即时余额作为现价预言机的脆弱协议</span>
+contract <span class="hljs-title class_">VulnerableLending</span> {
+    <span class="hljs-keyword">function</span> <span class="hljs-title function_">getPriceOfToken</span>(<span class="hljs-params">address token</span>) <span class="hljs-keyword">public</span> view <span class="hljs-title function_">returns</span> (uint256) {
+        <span class="hljs-comment">// 致命点：直接取当前区块某一个池子的瞬时比例作为价格！这极容易被闪电贷一波流冲垮。</span>
+        uint256 reserveA = <span class="hljs-title class_">IERC20</span>(token).<span class="hljs-title function_">balanceOf</span>(uniswapPool);
+        uint256 reserveETH = <span class="hljs-title function_">address</span>(uniswapPool).<span class="hljs-property">balance</span>;
+        <span class="hljs-keyword">return</span> reserveETH / reserveA; 
     }
 }
 </code></pre>
-<h3 id="section-8">攻击核心逻辑 (Attack Logic)</h3><pre><code class="language-solidity">// 你的攻击合约实现闪电贷回调接口
-function executeOperation(
+<h3 id="section-8">攻击核心逻辑 (Attack Logic)</h3><pre><code class="language-solidity"><span class="hljs-comment">// 你的攻击合约实现闪电贷回调接口</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">executeOperation</span>(<span class="hljs-params">
     address[] calldata assets,
     uint256[] calldata amounts,
     uint256[] calldata premiums,
     address initiator,
     bytes calldata params
-) external returns (bool) {
-    // 1. 此时你已经拥有了天量资金 assets[0]
+</span>) external <span class="hljs-title function_">returns</span> (bool) {
+    <span class="hljs-comment">// 1. 此时你已经拥有了天量资金 assets[0]</span>
     
-    // 2. 拿去砸盘，人为制造巨大的价格滑点
-    dex.swapExactTokensForTokens(amounts[0], ...);
+    <span class="hljs-comment">// 2. 拿去砸盘，人为制造巨大的价格滑点</span>
+    dex.<span class="hljs-title function_">swapExactTokensForTokens</span>(amounts[<span class="hljs-number">0</span>], ...);
     
-    // 3. 趁着价格扭曲，去借贷协议薅羊毛
-    vulnerableLending.borrow(targetAmount);
+    <span class="hljs-comment">// 3. 趁着价格扭曲，去借贷协议薅羊毛</span>
+    vulnerableLending.<span class="hljs-title function_">borrow</span>(targetAmount);
     
-    // 4. 批准闪电贷平台扣除本金+手续费 (如果钱不够，交易直接 revert，你不会有任何损失)
-    IERC20(assets[0]).approve(msg.sender, amounts[0] + premiums[0]);
-    return true;
+    <span class="hljs-comment">// 4. 批准闪电贷平台扣除本金+手续费 (如果钱不够，交易直接 revert，你不会有任何损失)</span>
+    <span class="hljs-title class_">IERC20</span>(assets[<span class="hljs-number">0</span>]).<span class="hljs-title function_">approve</span>(msg.<span class="hljs-property">sender</span>, amounts[<span class="hljs-number">0</span>] + premiums[<span class="hljs-number">0</span>]);
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
 }
 </code></pre>
 <hr>
