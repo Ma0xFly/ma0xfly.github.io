@@ -21,9 +21,8 @@
     let width = canvas.width = window.innerWidth;
     let height = canvas.height = window.innerHeight;
     
-    // Check initial theme
-    const root = document.documentElement;
-    let isDark = root.getAttribute("data-theme") === "dark";
+    // Force dark mode
+    let isDark = true;
 
     let stars = Array.from({ length: 250 }, () => ({
       x: Math.random() * width,
@@ -40,7 +39,6 @@
 
     const draw = () => {
       ctx.clearRect(0, 0, width, height);
-      isDark = root.getAttribute("data-theme") === "dark";
 
       stars.forEach((s) => {
         // Pulse
@@ -146,16 +144,6 @@
 
   /* Themes injected globally, applied here */
   :global(:root) {
-    --ds-bg: #f8fafc;
-    --ds-nebula: 
-      radial-gradient(circle at 10% 20%, rgba(2, 132, 199, 0.06), transparent 40%),
-      radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.04), transparent 40%),
-      radial-gradient(circle at 50% 50%, rgba(125, 211, 252, 0.03), transparent 60%);
-    --ds-grid-color: rgba(100, 116, 139, 0.06);
-    --ds-grid-color-subtle: rgba(100, 116, 139, 0.02);
-  }
-
-  :global(:root[data-theme='dark']) {
     --ds-bg: #030407;
     --ds-nebula: 
       radial-gradient(circle at 20% 30%, rgba(45, 212, 191, 0.07), transparent 45%),
@@ -165,7 +153,7 @@
     --ds-grid-color-subtle: rgba(45, 212, 191, 0.015);
   }
   
-  :global(:root[data-theme='dark']) .ds-noise {
+  :global(:root) .ds-noise {
     opacity: 0.08;
     mix-blend-mode: screen;
   }

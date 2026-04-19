@@ -19,7 +19,7 @@ const searchHref = isHome ? "#archive-search" : "/#archive-search";
 ---
 
 <!doctype html>
-<html lang="zh-Hans">
+<html lang="zh-Hans" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -32,19 +32,6 @@ const searchHref = isHome ? "#archive-search" : "/#archive-search";
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
-    <script is:inline>
-      (() => {
-        try {
-          const saved = localStorage.getItem("theme");
-          const theme = saved === "dark" || saved === "light"
-            ? saved
-            : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-          document.documentElement.setAttribute("data-theme", theme);
-        } catch {
-          document.documentElement.setAttribute("data-theme", "light");
-        }
-      })();
-    </script>
   </head>
   <body class={bodyClass}>
     <DeepSpaceBackground />
@@ -56,10 +43,6 @@ const searchHref = isHome ? "#archive-search" : "/#archive-search";
             <a href="/folders">目录</a>
             <a href="/tags">标签</a>
             <a href={searchHref}>搜索</a>
-            <button id="theme-toggle" type="button" aria-label="切换主题">
-              <span class="theme-icon theme-sun">☀</span>
-              <span class="theme-icon theme-moon">☾</span>
-            </button>
           </nav>
         </div>
       </header>
@@ -71,10 +54,6 @@ const searchHref = isHome ? "#archive-search" : "/#archive-search";
           <a href="/folders" class={isFoldersPath ? "active" : ""}>目录</a>
           <a href="/tags" class={isTagsPath ? "active" : ""}>标签</a>
           <a href={searchHref}>搜索</a>
-          <button id="theme-toggle" type="button" aria-label="切换主题">
-            <span class="theme-icon theme-sun">☀</span>
-            <span class="theme-icon theme-moon">☾</span>
-          </button>
         </nav>
       </header>
     ) : (
@@ -86,10 +65,6 @@ const searchHref = isHome ? "#archive-search" : "/#archive-search";
             <a href="/folders" class={isFoldersPath ? "active" : ""}>目录</a>
             <a href="/tags" class={isTagsPath ? "active" : ""}>标签</a>
             <a href={searchHref}>搜索</a>
-            <button id="theme-toggle" type="button" aria-label="切换主题">
-              <span class="theme-icon theme-sun">☀</span>
-              <span class="theme-icon theme-moon">☾</span>
-            </button>
           </nav>
         </header>
       </div>
@@ -136,23 +111,7 @@ const searchHref = isHome ? "#archive-search" : "/#archive-search";
           });
         };
 
-        const bindToggle = () => {
-          const btn = document.getElementById("theme-toggle");
-          if (!btn) return;
-          const next = btn.cloneNode(true);
-          btn.replaceWith(next);
-          next.addEventListener("click", () => {
-            const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
-            const value = current === "dark" ? "light" : "dark";
-            root.setAttribute("data-theme", value);
-            try {
-              localStorage.setItem("theme", value);
-            } catch {}
-          });
-        };
-
         bindScrollReset();
-        bindToggle();
       })();
     </script>
   </body>

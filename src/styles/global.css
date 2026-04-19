@@ -1,22 +1,5 @@
 /* 鈹€鈹€鈹€ Design Tokens 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 :root {
-  /* LIGHT MODE (Observatory Printout)
-     Clean, high contrast, non-blinding backdrops. */
-  --bg: #f4f7f9;
-  --panel: rgba(255, 255, 255, 0.85);
-  --ink: #1e293b;
-  --muted: #64748b;
-  --line: rgba(100, 116, 139, 0.15);
-  --line-heavy: rgba(100, 116, 139, 0.25);
-  --accent: #0284c7;  /* Deep Sky Blue */
-  --accent-light: rgba(14, 165, 233, 0.1);
-  --radius-xl: 20px;
-  --radius-lg: 12px;
-  --radius-md: 6px;
-  --font-mono: "ui-monospace", "SFMono-Regular", "Menlo", "Consolas", monospace;
-}
-
-:root[data-theme='dark'] {
   /* DARK MODE (NASA Deep Space)
      Cool darks, bright accents, glass panels. */
   --bg: #06080d;
@@ -27,6 +10,10 @@
   --line-heavy: rgba(148, 163, 184, 0.25);
   --accent: #2dd4bf;  /* Teal glowing scanner */
   --accent-light: rgba(45, 212, 191, 0.08);
+  --radius-xl: 20px;
+  --radius-lg: 12px;
+  --radius-md: 6px;
+  --font-mono: "ui-monospace", "SFMono-Regular", "Menlo", "Consolas", monospace;
 }
 
 /* 鈹€鈹€鈹€ Base Reset 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
@@ -284,7 +271,6 @@ body.is-post-page .topbar {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   font-size: clamp(3.5rem, 7vw, 6rem);
   font-weight: 300;
-  text-transform: uppercase;
   letter-spacing: 0.15em;
   margin: 0 0 16px;
   color: rgba(255, 255, 255, 0.95);
