@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.vzbGpqN6.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">蓝牙协议栈</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">iot</span>  <span class="directory-sep">/</span> <span class="directory-text">ble</span>  </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>二进制</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：二进制/iot/ble/蓝牙协议栈.md</p> </header> <div class="article-main"> <div class="article-content"><p>[蓝牙耳机音质差？延迟高？蓝牙鼠标键盘游戏手柄都有哪些优缺点？蓝牙产品开发者给你讲蓝牙「硬核无线技术」系列视频 蓝牙篇（下] <a href="https://www.bilibili.com/video/BV1RA411x7sX/?share_source=copy_web&vd_source=87a11b85578403cdea5acfdfcee7111f">https://www.bilibili.com/video/BV1RA411x7sX/?share_source=copy_web&amp;vd_source=87a11b85578403cdea5acfdfcee7111f</a></p>
+    </script><link rel="stylesheet" href="/_astro/_folder_.6ncck4XA.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">蓝牙协议栈</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">iot</span>  <span class="directory-sep">/</span> <span class="directory-text">ble</span>  </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>二进制</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：二进制/iot/ble/蓝牙协议栈.md</p> </header> <div class="article-main"> <div class="article-content"><p>[蓝牙耳机音质差？延迟高？蓝牙鼠标键盘游戏手柄都有哪些优缺点？蓝牙产品开发者给你讲蓝牙「硬核无线技术」系列视频 蓝牙篇（下] <a href="https://www.bilibili.com/video/BV1RA411x7sX/?share_source=copy_web&vd_source=87a11b85578403cdea5acfdfcee7111f">https://www.bilibili.com/video/BV1RA411x7sX/?share_source=copy_web&amp;vd_source=87a11b85578403cdea5acfdfcee7111f</a></p>
 <p><a href="https://cloud.tencent.com/developer/article/1758235">https://cloud.tencent.com/developer/article/1758235</a></p>
 <h1>蓝牙协议栈(Bluetooth Protocol Stack)</h1><h2 id="section-1">是什么</h2><p>假如说你用蓝牙耳机听音乐,或者是用蓝牙键盘打游戏,按了一个按键,这些都是通过无线的方式传输的数据。</p>
 <p>这些数据先经过应用层,听歌也好,键盘的按键也好,再通过协议栈,以蓝牙的规范,层层封包(类似tcp/ip),最后通过天线发射出去,被接收端接收,然后数据被解释出来,变成了音乐 从耳机里面播放出来,或者是你的一波闪现空大的操作,被电脑接收到,然后执行出来.</p>
@@ -147,7 +147,7 @@ D6BE898E – 访问地址(access address)
 <p>虽然开发者只调用了 send(0x53)，但由于低功耗蓝牙协议栈层层打包，最后空中实际传输的数据将变成下图所示的模样，这就既满足了低功耗蓝牙通信的需求，又让用户API变得简单，可谓一箭双雕！</p>
 <p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/d8b9d90162a8e60bf6cc9819e4bdf5b1_MD5.jpg" alt=""></p>
 <p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/6b4f0eb07a4033900f1ec5d970307697_MD5.jpg" alt=""></p>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/二进制/iot/ble/蓝牙灯泡重放攻击/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">蓝牙灯泡重放攻击</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/二进制/iot/ble/gatt协议/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">gatt协议</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>是什么</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>结构</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-3"> <a href="#section-3">一.控制器部分</a> </li><li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">二.主机部分</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-5"> <button class="article-outline__group-link" type="button" data-group-target="section-5"> <span>蓝牙规范(Profile)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">如何通过无线发送一个数据包</a> </li> </ol> </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/二进制/iot/ble/蓝牙灯泡重放攻击/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">蓝牙灯泡重放攻击</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/二进制/iot/ble/gatt协议/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">gatt协议</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>是什么</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>结构</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-3"> <a href="#section-3">一.控制器部分</a> </li><li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">二.主机部分</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-5"> <button class="article-outline__group-link" type="button" data-group-target="section-5"> <span>蓝牙规范(Profile)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">如何通过无线发送一个数据包</a> </li> </ol> </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
       (() => {
         const root = document.documentElement;
         const scrollFlagKey = "scroll-to-top-once";
@@ -208,33 +208,17 @@ D6BE898E – 访问地址(access address)
       (() => {
         const shell = document.getElementById("article-shell");
         const sidebar = document.getElementById("article-sidebar");
-        const fab = document.getElementById("article-toc-fab");
-        const outlineNav = sidebar?.querySelector(".article-outline__body");
         const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
         const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
         const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
-        const storageKey = "article-outline-open";
 
-        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !groupLinks.length) return;
+        if (!shell || !sidebar || !outlineNav || !headings.length || !groupLinks.length) return;
 
-        let isOpen = false;
         let activeId = "";
         let activeGroupId = "";
         let manualOpenGroupId = "";
         let ticking = false;
         let suppressOutlineScrollUntil = 0;
-
-        const syncState = () => {
-          shell.classList.toggle("article-shell--toc-expanded", isOpen);
-          shell.classList.toggle("article-shell--toc-collapsed", !isOpen);
-          sidebar.classList.toggle("is-open", isOpen);
-          fab.classList.toggle("is-open", isOpen);
-          fab.setAttribute("aria-expanded", String(isOpen));
-
-          try {
-            localStorage.setItem(storageKey, isOpen ? "1" : "0");
-          } catch {}
-        };
 
         const groupMap = new Map(
           groupLinks.map((link) => {
@@ -288,7 +272,7 @@ D6BE898E – 访问地址(access address)
             group.classList.toggle("is-current", groupId === id && !parentId);
           });
 
-          if (!isOpen || Date.now() < suppressOutlineScrollUntil) return;
+          if (Date.now() < suppressOutlineScrollUntil) return;
 
           const activeLink = [...groupLinks, ...childLinks].find((link) => {
             const href = link.getAttribute("href");
@@ -336,14 +320,6 @@ D6BE898E – 访问地址(access address)
           window.requestAnimationFrame(updateOutline);
         };
 
-        try {
-          isOpen = localStorage.getItem(storageKey) === "1";
-        } catch {
-          isOpen = false;
-        }
-
-        syncState();
-
         groupLinks.forEach((button) => {
           button.addEventListener("click", (event) => {
             event.stopPropagation();
@@ -385,24 +361,6 @@ D6BE898E – 访问地址(access address)
 
             targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
           });
-        });
-
-        fab.addEventListener("click", (event) => {
-          event.stopPropagation();
-          isOpen = !isOpen;
-          syncState();
-        });
-
-        sidebar.addEventListener("click", (event) => {
-          event.stopPropagation();
-        });
-
-        document.addEventListener("keydown", (event) => {
-          if (event.key === "Escape" && isOpen) {
-            isOpen = false;
-            syncState();
-            fab.focus();
-          }
         });
 
         window.addEventListener("scroll", requestUpdate, { passive: true });

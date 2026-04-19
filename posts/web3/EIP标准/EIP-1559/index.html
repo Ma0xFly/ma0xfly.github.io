@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.vzbGpqN6.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">EIP-1559</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">EIP标准</span>  </div> <div class="article-meta-row"> <span>2026/3/24</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/EIP标准/EIP-1559.md</p> </header> <div class="article-main"> <div class="article-content"><h1>EIP-1559: 费用市场改革 (Fee market change for ETH 1.0 chain)</h1><blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.6ncck4XA.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">EIP-1559</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">EIP标准</span>  </div> <div class="article-meta-row"> <span>2026/3/24</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/EIP标准/EIP-1559.md</p> </header> <div class="article-main"> <div class="article-content"><h1>EIP-1559: 费用市场改革 (Fee market change for ETH 1.0 chain)</h1><blockquote>
 <p><strong>一句话总结</strong>：EIP-1559 彻底重构了以太坊的交易费用定价机制——从原来的&quot;盲目竞价拍卖&quot;（First-Price Auction）改为由<strong>协议自动计算基础费 (Base Fee) + 用户自选小费 (Priority Fee / Tip)</strong> 的双层模型。Base Fee 会根据上一个区块的拥堵程度像弹簧一样自动调节，并且被<strong>永久销毁 (Burn)</strong>，使得 ETH 从纯通胀资产变为可能通缩的&quot;超声波货币 (Ultrasound Money)&quot;。</p>
 </blockquote>
 <h2 id="section-1">📜 核心元数据 (Metadata)</h2><blockquote>
@@ -207,7 +207,7 @@ $$\text{BaseFee}_{n+1} = \text{BaseFee}_n \times \left(1 + \frac{1}{d} \times \f
 </ul>
 </li>
 </ul>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/EIP标准/EIP-2612/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-2612</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/DeFi协议/uniswap_v2/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">uniswap_v2</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>📜 核心元数据 (Metadata)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>1. 核心理念与全网级痛点 (Core Concept &amp; Motivation)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>2. 核心架构与底层修改细节 (Core Specification)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">A. 全局参数 / 常量变动 (Parameters)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">B. EVM 指令集与 Gas 计价改动 (Opcodes &amp; Gas Changes)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">C. 交易类型与区块结构 (Transaction &amp; Block Header Changes)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-7"> <button class="article-outline__group-link" type="button" data-group-target="section-7"> <span>3. 从宏观到微观的生命周期 (Lifecycle Workflow)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-8"> <button class="article-outline__group-link" type="button" data-group-target="section-8"> <span>4. 关键机制深度解析与数学公式 (Deep Dive)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">A. 核心难点：Base Fee 弹簧调节算法</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">B. 核心难点：为什么要销毁 Base Fee 而不是给区块生产者？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-11"> <a href="#section-11">C. 实战算账：连续拥堵下 Base Fee 的指数增长</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-12"> <button class="article-outline__group-link" type="button" data-group-target="section-12"> <span>5. 对生态与智能合约的系统级冲击 (Impact Analysis)</span>  </button>  </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/EIP标准/EIP-2612/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">EIP-2612</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/DeFi协议/uniswap_v2/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">uniswap_v2</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>📜 核心元数据 (Metadata)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>1. 核心理念与全网级痛点 (Core Concept &amp; Motivation)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>2. 核心架构与底层修改细节 (Core Specification)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">A. 全局参数 / 常量变动 (Parameters)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">B. EVM 指令集与 Gas 计价改动 (Opcodes &amp; Gas Changes)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">C. 交易类型与区块结构 (Transaction &amp; Block Header Changes)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-7"> <button class="article-outline__group-link" type="button" data-group-target="section-7"> <span>3. 从宏观到微观的生命周期 (Lifecycle Workflow)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-8"> <button class="article-outline__group-link" type="button" data-group-target="section-8"> <span>4. 关键机制深度解析与数学公式 (Deep Dive)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">A. 核心难点：Base Fee 弹簧调节算法</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">B. 核心难点：为什么要销毁 Base Fee 而不是给区块生产者？</a> </li><li class="article-outline__item depth-3" data-toc-id="section-11"> <a href="#section-11">C. 实战算账：连续拥堵下 Base Fee 的指数增长</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-12"> <button class="article-outline__group-link" type="button" data-group-target="section-12"> <span>5. 对生态与智能合约的系统级冲击 (Impact Analysis)</span>  </button>  </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
       (() => {
         const root = document.documentElement;
         const scrollFlagKey = "scroll-to-top-once";
@@ -268,33 +268,17 @@ $$\text{BaseFee}_{n+1} = \text{BaseFee}_n \times \left(1 + \frac{1}{d} \times \f
       (() => {
         const shell = document.getElementById("article-shell");
         const sidebar = document.getElementById("article-sidebar");
-        const fab = document.getElementById("article-toc-fab");
-        const outlineNav = sidebar?.querySelector(".article-outline__body");
         const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
         const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
         const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
-        const storageKey = "article-outline-open";
 
-        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !groupLinks.length) return;
+        if (!shell || !sidebar || !outlineNav || !headings.length || !groupLinks.length) return;
 
-        let isOpen = false;
         let activeId = "";
         let activeGroupId = "";
         let manualOpenGroupId = "";
         let ticking = false;
         let suppressOutlineScrollUntil = 0;
-
-        const syncState = () => {
-          shell.classList.toggle("article-shell--toc-expanded", isOpen);
-          shell.classList.toggle("article-shell--toc-collapsed", !isOpen);
-          sidebar.classList.toggle("is-open", isOpen);
-          fab.classList.toggle("is-open", isOpen);
-          fab.setAttribute("aria-expanded", String(isOpen));
-
-          try {
-            localStorage.setItem(storageKey, isOpen ? "1" : "0");
-          } catch {}
-        };
 
         const groupMap = new Map(
           groupLinks.map((link) => {
@@ -348,7 +332,7 @@ $$\text{BaseFee}_{n+1} = \text{BaseFee}_n \times \left(1 + \frac{1}{d} \times \f
             group.classList.toggle("is-current", groupId === id && !parentId);
           });
 
-          if (!isOpen || Date.now() < suppressOutlineScrollUntil) return;
+          if (Date.now() < suppressOutlineScrollUntil) return;
 
           const activeLink = [...groupLinks, ...childLinks].find((link) => {
             const href = link.getAttribute("href");
@@ -396,14 +380,6 @@ $$\text{BaseFee}_{n+1} = \text{BaseFee}_n \times \left(1 + \frac{1}{d} \times \f
           window.requestAnimationFrame(updateOutline);
         };
 
-        try {
-          isOpen = localStorage.getItem(storageKey) === "1";
-        } catch {
-          isOpen = false;
-        }
-
-        syncState();
-
         groupLinks.forEach((button) => {
           button.addEventListener("click", (event) => {
             event.stopPropagation();
@@ -445,24 +421,6 @@ $$\text{BaseFee}_{n+1} = \text{BaseFee}_n \times \left(1 + \frac{1}{d} \times \f
 
             targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
           });
-        });
-
-        fab.addEventListener("click", (event) => {
-          event.stopPropagation();
-          isOpen = !isOpen;
-          syncState();
-        });
-
-        sidebar.addEventListener("click", (event) => {
-          event.stopPropagation();
-        });
-
-        document.addEventListener("keydown", (event) => {
-          if (event.key === "Escape" && isOpen) {
-            isOpen = false;
-            syncState();
-            fab.focus();
-          }
         });
 
         window.addEventListener("scroll", requestUpdate, { passive: true });

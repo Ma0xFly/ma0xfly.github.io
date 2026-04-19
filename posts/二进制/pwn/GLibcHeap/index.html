@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.vzbGpqN6.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">GLibcHeap</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">pwn</span>  </div> <div class="article-meta-row"> <span>2026/4/17</span> <span>二进制</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：二进制/pwn/GLibcHeap.md</p> </header> <div class="article-main"> <div class="article-content"><p>本文将对 Glibc 堆上的内存管理作简要介绍，部分内容翻译自参考资料中的文章。略过了许多细节，主要是为了对新手友好。</p>
+    </script><link rel="stylesheet" href="/_astro/_folder_.6ncck4XA.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">GLibcHeap</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">pwn</span>  </div> <div class="article-meta-row"> <span>2026/4/17</span> <span>二进制</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：二进制/pwn/GLibcHeap.md</p> </header> <div class="article-main"> <div class="article-content"><p>本文将对 Glibc 堆上的内存管理作简要介绍，部分内容翻译自参考资料中的文章。略过了许多细节，主要是为了对新手友好。</p>
 <p>默认读者熟悉操作系统、C 语言及其运行机制，并且对于 C 中的函数调用栈有所了解。</p>
 <h2 id="section-1">什么是堆？</h2><p>堆是每个程序被分配到的一块内存区域，和栈的区别主要在于堆内存是动态分配的。也就是说，程序可以从<code>heap</code>段请求一块内存，或者释放一块内存。</p>
 <p>另外，堆内存是全局的，即在程序的任意位置都可以访问到堆，并不一定要在调用<code>malloc</code>的那个函数里访问。这是因为 C 语言使用指针指向动态分配的内存。但相比访问栈上的静态局部变量，使用指针也带来了一定的开销。</p>
@@ -432,7 +432,7 @@ musable (void *mem)
 <li><a href="https://paper.seebug.org/papers/Archive/refs/heap/glibc%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86ptmalloc%E6%BA%90%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90.pdf">glibc 内存管理 ptmalloc 源代码分析</a></li>
 <li><a href="https://sensepost.com/blog/2017/painless-intro-to-the-linux-userland-heap/">Painless intro to the Linux userland heap</a></li>
 </ul>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/二进制/pwn/堆/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">堆</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/solidity语法/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">solidity语法</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>什么是堆？</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>使用动态分配的内存</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>两个系统调用</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">brk()</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">mmap()</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-6"> <button class="article-outline__group-link" type="button" data-group-target="section-6"> <span>多线程与 Arena</span>  </button>  </li><li class="article-outline__group" data-group-id="section-7"> <button class="article-outline__group-link" type="button" data-group-target="section-7"> <span>维护多个堆</span>  </button>  </li><li class="article-outline__group" data-group-id="section-8"> <button class="article-outline__group-link" type="button" data-group-target="section-8"> <span>Chunk 的结构</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">Allocated chunk</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">Free chunk</a> </li><li class="article-outline__item depth-3" data-toc-id="section-11"> <a href="#section-11">Top chunk</a> </li><li class="article-outline__item depth-3" data-toc-id="section-12"> <a href="#section-12">Last Remainder chunk</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-13"> <button class="article-outline__group-link" type="button" data-group-target="section-13"> <span>Bin 的结构</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-14"> <a href="#section-14">fast bins</a> </li><li class="article-outline__item depth-3" data-toc-id="section-15"> <a href="#section-15">unsorted bin</a> </li><li class="article-outline__item depth-3" data-toc-id="section-16"> <a href="#section-16">small bins</a> </li><li class="article-outline__item depth-3" data-toc-id="section-17"> <a href="#section-17">large bins</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-18"> <button class="article-outline__group-link" type="button" data-group-target="section-18"> <span>内存分配流程</span>  </button>  </li><li class="article-outline__group" data-group-id="section-19"> <button class="article-outline__group-link" type="button" data-group-target="section-19"> <span>内存释放流程</span>  </button>  </li><li class="article-outline__group" data-group-id="section-20"> <button class="article-outline__group-link" type="button" data-group-target="section-20"> <span>参考资料</span>  </button>  </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/二进制/pwn/堆/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">堆</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/solidity语法/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">solidity语法</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>什么是堆？</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>使用动态分配的内存</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>两个系统调用</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">brk()</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">mmap()</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-6"> <button class="article-outline__group-link" type="button" data-group-target="section-6"> <span>多线程与 Arena</span>  </button>  </li><li class="article-outline__group" data-group-id="section-7"> <button class="article-outline__group-link" type="button" data-group-target="section-7"> <span>维护多个堆</span>  </button>  </li><li class="article-outline__group" data-group-id="section-8"> <button class="article-outline__group-link" type="button" data-group-target="section-8"> <span>Chunk 的结构</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">Allocated chunk</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">Free chunk</a> </li><li class="article-outline__item depth-3" data-toc-id="section-11"> <a href="#section-11">Top chunk</a> </li><li class="article-outline__item depth-3" data-toc-id="section-12"> <a href="#section-12">Last Remainder chunk</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-13"> <button class="article-outline__group-link" type="button" data-group-target="section-13"> <span>Bin 的结构</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-14"> <a href="#section-14">fast bins</a> </li><li class="article-outline__item depth-3" data-toc-id="section-15"> <a href="#section-15">unsorted bin</a> </li><li class="article-outline__item depth-3" data-toc-id="section-16"> <a href="#section-16">small bins</a> </li><li class="article-outline__item depth-3" data-toc-id="section-17"> <a href="#section-17">large bins</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-18"> <button class="article-outline__group-link" type="button" data-group-target="section-18"> <span>内存分配流程</span>  </button>  </li><li class="article-outline__group" data-group-id="section-19"> <button class="article-outline__group-link" type="button" data-group-target="section-19"> <span>内存释放流程</span>  </button>  </li><li class="article-outline__group" data-group-id="section-20"> <button class="article-outline__group-link" type="button" data-group-target="section-20"> <span>参考资料</span>  </button>  </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
       (() => {
         const root = document.documentElement;
         const scrollFlagKey = "scroll-to-top-once";
@@ -493,33 +493,17 @@ musable (void *mem)
       (() => {
         const shell = document.getElementById("article-shell");
         const sidebar = document.getElementById("article-sidebar");
-        const fab = document.getElementById("article-toc-fab");
-        const outlineNav = sidebar?.querySelector(".article-outline__body");
         const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
         const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
         const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
-        const storageKey = "article-outline-open";
 
-        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !groupLinks.length) return;
+        if (!shell || !sidebar || !outlineNav || !headings.length || !groupLinks.length) return;
 
-        let isOpen = false;
         let activeId = "";
         let activeGroupId = "";
         let manualOpenGroupId = "";
         let ticking = false;
         let suppressOutlineScrollUntil = 0;
-
-        const syncState = () => {
-          shell.classList.toggle("article-shell--toc-expanded", isOpen);
-          shell.classList.toggle("article-shell--toc-collapsed", !isOpen);
-          sidebar.classList.toggle("is-open", isOpen);
-          fab.classList.toggle("is-open", isOpen);
-          fab.setAttribute("aria-expanded", String(isOpen));
-
-          try {
-            localStorage.setItem(storageKey, isOpen ? "1" : "0");
-          } catch {}
-        };
 
         const groupMap = new Map(
           groupLinks.map((link) => {
@@ -573,7 +557,7 @@ musable (void *mem)
             group.classList.toggle("is-current", groupId === id && !parentId);
           });
 
-          if (!isOpen || Date.now() < suppressOutlineScrollUntil) return;
+          if (Date.now() < suppressOutlineScrollUntil) return;
 
           const activeLink = [...groupLinks, ...childLinks].find((link) => {
             const href = link.getAttribute("href");
@@ -621,14 +605,6 @@ musable (void *mem)
           window.requestAnimationFrame(updateOutline);
         };
 
-        try {
-          isOpen = localStorage.getItem(storageKey) === "1";
-        } catch {
-          isOpen = false;
-        }
-
-        syncState();
-
         groupLinks.forEach((button) => {
           button.addEventListener("click", (event) => {
             event.stopPropagation();
@@ -670,24 +646,6 @@ musable (void *mem)
 
             targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
           });
-        });
-
-        fab.addEventListener("click", (event) => {
-          event.stopPropagation();
-          isOpen = !isOpen;
-          syncState();
-        });
-
-        sidebar.addEventListener("click", (event) => {
-          event.stopPropagation();
-        });
-
-        document.addEventListener("keydown", (event) => {
-          if (event.key === "Escape" && isOpen) {
-            isOpen = false;
-            syncState();
-            fab.focus();
-          }
         });
 
         window.addEventListener("scroll", requestUpdate, { passive: true });

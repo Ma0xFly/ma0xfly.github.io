@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.vzbGpqN6.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">gatt协议</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">iot</span>  <span class="directory-sep">/</span> <span class="directory-text">ble</span>  </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>二进制</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：二进制/iot/ble/gatt协议.md</p> </header> <div class="article-main"> <div class="article-content"><h1>gatt协议</h1><p>协议将设备分为2种。client客户端和server服务端</p>
+    </script><link rel="stylesheet" href="/_astro/_folder_.6ncck4XA.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">二进制</p> <h1 class="post-cover-hero__title">gatt协议</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/二进制/" class="directory-link">二进制</a>   <span class="directory-sep">/</span> <span class="directory-text">iot</span>  <span class="directory-sep">/</span> <span class="directory-text">ble</span>  </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>二进制</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：二进制/iot/ble/gatt协议.md</p> </header> <div class="article-main"> <div class="article-content"><h1>gatt协议</h1><p>协议将设备分为2种。client客户端和server服务端</p>
 <p>客户端发送命令，请求，确认信息给服务端，读取和写入存储在服务端的特征值 <code>(Characteristics )</code></p>
 <p>服务端通过下图三种方式返回数据给客户端，设备包含由 <code>GATT</code> 客户端读取或写入的 <code>Characteristic</code>，每当客户端发送请求时，服务端就会接受并执行相应的请求。</p>
 <p>区分三种行为：<strong>Notification、Indication 和 Response</strong></p>
@@ -122,7 +122,7 @@ Characteristic value/descriptor: 1a 46 00 0f ff
 └─$ gatttool -b 2C:BC:BB:0B:DC:82 --char-read --handle=0x46
 Characteristic value/descriptor: 4c 69 73 74 65 6e 20 74 6f 20 6d 65 20 66 6f 72 20 6d 75 6c 74 69 20 6e 6f 74 69 66 69 63 61 74 69 6f 6e 73 
 </code></pre>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/二进制/iot/ble/蓝牙协议栈/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">蓝牙协议栈</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/二进制/iot/ble/blectf/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">blectf</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>service</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-2"> <a href="#section-2">Service Declaration(服务申明)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-3"> <a href="#section-3">Service include(服务包含)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">characteristic(特征)</a> </li> </ol> </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/二进制/iot/ble/蓝牙协议栈/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">蓝牙协议栈</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/二进制/iot/ble/blectf/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">blectf</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>service</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-2"> <a href="#section-2">Service Declaration(服务申明)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-3"> <a href="#section-3">Service include(服务包含)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">characteristic(特征)</a> </li> </ol> </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
       (() => {
         const root = document.documentElement;
         const scrollFlagKey = "scroll-to-top-once";
@@ -183,33 +183,17 @@ Characteristic value/descriptor: 4c 69 73 74 65 6e 20 74 6f 20 6d 65 20 66 6f 72
       (() => {
         const shell = document.getElementById("article-shell");
         const sidebar = document.getElementById("article-sidebar");
-        const fab = document.getElementById("article-toc-fab");
-        const outlineNav = sidebar?.querySelector(".article-outline__body");
         const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
         const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
         const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
-        const storageKey = "article-outline-open";
 
-        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !groupLinks.length) return;
+        if (!shell || !sidebar || !outlineNav || !headings.length || !groupLinks.length) return;
 
-        let isOpen = false;
         let activeId = "";
         let activeGroupId = "";
         let manualOpenGroupId = "";
         let ticking = false;
         let suppressOutlineScrollUntil = 0;
-
-        const syncState = () => {
-          shell.classList.toggle("article-shell--toc-expanded", isOpen);
-          shell.classList.toggle("article-shell--toc-collapsed", !isOpen);
-          sidebar.classList.toggle("is-open", isOpen);
-          fab.classList.toggle("is-open", isOpen);
-          fab.setAttribute("aria-expanded", String(isOpen));
-
-          try {
-            localStorage.setItem(storageKey, isOpen ? "1" : "0");
-          } catch {}
-        };
 
         const groupMap = new Map(
           groupLinks.map((link) => {
@@ -263,7 +247,7 @@ Characteristic value/descriptor: 4c 69 73 74 65 6e 20 74 6f 20 6d 65 20 66 6f 72
             group.classList.toggle("is-current", groupId === id && !parentId);
           });
 
-          if (!isOpen || Date.now() < suppressOutlineScrollUntil) return;
+          if (Date.now() < suppressOutlineScrollUntil) return;
 
           const activeLink = [...groupLinks, ...childLinks].find((link) => {
             const href = link.getAttribute("href");
@@ -311,14 +295,6 @@ Characteristic value/descriptor: 4c 69 73 74 65 6e 20 74 6f 20 6d 65 20 66 6f 72
           window.requestAnimationFrame(updateOutline);
         };
 
-        try {
-          isOpen = localStorage.getItem(storageKey) === "1";
-        } catch {
-          isOpen = false;
-        }
-
-        syncState();
-
         groupLinks.forEach((button) => {
           button.addEventListener("click", (event) => {
             event.stopPropagation();
@@ -360,24 +336,6 @@ Characteristic value/descriptor: 4c 69 73 74 65 6e 20 74 6f 20 6d 65 20 66 6f 72
 
             targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
           });
-        });
-
-        fab.addEventListener("click", (event) => {
-          event.stopPropagation();
-          isOpen = !isOpen;
-          syncState();
-        });
-
-        sidebar.addEventListener("click", (event) => {
-          event.stopPropagation();
-        });
-
-        document.addEventListener("keydown", (event) => {
-          if (event.key === "Escape" && isOpen) {
-            isOpen = false;
-            syncState();
-            fab.focus();
-          }
         });
 
         window.addEventListener("scroll", requestUpdate, { passive: true });

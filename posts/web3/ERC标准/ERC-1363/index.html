@@ -10,7 +10,7 @@
           document.documentElement.setAttribute("data-theme", "light");
         }
       })();
-    </script><link rel="stylesheet" href="/_astro/_folder_.vzbGpqN6.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">ERC-1363</h1> </div> </section> <div class="article-shell article-shell--toc-collapsed" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <div class="article-meta-row"> <span>2026/3/6</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/ERC标准/ERC-1363.md</p> </header> <div class="article-main"> <div class="article-content"><h1>ERC-1363: 可支付型代币扩展 (Payable Token)</h1><blockquote>
+    </script><link rel="stylesheet" href="/_astro/_folder_.6ncck4XA.css"></head> <body class="is-post-page"> <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> <button id="theme-toggle" type="button" aria-label="切换主题"> <span class="theme-icon theme-sun">☀</span> <span class="theme-icon theme-moon">☾</span> </button> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero" style="background-image: url('/hero-bg.jpg')"> <div class="post-cover-hero__overlay"></div> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">web3</p> <h1 class="post-cover-hero__title">ERC-1363</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/web3/" class="directory-link">web3</a>   <span class="directory-sep">/</span> <span class="directory-text">ERC标准</span>  </div> <div class="article-meta-row"> <span>2026/3/6</span> <span>web3</span>  </div> <div class="tag-row article-header__tags">  </div> <p class="source-note">来源路径：web3/ERC标准/ERC-1363.md</p> </header> <div class="article-main"> <div class="article-content"><h1>ERC-1363: 可支付型代币扩展 (Payable Token)</h1><blockquote>
 <p><strong>一句话总结</strong>：ERC-1363 是对 ERC-20 标准最安全、最成功的演进补丁。它吸取了前辈们的教训，用标准化的 <code>TransferAndCall</code> 解决了双重审批（Approve + Execute）的痛点，允许用户在一笔交易中完成代币转移和调用外部合约逻辑。</p>
 </blockquote>
 <h2 id="section-1">📜 核心元数据与参阅资料 (Metadata &amp; References)</h2><blockquote>
@@ -105,7 +105,7 @@ function _checkOnTransferReceived(address from, address to, uint256 value, bytes
 </ul>
 </li>
 </ul>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/ERC标准/ERC-1046/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-1046</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/漏洞笔记/授权漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">授权漏洞</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>📜 核心元数据与参阅资料 (Metadata &amp; References)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>1. 核心理念与痛点解决 (Core Concept)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>2. 核心接口与数据结构 (Core Interfaces)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">A. 核心状态结构 (State Variables)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">B. 关键机制与底层逻辑 (Core Functions)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">C. 关键事件 (Events)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-7"> <button class="article-outline__group-link" type="button" data-group-target="section-7"> <span>3. 标准业务工作流 (Standard Workflow)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-8"> <button class="article-outline__group-link" type="button" data-group-target="section-8"> <span>4. 关键机制与难点解析 (Key Mechanics)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">A. 核心难点一：如何避免重走 827 借刀杀人的老路？</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-10"> <button class="article-outline__group-link" type="button" data-group-target="section-10"> <span>5. 周边生态与后续演进 (Ecosystem)</span>  </button>  </li> </ol> </div> </nav> </aside> <button class="article-toc-fab" id="article-toc-fab" type="button" aria-expanded="false" aria-controls="article-sidebar" aria-label="切换目录"> <span class="article-toc-fab__icon">☰</span> </button>  </div> </div>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/web3/ERC标准/ERC-1046/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">ERC-1046</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/web3/漏洞笔记/授权漏洞/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">授权漏洞</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>📜 核心元数据与参阅资料 (Metadata &amp; References)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>1. 核心理念与痛点解决 (Core Concept)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>2. 核心接口与数据结构 (Core Interfaces)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">A. 核心状态结构 (State Variables)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">B. 关键机制与底层逻辑 (Core Functions)</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">C. 关键事件 (Events)</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-7"> <button class="article-outline__group-link" type="button" data-group-target="section-7"> <span>3. 标准业务工作流 (Standard Workflow)</span>  </button>  </li><li class="article-outline__group" data-group-id="section-8"> <button class="article-outline__group-link" type="button" data-group-target="section-8"> <span>4. 关键机制与难点解析 (Key Mechanics)</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">A. 核心难点一：如何避免重走 827 借刀杀人的老路？</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-10"> <button class="article-outline__group-link" type="button" data-group-target="section-10"> <span>5. 周边生态与后续演进 (Ecosystem)</span>  </button>  </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
       (() => {
         const root = document.documentElement;
         const scrollFlagKey = "scroll-to-top-once";
@@ -166,33 +166,17 @@ function _checkOnTransferReceived(address from, address to, uint256 value, bytes
       (() => {
         const shell = document.getElementById("article-shell");
         const sidebar = document.getElementById("article-sidebar");
-        const fab = document.getElementById("article-toc-fab");
-        const outlineNav = sidebar?.querySelector(".article-outline__body");
         const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
         const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
         const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
-        const storageKey = "article-outline-open";
 
-        if (!shell || !sidebar || !fab || !outlineNav || !headings.length || !groupLinks.length) return;
+        if (!shell || !sidebar || !outlineNav || !headings.length || !groupLinks.length) return;
 
-        let isOpen = false;
         let activeId = "";
         let activeGroupId = "";
         let manualOpenGroupId = "";
         let ticking = false;
         let suppressOutlineScrollUntil = 0;
-
-        const syncState = () => {
-          shell.classList.toggle("article-shell--toc-expanded", isOpen);
-          shell.classList.toggle("article-shell--toc-collapsed", !isOpen);
-          sidebar.classList.toggle("is-open", isOpen);
-          fab.classList.toggle("is-open", isOpen);
-          fab.setAttribute("aria-expanded", String(isOpen));
-
-          try {
-            localStorage.setItem(storageKey, isOpen ? "1" : "0");
-          } catch {}
-        };
 
         const groupMap = new Map(
           groupLinks.map((link) => {
@@ -246,7 +230,7 @@ function _checkOnTransferReceived(address from, address to, uint256 value, bytes
             group.classList.toggle("is-current", groupId === id && !parentId);
           });
 
-          if (!isOpen || Date.now() < suppressOutlineScrollUntil) return;
+          if (Date.now() < suppressOutlineScrollUntil) return;
 
           const activeLink = [...groupLinks, ...childLinks].find((link) => {
             const href = link.getAttribute("href");
@@ -294,14 +278,6 @@ function _checkOnTransferReceived(address from, address to, uint256 value, bytes
           window.requestAnimationFrame(updateOutline);
         };
 
-        try {
-          isOpen = localStorage.getItem(storageKey) === "1";
-        } catch {
-          isOpen = false;
-        }
-
-        syncState();
-
         groupLinks.forEach((button) => {
           button.addEventListener("click", (event) => {
             event.stopPropagation();
@@ -343,24 +319,6 @@ function _checkOnTransferReceived(address from, address to, uint256 value, bytes
 
             targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
           });
-        });
-
-        fab.addEventListener("click", (event) => {
-          event.stopPropagation();
-          isOpen = !isOpen;
-          syncState();
-        });
-
-        sidebar.addEventListener("click", (event) => {
-          event.stopPropagation();
-        });
-
-        document.addEventListener("keydown", (event) => {
-          if (event.key === "Escape" && isOpen) {
-            isOpen = false;
-            syncState();
-            fab.focus();
-          }
         });
 
         window.addEventListener("scroll", requestUpdate, { passive: true });
