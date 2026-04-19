@@ -5,3 +5,5 @@ public/__published_media/
 src/content/posts/
 src/generated/
 reports/imports/
+.run/*.log
+.run/*.pid
