@@ -86,7 +86,10 @@ async function loadNotes() {
   state.sourceRoot = payload.sourceRoot ?? "";
   state.liveState = payload.liveState && typeof payload.liveState === "object" ? payload.liveState : {};
   state.draftState = Object.fromEntries(
-    state.notes.map((note) => [note.relativePath, { publish: note.draftPublish === true }]),
+    state.notes.map((note) => [note.relativePath, {
+      publish: note.draftPublish === true,
+      customTags: normalizeTagList(note.draftCustomTags),
+    }]),
   );
 
   elements.sourceRoot.textContent = state.sourceRoot || "-";
@@ -134,31 +137,9 @@ function bindEvents() {
         : `已取消当前列表中的 ${filtered.length} 篇笔记选择。`,
     );
   });
-
-  document.querySelector("#clear-selection").addEventListener("click", () => {
-    const count = state.selected.size;
-    state.selected.clear();
-    render();
-    log(count > 0 ? `已清空 ${count} 篇已选笔记。` : "当前没有已选笔记。");
-  });
-
-  document.querySelector("#publish-selected").addEventListener("click", async () => {
-    await applyPublishToSelection(true);
-  });
-  document.querySelector("#unpublish-selected").addEventListener("click", async () => {
-    await applyPublishToSelection(false);
-  });
-  document.querySelector("#save-state").addEventListener("click", saveState);
-  document.querySelector("#preview-state").addEventListener("click", loadPreview);
-  document.querySelector("#build-site").addEventListener("click", () => runAction("/api/actions/build", "构建"));
-  document.querySelector("#check-site").addEventListener("click", () => runAction("/api/actions/check", "检查"));
   document.querySelector("#update-published").addEventListener("click", updatePublishedChanges);
   document.querySelector("#deploy-site").addEventListener("click", () => runAction("/api/actions/deploy", "部署"));
   document.querySelector("#publish-deploy-selected").addEventListener("click", publishAndDeploySelection);
-  document.querySelector("#open-local-home").addEventListener("click", () => openUrl("http://127.0.0.1:4321/"));
-  document.querySelector("#open-live-home").addEventListener("click", () => openUrl("https://ma0xfly.github.io/"));
-  document.querySelector("#open-selected-local").addEventListener("click", () => openSelectedPosts("local"));
-  document.querySelector("#open-selected-live").addEventListener("click", () => openSelectedPosts("live"));
   document.querySelector("#clear-console").addEventListener("click", () => {
     elements.console.textContent = "";
   });
@@ -182,7 +163,7 @@ function getFilteredNotes() {
     }
 
     if (!search) return true;
-    const haystack = `${note.title} ${note.relativePath} ${note.tags.join(" ")}`.toLowerCase();
+    const haystack = `${note.title} ${note.relativePath} ${getEffectiveTags(note).join(" ")}`.toLowerCase();
     return haystack.includes(search);
   });
 }
@@ -224,6 +205,9 @@ function render() {
       const sourceFileName = getSourceFileName(note.relativePath);
       const baseName = stripExtension(sourceFileName);
       const titleAlias = note.title && note.title !== baseName ? note.title : "";
+      const effectiveTags = getEffectiveTags(note);
+      const autoTagSet = new Set(normalizeTagList(note.autoTags).map((tag) => tag.toLocaleLowerCase("zh-CN")));
+      const sourceTagSet = new Set(normalizeTagList(note.sourceTags).map((tag) => tag.toLocaleLowerCase("zh-CN")));
 
       return `
         <tr class="note-row ${selected ? "is-selected" : ""}" data-row-select="${escapeHtml(note.relativePath)}">
@@ -245,7 +229,25 @@ function render() {
             </div>
           </td>
           <td>${escapeHtml(note.directory)}</td>
-          <td>${note.tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}</td>
+          <td>
+            <div class="tag-editor">
+              <div class="tag-list">
+                ${effectiveTags.map((tag) => {
+                  const key = tag.toLocaleLowerCase("zh-CN");
+                  if (autoTagSet.has(key)) {
+                    return `<span class="tag tag-auto" title="目录标签">${escapeHtml(tag)}</span>`;
+                  }
+
+                  if (sourceTagSet.has(key)) {
+                    return `<span class="tag tag-source" title="原始标签">${escapeHtml(tag)}</span>`;
+                  }
+
+                  return `<button class="tag tag-custom" data-remove-tag="${escapeHtml(note.relativePath)}" data-tag-value="${escapeHtml(tag)}" title="删除自定义标签">${escapeHtml(tag)} ×</button>`;
+                }).join("")}
+              </div>
+              <button class="tag-add" data-add-tag="${escapeHtml(note.relativePath)}" type="button">+ 标签</button>
+            </div>
+          </td>
           <td>${formatDate(note.updatedAt)}</td>
         </tr>
       `;
@@ -276,12 +278,30 @@ function render() {
     button.addEventListener("click", async () => {
       const relativePath = button.getAttribute("data-toggle");
       if (!relativePath) return;
-      const current = state.draftState[relativePath]?.publish === true;
-      state.draftState[relativePath] = { publish: !current };
+      const entry = ensureDraftEntry(relativePath);
+      const current = entry.publish === true;
+      entry.publish = !current;
       markDraftDirty();
       render();
       log(`已将 ${relativePath} 设为${!current ? "上线" : "下线"}（已加入自动保存，未部署前不会影响线上）。`);
       await loadPreview();
+    });
+  }
+
+  for (const button of elements.notesBody.querySelectorAll("[data-add-tag]")) {
+    button.addEventListener("click", () => {
+      const relativePath = button.getAttribute("data-add-tag");
+      if (!relativePath) return;
+      addCustomTagsForNote(relativePath);
+    });
+  }
+
+  for (const button of elements.notesBody.querySelectorAll("[data-remove-tag]")) {
+    button.addEventListener("click", () => {
+      const relativePath = button.getAttribute("data-remove-tag");
+      const tag = button.getAttribute("data-tag-value");
+      if (!relativePath || !tag) return;
+      removeCustomTagForNote(relativePath, tag);
     });
   }
 }
@@ -318,26 +338,79 @@ function toggleSelection(relativePath, forceValue) {
   else state.selected.add(relativePath);
 }
 
-async function applyPublishToSelection(publish) {
-  if (state.selected.size === 0) {
-    log("当前没有选中文章。");
+function ensureDraftEntry(relativePath) {
+  const previous = state.draftState[relativePath] && typeof state.draftState[relativePath] === "object"
+    ? state.draftState[relativePath]
+    : { publish: false, customTags: [] };
+
+  state.draftState[relativePath] = {
+    publish: previous.publish === true,
+    customTags: normalizeTagList(previous.customTags),
+  };
+
+  return state.draftState[relativePath];
+}
+
+function getEffectiveTags(note) {
+  return normalizeTagList([
+    ...(Array.isArray(note.sourceTags) ? note.sourceTags : note.tags),
+    ...(Array.isArray(note.autoTags) ? note.autoTags : []),
+    ...((state.draftState[note.relativePath]?.customTags) ?? []),
+  ]);
+}
+
+function addCustomTagsForNote(relativePath) {
+  const entry = ensureDraftEntry(relativePath);
+  const input = window.prompt("输入自定义标签，支持逗号分隔（如：审计,DeFi）", "");
+  if (typeof input !== "string") return;
+
+  const incoming = normalizeTagList(input.split(/[，,]/).map((item) => item.trim()));
+  if (incoming.length === 0) {
+    log("未输入有效标签。",);
     return;
   }
 
-  let changed = 0;
-  for (const relativePath of state.selected) {
-    const current = state.draftState[relativePath]?.publish === true;
-    if (current !== publish) {
-      state.draftState[relativePath] = { publish };
-      changed += 1;
-    }
+  const before = entry.customTags.length;
+  entry.customTags = normalizeTagList([...entry.customTags, ...incoming]);
+  const added = entry.customTags.length - before;
+  if (added <= 0) {
+    log(`未新增标签：${relativePath}（标签可能已存在）`);
+    return;
   }
 
   markDraftDirty();
   render();
-  log(`已将 ${state.selected.size} 篇选中文章设为${publish ? "上线" : "下线"}草稿，其中 ${changed} 篇状态发生变化。`);
-  log(`涉及文件：${[...state.selected].join("，")}`);
-  await loadPreview();
+  log(`已为 ${relativePath} 新增 ${added} 个自定义标签：${incoming.join("，")}`);
+}
+
+function removeCustomTagForNote(relativePath, tag) {
+  const entry = ensureDraftEntry(relativePath);
+  const targetKey = String(tag).trim().toLocaleLowerCase("zh-CN");
+  const next = entry.customTags.filter((item) => item.toLocaleLowerCase("zh-CN") !== targetKey);
+  if (next.length === entry.customTags.length) {
+    return;
+  }
+
+  entry.customTags = next;
+  markDraftDirty();
+  render();
+  log(`已从 ${relativePath} 删除自定义标签：${tag}`);
+}
+
+function normalizeTagList(value) {
+  if (!Array.isArray(value)) return [];
+
+  const seen = new Set();
+  const tags = [];
+  for (const item of value) {
+    const tag = String(item ?? "").trim();
+    if (!tag) continue;
+    const key = tag.toLocaleLowerCase("zh-CN");
+    if (seen.has(key)) continue;
+    seen.add(key);
+    tags.push(tag);
+  }
+  return tags;
 }
 
 function markDraftDirty() {
@@ -532,7 +605,8 @@ async function publishAndDeploySelection() {
   }
 
   for (const relativePath of state.selected) {
-    state.draftState[relativePath] = { publish: true };
+    const entry = ensureDraftEntry(relativePath);
+    entry.publish = true;
   }
 
   markDraftDirty();
@@ -570,32 +644,12 @@ async function publishAndDeploySelection() {
   }
 }
 
-function openSelectedPosts(mode) {
-  if (state.selected.size === 0) {
-    log("当前没有选中文章。");
-    return;
-  }
-
-  const selectedNotes = state.notes.filter((note) => state.selected.has(note.relativePath));
-  selectedNotes.forEach((note) => {
-    const articlePath = note.relativePath.replace(/\.[^.]+$/, "").replace(/\\/g, "/");
-    const url = mode === "local"
-      ? `http://127.0.0.1:4321/posts/${articlePath}/`
-      : `https://ma0xfly.github.io/posts/${articlePath}/`;
-    openUrl(url);
-  });
-}
-
 function getSourceFileName(relativePath) {
   return relativePath.split("/").at(-1) ?? relativePath;
 }
 
 function stripExtension(fileName) {
   return fileName.replace(/\.[^.]+$/, "");
-}
-
-function openUrl(url) {
-  window.open(url, "_blank", "noopener,noreferrer");
 }
 
 function log(message) {

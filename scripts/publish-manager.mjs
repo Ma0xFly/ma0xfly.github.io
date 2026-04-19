@@ -216,12 +216,22 @@ async function buildNotesPayload() {
       const meta = await readNoteMeta(config, relativePath);
       const draftPublish = draftState.notes?.[relativePath]?.publish === true;
       const livePublish = liveState.notes?.[relativePath]?.publish === true;
+      const draftCustomTags = normalizeTagList(draftState.notes?.[relativePath]?.customTags);
+      const liveCustomTags = normalizeTagList(liveState.notes?.[relativePath]?.customTags);
+      const autoTags = getDirectoryTags(relativePath);
+      const sourceTags = normalizeTagList(meta.tags);
+      const mergedTags = mergeTags(sourceTags, autoTags, draftCustomTags);
       return {
         ...meta,
+        tags: mergedTags,
+        sourceTags,
+        autoTags,
+        draftCustomTags,
+        liveCustomTags,
         publish: draftPublish,
         draftPublish,
         livePublish,
-        pendingDeploy: draftPublish !== livePublish,
+        pendingDeploy: draftPublish !== livePublish || !isSameTagList(draftCustomTags, liveCustomTags),
       };
     }),
   );
@@ -282,6 +292,7 @@ async function publishAndDeploy(body) {
   const beforeState = await buildNotesPayload();
 
   await savePublishState(nextState);
+  await syncDistMainBeforeBuild();
 
   const buildResult = await runNpmScript("build");
   if (!buildResult.ok) {
@@ -325,6 +336,7 @@ async function deployCurrentDraft() {
   const config = await loadPublishingConfig();
   const notePaths = await scanSourceNotes(config);
   const previousLiveState = await loadLiveState(config, notePaths);
+  await syncDistMainBeforeBuild();
 
   const buildResult = await runNpmScript("build");
   if (!buildResult.ok) {
@@ -438,6 +450,8 @@ async function updatePublishedChanges() {
     };
   }
 
+  await syncDistMainBeforeBuild();
+
   const buildResult = await runNpmScript("build");
   if (!buildResult.ok) {
     return buildResult;
@@ -475,6 +489,7 @@ async function syncLiveStateFromGeneratedOutput(timestamp = new Date().toISOStri
   const config = await loadPublishingConfig();
   const notePaths = await scanSourceNotes(config);
   const liveState = await loadLiveState(config, notePaths);
+  const draftState = await loadPublishState(config, notePaths);
   const publishedManifest = await readPublishedManifest();
   const liveSourceSet = new Set(
     (publishedManifest.publishedPosts ?? [])
@@ -496,6 +511,7 @@ async function syncLiveStateFromGeneratedOutput(timestamp = new Date().toISOStri
         publish: false,
         syncedHash: null,
         syncedAt: null,
+        customTags: normalizeTagList(draftState.notes?.[relativePath]?.customTags),
       };
       continue;
     }
@@ -505,6 +521,7 @@ async function syncLiveStateFromGeneratedOutput(timestamp = new Date().toISOStri
       publish: true,
       syncedHash: await computeNoteSyncFingerprint(config, relativePath),
       syncedAt: timestamp,
+      customTags: normalizeTagList(draftState.notes?.[relativePath]?.customTags),
     };
   }
 
@@ -731,6 +748,49 @@ async function ensureDistRepo(targetDistDir) {
   }
 }
 
+async function syncDistMainBeforeBuild() {
+  await ensureDistRepo(distDir);
+  await cleanupDistLock();
+
+  await runGit(["checkout", "main"], {
+    allowFailure: true,
+    retries: 0,
+  });
+
+  const dirtyStatus = await runGit(["status", "--porcelain"], {
+    allowFailure: true,
+    retries: 0,
+  });
+  if (dirtyStatus.ok && dirtyStatus.stdout.trim()) {
+    throw new Error("dist working tree is not clean before build. Please commit or discard local dist changes first.");
+  }
+
+  const fetchResult = await runGit(["fetch", "origin", "main"], {
+    allowFailure: true,
+    retries: 1,
+  });
+  if (!fetchResult.ok) {
+    return;
+  }
+
+  const hasRemoteMain = await runGit(["rev-parse", "--verify", "refs/remotes/origin/main"], {
+    allowFailure: true,
+    retries: 0,
+  });
+  if (!hasRemoteMain.ok) {
+    return;
+  }
+
+  const pullResult = await runGit(["pull", "--rebase", "origin", "main"], {
+    allowFailure: true,
+    retries: 0,
+  });
+  if (!pullResult.ok) {
+    const output = `${pullResult.stdout}\n${pullResult.stderr}`.trim();
+    throw new Error(`git pull --rebase origin main failed before build:\n${output}`);
+  }
+}
+
 async function runNpmScript(scriptName) {
   return runCommand("cmd.exe", ["/c", "npm", "run", scriptName], rootDir, {
     maxBuffer: 32 * 1024 * 1024,
@@ -893,6 +953,7 @@ function mergeDraftNotesIntoState(currentState, draftNotes) {
       publish: draftEntry?.publish === true,
       syncedHash: previous.syncedHash ?? null,
       syncedAt: previous.syncedAt ?? null,
+      customTags: normalizeTagList(draftEntry?.customTags ?? previous.customTags),
     };
   }
 
@@ -904,6 +965,39 @@ function createManagerSession() {
     token: randomUUID(),
     expiresAt: Date.now() + sessionTtlMs,
   };
+}
+
+function getDirectoryTags(relativePath) {
+  const directory = relativePath.includes("/") ? relativePath.slice(0, relativePath.lastIndexOf("/")) : "";
+  if (!directory || directory === ".") return [];
+  return normalizeTagList(directory.split("/").map((segment) => segment.trim()));
+}
+
+function normalizeTagList(value) {
+  if (!Array.isArray(value)) return [];
+
+  const seen = new Set();
+  const tags = [];
+  for (const item of value) {
+    const tag = String(item ?? "").trim();
+    if (!tag) continue;
+    const key = tag.toLocaleLowerCase("zh-CN");
+    if (seen.has(key)) continue;
+    seen.add(key);
+    tags.push(tag);
+  }
+  return tags;
+}
+
+function mergeTags(...groups) {
+  return normalizeTagList(groups.flatMap((group) => group ?? []));
+}
+
+function isSameTagList(left, right) {
+  const leftNorm = normalizeTagList(left);
+  const rightNorm = normalizeTagList(right);
+  if (leftNorm.length !== rightNorm.length) return false;
+  return leftNorm.every((tag, index) => tag === rightNorm[index]);
 }
 
 function readManagerSessionToken(req) {

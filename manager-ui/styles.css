@@ -398,6 +398,41 @@ input[type="checkbox"] {
   font-size: 0.82rem;
 }
 
+.tag-editor {
+  display: grid;
+  gap: 8px;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tag-auto {
+  background: rgba(45, 41, 38, 0.08);
+  color: var(--ink);
+}
+
+.tag-source {
+  background: rgba(159, 86, 52, 0.14);
+  color: var(--accent);
+}
+
+button.tag-custom {
+  border: 1px solid rgba(159, 86, 52, 0.25);
+  background: #fff;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.tag-add {
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  background: #fff;
+  width: fit-content;
+}
+
 .status {
   min-width: 84px;
 }

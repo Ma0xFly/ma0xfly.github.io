@@ -133,7 +133,12 @@ async function processNote({ absoluteNotePath, sourcePath, slug, mode, published
   const resolvedUpdated = normalizedFrontmatter.updated
     ? resolveDateValue(normalizedFrontmatter.updated, fileInfo.mtime, "updated", warnings)
     : null;
-  const resolvedTags = normalizeTagsInput(normalizedFrontmatter.tags, warnings);
+  const sourceTags = normalizeTagsInput(normalizedFrontmatter.tags, warnings);
+  const autoTags = mode === "external" ? getDirectoryTagsFromSourcePath(sourcePath) : [];
+  const customTags = mode === "external"
+    ? normalizeTags(publishState.notes?.[sourcePath]?.customTags)
+    : [];
+  const resolvedTags = mergeTags(sourceTags, autoTags, customTags);
   const resolvedSummary = resolveSummary(normalizedFrontmatter.summary, parsed.content, warnings);
 
   if (mode === "local" && typeof normalizedFrontmatter.publish !== "boolean") {
@@ -329,6 +334,27 @@ function isExternalAsset(value) {
 
 function normalizeTags(tags) {
   return Array.isArray(tags) ? tags.map((tag) => String(tag).trim()).filter(Boolean) : [];
+}
+
+function mergeTags(...groups) {
+  const seen = new Set();
+  const merged = [];
+  for (const group of groups) {
+    for (const tag of normalizeTags(group)) {
+      const key = tag.toLocaleLowerCase("zh-CN");
+      if (seen.has(key)) continue;
+      seen.add(key);
+      merged.push(tag);
+    }
+  }
+  return merged;
+}
+
+function getDirectoryTagsFromSourcePath(sourcePath) {
+  const normalized = toPosix(sourcePath);
+  const directory = normalized.includes("/") ? normalized.slice(0, normalized.lastIndexOf("/")) : "";
+  if (!directory || directory === ".") return [];
+  return normalizeTags(directory.split("/").map((segment) => segment.trim()));
 }
 
 function normalizeTagsInput(tags, warnings) {

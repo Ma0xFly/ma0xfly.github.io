@@ -121,6 +121,7 @@ async function loadStateFile(targetPath, config, notePaths, options) {
           : (options.useLegacyDefault ? isLegacyPublished(relativePath, config.legacyPublishedRoots) : false),
         syncedHash: null,
         syncedAt: null,
+        customTags: [],
       };
       changed = true;
       continue;
@@ -456,6 +457,7 @@ function normalizeStateEntry(entry) {
       publish: entry,
       syncedHash: null,
       syncedAt: null,
+      customTags: [],
     };
   }
 
@@ -467,13 +469,31 @@ function normalizeStateEntry(entry) {
     publish: entry.publish === true,
     syncedHash: typeof entry.syncedHash === "string" && entry.syncedHash.trim() ? entry.syncedHash.trim() : null,
     syncedAt: typeof entry.syncedAt === "string" && entry.syncedAt.trim() ? entry.syncedAt.trim() : null,
+    customTags: normalizeTagList(entry.customTags),
   };
 }
 
 function isSameStateEntry(left, right) {
   return left?.publish === right?.publish &&
     left?.syncedHash === right?.syncedHash &&
-    left?.syncedAt === right?.syncedAt;
+    left?.syncedAt === right?.syncedAt &&
+    JSON.stringify(left?.customTags ?? []) === JSON.stringify(normalizeTagList(right?.customTags));
+}
+
+function normalizeTagList(value) {
+  if (!Array.isArray(value)) return [];
+
+  const seen = new Set();
+  const tags = [];
+  for (const item of value) {
+    const tag = String(item ?? "").trim();
+    if (!tag) continue;
+    const key = tag.toLocaleLowerCase("zh-CN");
+    if (seen.has(key)) continue;
+    seen.add(key);
+    tags.push(tag);
+  }
+  return tags;
 }
 
 function isExternalUrl(value) {
