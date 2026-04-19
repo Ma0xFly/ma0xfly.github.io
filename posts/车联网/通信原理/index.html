@@ -1,0 +1,363 @@
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>通信原理 | 沉于思，录以隙</title><meta name="description" content="# 无线电波 电磁波谱 ## 性质 L=ft **振幅：**指的是波的波动幅度 往往能量越大振幅越高 表现出来的信号强度就越高 **波长：**是波在一个振动周期传播的距离 （波长变在几公里到几米的范围 频率随之变成3000Hz 到100MHz 就变成了FM广播和AM广播的无线电波"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">车联网</p> <h1 class="post-cover-hero__title">通信原理</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/车联网/" class="directory-link">车联网</a>   </div> <div class="article-meta-row"> <span>2026/4/20</span> <span>车联网</span> <span>车联网</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/车联网/" class="tag">#车联网</a> </div> <p class="source-note">来源路径：车联网/通信原理.md</p> </header> <div class="article-main"> <div class="article-content"><h1>无线电波</h1><p>电磁波谱</p>
+<p><img src="../../%E5%9B%BE%E5%BA%93/image-20250527170931385.png" alt="image-20250527170931385"></p>
+<h2 id="section-1">性质</h2><p>L=ft</p>
+<p>**振幅：**指的是波的波动幅度 往往能量越大振幅越高 表现出来的信号强度就越高 </p>
+<p>**波长：**是波在一个振动周期传播的距离 </p>
+<p>（波长变在几公里到几米的范围 频率随之变成3000Hz 到100MHz  就变成了FM广播和AM广播的无线电波 半米左右到10厘米左右的波长 就是我们现在的4G风格网络的无线电波 变成波长12厘米 对应的是2.4GHz的电磁波 和6厘米对应的是5GHz的电磁波 2.4和5GHz的电磁波 就是我们常用的WiFi的无线电波）</p>
+<p>**频率:**指的是波的周期 一秒钟通过一个完整的波长 就是一个Hz 1000赫就是一秒钟通过1000个波长 1兆赫就是100万赫兹 1GHz就是10亿赫兹 </p>
+<ul>
+<li><strong>1 Hz = 1 次/秒</strong></li>
+<li><strong>1 MHz = 1,000,000 Hz（百万赫兹）</strong></li>
+<li><strong>1 GHz = 1,000,000,000 Hz（十亿赫兹）</strong></li>
+</ul>
+<p>**速度：**电磁波在真空中以光速传播 在空气界之中会稍微慢一点点 但是依然很接近光速 </p>
+<p>（超低频 如说3赫兹的电磁波的波长能长达10万公里 虽然说尺度很大 但是请电磁波是以光速传播的 即便是10万公里的波长 一秒钟传播的距离仍然能达到30万公里 ，即10万公里长的波长的电磁波一秒钟也能传播三个波播的距离）</p>
+<p>举个形象的例子：</p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>类比于马路</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>频率</td>
+<td>汽车行驶速度（振动快慢）</td>
+</tr>
+<tr>
+<td>频段</td>
+<td>哪条街道（某段范围）</td>
+</tr>
+<tr>
+<td>带宽</td>
+<td>马路有多宽（车道数）</td>
+</tr>
+<tr>
+<td>信道</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="section-2">频段（Band）</h2><p><strong>定义：</strong>
+ 频段就是一段特定范围的频率，像“2.4GHz~2.5GHz”这样的区间，叫做一个“频段”。</p>
+<p>常见的无线频段：</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>频段范围</th>
+<th>应用举例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2.4GHz</td>
+<td>2.400–2.4835GHz</td>
+<td>WiFi、蓝牙、微波炉</td>
+</tr>
+<tr>
+<td>5GHz</td>
+<td>5.150–5.825GHz</td>
+<td>WiFi（高速）</td>
+</tr>
+<tr>
+<td>868/915MHz</td>
+<td>~868MHz/915MHz</td>
+<td>LoRa、Zigbee等低功耗设备</td>
+</tr>
+<tr>
+<td>24GHz、60GHz</td>
+<td>更高频段</td>
+<td>雷达、高速WiFi等</td>
+</tr>
+</tbody></table>
+<p>注意：不同频段有不同的穿透能力、距离、速度。2.4GHz 穿墙强但速度慢，5GHz 速度快但穿墙差。</p>
+<p>蓝牙工作的波长范围为［120.7mm - 124.9mm］。波长（λ）和频率（f）之间的转换可以使用公式：波长 = 光速（c）/ 频率。即：<strong>λ = c / f</strong>
+其中，光速 c 约为 299，792，458 米每秒（m/s）。
+ 所以蓝牙的工作最高频率为： <strong>f = c / λ = 299，792，458 m/s / （120.7 x 10^-3 m） ≈2.487GHz</strong>
+最低工作频率为：  <strong>f = c / λ = 299，792，458 m/s / （124.9 x 10^-3 m） ≈2.40GHz</strong>
+ 所以，蓝牙的工作频段为［<strong>2.4GHz ~ 2.48GHz</strong>］。</p>
+<h2 id="section-3">频率（Frequency）</h2><h3 id="section-4"><strong>定义：</strong></h3><p>指的是波的周期 一秒钟通过一个完整的波长 就是一个Hz 1000赫就是一秒钟通过1000个波长 1兆赫就是100万赫兹 1GHz就是10亿赫兹 </p>
+<p> 频率是指<strong>一个信号每秒震动（振荡）的次数</strong>。单位是赫兹（Hz）。</p>
+<ul>
+<li><strong>1 Hz = 1 次/秒</strong></li>
+<li><strong>1 MHz = 1,000,000 Hz（百万赫兹）</strong></li>
+<li><strong>1 GHz = 1,000,000,000 Hz（十亿赫兹）</strong></li>
+</ul>
+<p>假如你甩绳子甩得越快，那绳子振动得越密，就是频率越高。无线电信号也是一样——每秒振动得越快，频率越高。</p>
+<h2 id="section-5">带宽（Band width）</h2><h3 id="section-6"><strong>定义：</strong></h3><p> 带宽是指某个频段内可以使用的“频率宽度”，也可以理解为<strong>一条路有多宽</strong>。一个频段中真正用于通信的一小段频率</p>
+<hr>
+<h3 id="section-7">应用举例（WiFi 的带宽）：</h3><ul>
+<li>2.4GHz WiFi 每个信道带宽通常是 20MHz</li>
+<li>5GHz WiFi 可以用 20、40、80、160MHz<ul>
+<li>带宽越大，一次传输的数据越多，速度越快</li>
+<li>但带宽大了，越容易干扰、覆盖距离也可能变短</li>
+</ul>
+</li>
+</ul>
+<h2 id="section-8">信道 （Channel）</h2><h3 id="section-9"><strong>定义：</strong></h3><p> 信道是从一个频段中划分出的一小段带宽，用来进行通信。
+ 它是“通信的专属小路”或“小车道”。</p>
+<hr>
+<h3 id="section-10">类比理解：</h3><ul>
+<li><strong>频段</strong> = 整条高速公路（比如 2.4GHz ~ 2.5GHz）</li>
+<li><strong>带宽</strong> = 每条车道的宽度（比如 20MHz）</li>
+<li><strong>信道</strong> = 在公路上划出来的一条车道（比如 2.412GHz ~ 2.432GHz）</li>
+</ul>
+<h3 id="section-11">举个 WiFi 的例子</h3><p>WiFi 2.4GHz 频段信道划分：</p>
+<ul>
+<li>整个频段是：<strong>2.400 GHz ~ 2.4835 GHz</strong></li>
+<li>每个信道占：<strong>20 MHz</strong></li>
+<li>中心频率从 <strong>信道1（2.412GHz）</strong> 一直到 <strong>信道13（2.472GHz）</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>信道编号</th>
+<th>中心频率</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>2.412 GHz</td>
+</tr>
+<tr>
+<td>2</td>
+<td>2.417 GHz</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr>
+<td>6</td>
+<td>2.437 GHz</td>
+</tr>
+<tr>
+<td>11</td>
+<td>2.462 GHz</td>
+</tr>
+<tr>
+<td>13</td>
+<td>2.472 GHz</td>
+</tr>
+</tbody></table>
+<p>💡<strong>问题：这么多信道会重叠！怎么办？</strong>
+ 所以实际使用中，一般推荐选 <strong>1、6、11</strong> 这三个“非重叠信道”。</p>
+<h3 id="section-12">蓝牙的信道（也在2.4GHz）</h3><p>蓝牙经典/低功耗（BLE）也用 2.4GHz，但和 WiFi 不一样：</p>
+<ul>
+<li>它划分了 <strong>79 个信道（每个1MHz）</strong>，范围在 2.402 ~ 2.480 GHz</li>
+<li>BLE（低功耗蓝牙）使用 <strong>40 个信道</strong>，每个宽 <strong>2 MHz</strong></li>
+<li>蓝牙通信时会“<strong>跳频</strong>”：每隔一段时间换一个信道，避免干扰！</li>
+</ul>
+<hr>
+<h3 id="section-13">为什么信道重要？</h3><p>信道让多个设备可以在同一个频段下：</p>
+<ul>
+<li><strong>同时通信</strong>（像多个车道并行，而不是挤在一条道上相互干扰）</li>
+<li><strong>避免冲突</strong>（互不干扰）</li>
+<li><strong>提高频谱利用率</strong>（不浪费频率资源）</li>
+</ul>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/车联网/MQTT协议简介/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">MQTT协议简介</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/车联网/ble/蓝牙协议栈/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">蓝牙协议栈</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>性质</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>频段（Band）</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>频率（Frequency）</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-4"> <a href="#section-4">定义：</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-5"> <button class="article-outline__group-link" type="button" data-group-target="section-5"> <span>带宽（Band width）</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">定义：</a> </li><li class="article-outline__item depth-3" data-toc-id="section-7"> <a href="#section-7">应用举例（WiFi 的带宽）：</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-8"> <button class="article-outline__group-link" type="button" data-group-target="section-8"> <span>信道 （Channel）</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-9"> <a href="#section-9">定义：</a> </li><li class="article-outline__item depth-3" data-toc-id="section-10"> <a href="#section-10">类比理解：</a> </li><li class="article-outline__item depth-3" data-toc-id="section-11"> <a href="#section-11">举个 WiFi 的例子</a> </li><li class="article-outline__item depth-3" data-toc-id="section-12"> <a href="#section-12">蓝牙的信道（也在2.4GHz）</a> </li><li class="article-outline__item depth-3" data-toc-id="section-13"> <a href="#section-13">为什么信道重要？</a> </li> </ol> </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
+      (() => {
+        const root = document.documentElement;
+        const scrollFlagKey = "scroll-to-top-once";
+
+        const bindScrollReset = () => {
+          try {
+            if ("scrollRestoration" in history) {
+              history.scrollRestoration = "manual";
+            }
+
+            if (sessionStorage.getItem(scrollFlagKey) === "1") {
+              sessionStorage.removeItem(scrollFlagKey);
+              requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
+            }
+          } catch {}
+
+          document.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest("a");
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            if (link.target && link.target !== "_self") return;
+            if (link.hasAttribute("download")) return;
+
+            const href = link.getAttribute("href");
+            if (!href || href.startsWith("#")) return;
+
+            try {
+              const url = new URL(link.href, window.location.href);
+              if (url.origin !== window.location.origin) return;
+              if (url.pathname === window.location.pathname && url.hash) return;
+              sessionStorage.setItem(scrollFlagKey, "1");
+            } catch {}
+          });
+        };
+
+        bindScrollReset();
+      })();
+    </script> </body> </html>  <script>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const outlineNav = document.querySelector(".article-outline__body");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+
+        if (!shell || !sidebar || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>
