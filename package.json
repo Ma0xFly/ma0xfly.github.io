@@ -1,0 +1,28 @@
+{
+  "name": "personal-blog",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "clean:output": "node ./scripts/clean-output.mjs",
+    "prepare:content": "node ./scripts/prepare-content.mjs",
+    "manager": "node ./scripts/publish-manager.mjs",
+    "predev": "npm run clean:output && npm run prepare:content",
+    "dev": "astro dev",
+    "prebuild": "npm run clean:output && npm run prepare:content",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "astro": "^5.7.11",
+    "fast-glob": "^3.3.3",
+    "gray-matter": "^4.0.3",
+    "marked": "^15.0.12",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.8",
+    "typescript": "^5.8.3"
+  }
+}

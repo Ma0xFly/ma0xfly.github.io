@@ -1,0 +1,46 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getTagDescription } from "../../config/tags";
+import posts, { type GeneratedPost } from "../../utils/posts";
+import { postPath } from "../../utils/routing";
+
+export async function getStaticPaths() {
+  const tags = [...new Set(posts.flatMap((post) => post.tags))];
+
+  return tags.map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: posts
+        .filter((post: GeneratedPost) => post.tags.includes(tag))
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+    },
+  }));
+}
+
+const { tag, posts: tagPosts } = Astro.props as { tag: string; posts: GeneratedPost[] };
+const description = getTagDescription(tag);
+---
+
+<BaseLayout title={`${tag} | 标签浏览`}>
+  <a href="/tags" class="back-link">&larr; 返回标签列表</a>
+
+  <section class="garden-section hero">
+    <h1>#{tag}</h1>
+    <p class="lead">{description} 该标签下共收录 {tagPosts.length} 篇已公开文章。</p>
+  </section>
+
+  <section class="garden-section">
+    <div class="post-list">
+      {tagPosts.map((post) => (
+        <a href={postPath(post)} class="post-row">
+          <span class="date">{new Date(post.date).toLocaleDateString("zh-CN").replace(/\//g, "-")}</span>
+          <div>
+            <h3 class="title">{post.title}</h3>
+            <p class="row-meta">{post.summary}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

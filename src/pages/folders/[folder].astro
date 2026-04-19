@@ -1,0 +1,45 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import posts, { type GeneratedPost } from "../../utils/posts";
+import { postPath } from "../../utils/routing";
+
+export async function getStaticPaths() {
+  const getTopLevel = (sourceNote: string) => sourceNote.split("/")[0] || "未分类";
+  const folders = [...new Set(posts.map((post) => getTopLevel(post.sourceNote)))];
+
+  return folders.map((folder) => ({
+    params: { folder },
+    props: {
+      folder,
+      posts: posts
+        .filter((post: GeneratedPost) => getTopLevel(post.sourceNote) === folder)
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+    },
+  }));
+}
+
+const { folder, posts: folderPosts } = Astro.props as { folder: string; posts: GeneratedPost[] };
+---
+
+<BaseLayout title={`${folder} | 目录浏览`}>
+  <a href="/folders" class="back-link">&larr; 返回目录列表</a>
+
+  <section class="garden-section hero">
+    <h1>{folder}</h1>
+    <p class="lead">该目录下共收录 {folderPosts.length} 篇已公开文章。</p>
+  </section>
+
+  <section class="garden-section">
+    <div class="post-list">
+      {folderPosts.map((post) => (
+        <a href={postPath(post)} class="post-row">
+          <span class="date">{new Date(post.date).toLocaleDateString("zh-CN").replace(/\//g, "-")}</span>
+          <div>
+            <h3 class="title">{post.title}</h3>
+            <p class="row-meta">{post.tags.length > 0 ? post.tags.join(" · ") : "无标签"}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

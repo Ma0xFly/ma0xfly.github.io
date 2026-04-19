@@ -1,0 +1,869 @@
+{
+  "notes": {
+    "web3/SpeedrunEthereum.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "车联网/车机渗透思路.md": {
+      "publish": true,
+      "syncedHash": "ce3c1c3503f4ac49e9075b20a4538f49911d97f6",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "车联网/车联网安全概述.md": {
+      "publish": true,
+      "syncedHash": "cff225a54ecd1572fc7310ec251b40c0d453355e",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "车联网/车联网ctf.md": {
+      "publish": true,
+      "syncedHash": "cf7910c268248b55de7cec2ae32efc8a275872fd",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "车联网/硬件.md": {
+      "publish": true,
+      "syncedHash": "ae464908b1dc86dfa5820acf0c5d0ae7d4defe69",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "车联网/整车检测.md": {
+      "publish": true,
+      "syncedHash": "f2dd688d767b893faea2610a170008ba0860b42e",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "车联网/职业分享.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "二进制/安卓逆向/安卓.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "二进制/安卓逆向/JAVA.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "二进制/iot/路由器/异架构.md": {
+      "publish": true,
+      "syncedHash": "cfd3afd0395a33ac0b7e817323d94b1ed2b13493",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "二进制/iot/路由器/dir-815.md": {
+      "publish": true,
+      "syncedHash": "f76b1ad40229dc776713f1627e7c5e474e519b2d",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "二进制/iot/路由器/dir823g.md": {
+      "publish": true,
+      "syncedHash": "f968a686481f014cd85c976d5e6dbc757bcdfb9f",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "二进制/iot/通信原理.md": {
+      "publish": true,
+      "syncedHash": "09b3d87c84fb6e7ebe9c98d9279b39b6a634bb15",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "二进制/iot/ble/蓝牙灯泡重放攻击.md": {
+      "publish": true,
+      "syncedHash": "9092c8de0257b7f309b8b8f7c73d340f2c931e15",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "二进制/iot/ble/蓝牙协议栈.md": {
+      "publish": true,
+      "syncedHash": "17458c7bb7d18ddc05c1e085977a5569856d9ad5",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "二进制/iot/ble/blectf.md": {
+      "publish": true,
+      "syncedHash": "6c5ed4a68302ba71b4a6bc2657aaa494f6e269d9",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "二进制/iot/ble/gatt协议.md": {
+      "publish": true,
+      "syncedHash": "0a0039a36382bb9034018e35119475289a94671b",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "二进制/iot/iot_ctf.md": {
+      "publish": true,
+      "syncedHash": "3ad9bf949338e2c0fae0d22309a4df43e675e77a",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "二进制/iot/MQTT协议简介.md": {
+      "publish": true,
+      "syncedHash": "36388fc902237c3fe066002a0af2ff6c9d1e1a0c",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "二进制/iot/RFID/gps汇报.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "二进制/iot/RFID/gps欺骗.md": {
+      "publish": true,
+      "syncedHash": "8b2a27c95984a74e3be2fd300406b5d4f2fb94ea",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "二进制/iot/RFID/RFID.md": {
+      "publish": true,
+      "syncedHash": "f7958ba5b52e5f8d8dbe91ac05dbd054db4f74ca",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "二进制/iot/wifi.md": {
+      "publish": true,
+      "syncedHash": "c032bfad6346792145c57300e63ca7212defd691",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "二进制/js逆向/爬虫.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "二进制/js逆向/Scrape Center挑战.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "二进制/pwn/常用快捷键和指令.md": {
+      "publish": true,
+      "syncedHash": "15f817f6f8791fb7340f5cfd4e7fbbba04e8ab55",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "二进制/pwn/出题步骤.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "二进制/pwn/堆.md": {
+      "publish": true,
+      "syncedHash": "356a64c668e118edc48fa4af20824159c474cf8c",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "二进制/pwn/高版本libc堆fd指针绕过.md": {
+      "publish": true,
+      "syncedHash": "7d7d6c8869f40deee35d61c1cf00f21b0dc712b8",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "二进制/pwn/栈漏洞.md": {
+      "publish": true,
+      "syncedHash": "8e898f1e4566d1ac1d0f2b0024a1b6ed495ac17b",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "二进制/pwn/awd.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "二进制/pwn/GLibcHeap.md": {
+      "publish": true,
+      "syncedHash": "e0dd5f276d7ce62780f0ffeb4ba1a00faafde5be",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "二进制/pwn/pwn入门知识.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "二进制/pwn/WSL_PWN环境搭建 .md": {
+      "publish": true,
+      "syncedHash": "582519185b27e739200cc9f3e52e4c44c84286d3",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "二进制/re/工具及快捷键.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "二进制/re/re.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "计算机基础/计算机网络.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "计算机基础/计算机组成.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "计算机基础/docker.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "金融学习计划.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "面试/简历.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "面试/面经.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "模板/python代码块.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "模板/solidity代码框.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "生活杂技/吃穿住/出差.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "生活杂技/吃穿住/省钱秘笈.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "生活杂技/吃穿住/衣服鞋子.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "生活杂技/吃穿住/医.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "生活杂技/吃穿住/租房.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "生活杂技/读书随笔.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "生活杂技/礼物.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "生活杂技/生活习惯/时间管理.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "生活杂技/生活习惯/心态.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "生活杂技/生活习惯/休闲指南.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "生活杂技/生活习惯/养生.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "生活杂技/生活习惯/养生实践.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "生活杂技/信息检索.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "生活杂技/应试速成方法.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "生活杂技/与子入矛盾处理指南.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "生活杂技/AI使用指南.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "未来规划/未命名.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "未来规划/web3学习路径.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "未命名.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "英语学习.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/大一下暑假任务.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/为辰信安/一汽.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/为辰信安/长城pki/ADC.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/为辰信安/长城pki/hut.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/为辰信安/长城pki/tbox.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/为辰信安/长城pki/zcu.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/为辰信安/ccm.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/为辰信安/dfrc tcu.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/病毒/病毒.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/病毒/病毒原理复习.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/病毒/大题.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/病毒/卷子.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/病毒/选填.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/代码审计.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/工程实践.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/汇编.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/基于CS模式、RSA和MD5的气象监测数据防篡改工具.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/计算机组成.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/计组.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/讲课.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/科目 二.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/科目四.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/毛概.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/密码复习.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/数据结构.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/数据库.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/网络攻防.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/线分类法.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/演示.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/PHP.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/python.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/task/task1.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/学校/task/task2.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/AI扫盲.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "杂项/Linux指令和工具.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "职业规划.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "Git 使用指南.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/代理模式/代理模式是什么.md": {
+      "publish": true,
+      "syncedHash": "53eabe4a37306bd30429752ee568a403374145c3",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/代理模式/Diamond_Proxy.md": {
+      "publish": true,
+      "syncedHash": "02a5d6c544a2314a67f4817ec4567b81d4dc8dea",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/代理模式/Transparent_Proxy.md": {
+      "publish": true,
+      "syncedHash": "49680ee53d74f02b3efb86bf363f0536fcbd4dcd",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/代理模式/UUPS_Proxy.md": {
+      "publish": true,
+      "syncedHash": "baa0e02b2b1742b0f9812f1ccaa704dc82a907fb",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/工具.md": {
+      "publish": true,
+      "syncedHash": "12f131673a5cb71b18c12857686cddc071ba6d17",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/合约审计/审计思路与常见合约设计.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/合约审计/以太航员挑战.md": {
+      "publish": true,
+      "syncedHash": "52b076b5d3b9320f6e5cf06ec936cad6dbf46e1f",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/开发框架.md": {
+      "publish": true,
+      "syncedHash": "ca3e5445bc46a91560cabd798b02ea9b37c09a8a",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/漏洞笔记/经典重入漏洞.md": {
+      "publish": true,
+      "syncedHash": "80f4e92acfa368035b2292e0f0dbfef8b9b6f21f",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/漏洞笔记/拒绝服务攻击漏洞.md": {
+      "publish": true,
+      "syncedHash": "f252d8800e5e0e52922c3890c4c39ee5939d2b1d",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/漏洞笔记/闪电贷攻击.md": {
+      "publish": true,
+      "syncedHash": "5df92a5ac3ff1cbbc2c4dcabefc233731ef69fb1",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/漏洞笔记/授权漏洞.md": {
+      "publish": true,
+      "syncedHash": "7a8d379bd3bb9539cb608b9bde8091f64c384330",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/漏洞笔记/预言机操纵漏洞.md": {
+      "publish": true,
+      "syncedHash": "a17deb52780aadecb390ebaa77f2d33e14d31e7a",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/漏洞笔记/整型溢出与精度计算漏洞.md": {
+      "publish": true,
+      "syncedHash": "38b228e07543872b2d9644ef49a7af7e4bb1b890",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/漏洞笔记/Curve只读重入漏洞.md": {
+      "publish": true,
+      "syncedHash": "56eee35409ec250c2fd073ed4192545a495cbe85",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/漏洞笔记/Delegatecall调用陷阱漏洞.md": {
+      "publish": true,
+      "syncedHash": "db5b80b86edc33eb0d8f4fed860cb8440d7a804f",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/漏洞笔记/TWAP操纵漏洞.md": {
+      "publish": true,
+      "syncedHash": "b0541f3ec63db0182de97a9395f2ba8ed79f4711",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/面试/面试高频清单.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/面试/面试计划.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/面试/面试题卡.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/面试/面试项目资料源/blocksec面经.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/面试/面试项目资料源/euler/audit_notes.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/面试/面试项目资料源/euler/README.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/面试/面试项目资料源/euler/REPRO_SUMMARY.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/面试/面试项目资料源/jd_bitslab.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/面试/面试项目资料源/memscan/面试准备.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/面试/面试项目资料源/sentiment/audit_notes.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/面试/面试项目资料源/sentiment/README.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/面试/ai模拟面试/1-1.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/面试/ai模拟面试/1-2.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/面试/ai模拟面试/1-3.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/面试/ai模拟面试/1-4.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/面试/ai模拟面试/2-1.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/面试/ai模拟面试/2-2.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/面试/ai模拟面试/2-3.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/面试/ai模拟面试/面试题卡-Voice题目版.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/面试/ai模拟面试/GPT Voice模拟面试提示词.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/面试/ai模拟面试/jd_bitslab.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/区块链技术原理/比特币基础.md": {
+      "publish": true,
+      "syncedHash": "eb724dd601cf5e5766a624ebc1c18d6723e80ba9",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/区块链技术原理/钱包.md": {
+      "publish": true,
+      "syncedHash": "6676554bce834801c4c06339418d32f8a3d60adf",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/区块链技术原理/以太坊（世界计算机）.md": {
+      "publish": true,
+      "syncedHash": "4a686e0911a1c38b0809f887e1f8d181715e392b",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/区块链技术原理/web3常见术语.md": {
+      "publish": true,
+      "syncedHash": "5174fa9d7bb034fc52649281eb2a606a9179db5d",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/区块链技术原理/web3基础概念与实际意义.md": {
+      "publish": true,
+      "syncedHash": "55fe8f4831ca0aba8aef6b1e00e6ae062faaf7a9",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/区块链技术原理/web3生态分层.md": {
+      "publish": true,
+      "syncedHash": "51cdc84802245f157ae8ca471c0aacc3964f8333",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/中美数字金融博弈：路线之争与战略演进.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/DeFi协议/Aave.md": {
+      "publish": true,
+      "syncedHash": "7d6120199a3412c610e172850f1422535bd82594",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/DeFi协议/Curve.md": {
+      "publish": true,
+      "syncedHash": "05a9f4c28a1921078c7139aa79761b94f865ae1c",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/DeFi协议/uniswap_v2.md": {
+      "publish": true,
+      "syncedHash": "242039a6e17e9b38cfcc2fea7b44cf8e9ca85012",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/DeFi协议/uniswap_v3.md": {
+      "publish": true,
+      "syncedHash": "5a6b2951191a9fa9d405d6d2acb4497998fe1449",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/DeFi协议/uniswap_v4.md": {
+      "publish": true,
+      "syncedHash": "4826d942f225e256ad70db55ba2b633c33e428b3",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/EIP标准/EIP-150.md": {
+      "publish": true,
+      "syncedHash": "8db418ccdca7fc659d48d77e7f4acab861c1aa5e",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/EIP标准/EIP-1559.md": {
+      "publish": true,
+      "syncedHash": "dca4c1130b8d48fbe2daca9f7113fc60fc31cf30",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/EIP标准/EIP-1967.md": {
+      "publish": true,
+      "syncedHash": "adc07046c56b0c192eb862619b06767e6466d215",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/EIP标准/EIP-2612.md": {
+      "publish": true,
+      "syncedHash": "db66c973c5877971ee43b309ae2641f81992af71",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/ERC标准/目录.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/ERC标准/ERC-1046.md": {
+      "publish": true,
+      "syncedHash": "192fc6836e74de2380dbbcab418400b3b949e172",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/ERC标准/ERC-1155.md": {
+      "publish": true,
+      "syncedHash": "3f4f63b92f2cf0bf5175363171217af18b89b79d",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/ERC标准/ERC-1363.md": {
+      "publish": true,
+      "syncedHash": "e0bdceedcba9a957948eeaa833e49cd59adbe019",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/ERC标准/ERC-165.md": {
+      "publish": true,
+      "syncedHash": "13982139326c78af2fceda46d2f45a869bb009c4",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/ERC标准/ERC-20.md": {
+      "publish": true,
+      "syncedHash": "72b638b2813a5b7f601108a40bb24a7f05b6a04e",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/ERC标准/ERC-223.md": {
+      "publish": true,
+      "syncedHash": "d029a4af1c813447ecf93a964af215a67154c879",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/ERC标准/ERC-2612.md": {
+      "publish": true,
+      "syncedHash": "a3d9edb8910e67e9b7da0ffe5e90bfbfdc18a0ba",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/ERC标准/ERC-3156.md": {
+      "publish": true,
+      "syncedHash": "f2087be5f8ba6acb6527c46db57736521c18ef58",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/ERC标准/ERC-3643.md": {
+      "publish": true,
+      "syncedHash": "1c86163207a337294c7329d692861f8912f797ee",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/ERC标准/ERC-4626.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/ERC标准/ERC-6093.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/ERC标准/ERC-721.md": {
+      "publish": true,
+      "syncedHash": "17adab5ed9ac3192f50d276b21414f1bdacb5856",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/ERC标准/ERC-827.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3/solidity语法.md": {
+      "publish": true,
+      "syncedHash": "b7b63ce85633bb577823dd07fd8a5ba9bfeeaefe",
+      "syncedAt": "2026-04-19T04:45:14.579Z"
+    },
+    "web3/web3学习路径.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3实习.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    },
+    "web3英语金融双修.md": {
+      "publish": false,
+      "syncedHash": null,
+      "syncedAt": null
+    }
+  }
+}

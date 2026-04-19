@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getTagDescription } from "../../config/tags";
+import posts from "../../utils/posts";
+
+const tagsCount = posts.reduce((acc, post) => {
+  post.tags.forEach((tag: string) => {
+    acc[tag] = (acc[tag] || 0) + 1;
+  });
+  return acc;
+}, {} as Record<string, number>);
+
+const sortedTags = Object.entries(tagsCount).sort((a, b) => Number(b[1]) - Number(a[1]));
+---
+
+<BaseLayout title="标签浏览">
+  <section class="garden-section hero">
+    <h1>标签浏览</h1>
+    <p class="lead">如果文章带有标签，可以从这里按主题进入。</p>
+  </section>
+
+  <section class="garden-section">
+    <div class="topics-cloud">
+      {sortedTags.map(([tag, count]) => (
+        <a href={`/tags/${tag}/`} class="topic-pill" title={getTagDescription(tag)}>
+          <span>{tag}</span>
+          <span class="topic-count">{count}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

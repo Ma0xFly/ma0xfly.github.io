@@ -1,0 +1,23 @@
+{
+  "sourceRoot": "D:/md",
+  "sharedGalleryDirs": [
+    "图库",
+    "圖庫",
+    "gallery"
+  ],
+  "excludeDirs": [
+    ".git",
+    ".obsidian",
+    ".trash",
+    ".venv",
+    ".vscode",
+    "node_modules",
+    "图库",
+    "圖庫",
+    "gallery"
+  ],
+  "legacyPublishedRoots": [
+    "web3"
+  ]
+}
+

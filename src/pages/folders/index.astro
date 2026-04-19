@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import posts from "../../utils/posts";
+
+const folders = posts.reduce((acc, post) => {
+  const folder = getTopLevel(post.sourceNote);
+  acc[folder] = (acc[folder] || 0) + 1;
+  return acc;
+}, {} as Record<string, number>);
+
+const sortedFolders = Object.entries(folders).sort((a, b) => Number(b[1]) - Number(a[1]));
+
+function getTopLevel(sourceNote: string) {
+  return sourceNote.split("/")[0] || "未分类";
+}
+---
+
+<BaseLayout title="目录浏览">
+  <section class="garden-section hero">
+    <h1>目录浏览</h1>
+    <p class="lead">很多笔记没有标签，但它们仍然属于清晰的主题目录。这里按顶层目录浏览所有公开内容。</p>
+  </section>
+
+  <section class="garden-section">
+    <div class="folder-grid">
+      {sortedFolders.map(([folder, count]) => (
+        <a href={`/folders/${folder}/`} class="folder-card folder-card-large">
+          <strong>{folder}</strong>
+          <span>{count} 篇文章</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

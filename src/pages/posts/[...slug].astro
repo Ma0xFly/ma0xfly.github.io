@@ -1,0 +1,422 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import site from "../../config/site.json";
+import posts, { type GeneratedPost } from "../../utils/posts";
+import { postPath } from "../../utils/routing";
+import { marked } from "marked";
+import type { Tokens } from "marked";
+
+interface OutlineItem {
+  depth: 2 | 3;
+  text: string;
+  slug: string;
+}
+
+interface OutlineGroup {
+  text: string;
+  slug: string;
+  children: OutlineItem[];
+}
+
+export async function getStaticPaths() {
+  const sortedPosts = [...posts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  return sortedPosts.map((post, index) => ({
+    params: { slug: post.id },
+    props: {
+      post,
+      prevPost: index + 1 < sortedPosts.length ? sortedPosts[index + 1] : null,
+      nextPost: index - 1 >= 0 ? sortedPosts[index - 1] : null,
+    },
+  }));
+}
+
+function stripMarkdownInline(value: string) {
+  return value
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, "")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/[*_`~]/g, "")
+    .replace(/<[^>]+>/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function createOutlineItem(rawText: string, depth: 2 | 3, index: number) {
+  return {
+    depth,
+    text: stripMarkdownInline(rawText),
+    slug: `section-${index + 1}`,
+  };
+}
+
+function buildOutline(markdown: string) {
+  const outline: OutlineItem[] = [];
+  let fenceMarker: "`" | "~" | null = null;
+
+  for (const line of markdown.split(/\r?\n/)) {
+    const fenceMatch = line.match(/^\s*(`{3,}|~{3,})/);
+    if (fenceMatch) {
+      const marker = fenceMatch[1][0] as "`" | "~";
+      fenceMarker = fenceMarker === marker ? null : marker;
+      continue;
+    }
+
+    if (fenceMarker) continue;
+
+    const headingMatch = line.match(/^(#{2,3})\s+(.+?)(?:\s+#+\s*)?$/);
+    if (!headingMatch) continue;
+
+    const depth = headingMatch[1].length as 2 | 3;
+    const item = createOutlineItem(headingMatch[2], depth, outline.length);
+    if (item.text) outline.push(item);
+  }
+
+  return outline;
+}
+
+function groupOutline(items: OutlineItem[]) {
+  const groups: OutlineGroup[] = [];
+  let currentGroup: OutlineGroup | null = null;
+
+  for (const item of items) {
+    if (item.depth === 2) {
+      currentGroup = {
+        text: item.text,
+        slug: item.slug,
+        children: [],
+      };
+      groups.push(currentGroup);
+      continue;
+    }
+
+    if (currentGroup) {
+      currentGroup.children.push(item);
+    }
+  }
+
+  return groups;
+}
+
+function renderPost(markdown: string, outlineItems: OutlineItem[]) {
+  const renderer = new marked.Renderer();
+  let outlineIndex = 0;
+
+  renderer.heading = (token: Tokens.Heading) => {
+    const innerHtml = marked.Parser.parseInline(token.tokens);
+
+    if (token.depth !== 2 && token.depth !== 3) {
+      return `<h${token.depth}>${innerHtml}</h${token.depth}>`;
+    }
+
+    const item = outlineItems[outlineIndex];
+    if (!item || item.depth !== token.depth) {
+      return `<h${token.depth}>${innerHtml}</h${token.depth}>`;
+    }
+
+    outlineIndex += 1;
+    return `<h${token.depth} id="${item.slug}">${innerHtml}</h${token.depth}>`;
+  };
+
+  return {
+    html: marked.parse(markdown, { renderer }) as string,
+  };
+}
+
+const { post, prevPost, nextPost } = Astro.props as {
+  post: GeneratedPost;
+  prevPost: GeneratedPost | null;
+  nextPost: GeneratedPost | null;
+};
+
+const outline = buildOutline(post.body);
+const outlineGroups = groupOutline(outline);
+const { html } = renderPost(post.body, outline);
+const directoryParts = post.directory === "." ? [] : post.directory.split("/").filter(Boolean);
+const topLevel = directoryParts[0] ?? post.topLevel;
+const nestedParts = directoryParts.slice(1);
+const coverSrc = "/hero-bg.jpg";
+---
+
+<BaseLayout title={`${post.title} | ${site.title}`} description={post.summary}>
+  <section class="post-cover-hero" style={`background-image: url('${coverSrc}')`}>
+    <div class="post-cover-hero__overlay"></div>
+    <div class="post-cover-hero__inner">
+      <p class="post-cover-hero__eyebrow">{topLevel}</p>
+      <h1 class="post-cover-hero__title">{post.title}</h1>
+    </div>
+  </section>
+
+  <div class="article-shell" id="article-shell">
+    <a class="back-link" href="/">&larr; 返回首页花园</a>
+
+    <div class="article-layout">
+      <article class="article-panel">
+        <header class="article-header">
+          <div class="article-directory">
+            <a href="/folders" class="directory-link">目录</a>
+            {topLevel && (
+              <>
+                <span class="directory-sep">/</span>
+                <a href={`/folders/${topLevel}/`} class="directory-link">{topLevel}</a>
+              </>
+            )}
+            {nestedParts.map((part) => (
+              <>
+                <span class="directory-sep">/</span>
+                <span class="directory-text">{part}</span>
+              </>
+            ))}
+          </div>
+
+          <div class="article-meta-row">
+            <span>{new Date(post.date).toLocaleDateString("zh-CN")}</span>
+            <span>{topLevel}</span>
+            {post.tags.length > 0 && <span>{post.tags.slice(0, 3).join(" · ")}</span>}
+          </div>
+
+          <div class="tag-row article-header__tags">
+            {post.tags.map((tag) => (
+              <a href={`/tags/${tag}/`} class="tag">#{tag}</a>
+            ))}
+          </div>
+
+          <p class="source-note">来源路径：{post.sourceNote}</p>
+        </header>
+
+        <div class="article-main">
+          <div class="article-content" set:html={html} />
+
+          <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);">
+            <div class="nav-prev" style="flex: 1;">
+              {prevPost && (
+                <a href={postPath(prevPost)} style="text-decoration: none;">
+                  <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p>
+                  <h4 style="margin: 8px 0 0; color: var(--ink);">{prevPost.title}</h4>
+                </a>
+              )}
+            </div>
+            <div class="nav-next" style="flex: 1; text-align: right;">
+              {nextPost && (
+                <a href={postPath(nextPost)} style="text-decoration: none;">
+                  <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p>
+                  <h4 style="margin: 8px 0 0; color: var(--ink);">{nextPost.title}</h4>
+                </a>
+              )}
+            </div>
+          </nav>
+        </div>
+      </article>
+
+      {
+        outlineGroups.length > 0 && (
+          <>
+            <aside class="article-sidebar" id="article-sidebar">
+              <nav class="article-outline" aria-label="文章目录">
+                <div class="article-outline__head">
+                  <strong>目录</strong>
+                </div>
+                <div class="article-outline__body">
+                  <ol class="article-outline__list article-outline__list--groups">
+                    {outlineGroups.map((group) => (
+                      <li class="article-outline__group" data-group-id={group.slug}>
+                        <button class="article-outline__group-link" type="button" data-group-target={group.slug}>
+                          <span>{group.text}</span>
+                          {
+                            group.children.length > 0 && (
+                              <span class="article-outline__group-caret" aria-hidden="true">›</span>
+                            )
+                          }
+                        </button>
+                        {
+                          group.children.length > 0 && (
+                            <ol class="article-outline__sublist">
+                              {group.children.map((item) => (
+                                <li class="article-outline__item depth-3" data-toc-id={item.slug}>
+                                  <a href={`#${item.slug}`}>{item.text}</a>
+                                </li>
+                              ))}
+                            </ol>
+                          )
+                        }
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </nav>
+            </aside>
+          </>
+        )
+      }
+    </div>
+  </div>
+</BaseLayout>
+
+{
+  outlineGroups.length > 0 && (
+    <script is:inline>
+      (() => {
+        const shell = document.getElementById("article-shell");
+        const sidebar = document.getElementById("article-sidebar");
+        const headings = Array.from(document.querySelectorAll(".article-content h2[id], .article-content h3[id]"));
+        const groupLinks = Array.from(document.querySelectorAll(".article-outline__group-link"));
+        const childLinks = Array.from(document.querySelectorAll(".article-outline__sublist a"));
+
+        if (!shell || !sidebar || !outlineNav || !headings.length || !groupLinks.length) return;
+
+        let activeId = "";
+        let activeGroupId = "";
+        let manualOpenGroupId = "";
+        let ticking = false;
+        let suppressOutlineScrollUntil = 0;
+
+        const groupMap = new Map(
+          groupLinks.map((link) => {
+            const id = link.getAttribute("data-group-target") || "";
+            return [id, link.closest(".article-outline__group")];
+          }),
+        );
+
+        let lastH2Id = "";
+        const headingMeta = headings.map((heading) => {
+          const depth = Number(heading.tagName.slice(1));
+          if (depth === 2) lastH2Id = heading.id;
+          return {
+            id: heading.id,
+            depth,
+            parentId: depth === 3 ? lastH2Id : "",
+            element: heading,
+          };
+        });
+
+        const pauseOutlineAutoScroll = (duration = 900) => {
+          suppressOutlineScrollUntil = Date.now() + duration;
+        };
+
+        const setActive = (id, parentId = "") => {
+          if (!id || (id === activeId && parentId === activeGroupId)) return;
+
+          activeId = id;
+          activeGroupId = parentId || id;
+
+          groupLinks.forEach((link) => {
+            const targetId = link.getAttribute("data-group-target") || "";
+            const isCurrentGroup = targetId === activeGroupId;
+            const isOpenGroup = targetId === activeGroupId || targetId === manualOpenGroupId;
+            link.toggleAttribute("aria-current", targetId === id && !parentId);
+            link.classList.toggle("is-current", targetId === id && !parentId);
+            link.classList.toggle("is-open", isOpenGroup);
+            link.classList.toggle("is-active-group", isCurrentGroup);
+          });
+
+          childLinks.forEach((link) => {
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            const isCurrent = targetId === id;
+            link.toggleAttribute("aria-current", isCurrent);
+            link.classList.toggle("is-current", isCurrent);
+          });
+
+          groupMap.forEach((group, groupId) => {
+            if (!group) return;
+            group.classList.toggle("is-open", groupId === activeGroupId || groupId === manualOpenGroupId);
+            group.classList.toggle("is-current", groupId === id && !parentId);
+          });
+
+          if (Date.now() < suppressOutlineScrollUntil) return;
+
+          const activeLink = [...groupLinks, ...childLinks].find((link) => {
+            const href = link.getAttribute("href");
+            if (href) return decodeURIComponent(href.replace(/^#/, "")) === id;
+            return (link.getAttribute("data-group-target") || "") === id;
+          });
+          if (!activeLink) return;
+
+          const linkTop = activeLink.offsetTop;
+          const linkBottom = linkTop + activeLink.offsetHeight;
+          const viewTop = outlineNav.scrollTop;
+          const viewBottom = viewTop + outlineNav.clientHeight;
+          const padding = 24;
+
+          if (linkTop - padding < viewTop) {
+            outlineNav.scrollTo({ top: Math.max(linkTop - padding, 0), behavior: "smooth" });
+          } else if (linkBottom + padding > viewBottom) {
+            outlineNav.scrollTo({
+              top: linkBottom - outlineNav.clientHeight + padding,
+              behavior: "smooth",
+            });
+          }
+        };
+
+        const updateOutline = () => {
+          ticking = false;
+
+          let current = headingMeta[0];
+          for (const heading of headingMeta) {
+            if (heading.element.getBoundingClientRect().top <= 160) {
+              current = heading;
+            } else {
+              break;
+            }
+          }
+
+          if (current) {
+            setActive(current.id, current.parentId);
+          }
+        };
+
+        const requestUpdate = () => {
+          if (ticking) return;
+          ticking = true;
+          window.requestAnimationFrame(updateOutline);
+        };
+
+        groupLinks.forEach((button) => {
+          button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const groupId = button.getAttribute("data-group-target") || "";
+            if (!groupId) return;
+
+            if (manualOpenGroupId === groupId) {
+              manualOpenGroupId = "";
+            } else {
+              manualOpenGroupId = groupId;
+            }
+
+            if (activeGroupId) {
+              setActive(activeId || activeGroupId, activeGroupId);
+            }
+
+            const targetHeading = document.getElementById(groupId);
+            targetHeading?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        childLinks.forEach((link) => {
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId = decodeURIComponent((link.getAttribute("href") || "").replace(/^#/, ""));
+            if (!targetId) return;
+
+            const targetMeta = headingMeta.find((item) => item.id === targetId);
+            if (!targetMeta) return;
+
+            pauseOutlineAutoScroll(1200);
+            setActive(targetMeta.id, targetMeta.parentId);
+
+            if (location.hash !== `#${targetId}`) {
+              history.pushState(null, "", `#${targetId}`);
+            }
+
+            targetMeta.element.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        window.addEventListener("scroll", requestUpdate, { passive: true });
+        window.addEventListener("resize", requestUpdate);
+        window.addEventListener("hashchange", requestUpdate);
+        requestUpdate();
+      })();
+    </script>
+  )
+}

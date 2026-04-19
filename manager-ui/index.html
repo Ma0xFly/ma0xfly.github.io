@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>本地发布台</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Local Publishing Desk</p>
+          <h1>本地发布台</h1>
+          <p class="lead">
+            直接管理 <code>D:\md</code> 中的笔记。勾选哪些文章对读者公开，构建时只发布选中的文章和被引用的图片。
+          </p>
+        </div>
+        <div class="hero-card">
+          <p class="source-line">源目录：<span id="source-root">-</span></p>
+          <div class="stats">
+            <div>
+              <strong id="note-count">0</strong>
+              <span>总笔记</span>
+            </div>
+            <div>
+              <strong id="published-count">0</strong>
+              <span>已上线</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="toolbar">
+        <input id="search" type="search" placeholder="搜索文件名、路径、标题、标签" />
+        <select id="folder-filter">
+          <option value="">全部目录</option>
+        </select>
+        <select id="status-filter">
+          <option value="">全部状态</option>
+          <option value="published">线上已上线</option>
+          <option value="draft">线上已下线</option>
+        </select>
+        <select id="recent-filter">
+          <option value="">全部时间</option>
+          <option value="1">今天修改</option>
+          <option value="7">近 7 天</option>
+          <option value="30">近 30 天</option>
+        </select>
+      </section>
+
+      <section class="actions">
+        <button id="clear-selection">清空选择</button>
+        <button id="publish-selected" class="accent">上线选中</button>
+        <button id="unpublish-selected">下线选中</button>
+        <button id="save-state" class="accent">立即保存（可选）</button>
+        <button id="preview-state">预览发布结果</button>
+        <button id="build-site">构建站点</button>
+        <button id="check-site">运行检查</button>
+        <button id="update-published" class="accent">更新已上线变更</button>
+        <button id="deploy-site" class="accent">部署上线</button>
+        <button id="publish-deploy-selected" class="accent strong">一键发布选中并部署</button>
+      </section>
+
+      <section class="actions secondary-actions">
+        <button id="open-local-home">打开本地首页</button>
+        <button id="open-live-home">打开线上首页</button>
+        <button id="open-selected-local">打开选中文章本地预览</button>
+        <button id="open-selected-live">打开选中文章线上地址</button>
+      </section>
+
+      <section class="summary">
+        <span id="selection-count">已选 0 篇</span>
+        <span id="filtered-count">当前筛选 0 篇</span>
+        <span id="live-published-count">线上生效 0 篇</span>
+        <span id="draft-published-count">草稿计划 0 篇</span>
+        <span id="pending-count">待部署 0 篇</span>
+        <span id="dirty-flag">未修改</span>
+      </section>
+
+      <section class="live-shell">
+        <div class="live-head">
+          <h2>线上生效状态</h2>
+          <span class="live-badge is-idle" id="live-status-badge">尚未部署</span>
+        </div>
+        <div class="live-meta">
+          <span>状态说明：<strong id="live-status-text">还没有执行部署。</strong></span>
+          <a id="live-status-link" href="https://ma0xfly.github.io/deploy-version.json" target="_blank" rel="noreferrer">查看线上部署标记</a>
+        </div>
+      </section>
+
+      <section class="sync-shell">
+        <div class="sync-head">
+          <h2>已上线同步状态</h2>
+          <span id="sync-status-label">尚未检测</span>
+        </div>
+        <div class="sync-grid">
+          <div class="sync-card">
+            <strong id="sync-published-count">0</strong>
+            <span>当前已上线</span>
+          </div>
+          <div class="sync-card">
+            <strong id="sync-changed-count">0</strong>
+            <span>检测到变更</span>
+          </div>
+          <div class="sync-card">
+            <strong id="sync-last-time">-</strong>
+            <span>上次同步时间</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="preview-shell">
+        <div class="preview-head">
+          <h2>发布预览</h2>
+          <span id="preview-status">尚未预览</span>
+        </div>
+        <div class="preview-grid">
+          <div class="preview-card">
+            <strong id="preview-published">0</strong>
+            <span>将发布文章</span>
+          </div>
+          <div class="preview-card">
+            <strong id="preview-assets">0</strong>
+            <span>将带出图片</span>
+          </div>
+          <div class="preview-card">
+            <strong id="preview-missing">0</strong>
+            <span>缺失图片</span>
+          </div>
+        </div>
+        <div class="preview-lists">
+          <div>
+            <h3>缺失图片</h3>
+            <ul id="missing-assets"></ul>
+          </div>
+          <div>
+            <h3>示例文章</h3>
+            <ul id="published-sample"></ul>
+          </div>
+        </div>
+        <div class="preview-links">
+          <h3>最新上线链接</h3>
+          <ul id="published-links"></ul>
+        </div>
+      </section>
+
+      <section class="table-shell">
+        <table>
+          <thead>
+            <tr>
+              <th><input id="select-visible-toggle" type="checkbox" aria-label="全选当前列表" /></th>
+              <th>状态</th>
+              <th>源文件</th>
+              <th>目录</th>
+              <th>标签</th>
+              <th>更新时间</th>
+            </tr>
+          </thead>
+          <tbody id="notes-body"></tbody>
+        </table>
+      </section>
+
+      <section class="console-shell">
+        <div class="console-head">
+          <h2>操作日志</h2>
+          <button id="clear-console">清空</button>
+        </div>
+        <pre id="console"></pre>
+      </section>
+    </div>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

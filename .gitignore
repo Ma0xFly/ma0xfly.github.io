@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.astro/
+public/__published_media/
+src/content/posts/
+src/generated/
+reports/imports/

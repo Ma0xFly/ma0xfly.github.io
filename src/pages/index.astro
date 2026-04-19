@@ -1,0 +1,536 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import posts, { type GeneratedPost } from "../utils/posts";
+import { postPath } from "../utils/routing";
+
+const sortedPosts = [...posts].sort(
+  (left, right) => new Date(right.date).getTime() - new Date(left.date).getTime(),
+);
+
+const archivePosts: GeneratedPost[] = sortedPosts.slice(0);
+
+const tagsCount = sortedPosts.reduce((acc, post) => {
+  post.tags.forEach((tag: string) => {
+    acc[tag] = (acc[tag] || 0) + 1;
+  });
+  return acc;
+}, {} as Record<string, number>);
+
+const sortedTags = Object.entries(tagsCount).sort((a, b) => Number(b[1]) - Number(a[1]));
+
+const folderCount = sortedPosts.reduce((acc, post) => {
+  const folder = getTopLevel(post.sourceNote);
+  acc[folder] = (acc[folder] || 0) + 1;
+  return acc;
+}, {} as Record<string, number>);
+
+const sortedFolders = Object.entries(folderCount).sort((a, b) => Number(b[1]) - Number(a[1]));
+
+function getTopLevel(sourceNote: string) {
+  return sourceNote.split("/")[0] || "未分类";
+}
+
+const archivePostsJson = JSON.stringify(
+  archivePosts.map((post) => ({
+    href: postPath(post),
+    date: new Date(post.date).toLocaleDateString("zh-CN").replace(/\//g, "-"),
+    title: post.title,
+    folder: getTopLevel(post.sourceNote),
+    tags: post.tags.slice(0, 3),
+    summary: post.summary,
+    haystack: [
+      post.title,
+      post.summary,
+      getTopLevel(post.sourceNote),
+      ...post.tags,
+    ].join(" ").toLowerCase(),
+  })),
+);
+---
+
+<BaseLayout>
+  <div class="hero-banner" id="hero-banner">
+    <div class="hero-banner__bg"></div>
+    <div class="hero-banner__overlay"></div>
+    <canvas id="hero-particles"></canvas>
+    <div class="hero-banner__content">
+      <h1 class="hero-banner__title">Ma&OxFly</h1>
+      <p class="hero-banner__sub">雁北海，凤朝阳。又携书剑路茫茫。</p>
+      <a href="#articles" class="hero-banner__cta" id="scroll-down-btn" aria-label="滚动到文章列表">
+        <span class="hero-banner__arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </span>
+      </a>
+    </div>
+  </div>
+
+  <div id="articles" class="articles-container">
+    <section class="garden-section search-section" id="archive-search">
+      <div class="section-head search-head">
+        <div>
+          <h2>搜索花园</h2>
+          <p>按标题、摘要、目录或标签筛文章。</p>
+        </div>
+      </div>
+      <div class="search-shell">
+        <label class="search-box" for="archive-search-input">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20l-3.5-3.5"></path>
+          </svg>
+          <input id="archive-search-input" class="search-input" type="search" placeholder="搜索文章标题、摘要、目录、标签" autocomplete="off" />
+        </label>
+        <p class="search-meta" id="search-meta">共 {archivePosts.length} 篇文章</p>
+      </div>
+    </section>
+
+    {
+      sortedFolders.length > 0 && (
+        <section class="garden-section">
+          <div class="section-head">
+            <h2>按目录浏览</h2>
+            <a href="/folders" class="more-link">查看全部目录 &rarr;</a>
+          </div>
+          <div class="folder-grid">
+            {sortedFolders.slice(0, 6).map(([folder, count]) => (
+              <a href={`/folders/${folder}/`} class="folder-card">
+                <strong>{folder}</strong>
+                <span>{count} 篇文章</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      sortedTags.length > 0 && (
+        <section class="garden-section">
+          <div class="section-head">
+            <h2>按标签浏览</h2>
+            <a href="/tags" class="more-link">查看全部标签 &rarr;</a>
+          </div>
+          <div class="topics-cloud">
+            {sortedTags.slice(0, 15).map(([tag, count]) => (
+              <a href={`/tags/${tag}/`} class="topic-pill">
+                <span>{tag}</span>
+                <span class="topic-count">{count}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <section class="garden-section" id="archive-section">
+      {archivePosts.length === 0 ? (
+        <div class="empty-state">
+          <p>暂时还没有公开文章。</p>
+        </div>
+      ) : (
+        <>
+          <div class="post-cards-grid" id="archive-grid"></div>
+          <div class="pagination" id="pagination"></div>
+        </>
+      )}
+    </section>
+  </div>
+</BaseLayout>
+
+<script is:inline define:vars={{ archivePostsJson }}>
+  // @ts-nocheck
+  const banner = document.getElementById("hero-banner");
+  if (banner) {
+    window.addEventListener("load", () => banner.classList.add("loaded"));
+  }
+
+  const nav = document.querySelector(".topbar-hero");
+  if (nav) {
+    window.addEventListener(
+      "scroll",
+      () => {
+        nav.classList.toggle("scrolled", window.scrollY > 60);
+      },
+      { passive: true },
+    );
+  }
+
+  const scrollBtn = document.getElementById("scroll-down-btn");
+  if (scrollBtn) {
+    scrollBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      document.getElementById("articles")?.scrollIntoView({ behavior: "smooth" });
+    });
+  }
+
+  const canvas = document.getElementById("hero-particles");
+  if (canvas) {
+    const ctx = canvas.getContext("2d");
+    let width;
+    let height;
+    let particles;
+
+    const initParticles = () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      particles = Array.from({ length: 80 }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: Math.random() * 2 + 0.5,
+        vy: Math.random() * 0.8 + 0.3,
+        opacity: Math.random() * 0.8 + 0.2,
+      }));
+    };
+
+    const drawParticles = () => {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach((particle) => {
+        ctx.fillStyle = `rgba(255,255,255,${particle.opacity})`;
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.r, 0, Math.PI * 2);
+        ctx.fill();
+        particle.y += particle.vy;
+        if (particle.y > height) {
+          particle.y = -10;
+          particle.x = Math.random() * width;
+        }
+      });
+      requestAnimationFrame(drawParticles);
+    };
+
+    initParticles();
+    drawParticles();
+    window.addEventListener("resize", initParticles);
+  }
+
+  const archivePosts = JSON.parse(archivePostsJson);
+  const PAGE_SIZE = 12;
+  const grid = document.getElementById("archive-grid");
+  const paginationEl = document.getElementById("pagination");
+  const archiveSection = document.getElementById("archive-section");
+  const searchInput = document.getElementById("archive-search-input");
+  const searchMeta = document.getElementById("search-meta");
+  let filteredPosts = archivePosts;
+
+  function getTotalPages() {
+    return Math.max(1, Math.ceil(filteredPosts.length / PAGE_SIZE));
+  }
+
+  function clampPage(page) {
+    return Math.min(Math.max(page, 1), getTotalPages());
+  }
+
+  function syncParams(page, query) {
+    const url = new URL(window.location.href);
+    const normalizedQuery = query.trim();
+
+    if (page <= 1) url.searchParams.delete("page");
+    else url.searchParams.set("page", String(page));
+
+    if (!normalizedQuery) url.searchParams.delete("q");
+    else url.searchParams.set("q", normalizedQuery);
+
+    history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+  }
+
+  function updateSearchMeta() {
+    if (!searchMeta) return;
+    const total = archivePosts.length;
+    const shown = filteredPosts.length;
+    searchMeta.textContent = shown === total
+      ? `共 ${total} 篇文章`
+      : `筛出 ${shown} / ${total} 篇文章`;
+  }
+
+  function renderPage(page) {
+    const currentQuery = searchInput?.value ?? "";
+    const currentPage = clampPage(page);
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const slice = filteredPosts.slice(start, start + PAGE_SIZE);
+    const totalPages = getTotalPages();
+
+    syncParams(currentPage, currentQuery);
+    updateSearchMeta();
+
+    if (grid) {
+      grid.style.opacity = "0";
+      grid.innerHTML = slice
+        .map(
+          (post) => `
+            <a href="${post.href}" class="post-card">
+              <div class="post-card__top">
+                <h3 class="post-card__title">${post.title}</h3>
+              </div>
+              <div class="post-card__bottom">
+                <p class="post-card__summary">${post.summary || post.title}</p>
+                <div class="post-card__meta-row">
+                  <span class="post-card__date">
+                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    ${post.date}
+                  </span>
+                  <span class="post-card__folder">
+                    <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                    ${post.folder}
+                  </span>
+                </div>
+                ${
+                  post.tags.length > 0
+                    ? `<div class="post-card__tags">${post.tags.map((tag) => `<span class="post-card__tag">${tag}</span>`).join("")}</div>`
+                    : ""
+                }
+              </div>
+            </a>
+          `,
+        )
+        .join("");
+
+      if (!slice.length) {
+        grid.innerHTML = `<div class="empty-state search-empty"><p>没有找到匹配的文章。</p></div>`;
+      }
+
+      requestAnimationFrame(() => {
+        grid.style.transition = "opacity 0.25s ease";
+        grid.style.opacity = "1";
+      });
+    }
+
+    if (paginationEl) {
+      const disabled = filteredPosts.length === 0;
+      paginationEl.innerHTML = `
+        <button class="page-arrow" ${currentPage === 1 || disabled ? "disabled" : ""} data-page="${currentPage - 1}" aria-label="上一页">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="pagination-center">
+          <span class="page-info">第 ${Math.min(currentPage, totalPages)} / ${totalPages} 页</span>
+          <label class="page-jump" for="page-jump-input">
+            <span>跳到</span>
+            <input id="page-jump-input" class="page-jump-input" type="number" min="1" max="${totalPages}" value="${Math.min(currentPage, totalPages)}" inputmode="numeric" />
+            <span>页</span>
+          </label>
+          <button class="page-jump-button" type="button">前往</button>
+        </div>
+        <button class="page-arrow" ${currentPage === totalPages || disabled ? "disabled" : ""} data-page="${currentPage + 1}" aria-label="下一页">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      `;
+
+      paginationEl.querySelectorAll(".page-arrow:not([disabled])").forEach((button) => {
+        button.addEventListener("click", () => {
+          const target = Number(button.dataset.page);
+          renderPage(target);
+          archiveSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+
+      const jumpInput = paginationEl.querySelector(".page-jump-input");
+      const jumpButton = paginationEl.querySelector(".page-jump-button");
+
+      const jumpToPage = () => {
+        const target = Number(jumpInput?.value);
+        if (!Number.isFinite(target)) return;
+        renderPage(target);
+        archiveSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+      };
+
+      jumpButton?.addEventListener("click", jumpToPage);
+      jumpInput?.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          jumpToPage();
+        }
+      });
+    }
+  }
+
+  function applySearch(query) {
+    const normalized = query.trim().toLowerCase();
+    filteredPosts = !normalized
+      ? archivePosts
+      : archivePosts.filter((post) => post.haystack.includes(normalized));
+    renderPage(1);
+  }
+
+  if (searchInput) {
+    const initialQuery = new URL(window.location.href).searchParams.get("q") ?? "";
+    searchInput.value = initialQuery;
+    searchInput.addEventListener("input", () => applySearch(searchInput.value));
+    searchInput.addEventListener("keydown", (event) => {
+      if (event.key === "/") event.stopPropagation();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "/" || event.metaKey || event.ctrlKey || event.altKey) return;
+      const target = event.target;
+      if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) return;
+      event.preventDefault();
+      searchInput.focus();
+      searchInput.select();
+    });
+
+    applySearch(initialQuery);
+  }
+</script>
+
+<style>
+  .search-section {
+    margin-bottom: 56px;
+  }
+
+  .search-head {
+    margin-bottom: 16px;
+  }
+
+  .search-shell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--panel) 94%, var(--bg) 6%);
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+    color: var(--muted);
+  }
+
+  .search-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: 1.02rem;
+    outline: none;
+  }
+
+  .search-input::placeholder {
+    color: color-mix(in srgb, var(--muted) 88%, transparent 12%);
+  }
+
+  .search-meta {
+    margin: 0;
+    white-space: nowrap;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+
+  .search-empty {
+    grid-column: 1 / -1;
+  }
+
+  .pagination {
+    display: grid;
+    grid-template-columns: 60px 1fr 60px;
+    align-items: center;
+    gap: 18px;
+    margin-top: 50px;
+  }
+
+  .pagination-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .page-arrow {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(110, 105, 120, 0.8);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+
+  .page-arrow:hover:not([disabled]) {
+    background: rgba(80, 75, 90, 0.9);
+    transform: scale(1.05);
+  }
+
+  .page-arrow[disabled] {
+    background: rgba(200, 200, 200, 0.5);
+    color: rgba(255, 255, 255, 0.8);
+    cursor: not-allowed;
+  }
+
+  .page-info {
+    font-size: 1.02rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .page-jump {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 0.96rem;
+  }
+
+  .page-jump-input {
+    width: 76px;
+    height: 40px;
+    padding: 0 10px;
+    border: 1px solid var(--line-heavy);
+    border-radius: 999px;
+    background: var(--panel);
+    color: var(--ink);
+    font: inherit;
+    text-align: center;
+  }
+
+  .page-jump-button {
+    height: 40px;
+    padding: 0 16px;
+    border: 1px solid var(--line-heavy);
+    border-radius: 999px;
+    background: var(--panel);
+    color: var(--ink);
+    cursor: pointer;
+    font: inherit;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .page-jump-button:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 900px) {
+    .search-shell {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .search-meta {
+      white-space: normal;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .pagination {
+      grid-template-columns: 1fr;
+    }
+
+    .page-arrow {
+      width: 52px;
+      height: 52px;
+      justify-self: center;
+    }
+  }
+</style>
