@@ -36,6 +36,23 @@ body {
   background: transparent;
 }
 
+/* 鈹€鈹€鈹€ Orbital Scrollbar 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.4);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 6px;
+  box-shadow: inset 0 0 4px var(--accent-light);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--accent) 80%, #fff);
+}
+
 /* Old pseudo-element backgrounds removed to use DeepSpaceBackground instead */
 
 h1, h2, h3, h4, h5, .brand {
@@ -422,16 +439,9 @@ body.is-post-page .topbar {
 .folder-card:hover,
 .featured-card:hover,
 .post-card:hover {
-  box-shadow: 0 8px 28px rgba(0,0,0,0.10);
-  transform: translateY(-3px);
-  border-color: var(--line-heavy);
-}
-
-:root[data-theme='dark'] .recent-card:hover,
-:root[data-theme='dark'] .folder-card:hover,
-:root[data-theme='dark'] .featured-card:hover,
-:root[data-theme='dark'] .post-card:hover {
-  box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(45, 212, 191, 0.1);
+  transform: translateY(-4px);
+  border-color: var(--accent);
 }
 
 /* 鈹€鈹€鈹€ Recent Card 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
@@ -547,15 +557,19 @@ body.is-post-page .topbar {
 
 .post-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.06);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(45, 212, 191, 0.1);
   border-color: var(--accent);
 }
 .post-card:hover::before {
   box-shadow: inset 0 0 0 1px var(--accent-light);
+  background: linear-gradient(180deg, transparent, rgba(45, 212, 191, 0.05) 50%, transparent);
+  background-size: 100% 200%;
+  animation: radar-scan 2s linear infinite;
 }
 
-:root[data-theme='dark'] .post-card:hover {
-  box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+@keyframes radar-scan {
+  0% { background-position: 0 -100%; }
+  100% { background-position: 0 200%; }
 }
 
 .post-card__top {
@@ -1170,39 +1184,56 @@ body.is-post-page .topbar {
 .article-content a { color: var(--accent); }
 
 .article-content pre {
-  padding: 1.1em;
-  border-radius: var(--radius-md);
-  background: rgba(244, 239, 232, 0.82);
-  border: 1px solid rgba(43, 40, 37, 0.08);
+  position: relative;
+  padding: 3rem 1.1em 1.1em;
+  margin: 1.5em 0;
+  border-radius: var(--radius-lg);
+  background: rgba(8, 12, 18, 0.9);
+  border: 1px solid var(--line-heavy);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.05);
   overflow-x: auto;
+  backdrop-filter: blur(12px);
+}
+
+.article-content pre::before {
+  content: "";
+  position: absolute;
+  top: 1rem;
+  left: 1.2rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff5f56;
+  box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #27c93f;
+  z-index: 10;
+}
+
+.article-content pre::after {
+  content: "bash - terminal";
+  position: absolute;
+  top: 0.9rem;
+  left: 5.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+  letter-spacing: 0.05em;
 }
 
 .article-content code {
-  font-family: "Cascadia Mono", Consolas, monospace;
+  font-family: var(--font-mono);
 }
 
-.article-content pre code { color: #2b2825; }
-
-:root[data-theme='dark'] .article-content pre {
-  background: rgba(19, 24, 37, 0.9);
-  border: 1px solid rgba(17, 24, 39, 0.08);
+.article-content pre code { 
+  color: var(--ink); 
 }
-
-:root[data-theme='dark'] .article-content pre code { color: #f8f2ea; }
 
 .article-content blockquote {
   margin: 2em 0;
   padding: 0.5em 0 0.5em 1.5em;
-  border-left: 3px solid rgba(154, 84, 53, 0.45);
+  border-left: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--accent-light) 50%, transparent);
   color: var(--muted);
-  background: rgba(255, 248, 239, 0.54);
-  border-radius: 0 12px 12px 0;
-}
-
-:root[data-theme='dark'] .article-content blockquote {
-  border-left: 3px solid rgba(154, 84, 53, 0.6);
-  color: color-mix(in srgb, var(--muted) 88%, #f6f1e9 12%);
-  background: rgba(255, 248, 239, 0.12);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
 }
 
 /* 鈹€鈹€鈹€ Misc 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
