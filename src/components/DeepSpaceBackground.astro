@@ -1,0 +1,172 @@
+---
+// src/components/DeepSpaceBackground.astro
+---
+
+<div class="deep-space-container" id="deep-space-bg" aria-hidden="true">
+  <div class="ds-nebula"></div>
+  <canvas class="ds-stars" id="ds-canvas"></canvas>
+  <div class="ds-grid"></div>
+  <div class="ds-noise"></div>
+</div>
+
+<script>
+  let animationFrameId;
+
+  function initStars() {
+    const canvas = document.getElementById("ds-canvas");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+    
+    // Check initial theme
+    const root = document.documentElement;
+    let isDark = root.getAttribute("data-theme") === "dark";
+
+    let stars = Array.from({ length: 250 }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      z: Math.random() * 2 + 0.1, // depth for parallax speed and size
+      opacity: Math.random() * (isDark ? 0.8 : 0.4) + 0.1,
+      pulse: Math.random() * 0.01,
+      pulseDir: Math.random() > 0.5 ? 1 : -1,
+    }));
+
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+    }
+
+    const draw = () => {
+      ctx.clearRect(0, 0, width, height);
+      isDark = root.getAttribute("data-theme") === "dark";
+
+      stars.forEach((s) => {
+        // Pulse
+        s.opacity += s.pulse * s.pulseDir;
+        const maxOpacity = isDark ? 0.8 : 0.4;
+        if (s.opacity >= maxOpacity) { s.opacity = maxOpacity; s.pulseDir = -1; }
+        if (s.opacity <= 0.05) { s.opacity = 0.05; s.pulseDir = 1; }
+
+        ctx.fillStyle = isDark 
+          ? `rgba(226, 232, 240, ${s.opacity})` 
+          : `rgba(2, 132, 199, ${s.opacity})`;
+          
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.z * 0.9, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Parallax drift (slow)
+        s.x -= (0.15 / s.z);
+        s.y -= (0.05 / s.z);
+
+        if (s.x < 0) s.x = width;
+        if (s.y < 0) s.y = height;
+      });
+
+      animationFrameId = requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    window.addEventListener("resize", () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+  }
+
+  // Setup on Astro page loads (if ViewTransitions were used, this covers it)
+  document.addEventListener('astro:page-load', initStars);
+  
+  // Fallback for non-ViewTransitions run
+  if (document.readyState === 'complete') {
+    initStars();
+  } else {
+    window.addEventListener('load', initStars);
+  }
+</script>
+
+<style>
+  .deep-space-container {
+    position: fixed;
+    inset: 0;
+    z-index: -20;
+    pointer-events: none;
+    background: var(--ds-bg, #06080d);
+    overflow: hidden;
+    transition: background 0.4s ease;
+  }
+
+  .ds-nebula {
+    position: absolute;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    background: var(--ds-nebula);
+    opacity: 0.8;
+    animation: ds-breath 40s ease-in-out infinite alternate;
+  }
+
+  .ds-stars {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .ds-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--ds-grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--ds-grid-color) 1px, transparent 1px),
+      linear-gradient(var(--ds-grid-color-subtle) 1px, transparent 1px),
+      linear-gradient(90deg, var(--ds-grid-color-subtle) 1px, transparent 1px);
+    background-size: 64px 64px, 64px 64px, 16px 16px, 16px 16px;
+    background-position: center center;
+    opacity: 0.7;
+    /* Fades out slightly at the edges */
+    mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%);
+    -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%);
+  }
+
+  .ds-noise {
+    position: absolute;
+    inset: 0;
+    background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+  }
+
+  @keyframes ds-breath {
+    0% { transform: scale(1) translate(0, 0); }
+    100% { transform: scale(1.1) translate(-2%, -1%); }
+  }
+
+  /* Themes injected globally, applied here */
+  :global(:root) {
+    --ds-bg: #f8fafc;
+    --ds-nebula: 
+      radial-gradient(circle at 10% 20%, rgba(2, 132, 199, 0.06), transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.04), transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(125, 211, 252, 0.03), transparent 60%);
+    --ds-grid-color: rgba(100, 116, 139, 0.06);
+    --ds-grid-color-subtle: rgba(100, 116, 139, 0.02);
+  }
+
+  :global(:root[data-theme='dark']) {
+    --ds-bg: #030407;
+    --ds-nebula: 
+      radial-gradient(circle at 20% 30%, rgba(45, 212, 191, 0.07), transparent 45%),
+      radial-gradient(circle at 80% 60%, rgba(14, 165, 233, 0.05), transparent 45%),
+      radial-gradient(circle at 50% 10%, rgba(139, 92, 246, 0.03), transparent 60%);
+    --ds-grid-color: rgba(45, 212, 191, 0.04);
+    --ds-grid-color-subtle: rgba(45, 212, 191, 0.015);
+  }
+  
+  :global(:root[data-theme='dark']) .ds-noise {
+    opacity: 0.08;
+    mix-blend-mode: screen;
+  }
+</style>

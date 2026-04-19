@@ -1,5 +1,6 @@
 ---
 import site from "../config/site.json";
+import DeepSpaceBackground from "../components/DeepSpaceBackground.astro";
 
 interface Props {
   title?: string;
@@ -46,6 +47,7 @@ const searchHref = isHome ? "#archive-search" : "/#archive-search";
     </script>
   </head>
   <body class={bodyClass}>
+    <DeepSpaceBackground />
     {isHome ? (
       <header class="topbar topbar-hero">
         <div class="topbar-inner-hero">

@@ -50,9 +50,6 @@ const archivePostsJson = JSON.stringify(
 
 <BaseLayout>
   <div class="hero-banner" id="hero-banner">
-    <div class="hero-banner__bg"></div>
-    <div class="hero-banner__overlay"></div>
-    <canvas id="hero-particles"></canvas>
     <div class="hero-banner__content">
       <h1 class="hero-banner__title">Ma&0xFly</h1>
       <p class="hero-banner__sub">鹏北海，凤朝阳。又携书剑路茫茫。</p>
@@ -163,59 +160,6 @@ const archivePostsJson = JSON.stringify(
       event.preventDefault();
       document.getElementById("articles")?.scrollIntoView({ behavior: "smooth" });
     });
-  }
-
-  const canvas = document.getElementById("hero-particles");
-  if (canvas) {
-    const ctx = canvas.getContext("2d");
-    let width;
-    let height;
-    let particles;
-
-    const initParticles = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-      particles = Array.from({ length: 150 }, () => ({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        r: Math.random() * 1.5 + 0.2, // Smaller, subtle dust
-        vx: (Math.random() - 0.5) * 0.2, // Slow horizontal drift
-        vy: (Math.random() - 0.5) * 0.2, // Slow vertical drift
-        opacity: Math.random() * 0.5 + 0.1,
-        pulse: Math.random() * 0.02, // Twinkling effect
-        pulseDir: Math.random() > 0.5 ? 1 : -1,
-      }));
-    };
-
-    const drawParticles = () => {
-      ctx.clearRect(0, 0, width, height);
-      particles.forEach((p) => {
-        // Twinkling logic
-        p.opacity += p.pulse * p.pulseDir;
-        if (p.opacity >= 0.7) { p.opacity = 0.7; p.pulseDir = -1; }
-        if (p.opacity <= 0.05) { p.opacity = 0.05; p.pulseDir = 1; }
-
-        ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Slow drifting
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // Wrap around edges to maintain constant dust
-        if (p.x < 0) p.x = width;
-        if (p.x > width) p.x = 0;
-        if (p.y < 0) p.y = height;
-        if (p.y > height) p.y = 0;
-      });
-      requestAnimationFrame(drawParticles);
-    };
-
-    initParticles();
-    drawParticles();
-    window.addEventListener("resize", initParticles);
   }
 
   const archivePosts = JSON.parse(archivePostsJson);

@@ -134,12 +134,10 @@ const { html } = renderPost(post.body, outline);
 const directoryParts = post.directory === "." ? [] : post.directory.split("/").filter(Boolean);
 const topLevel = directoryParts[0] ?? post.topLevel;
 const nestedParts = directoryParts.slice(1);
-const coverSrc = "/hero-bg.jpg";
 ---
 
 <BaseLayout title={`${post.title} | ${site.title}`} description={post.summary}>
-  <section class="post-cover-hero" style={`background-image: url('${coverSrc}')`}>
-    <div class="post-cover-hero__overlay"></div>
+  <section class="post-cover-hero">
     <div class="post-cover-hero__inner">
       <p class="post-cover-hero__eyebrow">{topLevel}</p>
       <h1 class="post-cover-hero__title">{post.title}</h1>
