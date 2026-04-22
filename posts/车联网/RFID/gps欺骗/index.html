@@ -1,80 +1,9 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>gps欺骗 | 沉于思，录以隙</title><meta name="description" content="# GPS的工作原理 卫星通过他自己的星历，得知它当前的位置之后，计算出用户当前的位置的范围。但只通过一颗卫星去定位肯定是不准确的，同时**需要四颗卫星**才可以得到相对精准的一个位置。 Gps其实不仅仅可以定位，还可以授时。就是因为它里边有这个原子钟，它可以为地面的授时装置提供"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">车联网</p> <h1 class="post-cover-hero__title">gps欺骗</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/车联网/" class="directory-link">车联网</a>   <span class="directory-sep">/</span> <span class="directory-text">RFID</span>  </div> <div class="article-meta-row"> <span>2025/5/28</span> <span>车联网</span> <span>车联网 · RFID</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/车联网/" class="tag">#车联网</a><a href="/tags/RFID/" class="tag">#RFID</a> </div> <p class="source-note">来源路径：车联网/RFID/gps欺骗.md</p> </header> <div class="article-main"> <div class="article-content"><h1>GPS的工作原理</h1><p>卫星通过他自己的星历，得知它当前的位置之后，计算出用户当前的位置的范围。但只通过一颗卫星去定位肯定是不准确的，同时<strong>需要四颗卫星</strong>才可以得到相对精准的一个位置。</p>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>gps欺骗 | 沉于思，录以隙</title><meta name="description" content="# GPS的工作原理 卫星通过他自己的星历，得知它当前的位置之后，计算出用户当前的位置的范围。但只通过一颗卫星去定位肯定是不准确的，同时**需要四颗卫星**才可以得到相对精准的一个位置。 Gps其实不仅仅可以定位，还可以授时。就是因为它里边有这个原子钟，它可以为地面的授时装置提供"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">车联网</p> <h1 class="post-cover-hero__title">gps欺骗</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/车联网/" class="directory-link">车联网</a>   <span class="directory-sep">/</span> <span class="directory-text">RFID</span>  </div> <div class="article-meta-row"> <span>2026/4/22</span> <span>车联网</span> <span>车联网 · RFID</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/车联网/" class="tag">#车联网</a><a href="/tags/RFID/" class="tag">#RFID</a> </div> <p class="source-note">来源路径：车联网/RFID/gps欺骗.md</p> </header> <div class="article-main"> <div class="article-content"><h1>GPS的工作原理</h1><p>卫星通过他自己的星历，得知它当前的位置之后，计算出用户当前的位置的范围。但只通过一颗卫星去定位肯定是不准确的，同时<strong>需要四颗卫星</strong>才可以得到相对精准的一个位置。</p>
 <p>Gps其实不仅仅可以定位，还可以授时。就是因为它里边有这个原子钟，它可以为地面的授时装置提供更加准确的时间。</p>
 <h1>GPS欺骗原理</h1><p>GPS欺骗实际上就是通过无线电的设备，模拟一个卫星向用户的设备发送用户的位置信息，终端设备为了得到一个更准确的一个数据，那么会采用四颗以上信号比较强的卫星。设想一下，卫星距离我们的距离是非常远的，但是攻击者的发射装置离用户是特别近的。终端设备自然会选择利用攻击者的信号进行一个定位的请求。在经历这个过程之后，终端机接收到的那个定位便是攻击者想让他去接收的。</p>
 <p>这个授时的欺骗是怎么回事呢？是因为gps在向用户发送坐标位置的时候，往往都会带有一个时间的信息。但是具体能不能用得上看情况。在早期的时候，我们的智能手机只要打开了位置服务就会自动获取时间，它会利用gps去授时。因为当时可能那个网络会存在很大的波动，可能没有现在这么快，所以说他的授予的时间可能会有误差，都会通过这样卫星的方式来获取到更加精准的时间。</p>
-<h1>初版HackRF 插件</h1><p>一个完整的基于 Python 的 HackRF GPS 欺骗插件开发指南，基于 <a href="https://github.com/osqzss/gps-sdr-sim">gps-sdr-sim</a> 工具和 <code>hackrf_transfer</code> 命令。你将获得一个可以从命令行使用的 Python 工具，支持如下功能：</p>
-<ul>
-<li>自动生成 GPS 欺骗信号的 I/Q 数据（<code>.bin</code> 文件）；</li>
-<li>控制 HackRF 发射这些信号；</li>
-<li>可配置位置坐标、功率、频率等参数。</li>
-</ul>
-<hr>
-<h2 id="section-1">插件结构</h2><pre><code>gps_spoofer/
-├── gps_sdr_sim/            <span class="hljs-comment"># 克隆的 gps-sdr-sim 源码目录</span>
-│   └── gps-sdr-sim         <span class="hljs-comment"># 编译后的可执行文件</span>
-├── gps_spoofer.py          <span class="hljs-comment"># 主控制脚本</span>
-└── brdc0010.22n            <span class="hljs-comment"># 星历文件（用于模拟）</span>
-</code></pre>
-<p>运行实例</p>
-<pre><code>./gps_spoofer.py \
-  --gpssim-path ./gps-sdr-sim \
-  -e brdc0010.22n \
-  -l 30.2865,120.0326,100 \
-  -o gpssim.bin \
-  -f 1575420000 \
-  -s 2600000 \
-  -x 20
-  
-  
-</code></pre>
-<h1>2版HackRF 插件</h1><h2 id="section-2">插件结构</h2><pre><code>project_root/
-├── main.py
-├── test_case.json         ← 输入文件
-├── gps-sdr-sim/           ← GPS模拟工具，需编译完成
-├── output/                ← 脚本自动生成，保存输出 <span class="hljs-built_in">bin</span> 文件
-├── Bean/
-│   ├── PluginResult.py
-│   └── StepResult.py
-</code></pre>
-<h2 id="section-3">json注释</h2><pre><code class="language-json">    <span class="hljs-attr">&quot;input&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-        <span class="hljs-punctuation">{</span>
-			<span class="hljs-attr">&quot;gpssim_path&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;./gps-sdr-sim&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// GPS 模拟工具的路径</span>
-            <span class="hljs-attr">&quot;ephemeris&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;brdc1350.25n.gz&quot;</span><span class="hljs-punctuation">,</span>   <span class="hljs-comment">// 星历文件路径</span>
-            <span class="hljs-attr">&quot;location&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;29.55666693527179, 122.43254400514557, 10&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-comment">// 纬度、经度,高度</span>
-            <span class="hljs-attr">&quot;output&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;gpsspoof.bin&quot;</span><span class="hljs-punctuation">,</span>      <span class="hljs-comment">// 输出的 GPS 欺骗信号文件</span>
-            <span class="hljs-attr">&quot;freq&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">1575420000</span><span class="hljs-punctuation">,</span>            <span class="hljs-comment">// 信号频率</span>
-            <span class="hljs-attr">&quot;samplerate&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">2600000</span><span class="hljs-punctuation">,</span>         <span class="hljs-comment">// 采样率</span>
-            <span class="hljs-attr">&quot;txgain&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">20</span>                   <span class="hljs-comment">// 发射增益</span>
-        <span class="hljs-punctuation">}</span>
-    <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-</code></pre>
-<h2 id="section-4">运行实例</h2><pre><code class="language-bash">python main.py test_001 <span class="hljs-comment">#test_001 是自定义的执行 ID，系统会用它通知后端。</span>
-</code></pre>
-<pre><code class="language-bash">====== GPS信号生成和发射测试开始 (2025-05-15 16:32:10) ======
-[*] 执行ID (exeId): test_001
-[*] 正在生成 GPS 欺骗信号...
-步骤1：生成GPS欺骗信号
-[*] 正在通过 HackRF 发射 GPS 信号...
-步骤2：通过HackRF发射GPS信号
-[*] 正在将结果发送到后端...
-[+] 结果已成功发送
-
-====== 测试结果总结 ======
-最终状态: GPS信号成功生成并发射 (SUCCESS)
-描述: GPS信号成功生成并发射
-
-详细步骤 (2 个):
-  步骤 1:
-    类型: string
-    描述: 生成文件: output/gpsspoof.bin
-  步骤 2:
-    类型: string
-    描述: GPS信号发射成功
-========================
-</code></pre>
-<h1>终版HackRF插件</h1><p><a href="https://chatgpt.com/share/68370ee1-a0b8-8002-8dfa-1893d8a61746">https://chatgpt.com/share/68370ee1-a0b8-8002-8dfa-1893d8a61746</a></p>
-<p>单独用gdr sim生成一个gps数据包，插件功能改为单独发送这个gps数据包</p>
-<h2 id="section-5">文件结构</h2><pre><code>gps_spoofer/
+<h1>HackRF插件</h1><p>单独用gdr sim生成一个gps数据包，插件功能改为单独发送这个gps数据包</p>
+<h2 id="section-1">文件结构</h2><pre><code>gps_spoofer/
 ├── main.py                            <span class="hljs-comment"># 主脚本（上面写的脚本）</span>
 ├── test_case.json                     <span class="hljs-comment"># 测试配置文件</span>
 ├── utils/
@@ -87,7 +16,7 @@
 ├── output/                            <span class="hljs-comment"># 输出目录，生成的 gpsspoof.bin 可放这里</span>
 └── gpssim.<span class="hljs-built_in">bin</span>                         <span class="hljs-comment"># 你用 gps-sdr-sim 工具生成的 GPS 信号二进制文件</span>
 </code></pre>
-<h2 id="section-6">json</h2><pre><code class="language-json"><span class="hljs-punctuation">{</span>
+<h2 id="section-2">json</h2><pre><code class="language-json"><span class="hljs-punctuation">{</span>
     <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;6&quot;</span><span class="hljs-punctuation">,</span>
     <span class="hljs-attr">&quot;ecu&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;7.2.5&quot;</span><span class="hljs-punctuation">,</span>
     <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;GPS欺骗测试&quot;</span><span class="hljs-punctuation">,</span>
@@ -112,9 +41,9 @@
     <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;测试车辆或其他接收设备是否能够识别并拒绝伪造的 GPS 信号，验证其对关键定位信息的抗干扰与安全防护能力&quot;</span>
 <span class="hljs-punctuation">}</span>
 </code></pre>
-<h2 id="section-7">运行方式示例（终端命令）</h2><pre><code>python3 main.py exeid-001
+<h2 id="section-3">运行方式示例（终端命令）</h2><pre><code>python3 main.py exeid-001
 </code></pre>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;">  </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/车联网/路由器/异架构/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">异架构</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>插件结构</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>插件结构</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>json注释</span>  </button>  </li><li class="article-outline__group" data-group-id="section-4"> <button class="article-outline__group-link" type="button" data-group-target="section-4"> <span>运行实例</span>  </button>  </li><li class="article-outline__group" data-group-id="section-5"> <button class="article-outline__group-link" type="button" data-group-target="section-5"> <span>文件结构</span>  </button>  </li><li class="article-outline__group" data-group-id="section-6"> <button class="article-outline__group-link" type="button" data-group-target="section-6"> <span>json</span>  </button>  </li><li class="article-outline__group" data-group-id="section-7"> <button class="article-outline__group-link" type="button" data-group-target="section-7"> <span>运行方式示例（终端命令）</span>  </button>  </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/车联网/RFID/RFID/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">RFID</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;">  </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>文件结构</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>json</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>运行方式示例（终端命令）</span>  </button>  </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
       (() => {
         const root = document.documentElement;
         const scrollFlagKey = "scroll-to-top-once";

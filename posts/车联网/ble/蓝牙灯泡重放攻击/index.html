@@ -1,55 +1,78 @@
-<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>蓝牙灯泡重放攻击 | 沉于思，录以隙</title><meta name="description" content="# 低功耗蓝牙协议栈 BLE是低功耗蓝牙的英文缩写（Bluetooth Low Energy），是蓝牙4.0版本起开始支持的新的、低功耗版本的蓝牙技术规范。 低功耗蓝牙瞄准多个市场，特别是移动智能终端，智能家居，互联设备等领域，主要特点包括： - 低功耗，使用纽扣电池就可以运行数"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">车联网</p> <h1 class="post-cover-hero__title">蓝牙灯泡重放攻击</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/车联网/" class="directory-link">车联网</a>   <span class="directory-sep">/</span> <span class="directory-text">ble</span>  </div> <div class="article-meta-row"> <span>2026/4/20</span> <span>车联网</span> <span>车联网 · ble</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/车联网/" class="tag">#车联网</a><a href="/tags/ble/" class="tag">#ble</a> </div> <p class="source-note">来源路径：车联网/ble/蓝牙灯泡重放攻击.md</p> </header> <div class="article-main"> <div class="article-content"><h1>低功耗蓝牙协议栈</h1><p>BLE是低功耗蓝牙的英文缩写（Bluetooth Low Energy），是蓝牙4.0版本起开始支持的新的、低功耗版本的蓝牙技术规范。</p>
-<p>低功耗蓝牙瞄准多个市场，特别是移动智能终端，智能家居，互联设备等领域，主要特点包括：</p>
+<!DOCTYPE html><html lang="zh-Hans" data-theme="dark"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>蓝牙灯泡重放攻击 | 沉于思，录以隙</title><meta name="description" content="# 蓝牙灯泡重放攻击复现 > 仅用于授权测试与教学研究，禁止用于未授权设备与生产环境。 ## 一、实验目标 本实验聚焦一个典型 IoT 安全问题： - 在 BLE 场景下，应用层控制指令如果缺少消息完整性保护、随机挑战或会话绑定，可能被捕获后直接重放。 - 攻击者即使不理解完整协"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Zhi+Mang+Xing&family=Noto+Serif+SC:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css"><link rel="stylesheet" href="/_astro/_folder_.k9dOAKhk.css"></head> <body class="is-post-page"> <div class="deep-space-container" id="deep-space-bg" aria-hidden="true" data-astro-cid-nnyeyk4f> <div class="ds-nebula" data-astro-cid-nnyeyk4f></div> <canvas class="ds-stars" id="ds-canvas" data-astro-cid-nnyeyk4f></canvas> <div class="ds-grid" data-astro-cid-nnyeyk4f></div> <div class="ds-noise" data-astro-cid-nnyeyk4f></div> </div> <script type="module">let r;function o(){const e=document.getElementById("ds-canvas");if(!e)return;const i=e.getContext("2d");if(!i)return;let a=e.width=window.innerWidth,n=e.height=window.innerHeight,h=Array.from({length:250},()=>({x:Math.random()*a,y:Math.random()*n,z:Math.random()*2+.1,opacity:Math.random()*.8+.1,pulse:Math.random()*.01,pulseDir:Math.random()>.5?1:-1}));r&&cancelAnimationFrame(r);const d=()=>{i.clearRect(0,0,a,n),h.forEach(t=>{t.opacity+=t.pulse*t.pulseDir;const c=.8;t.opacity>=c&&(t.opacity=c,t.pulseDir=-1),t.opacity<=.05&&(t.opacity=.05,t.pulseDir=1),i.fillStyle=`rgba(226, 232, 240, ${t.opacity})`,i.beginPath(),i.arc(t.x,t.y,t.z*.9,0,Math.PI*2),i.fill(),t.x-=.15/t.z,t.y-=.05/t.z,t.x<0&&(t.x=a),t.y<0&&(t.y=n)}),r=requestAnimationFrame(d)};d(),window.addEventListener("resize",()=>{a=e.width=window.innerWidth,n=e.height=window.innerHeight})}document.addEventListener("astro:page-load",o);document.readyState==="complete"?o():window.addEventListener("load",o);</script>  <header class="topbar topbar-post"> <a class="brand" href="/">沉于思，录以隙</a> <nav class="nav-links"> <a href="/" class>首页</a> <a href="/folders" class>目录</a> <a href="/tags" class>标签</a> <a href="/#archive-search">搜索</a> </nav> </header> <main id="main-content" class="page-shell page-main is-post-main">  <section class="post-cover-hero"> <div class="post-cover-hero__inner"> <p class="post-cover-hero__eyebrow">车联网</p> <h1 class="post-cover-hero__title">蓝牙灯泡重放攻击</h1> </div> </section> <div class="article-shell" id="article-shell"> <a class="back-link" href="/">&larr; 返回首页花园</a> <div class="article-layout"> <article class="article-panel"> <header class="article-header"> <div class="article-directory"> <a href="/folders" class="directory-link">目录</a>  <span class="directory-sep">/</span> <a href="/folders/车联网/" class="directory-link">车联网</a>   <span class="directory-sep">/</span> <span class="directory-text">ble</span>  </div> <div class="article-meta-row"> <span>2026/4/22</span> <span>车联网</span> <span>车联网 · ble</span> </div> <div class="tag-row article-header__tags"> <a href="/tags/车联网/" class="tag">#车联网</a><a href="/tags/ble/" class="tag">#ble</a> </div> <p class="source-note">来源路径：车联网/ble/蓝牙灯泡重放攻击.md</p> </header> <div class="article-main"> <div class="article-content"><h1>蓝牙灯泡重放攻击复现</h1><blockquote>
+<p>仅用于授权测试与教学研究，禁止用于未授权设备与生产环境。</p>
+</blockquote>
+<h2 id="section-1">一、实验目标</h2><p>本实验聚焦一个典型 IoT 安全问题：</p>
 <ul>
-<li>低功耗，使用纽扣电池就可以运行数月至数年。</li>
-<li>快连接，毫秒级的连接速度，传统蓝牙甚至长达数分钟。</li>
-<li>远距离，长达数百米的通信距离，而传统蓝牙通常10米左右。</li>
+<li>在 BLE 场景下，应用层控制指令如果缺少消息完整性保护、随机挑战或会话绑定，可能被捕获后直接重放。</li>
+<li>攻击者即使不理解完整协议语义，也可能通过“抓包 + 回放”复现关键控制动作（如开关灯）。</li>
 </ul>
-<p>​       <img src="../../../%E5%9B%BE%E5%BA%93/image-20250504145635287.png" alt="image-20250504145635287"></p>
-<p>​       <strong>物理层(phy)</strong>:使用GFSK调制无线信号，并将2.4GHz频段划分为40个射频信道(3个广播信道，37个数据信道)。</p>
+<h2 id="section-2">二、实验环境</h2><ul>
+<li>目标设备：Lifesmart 智能灯泡</li>
+<li>抓包工具：Wireshark 3.4 + nRF52832 Dongle</li>
+<li>交互工具：LightBlue App、Lifesmart 官方 App</li>
+<li>参考资料：<a href="https://blog.csdn.net/XiaoXiaoPengBo/article/details/115156929">https://blog.csdn.net/XiaoXiaoPengBo/article/details/115156929</a></li>
+</ul>
+<p>实验前提：</p>
 <ul>
-<li><p><strong>直接测试模式（DTM）</strong>：通过测试仪器直接连接蓝牙设备控制接口，自动完成与蓝牙模块之间的交互命令和蓝牙参数的设定，从而对蓝牙模块进行测试。</p>
-</li>
-<li><p><strong>链路层（LL）</strong>：定义逻辑通道并为通道选择调频技术；控制设备的射频状态（等待、广播、扫描、发起连接等）和角色；控制数据包的发送时机、完整性等。</p>
-</li>
-<li><p><strong>主机控制器接口（HCI）</strong>：为主机和控制器提供统一的通信接口。这一层的功能可以通过软件API来实现，也可以使用硬件外设来实现。</p>
-</li>
-<li><p><strong>逻辑链路控制和适配协议（L2CAP）</strong>：用于协商与建立逻辑通信信道。BLE使用固定逻辑通信信道来传输协议数据，可避免建立信道时带来的额外时间消耗。</p>
-</li>
-<li><p><strong>安全管理器（SM）</strong>：定义了设备配对与密钥分配的方式，并为设备之间的安全连接和数据交换提供服务。</p>
-</li>
-<li><p><strong>属性协议（ATT）</strong>：定义了访问服务端设备数据的规则（比如读、写等）。数据存储在属性服务器的属性（attribute）中，供属性客户端执行读写操作。</p>
-</li>
-<li><p><strong>通用属性规范（GAP）</strong>：负责处理设备的访问模式和程序，具体包括定义蓝牙设备的角色、通信操作模式和过程，定义蓝牙地址、蓝牙名称等与蓝牙相关的参数。</p>
-</li>
-<li><p><strong>通用访问规范（GAP）</strong>：主要用来控制设备连接和广播。通用访问规范可使你的设备被其他设备发现，并决定了你的设备是否可以或者怎样与交互设备进行通信。</p>
-</li>
-<li><p><strong>各种应用程序</strong>：基于蓝牙协议的应用程序</p>
-</li>
-<li><p><strong>通用属性配置文件(GATT)</strong>
-GATT配置文件定义了如何通过BLE连接来交换所有配置文件和用户数据。它为基于GATT的配置文件提供了参考框架和精确的用例，以确保不同供应商生产的设备之间的互操作性。标准的BLE配置文件都以GATT配置文件为基础，并且必须遵守GATT配置文件才能正常运行。
-​     尽管蓝牙规范在属性协议(ATT)中定义了属性，但定义的这些属性是与ATT相关的。ATT依靠公开的所有概念提供一系列精确的协议数据单元(PDU)，以允许客户端访问服务器上的属性。</p>
-<p>​      而GATT进一步建立了严格的层次结构，允许使用一组简洁的规则在客户端和服务器之间访问与检索数据，而这些规则共同构成了所有基于 GATT 的配置文件使用的框架。</p>
-<p>​      <strong>在GATT服务器中，属性被分组为服务(service)，每个服务可以包含零个或多个特征(characteristic)，不同的特征之间用唯一的 UUID区分，这些特征又可以包括零个或多个描述符(descriptor)。对于声称与 GATT 兼容的任何 BLE 设备来说，都具有相应的层次结构。</strong></p>
-</li>
+<li>手机与灯泡可正常连接并完成基础控制。</li>
+<li>抓包网卡可稳定跟随 BLE 会话。</li>
+<li>手机保持前台连接状态，避免会话频繁断开。</li>
 </ul>
-<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/557784d398cbdf8c174628089bbd1d83_MD5.jpg" alt=""></p>
-<p>  ​       在日常生活中，一种常见的 BLE 设备是智能手环。假设它包含 3 个服务，分别是提供设备信息的服务、统计步数的服务和检测心率的服务。在提供设备信息的服务中，包含的特征有厂商信息、硬件信息和版本信息等，而在检测心率的服务中则包含心率的特征等。每个特征都有对应的值（value）和描述符，用于提供更多相关信息。心率特征中的值是与心率相关的数据，而描述符是对该value的描述说明，如value的单位。权限等。</p>
-<p>  ​       尽管BLE设备的配对操作是加密的，但每个特征的值可以在不加密的状态下进行读写。当特征值发生改变时，蓝牙设备会收到相应的通知。</p>
-<h1>智能灯泡攻击实验</h1><h2 id="section-1">环境搭建</h2><p><a href="https://blog.csdn.net/XiaoXiaoPengBo/article/details/115156929">https://blog.csdn.net/XiaoXiaoPengBo/article/details/115156929</a></p>
-<p>工具：wireshark3.4+52832dongle+lifesmart智能灯泡+lightblue app+lifesmart app</p>
-<p>注意：python版本一定要换</p>
-<h2 id="section-2">1.确定蓝牙设备mac地址</h2><p>打开蓝牙灯泡并用产品官方app与其蓝牙连接，再使用lightblue检测蓝牙信号强度，找到一靠近灯泡信号飙升远离灯泡信号掉的最明显的设备就是蓝牙灯泡。我这里是第二个设备，BULB。
-<img src="/__published_media/external/%E5%9B%BE%E5%BA%93/b10b397b6c87a6256ec0d1e02abc6197_MD5.jpg" alt=""></p>
-<h2 id="section-3">2.wireshark抓蓝牙数据包</h2><p>插上52832，用btatt过滤规则，查看ATT层传输的数据。device选择mac地址监听目标设备，当52832指示灯变从红色闪烁变绿即连接成功。(连接时手机不能熄屏，要留在lifesmart应用否指连接断开)</p>
+<h2 id="section-3">三、最小必要背景（ATT/GATT）</h2><p>BLE 常见控制链路是：</p>
+<ul>
+<li>App 对某个 Characteristic 执行写操作（Write Request / Write Command）。</li>
+<li>设备在对应服务中解析 Value 字段并执行动作。</li>
+</ul>
+<p>因此，若该 Value 没有被动态校验（如时间戳、随机数、签名、会话计数器绑定），就可能被重放。</p>
+<h2 id="section-4">四、攻击链路</h2><h3 id="section-5">1）识别目标设备</h3><p>先用官方 App 连接灯泡，再用 LightBlue 观察附近设备 RSSI 变化。靠近设备时信号明显增强、远离时明显衰减的目标即为候选设备。</p>
+<p>我这里识别到目标名称为 BULB。</p>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/b10b397b6c87a6256ec0d1e02abc6197_MD5.jpg" alt=""></p>
+<h3 id="section-6">2）抓取控制流量</h3><p>使用 nRF52832 Dongle 配合 Wireshark 抓包，过滤 ATT 层数据：</p>
+<pre><code class="language-text">btatt
+</code></pre>
+<p>抓包过程中选定目标设备地址，待 Dongle 指示状态稳定后进行多次“开灯/关灯”操作，构造可对比样本。</p>
 <p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/231ba607a2ac0e8f40413295c5c55ba4_MD5.jpg" alt=""></p>
 <p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/c7135f8801e183cf379e59b4508c9383_MD5.jpg" alt=""></p>
-<p>多次在lifesmart app上开关灯泡，找到对应开关的服务。
-<img src="/__published_media/external/%E5%9B%BE%E5%BA%93/7ab73fc8d8c87a9bde3e4286f3ed1a84_MD5.jpg" alt=""></p>
-<p>黑色标记的2条是开关操作，发现每次操作value倒数第七位自增1，开灯末尾是181，关灯180.并且找到了servic和其特征的uuid红线划出了。</p>
-<h2 id="section-4">3.重放攻击</h2><p>  现在灯是开的，我们通过lightblue app  改写上述服务的特征值，达到重放攻击。</p>
-<p>输入Value: 0e000000000000000000000410020180.灯灭</p>
-</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/车联网/ble/蓝牙协议栈/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">蓝牙协议栈</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/车联网/ble/blectf/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">blectf</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>环境搭建</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>1.确定蓝牙设备mac地址</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>2.wireshark抓蓝牙数据包</span>  </button>  </li><li class="article-outline__group" data-group-id="section-4"> <button class="article-outline__group-link" type="button" data-group-target="section-4"> <span>3.重放攻击</span>  </button>  </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
+<h3 id="section-7">3）定位可复用指令</h3><p>对比多次操作后可观察到：</p>
+<ul>
+<li>两条关键写入报文与开关动作强关联。</li>
+<li>Value 字段存在规律变化，倒数第 7 位在连续操作中自增。</li>
+<li>开灯报文末尾常见 <code>...181</code>，关灯报文末尾常见 <code>...180</code>。</li>
+</ul>
+<p><img src="/__published_media/external/%E5%9B%BE%E5%BA%93/7ab73fc8d8c87a9bde3e4286f3ed1a84_MD5.jpg" alt=""></p>
+<p>同时可定位到对应 Service/Characteristic 的 UUID，为后续回放提供写入位置。</p>
+<h3 id="section-8">4）执行重放验证</h3><p>在 LightBlue 中对目标 Characteristic 进行写入，使用已捕获的关灯控制值：</p>
+<pre><code class="language-text">0e000000000000000000000410020180
+</code></pre>
+<p>写入后灯泡关闭，说明捕获指令可被直接复用，重放成立。</p>
+<h2 id="section-9">五、漏洞本质分析</h2><p>从现象看，该控制流程可能存在以下薄弱点：</p>
+<ul>
+<li>缺少一次性挑战值（nonce）或时序有效性校验。</li>
+<li>控制指令未与当前会话强绑定（抓到的历史包仍可用）。</li>
+<li>指令完整性保护不足，设备侧对报文新鲜度验证不严格。</li>
+</ul>
+<p>这类问题在 BLE 轻量控制设备中较常见，属于“功能可用优先于安全设计”的典型落地风险。</p>
+<h2 id="section-10">六、防护建议</h2><p>面向设备厂商与固件开发侧，可优先落地以下策略：</p>
+<ul>
+<li>在应用层指令引入随机挑战与响应机制，拒绝历史报文。</li>
+<li>指令中加入时间窗和递增计数器，并在设备端严格校验。</li>
+<li>对控制指令做消息认证（如基于会话密钥的 MAC），避免可伪造与可重放。</li>
+<li>强制敏感控制走加密链路，避免明文特征值可直接复写。</li>
+<li>增加异常行为检测（短时间重复同值写入、跨端突发写入告警）。</li>
+</ul>
+<h2 id="section-11">七、复现中的常见问题</h2><ul>
+<li>连接不稳定：手机需保持前台，避免系统回收蓝牙会话。</li>
+<li>抓不到关键包：优先保证开关动作节奏清晰，减少无关操作噪声。</li>
+<li>回放无效：检查写入句柄、UUID、Value 长度及大小端格式是否一致。</li>
+</ul>
+<h2 id="section-12">八、总结</h2><p>本实验验证了 BLE 智能灯泡在控制指令新鲜度与会话绑定方面的风险：</p>
+<ul>
+<li>攻击门槛低，依赖公开工具即可复现。</li>
+<li>影响直观，直接触发物理控制行为。</li>
+<li>修复路径明确，关键在于“动态校验 + 完整性保护 + 会话约束”。</li>
+</ul>
+<p>对车联网与 IoT 场景而言，这类“可重放控制链路”值得作为基线测试项长期纳入验证流程。</p>
+</div> <nav class="article-nav" style="display: flex; justify-content: space-between; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line);"> <div class="nav-prev" style="flex: 1;"> <a href="/posts/车联网/路由器/dir823g/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">&larr; 上一篇</p> <h4 style="margin: 8px 0 0; color: var(--ink);">dir823g</h4> </a> </div> <div class="nav-next" style="flex: 1; text-align: right;"> <a href="/posts/车联网/RFID/RFID/" style="text-decoration: none;"> <p class="muted" style="margin: 0; font-size: 0.9rem; color: var(--muted);">下一篇 &rarr;</p> <h4 style="margin: 8px 0 0; color: var(--ink);">RFID</h4> </a> </div> </nav> </div> </article>  <aside class="article-sidebar" id="article-sidebar"> <nav class="article-outline" aria-label="文章目录"> <div class="article-outline__head"> <strong>目录</strong> </div> <div class="article-outline__body"> <ol class="article-outline__list article-outline__list--groups"> <li class="article-outline__group" data-group-id="section-1"> <button class="article-outline__group-link" type="button" data-group-target="section-1"> <span>一、实验目标</span>  </button>  </li><li class="article-outline__group" data-group-id="section-2"> <button class="article-outline__group-link" type="button" data-group-target="section-2"> <span>二、实验环境</span>  </button>  </li><li class="article-outline__group" data-group-id="section-3"> <button class="article-outline__group-link" type="button" data-group-target="section-3"> <span>三、最小必要背景（ATT/GATT）</span>  </button>  </li><li class="article-outline__group" data-group-id="section-4"> <button class="article-outline__group-link" type="button" data-group-target="section-4"> <span>四、攻击链路</span> <span class="article-outline__group-caret" aria-hidden="true">›</span> </button> <ol class="article-outline__sublist"> <li class="article-outline__item depth-3" data-toc-id="section-5"> <a href="#section-5">1）识别目标设备</a> </li><li class="article-outline__item depth-3" data-toc-id="section-6"> <a href="#section-6">2）抓取控制流量</a> </li><li class="article-outline__item depth-3" data-toc-id="section-7"> <a href="#section-7">3）定位可复用指令</a> </li><li class="article-outline__item depth-3" data-toc-id="section-8"> <a href="#section-8">4）执行重放验证</a> </li> </ol> </li><li class="article-outline__group" data-group-id="section-9"> <button class="article-outline__group-link" type="button" data-group-target="section-9"> <span>五、漏洞本质分析</span>  </button>  </li><li class="article-outline__group" data-group-id="section-10"> <button class="article-outline__group-link" type="button" data-group-target="section-10"> <span>六、防护建议</span>  </button>  </li><li class="article-outline__group" data-group-id="section-11"> <button class="article-outline__group-link" type="button" data-group-target="section-11"> <span>七、复现中的常见问题</span>  </button>  </li><li class="article-outline__group" data-group-id="section-12"> <button class="article-outline__group-link" type="button" data-group-target="section-12"> <span>八、总结</span>  </button>  </li> </ol> </div> </nav> </aside>  </div> </div>  </main> <script>
       (() => {
         const root = document.documentElement;
         const scrollFlagKey = "scroll-to-top-once";
